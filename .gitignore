@@ -1,0 +1,42 @@
+# Ignore compiled Python files
+*.pyc
+
+# Ignore development-related files and directories
+__pycache__/
+*.sqlite3
+*.env
+
+# Ignore IDE files
+.idea/
+
+# Ignore static files
+/static/
+
+# Ignore media files
+/media/
+
+# Ignore log files
+*.log
+
+# Ignore database files
+db.sqlite3
+
+
+# Ignore virtual environment files (assuming you use virtualenv or venv)
+env/
+.env
+
+
+
+/apps/*/migrations/*
+!/apps/*/migrations/__init__.py
+
+delete_migrations.py
+general.log
+
+
+venv/
+apps/breif_models
+
+app_name/settings/dev.py
+.DS_Store
