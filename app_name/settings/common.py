@@ -2,12 +2,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-AUTH_USER_MODEL = 'users.CustomUser'
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -26,9 +20,8 @@ INSTALLED_APPS = [
     "rest_framework",
 
     # apps here
-    'apps.authentication',
-    'apps.users',
     'apps.core',
+    # 'apps.currency',
 ]
 
 MIDDLEWARE = [

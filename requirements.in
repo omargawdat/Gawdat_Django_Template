@@ -1,12 +1,7 @@
 django
-python-dotenv
-django-jazzmin
 djangorestframework
 Pillow
 gunicorn
 whitenoise
 gevent
-djangorestframework-simplejwt
-django-phonenumber-field
 requests
-phonenumbers
