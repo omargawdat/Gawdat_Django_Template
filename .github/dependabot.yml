@@ -1,0 +1,54 @@
+#version: 2
+#updates:
+#  # Update GitHub actions in workflows
+#  - package-ecosystem: 'github-actions'
+#    directory: '/'
+#    schedule:
+#      interval: 'monthly'
+#
+#  # Enable version updates for Docker
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/local/django/'
+#    schedule:
+#      interval: 'monthly'
+#    ignore:
+#      - dependency-name: '*'
+#        update-types:
+#          - 'version-update:semver-major'
+#          - 'version-update:semver-minor'
+#
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/local/node/'
+#    schedule:
+#      interval: 'monthly'
+#
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/production/aws/'
+#    schedule:
+#      interval: 'monthly'
+#
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/production/django/'
+#    schedule:
+#      interval: 'monthly'
+#    ignore:
+#      - dependency-name: '*'
+#        update-types:
+#          - 'version-update:semver-major'
+#          - 'version-update:semver-minor'
+#
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/production/postgres/'
+#    schedule:
+#      interval: 'monthly'
+#
+#  - package-ecosystem: 'docker'
+#    directory: 'compose/production/traefik/'
+#    schedule:
+#      interval: 'monthly'
+#
+#  # Enable version updates for Python/Pip - Production
+#  - package-ecosystem: 'pip'
+#    directory: '/'
+#    schedule:
+#      interval: 'monthly'

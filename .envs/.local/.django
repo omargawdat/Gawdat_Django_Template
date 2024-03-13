@@ -1,0 +1,14 @@
+# General
+# ------------------------------------------------------------------------------
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+VIRTUAL_HOST=my-dev-env.local
+VIRTUAL_PORT=8000
+DJANGO_SECRET_KEY=IDSRJaOPDMcZGhLXa3g6gZsoFPhV3LjLmZWwGWIUtUjEWyKnN1RShHZGMmh7SQyg
+
+
+# Super User
+# ------------------------------------------------------------------------------
+DJANGO_SUPERUSER_USERNAME=omar
+DJANGO_SUPERUSER_EMAIL=omargawdat@gmail.com
+DJANGO_SUPERUSER_PASSWORD=123

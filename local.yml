@@ -1,0 +1,47 @@
+version: '3'
+
+volumes:
+  project_name_local_postgres_data: { }
+  project_name_local_postgres_data_backups: { }
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: project_name_local_django
+    container_name: project_name_local_django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: project_name_production_postgres
+    container_name: project_name_local_postgres
+    volumes:
+      - project_name_local_postgres_data:/var/lib/postgresql/data
+      - project_name_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: project_name_nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./assets/certs:/etc/nginx/certs
+    restart: always
+    depends_on:
+      - django
