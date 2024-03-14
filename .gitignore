@@ -242,7 +242,6 @@
 #
 #### macOS template
 ## General
-#*.DS_Store
 #.AppleDouble
 #.LSOverride
 #
@@ -332,3 +331,6 @@
 #
 #
 #/assets/certs/*
+
+*.DS_Store
+assets/staticfiles/
