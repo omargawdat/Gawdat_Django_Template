@@ -331,6 +331,5 @@
 #
 #
 #/assets/certs/*
-
-*.DS_Store
-assets/staticfiles/
+#*.DS_Store
+#assets/staticfiles/

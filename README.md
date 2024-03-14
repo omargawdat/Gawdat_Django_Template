@@ -23,9 +23,8 @@
 
 ## 2. Git Repository Setup
 1. **Uncomment the `.gitignore` File**
-2. **Uncomment the `ci.yml` and `dependabot.yml`Files'**
-3. **Remove Existing `.git` Directory**
-4. **Initialize the Git Repository**
+2. **Uncomment the `ci.yml` and `dependabot.yml`Files**
+3. **Initialize the Git Repository**
    ```
    sudo rm -r .git
    git init
@@ -33,7 +32,7 @@
    git add .
    git commit -m "Initial commit"
    ```
-5. **share the project on Github**
+4. **Share the project on GitHub**
 
 
 ## 3. Server Ready Configuration
