@@ -21,6 +21,7 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    path("api/v1/", include("apps.users.api.v1.urls")),
 ]
 
 if settings.DEBUG:
