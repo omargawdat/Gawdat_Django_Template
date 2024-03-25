@@ -36,22 +36,12 @@
 
 
 ## 3. Server Ready Configuration
-1. **Create Ec2 instance with  IAM Role (S3) if using s3**
-2. **Install Needed Packages Using DNF (Amazon Linux 2023)**
-   ```
-   sudo dnf install git 
-   sudo dnf install docker
-   sudo systemctl start docker
-   sudo systemctl enable docker
-   sudo usermod -aG docker ec2-user
-   newgrp docker
-   sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m) -o /usr/bin/docker-compose && sudo chmod 755 /usr/bin/docker-compose && docker-compose --version. 
-   ```
-3. **Clone the repository to your server.**
+1. **Create Ec2 instance using AMI image with  IAM Role Full access**
+2. **Clone the repository to your server.**
     ```
       git clone repo_url
     ```
-4. **Upload the .envs files into the server**
+3. **Upload the .envs files into the server**
     ```
       mkdir .envs/.production/
     ```
@@ -64,7 +54,7 @@
     ```
        python3 merge_production_dotenvs_in_dotenv.py
     ```
-5. Run the docker container
+4. Run the docker container
    ```
     sudo docker-compose -f production.yml up --build
    ```
