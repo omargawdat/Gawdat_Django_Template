@@ -12,9 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # dependencies for building Python packages
   build-essential \
   # psycopg2 dependencies
-  libpq-dev \
-  # GDAL dependencies
-  libgdal-dev
+  libpq-dev
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements .
 
@@ -43,8 +41,6 @@ RUN addgroup --system django \
 RUN apt-get update && apt-get install --no-install-recommends -y \
   # psycopg2 dependencies
   libpq-dev \
-  # GDAL dependencies
-  libgdal-dev\
     # Translations dependencies
   gettext \
   # cleaning up unused files

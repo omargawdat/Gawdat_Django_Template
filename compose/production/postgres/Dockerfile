@@ -1,4 +1,4 @@
-FROM postgis/postgis:16-3.4-alpine
+FROM docker.io/postgres:16
 
 COPY ./compose/production/postgres/maintenance /usr/local/bin/maintenance
 RUN chmod +x /usr/local/bin/maintenance/*
