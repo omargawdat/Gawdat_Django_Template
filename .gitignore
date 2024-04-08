@@ -321,8 +321,8 @@
 #dump.rdb
 #
 #### Project template
-#apps/media/
-#
+#assets/media/
+
 #.pytest_cache/
 #.ipython/
 #.env
