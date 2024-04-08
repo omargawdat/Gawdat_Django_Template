@@ -8,9 +8,9 @@
    - make sure the domain is pointing into the instance IP.
 3. **Fill the `.envs/.production/.django` file**
 4. **Optional:Use postgis**
-    - If your project does not use PostGIS, you may remove `libgdal` from the Django Docker files.
-    - Replace the PostGIS image with a standard PostgreSQL image to match your project's database needs.
-    - Update the `DATABASE_URL` in the `entry point` file to "postgres".
+   ```
+   git merge postgis
+   ```
 5. **Optional: Using S3**
    - Remove white noise from `[middle ware + package]`
    - Write the s3 configurations in the productions settings. 
@@ -58,3 +58,4 @@
    ```
     sudo docker-compose -f production.yml up --build
    ```
+   
