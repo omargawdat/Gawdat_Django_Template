@@ -37,14 +37,6 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "assets", "staticfiles")
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets", "static"),
-]
-STATIC_URL = "/static/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "assets", "media")
-MEDIA_URL = "/media/"
-
 # Templates Configuration
 TEMPLATES = [
     {
@@ -184,7 +176,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
 }
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,

@@ -81,16 +81,48 @@ sentry_sdk.init(
     traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
 )
 
-# THIRD-PARTY APPS CONFIGURATION
-# ------------------------------------------------------------------------------
-# todo: after correcting the s3 bucket use collectfast.
-# INSTALLED_APPS = ["collectfast"] + INSTALLED_APPS
-# COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
 
 
 # django-rest-framework
 SPECTACULAR_SETTINGS["SERVERS"] = [{"url": f"https://{domain_url}", "description": "Production server"}]
 
-# Additional custom settings...
+
+
+# MEDIA + STATIC SETTINGS
 # ------------------------------------------------------------------------------
-MIDDLEWARE += ["whitenoise.middleware.WhiteNoiseMiddleware"]
+AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME")
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+AWS_LOCATION = "static"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
+
+INSTALLED_APPS += ["storages"]
+AWS_QUERYSTRING_AUTH = False
+# DO NOT change these unless you know what you're doing.
+_AWS_EXPIRY = 60 * 60 * 24 * 7
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": f"max-age={_AWS_EXPIRY}, s-maxage={_AWS_EXPIRY}, must-revalidate",
+}
+AWS_S3_MAX_MEMORY_SIZE = env.int(
+    "DJANGO_AWS_S3_MAX_MEMORY_SIZE",
+    default=100_000_000,  # 100MB
+)
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "media",
+            "file_overwrite": False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "static",
+        },
+    },
+}
+
+COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
+INSTALLED_APPS = ["collectfast"] + INSTALLED_APPS
