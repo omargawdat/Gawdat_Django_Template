@@ -37,6 +37,14 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, "assets", "staticfiles")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets", "static"),
+]
+STATIC_URL = "/static/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "assets", "media")
+MEDIA_URL = "/media/"
+
 # Templates Configuration
 TEMPLATES = [
     {

@@ -39,12 +39,3 @@ if env("USE_DOCKER") == "yes":  # Conditionally add Docker-related IPs to INTERN
 # SECURITY SETTINGS
 # ------------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-
-STATIC_ROOT = os.path.join(BASE_DIR, "assets", "staticfiles")
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets", "static"),
-]
-STATIC_URL = "/static/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "assets", "media")
-MEDIA_URL = "/media/"

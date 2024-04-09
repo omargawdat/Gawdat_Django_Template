@@ -11,7 +11,7 @@
    ```
    git merge postgis
    ```
-5. **Optional: Using S3**
+5. **Optional: Remove S3**
    - Remove white noise from `[middle ware + package]`
    - Write the s3 configurations in the productions settings. 
 6. **Try the Local Development**
