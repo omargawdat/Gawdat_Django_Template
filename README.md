@@ -12,8 +12,9 @@
    git merge postgis
    ```
 5. **Optional: Remove S3**
-   - Remove white noise from `[middle ware + package]`
-   - Write the s3 configurations in the productions settings. 
+   ```
+   git merge remove_s3
+   ```
 6. **Try the Local Development**
   ```
   docker compose -f local.yml up --build
