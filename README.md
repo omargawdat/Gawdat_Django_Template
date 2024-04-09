@@ -38,11 +38,12 @@
 
 ## 3. Server Ready Configuration
 1. **Create Ec2 instance using AMI image with  IAM Role Full access**
-2. **Clone the repository to your server.**
+2. **Create S3 Bucket**
+3. **Clone the repository to your server.**
     ```
       git clone repo_url
     ```
-3. **Upload the .envs files into the server**
+4. **Upload the .envs files into the server**
     ```
       mkdir .envs/.production/
     ```
@@ -55,7 +56,7 @@
     ```
        python3 merge_production_dotenvs_in_dotenv.py
     ```
-4. Run the docker container
+5. Run the docker container
    ```
     sudo docker-compose -f production.yml up --build
    ```
