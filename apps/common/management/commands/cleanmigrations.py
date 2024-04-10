@@ -10,14 +10,21 @@ class Command(BaseCommand):
     help = "Cleans all migration files in all apps, clears the django_migrations table, and then re-creates and fakes them."
 
     def handle(self, *args, **kwargs):
+        # Step 0: Make migrations and migrate to ensure that the database is up-to-date
+        call_command("makemigrations")
+        call_command("migrate")
+        self.stdout.write(self.style.SUCCESS("Database is up-to-date."))
+
         # Step 1: Delete all migration records from the django_migrations table
         self.stdout.write(self.style.WARNING("Deleting all records from django_migrations table..."))
-        with connections['default'].cursor() as cursor:
+        with connections["default"].cursor() as cursor:
             cursor.execute("DELETE FROM django_migrations")
         self.stdout.write(self.style.SUCCESS("All records deleted."))
 
         # Step 2: Delete all migration files except __init__.py from all apps
-        apps_folder_path = settings.BASE_DIR / "apps"  # Assuming all apps are within the 'apps' directory at the base level
+        apps_folder_path = (
+                settings.BASE_DIR / "apps"
+        )  # Assuming all apps are within the 'apps' directory at the base level
         self.stdout.write(self.style.WARNING("Cleaning migration files..."))
 
         for app_name in os.listdir(apps_folder_path):
