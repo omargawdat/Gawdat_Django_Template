@@ -4,3 +4,6 @@ from django.apps import AppConfig
 class AppOneConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.template"
+
+    def ready(self):
+        from .admin import admin  # noqa
