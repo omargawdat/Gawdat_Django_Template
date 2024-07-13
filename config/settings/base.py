@@ -8,7 +8,8 @@ import environ
 from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / "apps"
+ASSETS_DIR = BASE_DIR / "assets"
+
 env = environ.Env()
 
 # GENERAL
@@ -23,7 +24,7 @@ LANGUAGES = [
 SITE_ID = 1
 USE_I18N = True
 USE_TZ = True
-LOCALE_PATHS = [str(BASE_DIR / "locale")]
+LOCALE_PATHS = [str(ASSETS_DIR / "locale")]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -65,7 +66,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-AUTH_USER_MODEL = "users.User"
+# AUTH_USER_MODEL = "users.User"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -99,9 +100,9 @@ MIDDLEWARE = [
 ]
 
 # STATIC
-STATIC_ROOT = str(BASE_DIR / "staticfiles")
+STATIC_ROOT = str(ASSETS_DIR / "staticfiles")
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [str(APPS_DIR / "static")]
+STATICFILES_DIRS = [str(ASSETS_DIR / "static")]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -109,7 +110,7 @@ STATICFILES_FINDERS = [
 
 # MEDIA
 # ------------------------------------------------------------------------------
-MEDIA_ROOT = str(APPS_DIR / "media")
+MEDIA_ROOT = str(ASSETS_DIR / "media")
 MEDIA_URL = "/media/"
 
 # TEMPLATES
@@ -117,7 +118,7 @@ MEDIA_URL = "/media/"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [str(APPS_DIR / "templates")],
+        "DIRS": [str(ASSETS_DIR / "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -136,7 +137,7 @@ TEMPLATES = [
 
 # FIXTURES
 # ------------------------------------------------------------------------------
-FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
+FIXTURE_DIRS = (str(ASSETS_DIR / "fixtures"),)
 
 # SECURITY
 # ------------------------------------------------------------------------------
