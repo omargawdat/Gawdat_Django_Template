@@ -1,0 +1,71 @@
+volumes:
+  template_local_postgres_data: {}
+  template_local_postgres_data_backups: {}
+  template_local_redis_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: template_local_django
+    container_name: template_local_django
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: template_production_postgres
+    container_name: template_local_postgres
+    volumes:
+      - template_local_postgres_data:/var/lib/postgresql/data
+      - template_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+
+  redis:
+    image: docker.io/redis:6
+    container_name: template_local_redis
+    
+    volumes:
+      - template_local_redis_data:/data
+    
+
+  celeryworker:
+    <<: *django
+    image: template_local_celeryworker
+    container_name: template_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: template_local_celerybeat
+    container_name: template_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: template_local_flower
+    container_name: template_local_flower
+    ports:
+      - '5555:5555'
+    command: /start-flower
