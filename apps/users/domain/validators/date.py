@@ -1,5 +1,5 @@
-from apps.common.helpers.constants import ValidationErrorType
-from apps.common.mixins.validators import BaseValidator
+from common.helpers.constants import ValidationErrorType
+from common.mixins.validators import BaseValidator
 
 
 class DateValidator(BaseValidator):

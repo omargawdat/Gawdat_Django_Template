@@ -8,7 +8,7 @@ from django.apps import apps
 
 class CoreConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "apps.common"
+    name = "common"
 
     def ready(self):
         # this code is for importing admins

@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from apps.common.helpers.constants import ValidationErrorType
+from common.helpers.constants import ValidationErrorType
 
 
 class BaseValidator:
