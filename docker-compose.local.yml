@@ -1,7 +1,7 @@
 volumes:
-  template_local_postgres_data: {}
-  template_local_postgres_data_backups: {}
-  template_local_redis_data: {}
+  template_local_postgres_data: { }
+  template_local_postgres_data_backups: { }
+  template_local_redis_data: { }
 
 services:
   django: &django
@@ -27,12 +27,16 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: template_production_postgres
+    ports:
+      - "5432:5432"
     container_name: template_local_postgres
     volumes:
       - template_local_postgres_data:/var/lib/postgresql/data
       - template_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+
+
 
   redis:
     image: docker.io/redis:6

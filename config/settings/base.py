@@ -15,7 +15,7 @@ env = environ.Env()
 # GENERAL
 # ------------------------------------------------------------------------------
 DEBUG = env.bool("DJANGO_DEBUG", False)
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Riyadh"
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [
     ("en", _("English")),
@@ -56,7 +56,10 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "apps.common",
+    "apps.users",
+]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # AUTHENTICATION
@@ -66,7 +69,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-# AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
