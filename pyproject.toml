@@ -148,7 +148,8 @@ ignore = [
     "SIM102", # sometimes it's better to nest
     "UP038", # Checks for uses of isinstance/issubclass that take a tuple of types for comparison
     "COM812", # Missing trailing comma in Python 3.6+
-    "ISC001"  # Single line implicit string concatenation
+    "ISC001", # Single line implicit string concatenation
+    "RET506"
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
