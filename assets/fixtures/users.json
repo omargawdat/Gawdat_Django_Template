@@ -1,0 +1,28 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "user1",
+      "password": "pbkdf2_sha256$260000$kZfuMfbdnTXl$1BzKZQzGfVmE/BuKXeRsU+j7ESrTzW/ZFfE08/Oamf0=",
+      "email": "user1@example.com",
+      "last_name": "Doe",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-07-14T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "user2",
+      "password": "pbkdf2_sha256$260000$8HhM8Iuvfj0o$g6Q+0Q+3hzNf5TkEcvE9Tx95qKU2W17T1nbuRr5U4/c=",
+      "email": "user2@example.com",
+      "last_name": "Smith",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-07-14T00:00:00Z"
+    }
+  }
+]

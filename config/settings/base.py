@@ -138,10 +138,6 @@ TEMPLATES = [
     },
 ]
 
-# FIXTURES
-# ------------------------------------------------------------------------------
-FIXTURE_DIRS = (str(ASSETS_DIR / "fixtures"),)
-
 # SECURITY
 # ------------------------------------------------------------------------------
 SESSION_COOKIE_HTTPONLY = True
@@ -159,7 +155,7 @@ EMAIL_TIMEOUT = 5
 # ADMIN
 # ------------------------------------------------------------------------------
 ADMIN_URL = "admin/"
-ADMINS = [("""omargawdat""", "omargawdaat@gmail.com")]
+ADMINS = [("omargawdat", "omargawdaat@gmail.com")]
 MANAGERS = ADMINS
 
 # LOGGING
