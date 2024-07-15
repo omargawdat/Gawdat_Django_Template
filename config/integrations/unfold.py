@@ -33,13 +33,13 @@ UNFOLD = {
             "950": "5 72 120",
         },
     },
-    "SIDEBAR": {
-        "show_search": True,
-        "show_all_applications": False,
-        "navigation": [
-            {
-                "items": [],
-            },
-        ],
-    },
+    # "SIDEBAR": {
+    #     "show_search": True,
+    #     "show_all_applications": False,
+    #     "navigation": [
+    #         {
+    #             "items": [],
+    #         },
+    #     ],
+    # },
 }

@@ -155,6 +155,8 @@ ignore = [
     "ERA001", # no commented out code
     "EM101", # avoid using string directly inside the exceptions
     "PGH004", # use correct noqa code
+    "N806", # lower case ensuring
+    "FBT002" # Boolean default positional argument in function definition
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

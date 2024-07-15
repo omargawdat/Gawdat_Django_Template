@@ -46,6 +46,7 @@ DJANGO_APPS = [
     "unfold.contrib.forms",
     "unfold.contrib.import_export",
     "unfold.contrib.inlines",
+    "fcm_django",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -66,6 +67,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "common",
     "apps.users",
+    "apps.notification",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 

@@ -22,3 +22,7 @@ DJANGO_SECRET_KEY="0o6E3WwwM9gFuIgGXgS91eyPExttMYkUCQKdgcMJzgn0EYxDbbM1ct7Jy6sns
 # ------------------------------------------------------------------------------
 DJANGO_SUPERUSER_USERNAME=testuser
 DJANGO_SUPERUSER_PASSWORD=1234
+
+# Firebase
+# ------------------------------------------------------------------------------
+GOOGLE_APPLICATION_CREDENTIALS = "firebase_cred.json"
