@@ -81,7 +81,7 @@ exclude = [
     "staticfiles/*"
 ]
 # Same as Django: https://github.com/cookiecutter/cookiecutter-django/issues/4792.
-line-length = 88
+line-length = 100
 indent-width = 4
 target-version = "py312"
 
@@ -150,7 +150,10 @@ ignore = [
     "COM812", # Missing trailing comma in Python 3.6+
     "ISC001", # Single line implicit string concatenation
     "RET506",
-    "S603"
+    "S603",
+    "TRY003", # ensure using execption for consistance in messages
+    "ERA001", # no commented out code
+    "EM101", # avoid using string directly inside the exceptions
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

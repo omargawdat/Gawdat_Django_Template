@@ -29,3 +29,4 @@ django-coverage-plugin==3.1.0
 factory-boy==3.3.0
 django-debug-toolbar==4.4.6
 django-extensions==3.2.3
+django-silk==5.1.0

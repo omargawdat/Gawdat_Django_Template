@@ -16,3 +16,9 @@ CELERY_FLOWER_PASSWORD=mT1VtATWd7V5HYYqp5IGaS4CKik5AhLt0BqItwr0rGzzlza0Ez2b1mDqG
 # Django
 # ------------------------------------------------------------------------------
 DJANGO_SECRET_KEY="0o6E3WwwM9gFuIgGXgS91eyPExttMYkUCQKdgcMJzgn0EYxDbbM1ct7Jy6snswcl"
+
+
+# SuperAdmin
+# ------------------------------------------------------------------------------
+DJANGO_SUPERUSER_USERNAME=
+DJANGO_SUPERUSER_PASSWORD=
