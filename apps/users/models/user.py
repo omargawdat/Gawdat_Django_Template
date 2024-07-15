@@ -5,7 +5,7 @@ from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 from polymorphic.models import PolymorphicModel
 
-from apps.users.helpers.manager import CustomUserManager
+from apps.users.helpers.model_manager import CustomUserManager
 
 
 class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
