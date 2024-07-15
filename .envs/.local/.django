@@ -20,5 +20,5 @@ DJANGO_SECRET_KEY="0o6E3WwwM9gFuIgGXgS91eyPExttMYkUCQKdgcMJzgn0EYxDbbM1ct7Jy6sns
 
 # SuperAdmin
 # ------------------------------------------------------------------------------
-DJANGO_SUPERUSER_USERNAME=
-DJANGO_SUPERUSER_PASSWORD=
+DJANGO_SUPERUSER_USERNAME=testuser
+DJANGO_SUPERUSER_PASSWORD=1234

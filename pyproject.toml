@@ -154,6 +154,7 @@ ignore = [
     "TRY003", # ensure using execption for consistance in messages
     "ERA001", # no commented out code
     "EM101", # avoid using string directly inside the exceptions
+    "PGH004", # use correct noqa code
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

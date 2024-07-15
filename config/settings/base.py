@@ -7,6 +7,8 @@ from pathlib import Path
 import environ
 from django.utils.translation import gettext_lazy as _
 
+from ..integrations.unfold import *  # noqa
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
 
@@ -39,6 +41,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # APPS
 DJANGO_APPS = [
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.import_export",
+    "unfold.contrib.inlines",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
