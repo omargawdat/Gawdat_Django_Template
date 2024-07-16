@@ -1,8 +1,11 @@
+from django.urls import reverse_lazy
+
 UNFOLD = {
-    "SITE_URL": "template_app.com",
     "SITE_TITLE": "template_app",
     "SITE_HEADER": "template_app",
     "SHOW_HISTORY": True,
+    # "SHOW_VIEW_ON_SITE": True,
+    # "SITE_URL": "",
     # "LOGIN": {
     #     "image": lambda request: static("images/login.png"),
     # },
@@ -33,13 +36,40 @@ UNFOLD = {
             "950": "5 72 120",
         },
     },
-    # "SIDEBAR": {
-    #     "show_search": True,
-    #     "show_all_applications": False,
-    #     "navigation": [
-    #         {
-    #             "items": [],
-    #         },
-    #     ],
-    # },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": "Navigation",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Dashboard",
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": "User Management",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Staff",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_staffuser_changelist"),
+                    },
+                    {
+                        "title": "Groups",
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+        ],
+    },
+    "TABS": [],
 }
