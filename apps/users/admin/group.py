@@ -1,14 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from unfold.admin import ModelAdmin
 
-from common.base.admin import BaseModelAdmin
+from common.base.modeladmin import ModelAdmin
 
 admin.site.unregister(Group)
 
 
 @admin.register(Group)
-class GroupAdmin(BaseModelAdmin, ModelAdmin):
+class GroupAdmin(ModelAdmin):
     #  List View
     # -----------------------------------------------------------------------------------------
     search_fields = ("name",)

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.admin.options import BaseModelAdmin as DjangoBaseModelAdmin
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from unfold.contrib.forms.widgets import ArrayWidget
 from unfold.contrib.forms.widgets import WysiwygWidget
 
@@ -14,7 +14,7 @@ class BaseModelAdminMeta(DjangoBaseModelAdmin.__class__, ABC.__class__):
     pass
 
 
-class BaseModelAdmin(ModelAdmin, ABC, metaclass=BaseModelAdminMeta):
+class ModelAdmin(UnfoldModelAdmin, ABC, metaclass=BaseModelAdminMeta):
     empty_value_display = "-"
     show_facets = admin.ShowFacets.ALWAYS
     formfield_overrides = {

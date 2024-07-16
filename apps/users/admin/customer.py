@@ -3,11 +3,11 @@ from unfold.contrib.filters.admin import RangeDateFilter
 
 from apps.users.helpers.decorators.customer import CustomerDisplayMixin
 from apps.users.models.customer import Customer
-from common.base.admin import BaseModelAdmin
+from common.base.modeladmin import ModelAdmin
 
 
 @admin.register(Customer)
-class CustomerAdmin(BaseModelAdmin, CustomerDisplayMixin):
+class CustomerAdmin(ModelAdmin, CustomerDisplayMixin):
     #  ---- List View ----
     list_display = ("display_header", "display_phone_number", "date_joined", "name")
     search_fields = ("phone_number",)
