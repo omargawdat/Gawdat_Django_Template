@@ -58,6 +58,11 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                     {
+                        "title": "Customer",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_customer_changelist"),
+                    },
+                    {
                         "title": "Staff",
                         "icon": "person",
                         "link": reverse_lazy("admin:users_staffuser_changelist"),

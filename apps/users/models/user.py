@@ -11,7 +11,6 @@ from apps.users.helpers.model_manager import CustomUserManager
 class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True)
     image = models.ImageField(upload_to="users/", null=True)
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

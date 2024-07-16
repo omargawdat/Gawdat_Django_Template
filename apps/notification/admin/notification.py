@@ -14,8 +14,10 @@ class NotificationForm(ModelForm):
         fields = ["title", "message_body", "users"]
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("user", None)
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        if user:
+            pass
 
 
 @admin.register(Notification)
