@@ -53,6 +53,18 @@ UNFOLD = {
                 ],
             },
             {
+                "title": "Notification",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Notification",
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:notification_notification_changelist"),
+                    },
+                ],
+            },
+            {
                 "title": "User Management",
                 "separator": True,
                 "collapsible": True,
