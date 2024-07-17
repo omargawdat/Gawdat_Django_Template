@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from common.base.modeladmin import ModelAdmin
+from common.base.basemodeladmin import BaseModelAdmin
 
 
 class MyModel:
@@ -8,7 +8,7 @@ class MyModel:
 
 
 @admin.register(MyModel)
-class CustomAdminClass(ModelAdmin):
+class CustomAdminClassBase(BaseModelAdmin):
     #  List View
     # -----------------------------------------------------------------------------------------
     list_display = ()

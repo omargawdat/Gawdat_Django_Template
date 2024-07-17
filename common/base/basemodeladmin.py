@@ -9,12 +9,14 @@ from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from unfold.contrib.forms.widgets import ArrayWidget
 from unfold.contrib.forms.widgets import WysiwygWidget
 
+from common.mixins.pass_request_to_form import RequestFormMixin
+
 
 class BaseModelAdminMeta(DjangoBaseModelAdmin.__class__, ABC.__class__):
     pass
 
 
-class ModelAdmin(UnfoldModelAdmin, ABC, metaclass=BaseModelAdminMeta):
+class BaseModelAdmin(RequestFormMixin, UnfoldModelAdmin, ABC, metaclass=BaseModelAdminMeta):
     empty_value_display = "-"
     show_facets = admin.ShowFacets.ALWAYS
     formfield_overrides = {
@@ -25,6 +27,11 @@ class ModelAdmin(UnfoldModelAdmin, ABC, metaclass=BaseModelAdminMeta):
             "widget": ArrayWidget,
         },
     }
+
+    @property
+    @abstractmethod
+    def form(self):
+        pass
 
     @abstractmethod
     def get_readonly_fields(self, request, obj=None):

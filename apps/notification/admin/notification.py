@@ -2,10 +2,9 @@ from django.contrib import admin
 from django.forms import ModelForm
 from django.shortcuts import redirect
 from django.urls import path
-from unfold.admin import ModelAdmin
 
 from apps.notification.models.notification import Notification
-from common.mixins.pass_request_to_form import RequestFormMixin
+from common.base.basemodeladmin import BaseModelAdmin
 
 
 class NotificationForm(ModelForm):
@@ -18,11 +17,8 @@ class NotificationForm(ModelForm):
 
 
 @admin.register(Notification)
-class NotificationAdmin(RequestFormMixin, ModelAdmin):
+class NotificationAdmin(BaseModelAdmin):
     form = NotificationForm
-    readonly_fields = ("message_body",)
-
-    fieldsets = ((None, {"fields": ("users", "title", "message_body")}),)
     filter_horizontal = ("users",)
 
     def get_urls(self):
@@ -38,3 +34,18 @@ class NotificationAdmin(RequestFormMixin, ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         return redirect("admin:notification_notification_add")
+
+    def get_readonly_fields(self, request, obj=None):
+        return ("message_body",)
+
+    def get_fieldsets(self, request, obj=None):
+        return ((None, {"fields": ("message_body", "title", "users")}),)
+
+    def has_add_permission(self, request):
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        return True
