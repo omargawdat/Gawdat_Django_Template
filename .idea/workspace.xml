@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0575f5f0-485a-4a9d-96b4-1d654f041ece" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/appInfo/domain/selectors/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/appInfo/domain/services/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/appInfo/domain/utilities/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/appInfo/domain/validators/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/notification/domain/selectors/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/notification/domain/utilities/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/notification/domain/validators/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/users/domain/selectors/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/users/domain/services/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/users/domain/utilities/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fixtures/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/locale/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/static/images/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/staticfiles/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/swagger/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/admin/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/domain/selectors/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/domain/services/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/domain/utilities/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/domain/validators/.gitkeep" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/template_app/models/.gitkeep" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/media/users/identity_preview_rev_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/media/users/identity_preview_rev_1_uNUibfd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/media/users/identity_preview_rev_1_y6SkO7U.png" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;import os&#10;os.environ.setdefault(&quot;DATABASE_URL&quot;,&quot;postgres://{}:{}@{}:{}/{}&quot;.format(os.environ['POSTGRES_USER'], os.environ['POSTGRES_PASSWORD'], os.environ['POSTGRES_HOST'], os.environ['POSTGRES_PORT'], os.environ['POSTGRES_DB']))&#10;os.environ.setdefault(&quot;CELERY_BROKER_URL&quot;, os.environ['REDIS_URL'])&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" module-name="template" is-module-sdk="true">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;import os&#10;os.environ.setdefault(&quot;DATABASE_URL&quot;,&quot;postgres://{}:{}@{}:{}/{}&quot;.format(os.environ['POSTGRES_USER'], os.environ['POSTGRES_PASSWORD'], os.environ['POSTGRES_HOST'], os.environ['POSTGRES_PORT'], os.environ['POSTGRES_DB']))&#10;os.environ.setdefault(&quot;CELERY_BROKER_URL&quot;, os.environ['REDIS_URL'])&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+    <option name="myUseModuleSdk" value="true" />
+    <option name="myModuleName" value="template" />
+  </component>
+  <component name="EditorConfigPreviewManager">
+    <editorConfig file="$PROJECT_DIR$/.editorconfig" previewFile="$PROJECT_DIR$/docker-compose.local.yml" />
+  </component>
+  <component name="EndpointsView">
+    <option name="showSidePanel" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;omargawdat&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/omargawdat/Gawdat_Django_Template.git&quot;,
+    &quot;accountId&quot;: &quot;1186fdff-0f65-400a-86ed-7b3367075daa&quot;
+  }
+}</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2jCTCDFOT3BiW8NzvMYxj7Ld8vC" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.docker-compose.local.yml.postgres: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;current_page&quot;: &quot;1&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
+    &quot;form admin&quot;: &quot;- initial: get_changeform_initial_data?\n- validation\n\t- clean: normal validations?\n\t- m2m: inside save model? \n- readonly and disable: get readonly?\n\n\n\ni prefer for delegating initial and valdiation into the form instead of admin !! \n&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/omar/Main/MYProjects/project_name&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;notes&quot;: &quot;current:\n- test endpoints \n- check readme and ensure it is as a template\n\nfuture:\n- validations and excpections\n- permissions (owner-rules?)\n&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ],
+    &quot;page_titles&quot;: [
+      &quot;Notes&quot;,
+      &quot;form admin&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets" />
+      <recent name="$PROJECT_DIR$/common" />
+      <recent name="$PROJECT_DIR$/apps" />
+      <recent name="$PROJECT_DIR$/apps/users/helpers" />
+      <recent name="$PROJECT_DIR$/common/mixins" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/common" />
+      <recent name="$PROJECT_DIR$/apps/users/helpers" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/apps/template_app/domain" />
+      <recent name="$PROJECT_DIR$/apps/users/api/model" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Docker.docker-compose.local.yml.postgres: Compose Deployment">
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.local.yml.postgres: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="postgres" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.local.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Django Server.runserver" />
+      <item itemvalue="Django Server.runserver_plus" />
+      <item itemvalue="Django Server.migrate" />
+      <item itemvalue="Docker.project_name/docker-compose.local.yml[django, celeryworker, celerybeat]: Compose Deployment" />
+      <item itemvalue="Docker.project_name/docker-compose.local.yml.docs: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.local.yml.postgres: Compose Deployment" />
+      <item itemvalue="Python.merge_production_dotenvs_in_dotenv" />
+      <item itemvalue="Python tests.pytest: users" />
+      <item itemvalue="Python tests.pytest: ." />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.docker-compose.local.yml.postgres: Compose Deployment" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-5b207ade9991-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17890.14" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0575f5f0-485a-4a9d-96b4-1d654f041ece" name="Changes" comment="" />
+      <created>1720889929807</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1720889929807</updated>
+      <workItem from="1720889931226" duration="10217000" />
+      <workItem from="1720904195115" duration="5325000" />
+      <workItem from="1720947941185" duration="23000000" />
+      <workItem from="1721114192825" duration="49538000" />
+      <workItem from="1721248443885" duration="2311000" />
+      <workItem from="1721252727358" duration="44000" />
+      <workItem from="1721253551347" duration="347000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+</project>
