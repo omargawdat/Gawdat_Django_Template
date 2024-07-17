@@ -21,6 +21,7 @@ UNFOLD = {
     #         "href": lambda request: static("images/identity.svg"),
     #     },
     # ],
+    "DASHBOARD_CALLBACK": "common.insights.dashboard_callback.dashboard_callback",
     "COLORS": {
         "primary": {
             "50": "235 245 255",
@@ -89,6 +90,35 @@ UNFOLD = {
                         "icon": "group",
                         "link": reverse_lazy("admin:auth_group_changelist"),
                         "permission": lambda request: request.user.has_perm("users.view_staffuser"),
+                    },
+                ],
+            },
+            {
+                "title": "App Info",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Social Account",
+                        "icon": "group",  # Represents social or group of people
+                        "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_socialaccount"
+                        ),
+                    },
+                    {
+                        "title": "appInfo Us",
+                        "icon": "info",  # Represents information
+                        "link": reverse_lazy("admin:appInfo_aboutus_changelist"),
+                        "permission": lambda request: request.user.has_perm("appInfo.view_aboutus"),
+                    },
+                    {
+                        "title": "Terms and Conditions",
+                        "icon": "gavel",  # Represents legal or terms
+                        "link": reverse_lazy("admin:appInfo_termsandconditions_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_termsandconditions"
+                        ),
                     },
                 ],
             },

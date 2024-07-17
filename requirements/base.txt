@@ -20,6 +20,7 @@ django-phonenumber-field[phonenumbers]==8.0.0
 django-polymorphic==3.1.0
 django-unfold==0.30.0
 fcm-django==2.1.0
+django-solo==2.3.0
 
 # Django REST Framework and Extensions
 djangorestframework==3.15.2

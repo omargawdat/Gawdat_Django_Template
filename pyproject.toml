@@ -78,7 +78,8 @@ exclude = [
     "node_modules",
     "venv",
     "*/migrations/*.py",
-    "staticfiles/*"
+    "staticfiles/*",
+    "common/insights/dashboard_callback.py",
 ]
 # Same as Django: https://github.com/cookiecutter/cookiecutter-django/issues/4792.
 line-length = 100
@@ -159,6 +160,7 @@ ignore = [
     "FBT002", # Boolean default positional argument in function definition
     "DJ007", # don't use __all__ in model form
     "RET505", # Unnecessary `else` after `return` statement
+    "E501", # too long line
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

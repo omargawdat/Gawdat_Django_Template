@@ -62,12 +62,14 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "drf_spectacular",
+    "solo",
 ]
 
 LOCAL_APPS = [
     "common",
     "apps.users",
     "apps.notification",
+    "apps.appInfo",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -241,3 +243,5 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+SOLO_ADMIN_SKIP_OBJECT_LIST_PAGE = True
