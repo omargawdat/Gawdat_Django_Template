@@ -11,7 +11,10 @@ from common.mixins.pass_request_to_form import RequestFormMixin
 class NotificationForm(ModelForm):
     class Meta:
         model = Notification
-        fields = ["title", "users", "message_body"]
+        fields = "__all__"
+
+    def clean_title(self):
+        return self.cleaned_data["title"].upper()
 
 
 @admin.register(Notification)
@@ -19,7 +22,7 @@ class NotificationAdmin(RequestFormMixin, ModelAdmin):
     form = NotificationForm
     readonly_fields = ("message_body",)
 
-    # fieldsets = ((None, {"fields": ("title", "message_body", "users")}),)
+    fieldsets = ((None, {"fields": ("users", "title", "message_body")}),)
     filter_horizontal = ("users",)
 
     def get_urls(self):
