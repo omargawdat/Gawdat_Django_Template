@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
 
 UNFOLD = {
-    "SITE_TITLE": "template_app",
-    "SITE_HEADER": "template_app",
+    "SITE_TITLE": "project_name",
+    "SITE_HEADER": "project_name",
     "SHOW_HISTORY": True,
     # "SHOW_VIEW_ON_SITE": True,
     # "SITE_URL": "",
@@ -107,7 +107,7 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": "appInfo Us",
+                        "title": "About Us",
                         "icon": "info",  # Represents information
                         "link": reverse_lazy("admin:appInfo_aboutus_changelist"),
                         "permission": lambda request: request.user.has_perm("appInfo.view_aboutus"),

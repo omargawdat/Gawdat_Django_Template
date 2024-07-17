@@ -67,4 +67,4 @@ Most of the files from `.idea/` were added to `.gitignore` with a few exceptions
 
 In theory you can remove them from repository, but then, other people will lose a ability to initialize a project from provided configurations as you did. To get rid of this annoying state, you can run command::
 
-    $ git update-index --assume-unchanged template.iml
+    $ git update-index --assume-unchanged project_name.iml

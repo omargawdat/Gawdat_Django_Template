@@ -7,7 +7,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from .base import *  # noqa: F403
 from .base import DATABASES
 from .base import INSTALLED_APPS
 from .base import SPECTACULAR_SETTINGS
@@ -38,7 +37,7 @@ CACHES = {
 # SECURITY
 # ------------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT =True
+SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
@@ -89,12 +88,12 @@ STATIC_URL = f"https://{aws_s3_domain}/static/"
 # ------------------------------------------------------------------------------
 DEFAULT_FROM_EMAIL = env(
     "DJANGO_DEFAULT_FROM_EMAIL",
-    default="template <noreply@template.com>",
+    default="project_name <noreply@domain.com>",
 )
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX",
-    default="[template] ",
+    default="[project_name] ",
 )
 
 # ADMIN
@@ -169,5 +168,5 @@ sentry_sdk.init(
 # django-rest-framework
 # -------------------------------------------------------------------------------
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://template.com", "description": "Production server"},
+    {"url": "https://domain.com", "description": "Production server"},
 ]

@@ -225,8 +225,8 @@ REST_FRAMEWORK = {
 CORS_URLS_REGEX = r"^/api/.*$"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "template API",
-    "DESCRIPTION": "Documentation of API endpoints of template",
+    "TITLE": "project_name API",
+    "DESCRIPTION": "Documentation of API endpoints of project_name",
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/",
@@ -244,4 +244,4 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
 }
 
-SOLO_ADMIN_SKIP_OBJECT_LIST_PAGE = True
+# SOLO_ADMIN_SKIP_OBJECT_LIST_PAGE = True

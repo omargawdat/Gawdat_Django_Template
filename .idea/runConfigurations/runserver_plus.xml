@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runserver_plus" type="Python.DjangoServer" factoryName="Django server" singleton="true">
-    <module name="template" />
+    <module name="project_name" />
+    <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -28,6 +29,6 @@
     <option name="runNoReload" value="false" />
     <option name="useCustomRunCommand" value="true" />
     <option name="customRunCommand" value="runserver_plus" />
-    <method />
+    <method v="2" />
   </configuration>
 </component>

@@ -1,88 +1,56 @@
-# template
+## 1. Initial Project Configuration
 
-Behold My Awesome Project!
+1. **Rename Project**
+   Replace `project_name` with the actual name of your project to better reflect its identity.
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+2. **Domain Configuration**
+    - Update any instance of `domain.com` into real domain.
+    - make sure the domain is pointing into the instance IP.
+3. **Fill the `.envs/.production/.django` file**
+4. **Try the Local Development**
 
-License: MIT
+  ```
+  docker compose -f docker-compose.local.yml up --build
+  docker compose -f docker-compose.local.yml exec django python manage.py makemigrations
+  docker compose -f docker-compose.local.yml exec django python manage.py migrate
+  ```
 
-## Settings
+## 2. Git Repository Setup
 
-Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
+1. **Uncomment the `.gitignore` File**
+2. **Uncomment the `ci.yml` and `dependabot.yml`Files**
+3. **Initialize the Git Repository**
+   ```
+   sudo rm -r .git
+   git init
+   pre-commit install
+   git add .
+   git commit -m "Initial commit"
+   ```
+4. **Share the project on GitHub**
 
-## Basic Commands
+## 3. Server Ready Configuration
 
-### Setting Up Your Users
-
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
-
-- To create a **superuser account**, use this command:
-
-      $ python manage.py createsuperuser
-
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy template
-
-### Test coverage
-
-To run the tests, check your test coverage, and generate an HTML coverage report:
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-#### Running tests with pytest
-
-    $ pytest
-
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
-
-### Celery
-
-This app comes with Celery.
-
-To run a celery worker:
-
-```bash
-cd template
-celery -A config.celery_app worker -l info
-```
-
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
-
-To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
-
-```bash
-cd template
-celery -A config.celery_app beat
-```
-
-or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
-
-```bash
-cd template
-celery -A config.celery_app worker -B -l info
-```
-
-### Sentry
-
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
-
-You must set the DSN url in production.
-
-## Deployment
-
-The following details how to deploy this application.
-
-### Docker
-
-See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
+1. **Create Ec2 instance using AMI image with IAM Role Full access**
+2. **Create S3 Bucket**
+3. **Clone the repository to your server.**
+    ```
+      git clone repo_url
+    ```
+4. **Upload the .envs files into the server**
+    ```
+      mkdir .envs/.production/
+    ```
+    ```
+       nano .envs/.production/.django
+    ```
+    ```
+       nano .envs/.production/.postgres
+    ```
+    ```
+       python3 merge_production_dotenvs_in_dotenv.py
+    ```
+5. Run the docker container
+   ```
+    sudo docker-compose -f docker-compose.production.yml up --build
+   ```

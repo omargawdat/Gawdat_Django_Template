@@ -13,6 +13,7 @@
 
 import os
 import sys
+
 import django
 
 if os.getenv("READTHEDOCS", default=False) == "True":
@@ -28,10 +29,9 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "template"
+project = "project_name"
 copyright = """2024, omargawdat"""
 author = "omargawdat"
-
 
 # -- General configuration ---------------------------------------------------
 

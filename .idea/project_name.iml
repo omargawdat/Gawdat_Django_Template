@@ -3,9 +3,9 @@
   <component name="FacetManager">
     <facet type="django" name="Django">
       <configuration>
-        <option name="rootFolder" value="$MODULE_DIR$" />
+        <option name="rootFolder" value="$MODULE_DIR$/../template" />
         <option name="settingsModule" value="config/settings/local.py" />
-        <option name="manageScript" value="$MODULE_DIR$/manage.py" />
+        <option name="manageScript" value="$MODULE_DIR$/../template/manage.py" />
         <option name="environment" value="&lt;map/&gt;" />
         <option name="doNotUseTestRunner" value="false" />
         <option name="trackFilePattern" value="migrations" />
@@ -18,19 +18,19 @@
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
-    <option name="requirementsPath" value="$MODULE_DIR$/requirements/local.txt" />
+    <option name="requirementsPath" value="$MODULE_DIR$/../template/requirements/local.txt" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="renderExternalDocumentation" value="true" />
   </component>
   <component name="ReSTService">
-    <option name="DOC_DIR" value="$MODULE_DIR$/docs" />
+    <option name="DOC_DIR" value="$MODULE_DIR$/../template/docs" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/template/templates" />
+        <option value="$MODULE_DIR$/../template/template/templates" />
       </list>
     </option>
   </component>

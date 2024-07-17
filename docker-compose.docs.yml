@@ -1,7 +1,7 @@
 services:
   docs:
-    image: template_local_docs
-    container_name: template_local_docs
+    image: project_name_local_docs
+    container_name: project_name_local_docs
     build:
       context: .
       dockerfile: ./compose/local/docs/Dockerfile
@@ -10,7 +10,7 @@ services:
     volumes:
       - ./docs:/docs:z
       - ./config:/app/config:z
-      - ./template:/app/template:z
+      - ./project_name:/app/project_name:z
     ports:
       - '9000:9000'
     command: /start-docs

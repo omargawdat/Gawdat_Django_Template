@@ -1,15 +1,15 @@
 volumes:
-  template_local_postgres_data: { }
-  template_local_postgres_data_backups: { }
-  template_local_redis_data: { }
+  project_name_local_postgres_data: { }
+  project_name_local_postgres_data_backups: { }
+  project_name_local_redis_data: { }
 
 services:
   django: &django
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: template_local_django
-    container_name: template_local_django
+    image: project_name_local_django
+    container_name: project_name_local_django
     depends_on:
       - postgres
       - redis
@@ -27,13 +27,13 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: template_production_postgres
+    image: project_name_production_postgres
     ports:
       - "5432:5432"
-    container_name: template_local_postgres
+    container_name: project_name_local_postgres
     volumes:
-      - template_local_postgres_data:/var/lib/postgresql/data
-      - template_local_postgres_data_backups:/backups
+      - project_name_local_postgres_data:/var/lib/postgresql/data
+      - project_name_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
 
@@ -41,16 +41,16 @@ services:
 
   redis:
     image: docker.io/redis:6
-    container_name: template_local_redis
+    container_name: project_name_local_redis
 
     volumes:
-      - template_local_redis_data:/data
+      - project_name_local_redis_data:/data
 
 
 #  celeryworker:
 #    <<: *django
-#    image: template_local_celeryworker
-#    container_name: template_local_celeryworker
+#    image: project_name_local_celeryworker
+#    container_name: project_name_local_celeryworker
 #    depends_on:
 #      - redis
 #      - postgres
@@ -59,8 +59,8 @@ services:
 #
 #  celerybeat:
 #    <<: *django
-#    image: template_local_celerybeat
-#    container_name: template_local_celerybeat
+#    image: project_name_local_celerybeat
+#    container_name: project_name_local_celerybeat
 #    depends_on:
 #      - redis
 #      - postgres
@@ -69,8 +69,8 @@ services:
 #
 #  flower:
 #    <<: *django
-#    image: template_local_flower
-#    container_name: template_local_flower
+#    image: project_name_local_flower
+#    container_name: project_name_local_flower
 #    ports:
 #      - '5555:5555'
 #    command: /start-flower
