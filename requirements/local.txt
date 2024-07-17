@@ -19,7 +19,7 @@ sphinx==7.3.7
 sphinx-autobuild==2024.4.16
 
 # Code Quality
-ruff==0.5.1
+ruff==0.5.2
 coverage==7.6.0
 djlint==1.34.1
 pre-commit==3.7.1
