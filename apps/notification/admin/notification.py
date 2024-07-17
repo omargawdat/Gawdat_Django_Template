@@ -11,28 +11,15 @@ from common.mixins.pass_request_to_form import RequestFormMixin
 class NotificationForm(ModelForm):
     class Meta:
         model = Notification
-        fields = ["title", "message_body", "users"]
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
-        readonly_fields = kwargs.pop("readonly_fields", {})
-
-        super().__init__(*args, **kwargs)
-
-        for field, value in readonly_fields.items():
-            if field in self.fields:
-                self.fields[field].initial = value
-                self.fields[field].widget.attrs["readonly"] = True
-
-        print("readonly_fields:", readonly_fields)  # noqa
+        fields = ["title", "users", "message_body"]
 
 
 @admin.register(Notification)
 class NotificationAdmin(RequestFormMixin, ModelAdmin):
     form = NotificationForm
-    readonly_fields = ("message_body", "title")
+    readonly_fields = ("message_body",)
 
-    fieldsets = ((None, {"fields": ("title", "message_body", "users")}),)
+    # fieldsets = ((None, {"fields": ("title", "message_body", "users")}),)
     filter_horizontal = ("users",)
 
     def get_urls(self):
