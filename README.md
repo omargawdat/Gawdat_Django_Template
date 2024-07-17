@@ -54,3 +54,8 @@
    ```
     sudo docker-compose -f docker-compose.production.yml up --build
    ```
+
+TODO:
+
+- validations and exceptions
+- permissions (owner-rules?)
