@@ -332,7 +332,5 @@
 #.envs/*
 #!.envs/.local/
 
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/dictionaries
+.idea/
 .Ds_Store
