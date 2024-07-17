@@ -12,14 +12,21 @@ class NotificationForm(ModelForm):
         model = Notification
         fields = "__all__"
 
-    def clean_title(self):
-        return self.cleaned_data["title"].upper()
-
 
 @admin.register(Notification)
 class NotificationAdmin(BaseModelAdmin):
+    #  List View
+    # -----------------------------------------------------------------------------------------
+
+    # Change View
+    # -----------------------------------------------------------------------------------------
     form = NotificationForm
-    filter_horizontal = ("users",)
+
+    def get_fieldsets(self, request, obj=None):
+        return ((None, {"fields": ("message_body", "title", "users")}),)
+
+    def get_readonly_fields(self, request, obj=None):
+        return ("message_body",)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -35,12 +42,8 @@ class NotificationAdmin(BaseModelAdmin):
     def changelist_view(self, request, extra_context=None):
         return redirect("admin:notification_notification_add")
 
-    def get_readonly_fields(self, request, obj=None):
-        return ("message_body",)
-
-    def get_fieldsets(self, request, obj=None):
-        return ((None, {"fields": ("message_body", "title", "users")}),)
-
+    # Permissions
+    # -----------------------------------------------------------------------------------------
     def has_add_permission(self, request):
         return True
 

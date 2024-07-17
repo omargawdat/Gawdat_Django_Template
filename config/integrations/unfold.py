@@ -1,3 +1,5 @@
+from django.urls import reverse_lazy
+
 UNFOLD = {
     "SITE_TITLE": "template_app",
     "SITE_HEADER": "template_app",
@@ -34,57 +36,63 @@ UNFOLD = {
             "950": "5 72 120",
         },
     },
-    # "SIDEBAR": {
-    #     "show_search": True,
-    #     "show_all_applications": False,
-    #     "navigation": [
-    #         {
-    #             "title": "Navigation",
-    #             "separator": True,
-    #             "collapsible": True,
-    #             "items": [
-    #                 {
-    #                     "title": "Dashboard",
-    #                     "icon": "dashboard",
-    #                     "link": reverse_lazy("admin:index"),
-    #                 },
-    #             ],
-    #         },
-    #         {
-    #             "title": "Notification",
-    #             "separator": True,
-    #             "collapsible": True,
-    #             "items": [
-    #                 {
-    #                     "title": "Notification",
-    #                     "icon": "notifications",
-    #                     "link": reverse_lazy("admin:notification_notification_changelist"),
-    #                 },
-    #             ],
-    #         },
-    #         {
-    #             "title": "User Management",
-    #             "separator": True,
-    #             "collapsible": True,
-    #             "items": [
-    #                 {
-    #                     "title": "Customer",
-    #                     "icon": "person",
-    #                     "link": reverse_lazy("admin:users_customer_changelist"),
-    #                 },
-    #                 {
-    #                     "title": "Staff",
-    #                     "icon": "person",
-    #                     "link": reverse_lazy("admin:users_staffuser_changelist"),
-    #                 },
-    #                 {
-    #                     "title": "Groups",
-    #                     "icon": "group",
-    #                     "link": reverse_lazy("admin:auth_group_changelist"),
-    #                 },
-    #             ],
-    #         },
-    #     ],
-    # },
-    # "TABS": [],
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": "Navigation",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Dashboard",
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": "Notification",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Notification",
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:notification_notification_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "notification.view_notification"
+                        ),
+                    },
+                ],
+            },
+            {
+                "title": "User Management",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Customer",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_customer_changelist"),
+                        "permission": lambda request: request.user.has_perm("users.view_staffuser"),
+                    },
+                    {
+                        "title": "Staff",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_staffuser_changelist"),
+                        "permission": lambda request: request.user.has_perm("users.view_staffuser"),
+                    },
+                    {
+                        "title": "Groups",
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "permission": lambda request: request.user.has_perm("users.view_staffuser"),
+                    },
+                ],
+            },
+        ],
+    },
+    "TABS": [],
 }

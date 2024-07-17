@@ -17,6 +17,10 @@ class BaseModelAdminMeta(DjangoBaseModelAdmin.__class__, ABC.__class__):
 
 
 class BaseModelAdmin(RequestFormMixin, UnfoldModelAdmin, ABC, metaclass=BaseModelAdminMeta):
+    def __init__(self, model, admin_site):
+        super().__init__(model, admin_site)
+        self.filter_horizontal = [field.name for field in model._meta.many_to_many]  # noqa SLF001
+
     empty_value_display = "-"
     show_facets = admin.ShowFacets.ALWAYS
     formfield_overrides = {

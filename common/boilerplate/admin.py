@@ -15,13 +15,9 @@ class CustomAdminClassBase(BaseModelAdmin):
     search_fields = ()
     list_filter = ()
     date_hierarchy = None
-    actions_list = []
-    actions_row = []
-
     list_per_page = 50
     list_filter_submit = False
     list_fullwidth = False
-    show_facets = admin.ShowFacets.ALWAYS
     list_horizontal_scrollbar_top = False
 
     def get_ordering(self, request):
@@ -29,11 +25,8 @@ class CustomAdminClassBase(BaseModelAdmin):
 
     # Change View
     # -----------------------------------------------------------------------------------------
+    form = None
     filter_horizontal = ()
-    readonly_preprocess_fields = {}
-    formfield_overrides = {}
-    actions_detail = []
-    actions_submit_line = []
     compressed_fields = False
     autocomplete_fields = ()
 
@@ -62,3 +55,6 @@ class CustomAdminClassBase(BaseModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+    # Other
+    # -----------------------------------------------------------------------------------------

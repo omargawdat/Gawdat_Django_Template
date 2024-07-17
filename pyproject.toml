@@ -158,6 +158,7 @@ ignore = [
     "N806", # lower case ensuring
     "FBT002", # Boolean default positional argument in function definition
     "DJ007", # don't use __all__ in model form
+    "RET505", # Unnecessary `else` after `return` statement
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

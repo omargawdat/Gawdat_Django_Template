@@ -2,7 +2,6 @@ class RequestFormMixin:
     def get_form(self, request, obj=None, **kwargs):
         FormClass = super().get_form(request, obj, **kwargs)
 
-        # Get readonly fields
         if hasattr(self, "get_readonly_fields"):
             readonly_fields = self.get_readonly_fields(request, obj)
         else:
