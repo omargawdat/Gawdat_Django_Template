@@ -15,15 +15,22 @@ class NotificationForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
-        readonly_fields = kwargs.pop("readonly_fields", [])
-        print("readonly_fields:", readonly_fields)  # noqa T201
+        readonly_fields = kwargs.pop("readonly_fields", {})
+
         super().__init__(*args, **kwargs)
+
+        for field, value in readonly_fields.items():
+            if field in self.fields:
+                self.fields[field].initial = value
+                self.fields[field].widget.attrs["readonly"] = True
+
+        print("readonly_fields:", readonly_fields)  # noqa
 
 
 @admin.register(Notification)
 class NotificationAdmin(RequestFormMixin, ModelAdmin):
     form = NotificationForm
-    readonly_fields = ("message_body",)
+    readonly_fields = ("message_body", "title")
 
     fieldsets = ((None, {"fields": ("title", "message_body", "users")}),)
     filter_horizontal = ("users",)
