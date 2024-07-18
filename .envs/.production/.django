@@ -18,8 +18,10 @@ DJANGO_SERVER_EMAIL=
 
 # AWS
 # ------------------------------------------------------------------------------
+DJANGO_AWS_ACCESS_KEY_ID=
 DJANGO_AWS_SECRET_ACCESS_KEY=
 DJANGO_AWS_STORAGE_BUCKET_NAME=
+DJANGO_AWS_S3_REGION_NAME=
 
 
 # Gunicorn
