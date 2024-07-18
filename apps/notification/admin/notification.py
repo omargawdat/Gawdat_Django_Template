@@ -26,7 +26,7 @@ class NotificationAdmin(BaseModelAdmin):
         return ((None, {"fields": ("message_body", "title", "users")}),)
 
     def get_readonly_fields(self, request, obj=None):
-        return ("message_body",)
+        return ()
 
     def get_urls(self):
         urls = super().get_urls()
