@@ -161,6 +161,7 @@ ignore = [
     "DJ007", # don't use __all__ in model form
     "RET505", # Unnecessary `else` after `return` statement
     "E501", # too long line
+    "F405", # 'x' may be undefined, or defined from star imports: module
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
