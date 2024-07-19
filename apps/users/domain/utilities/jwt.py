@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class JWT:
+class JWTUtil:
     @staticmethod
     def generate_tokens_for_user(user):
         refresh = RefreshToken.for_user(user)
