@@ -331,6 +331,6 @@
 #.env
 #.envs/*
 #!.envs/.local/
-#
-#.idea/
-#.Ds_Store
+
+.idea/
+.Ds_Store
