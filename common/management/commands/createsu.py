@@ -3,6 +3,7 @@ import os
 from django.core.management.base import BaseCommand
 
 from apps.users.models import User
+from apps.users.models.staff import StaffUser
 
 
 class Command(BaseCommand):
@@ -17,7 +18,7 @@ class Command(BaseCommand):
             return
 
         if not User.objects.filter(username=username).exists():
-            User.objects.create_superuser(username, password=password)
+            StaffUser.objects.create_superuser(username, password=password)
             self.stdout.write(self.style.SUCCESS(f"Superuser {username} created successfully"))
         else:
             self.stdout.write(self.style.WARNING(f"Superuser {username} already exists"))
