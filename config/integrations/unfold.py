@@ -1,3 +1,4 @@
+from django.templatetags.static import static
 from django.urls import reverse_lazy
 
 UNFOLD = {
@@ -21,6 +22,12 @@ UNFOLD = {
     #         "href": lambda request: static("images/identity.svg"),
     #     },
     # ],
+    "STYLES": [
+        lambda request: static("css/style.css"),
+    ],
+    "SCRIPTS": [
+        lambda request: static("js/script.js"),
+    ],
     "DASHBOARD_CALLBACK": "common.insights.dashboard_callback.dashboard_callback",
     "COLORS": {
         "primary": {
