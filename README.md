@@ -17,7 +17,7 @@
 
 ## 2. Git Repository Setup
 
-1. **Uncomment the `.gitignore` File**
+1. **Uncomment the `.gitignore`, `ci.yml` Files**
 2. **Initialize the Git Repository**
    ```
    sudo rm -r .git
