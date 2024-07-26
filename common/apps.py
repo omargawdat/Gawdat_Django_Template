@@ -11,15 +11,18 @@ class CoreConfig(AppConfig):
     name = "common"
 
     def ready(self):
-        # this code is for importing admins
+        # import admin
         for app_config in apps.get_app_configs():
-            self.import_modules_from_directory(
-                app_config.path,
-                "admin",
-                app_config.name,
-            )
+            admin_dir = Path(app_config.path) / "admin"
+            if admin_dir.is_dir():
+                for subdir in admin_dir.iterdir():
+                    if subdir.is_dir():
+                        admin_file = subdir / "admin.py"
+                        if admin_file.is_file():
+                            module_name = f"{app_config.name}.admin.{subdir.name}.admin"
+                            importlib.import_module(module_name)
 
-        # Import models
+        # import models
         for app_config in apps.get_app_configs():
             self.import_modules_from_directory(
                 app_config.path,

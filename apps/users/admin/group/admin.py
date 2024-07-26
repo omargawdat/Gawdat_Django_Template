@@ -1,16 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.forms import ModelForm
 
+from apps.users.admin.group.form import GroupForm
 from common.base.basemodeladmin import BaseModelAdmin
 
 admin.site.unregister(Group)
-
-
-class GroupForm(ModelForm):
-    class Meta:
-        model = Group
-        fields = "__all__"
 
 
 @admin.register(Group)

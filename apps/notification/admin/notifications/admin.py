@@ -1,16 +1,10 @@
 from django.contrib import admin
-from django.forms import ModelForm
 from django.shortcuts import redirect
 from django.urls import path
 
+from apps.notification.admin.notifications.form import NotificationForm
 from apps.notification.models.notification import Notification
 from common.base.basemodeladmin import BaseModelAdmin
-
-
-class NotificationForm(ModelForm):
-    class Meta:
-        model = Notification
-        fields = "__all__"
 
 
 @admin.register(Notification)

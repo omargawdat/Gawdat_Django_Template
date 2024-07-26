@@ -1,23 +1,10 @@
 from django.contrib import admin
-from django.contrib.auth.password_validation import validate_password
-from django.forms import ModelForm
 
+from apps.users.admin.staff.form import StaffForm
 from apps.users.helpers.decorators.staff import StaffDisplay
 from apps.users.helpers.hash_password import HashPasswordMixin
 from apps.users.models.staff import StaffUser
 from common.base.basemodeladmin import BaseModelAdmin
-
-
-class StaffForm(ModelForm):
-    class Meta:
-        model = StaffUser
-        fields = "__all__"
-
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if password:
-            validate_password(password, user=self.instance)
-        return password
 
 
 @admin.register(StaffUser)

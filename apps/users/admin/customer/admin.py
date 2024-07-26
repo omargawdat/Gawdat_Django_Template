@@ -1,16 +1,10 @@
 from django.contrib import admin
-from django.forms import ModelForm
 from unfold.contrib.filters.admin import RangeDateFilter
 
+from apps.users.admin.customer.form import CustomerForm
 from apps.users.helpers.decorators.customer import CustomerDisplayMixin
 from apps.users.models.customer import Customer
 from common.base.basemodeladmin import BaseModelAdmin
-
-
-class CustomerForm(ModelForm):
-    class Meta:
-        model = Customer
-        fields = "__all__"
 
 
 @admin.register(Customer)
