@@ -51,7 +51,7 @@ UNFOLD = {
             {
                 "title": "Navigation",
                 "separator": True,
-                "collapsible": True,
+                # "collapsible": True,
                 "items": [
                     {
                         "title": "Dashboard",
@@ -63,7 +63,7 @@ UNFOLD = {
             {
                 "title": "Notification",
                 "separator": True,
-                "collapsible": True,
+                # "collapsible": True,
                 "items": [
                     {
                         "title": "Notification",
@@ -78,7 +78,7 @@ UNFOLD = {
             {
                 "title": "User Management",
                 "separator": True,
-                "collapsible": True,
+                # "collapsible": True,
                 "items": [
                     {
                         "title": "Customer",
@@ -103,7 +103,7 @@ UNFOLD = {
             {
                 "title": "App Info",
                 "separator": True,
-                "collapsible": True,
+                # "collapsible": True,
                 "items": [
                     {
                         "title": "Social Account",
