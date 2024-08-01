@@ -15,12 +15,19 @@ class CoreConfig(AppConfig):
         for app_config in apps.get_app_configs():
             admin_dir = Path(app_config.path) / "admin"
             if admin_dir.is_dir():
+                # Import all .py files in the admin directory
+                for file in admin_dir.glob("*.py"):
+                    if file.name != "__init__.py":
+                        module_name = f"{app_config.name}.admin.{file.stem}"
+                        importlib.import_module(module_name)
+
+                # Import all .py files from subdirectories
                 for subdir in admin_dir.iterdir():
                     if subdir.is_dir():
-                        admin_file = subdir / "admin.py"
-                        if admin_file.is_file():
-                            module_name = f"{app_config.name}.admin.{subdir.name}.admin"
-                            importlib.import_module(module_name)
+                        for file in subdir.glob("*.py"):
+                            if file.name != "__init__.py":
+                                module_name = f"{app_config.name}.admin.{subdir.name}.{file.stem}"
+                                importlib.import_module(module_name)
 
         # import models
         for app_config in apps.get_app_configs():
