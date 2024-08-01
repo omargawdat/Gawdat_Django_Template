@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class TemplateConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "common.template_app"
+    name = "apps.template_app"
