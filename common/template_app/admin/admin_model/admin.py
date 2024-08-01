@@ -16,6 +16,7 @@
 #     list_horizontal_scrollbar_top = False
 #     search_fields = ()
 #     search_help_text = ""
+#     ordering = ()
 #
 #     def get_ordering(self, request):
 #         return ()
@@ -28,13 +29,20 @@
 #     autocomplete_fields = ()
 #
 #     def get_fieldsets(self, request, obj=None):
-#         return (
-#             ("Name", {"fields": ("field_one, field_two")}),
-#             ("Name", {"fields": ("field_one, field_two")}),
-#         )
+#         if obj:
+#             return (
+#                 ("User Information", {"fields": ()}),
+#             )
+#         else:
+#             return (
+#                 ("User Information", {"fields": ()}),
+#             )
 #
 #     def get_readonly_fields(self, request, obj=None):
-#         return ()
+#         base = ()
+#         if obj:
+#             return base
+#         return base
 #
 #     def get_inlines(self, request, obj=None):
 #         if obj is None:
