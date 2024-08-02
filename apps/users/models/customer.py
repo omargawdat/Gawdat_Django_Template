@@ -1,7 +1,5 @@
-from django.db import models
-
-from apps.users.models import User
+from apps.users.models import Profile
 
 
-class Customer(User):
-    name = models.CharField(max_length=100, blank=True, default="")
+class Customer(Profile):
+    pass
