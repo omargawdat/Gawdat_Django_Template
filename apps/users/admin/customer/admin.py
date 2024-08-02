@@ -10,7 +10,7 @@ from common.base.basemodeladmin import BaseModelAdmin
 @admin.register(Customer)
 class CustomerAdminBase(BaseModelAdmin, CustomerDisplayMixin):
     #  ---- List View ----
-    list_display = ("display_header", "display_phone_number", "date_joined", "name")
+    list_display = ("display_header", "display_phone_number", "date_joined", "full_name")
     search_fields = ("phone_number",)
     list_filter = (("date_joined", RangeDateFilter),)
 

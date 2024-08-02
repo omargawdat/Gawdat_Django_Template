@@ -31,6 +31,5 @@ class Profile(User):
         abstract = True
 
     def save(self, *args, **kwargs):
-        if not self.username and self.phone_number:
-            self.username = str(self.phone_number)
+        self.username = str(self.phone_number)
         super().save(*args, **kwargs)
