@@ -7,7 +7,7 @@ psycopg[c]==3.2.1
 watchfiles==0.22.0
 
 # Testing
-mypy==1.10.0
+mypy==1.11.1
 django-stubs[compatible-mypy]==5.0.2
 pytest==8.2.2
 pytest-sugar==1.0.0
