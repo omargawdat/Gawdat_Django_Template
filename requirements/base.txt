@@ -1,0 +1,31 @@
+# Python Utilities
+python-slugify==8.0.4
+Pillow==10.4.0
+argon2-cffi==23.1.0
+
+# Redis and Celery
+redis==5.0.7
+hiredis==2.3.2
+celery==5.4.0  # pyup: < 6.0
+django-celery-beat==2.6.0
+flower==2.0.1
+
+# Django and Extensions
+django==5.0.6
+django-environ==0.11.2
+django-model-utils==4.5.1
+django-redis==5.4.0
+django-import-export==4.1.1
+django-phonenumber-field[phonenumbers]==8.0.0
+django-polymorphic==3.1.0
+django-unfold==0.35.0
+fcm-django==2.1.0
+django-solo==2.3.0
+rules==3.4.0
+
+# Django REST Framework and Extensions
+djangorestframework==3.15.2
+django-cors-headers==4.4.0
+djangorestframework-simplejwt==5.3.1
+drf-spectacular==0.27.2
+drf-standardized-errors[openapi]==0.14.0

@@ -1,0 +1,2 @@
+class GroupDisplayMixin:
+    pass

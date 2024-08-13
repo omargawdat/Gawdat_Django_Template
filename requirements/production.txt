@@ -1,0 +1,12 @@
+-r base.txt
+
+gunicorn==22.0.0
+psycopg[c]==3.2.1
+Collectfasta==3.2.0
+sentry-sdk[django]==2.10.0
+
+# Django
+# ------------------------------------------------------------------------------
+django-storages[s3]==1.14.4
+django-anymail[amazon-ses]==11.0.1
+gevent==24.2.1
