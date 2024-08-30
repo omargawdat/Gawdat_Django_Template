@@ -209,7 +209,7 @@ CELERY_TASK_SEND_SENT_EVENT = True
 # django-rest-framework
 # -------------------------------------------------------------------------------
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "config.custom_exception_handler.custom_exception_handler",
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
@@ -221,7 +221,10 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "600/day", "user": "2000/day"},
 }
-
+DRF_STANDARDIZED_ERRORS = {
+    "ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True,
+    "EXCEPTION_HANDLER_CLASS": "config.custom_exception_handler.CustomExceptionHandler",
+}
 CORS_URLS_REGEX = r"^/api/.*$"
 
 SPECTACULAR_SETTINGS = {
@@ -261,4 +264,3 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
 PASSWORD_RESET_TIMEOUT = 4 * 60 * 60
 
-DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
