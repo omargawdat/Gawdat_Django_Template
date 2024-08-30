@@ -209,7 +209,7 @@ CELERY_TASK_SEND_SENT_EVENT = True
 # django-rest-framework
 # -------------------------------------------------------------------------------
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    "EXCEPTION_HANDLER": "config.custom_exception_handler.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
