@@ -7,7 +7,8 @@ from polymorphic.models import PolymorphicModel
 
 from apps.users.helpers.constants import Gender
 from apps.users.helpers.model_manager import CustomUserManager
-
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFit
 
 class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True)
@@ -25,7 +26,13 @@ class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
 class MobileUser(User):
     phone_number = PhoneNumberField(unique=True, help_text="Should start with (+966)")
     is_phone_verified = models.BooleanField(default=False)
-    image = models.ImageField(upload_to="users/", null=True, blank=True)
+    image = ProcessedImageField(
+        upload_to="users/",
+        processors=[ResizeToFit(1200, 800)],
+        format="JPEG",
+        options={"quality": 90, "optimize": True},
+        null=True,
+    )
     full_name = models.CharField(max_length=255, default="", blank=True)
     gender = models.CharField(max_length=1, choices=Gender.choices, blank=True)
     birthday = models.DateField(null=True, blank=True)

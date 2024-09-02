@@ -55,9 +55,10 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.forms",
-    "rules",
 ]
 THIRD_PARTY_APPS = [
+    "rules",
+    "imagekit",
     # "django_celery_beat",
     "rest_framework",
     "rest_framework_simplejwt",
