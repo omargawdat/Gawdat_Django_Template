@@ -20,6 +20,7 @@
    ```
    sudo rm -r .git
    git init
+   git config http.postBuffer 524288000
    pre-commit install
    git add .
    git commit -m "Initial commit"
@@ -51,7 +52,7 @@
    ```
     sudo docker-compose -f docker-compose.production.yml up --build
    ```
-
+6. check unfold settings
 TODO:
 
 - validations and exceptions
