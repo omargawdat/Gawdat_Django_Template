@@ -7,7 +7,7 @@ UNFOLD = {
     "SHOW_HISTORY": True,
     # "SITE_URL": "",
     "LOGIN": {
-        "image": lambda request: static("images/login.jpeg"),
+        "image": lambda request: static("images/login.png"),
     },
     "SITE_SYMBOL": "anchor",
     # "SITE_ICON": {
