@@ -4,7 +4,7 @@ Pillow==10.4.0
 argon2-cffi==23.1.0
 
 # Redis and Celery
-redis==5.0.7
+redis==5.1.0
 hiredis==2.3.2
 # celery==5.4.0  # pyup: < 6.0
 # django-celery-beat==2.6.0
