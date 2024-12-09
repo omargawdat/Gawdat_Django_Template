@@ -36,12 +36,27 @@ updates:
       include: "scope"
     open-pull-requests-limit: 5
     groups:
-      local-dependencies:
+      django-dependencies:
         patterns:
-          - "compose/local/**/*"
-      prod-dependencies:
+          - "compose/local/django/*"
+      docs-dependencies:
         patterns:
-          - "compose/prod/**/*"
+          - "compose/local/docs/*"
+      node-dependencies:
+        patterns:
+          - "compose/local/node/*"
+      aws-dependencies:
+        patterns:
+          - "compose/prod/aws/*"
+      django-prod-dependencies:
+        patterns:
+          - "compose/prod/django/*"
+      postgres-dependencies:
+        patterns:
+          - "compose/prod/postgres/*"
+      traefik-dependencies:
+        patterns:
+          - "compose/prod/traefik/*"
     ignore:
       - dependency-name: '*'
         update-types:
