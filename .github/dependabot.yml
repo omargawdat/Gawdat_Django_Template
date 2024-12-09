@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'daily'
     labels:
       - "dependencies"
       - "github-actions"
@@ -27,7 +27,7 @@ updates:
       - 'compose/prod/postgres/'
       - 'compose/prod/traefik/'
     schedule:
-      interval: 'weekly'
+      interval: 'daily'
     labels:
       - "dependencies"
       - "docker"
@@ -67,7 +67,7 @@ updates:
   - package-ecosystem: 'pip'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'daily'
     labels:
       - "dependencies"
       - "python"
@@ -76,7 +76,6 @@ updates:
       prefix-development: "dev-deps"
       include: "scope"
     open-pull-requests-limit: 10
-    versioning-strategy: 'increase'
     groups:
       python-dependencies:
         patterns:
