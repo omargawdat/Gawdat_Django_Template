@@ -16,6 +16,8 @@ updates:
       github-actions:
         patterns:
           - "*"
+    notify:
+      individual_pulls: false
 
   # Enable version updates for Docker
   - package-ecosystem: 'docker'
@@ -44,6 +46,8 @@ updates:
         update-types:
           - 'version-update:semver-major'
           - 'version-update:semver-minor'
+    notify:
+      individual_pulls: false
 
   # Enable version updates for Python/Pip - Production
   - package-ecosystem: 'pip'
@@ -63,3 +67,5 @@ updates:
       python-dependencies:
         patterns:
           - "*"
+    notify:
+      individual_pulls: false
