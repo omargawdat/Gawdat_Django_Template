@@ -19,7 +19,13 @@ updates:
 
   # Enable version updates for Docker
   - package-ecosystem: 'docker'
-    directory: 'compose/local/django/'
+    directories:
+      - 'compose/local/django/'
+      - 'compose/local/docs/'
+      - 'compose/prod/aws/'
+      - 'compose/prod/django/'
+      - 'compose/prod/postgres/'
+      - 'compose/prod/traefik/'
     schedule:
       interval: 'weekly'
     labels:
@@ -29,135 +35,33 @@ updates:
       prefix: "docker"
       include: "scope"
     open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
     groups:
       django-dependencies:
         patterns:
-          - "*"
-    ignore:
-      - dependency-name: '*'
-        update-types:
-          - 'version-update:semver-major'
-          - 'version-update:semver-minor'
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/local/docs/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
+          - "compose/local/django/*"
       docs-dependencies:
         patterns:
-          - "*"
-    ignore:
-      - dependency-name: '*'
-        update-types:
-          - 'version-update:semver-major'
-          - 'version-update:semver-minor'
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/local/node/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
+          - "compose/local/docs/*"
       node-dependencies:
         patterns:
-          - "*"
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/prod/aws/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
+          - "compose/local/node/*"
       aws-dependencies:
         patterns:
-          - "*"
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/prod/django/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
+          - "compose/prod/aws/*"
       django-prod-dependencies:
         patterns:
-          - "*"
+          - "compose/prod/django/*"
+      postgres-dependencies:
+        patterns:
+          - "compose/prod/postgres/*"
+      traefik-dependencies:
+        patterns:
+          - "compose/prod/traefik/*"
     ignore:
       - dependency-name: '*'
         update-types:
           - 'version-update:semver-major'
           - 'version-update:semver-minor'
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/prod/postgres/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
-      postgres-dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: 'docker'
-    directory: 'compose/prod/traefik/'
-    schedule:
-      interval: 'weekly'
-    labels:
-      - "dependencies"
-      - "docker"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    open-pull-requests-limit: 5
-    versioning-strategy:
-      increase: "patch"
-    groups:
-      traefik-dependencies:
-        patterns:
-          - "*"
 
   # Enable version updates for Python/Pip - Production
   - package-ecosystem: 'pip'
@@ -172,9 +76,7 @@ updates:
       prefix-development: "dev-deps"
       include: "scope"
     open-pull-requests-limit: 10
-    versioning-strategy:
-      increase: "patch"
-      update-type: "semver:minor"
+    versioning-strategy: 'increase'
     groups:
       python-dependencies:
         patterns:
