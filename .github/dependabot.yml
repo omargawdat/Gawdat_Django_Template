@@ -1,0 +1,65 @@
+version: 2
+updates:
+  # Update GitHub actions in workflows
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Enable version updates for Docker
+  - package-ecosystem: 'docker'
+    directories:
+      - 'compose/local/django/'
+      - 'compose/local/docs/'
+      - 'compose/prod/aws/'
+      - 'compose/prod/django/'
+      - 'compose/prod/postgres/'
+      - 'compose/prod/traefik/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    groups:
+      compose-dependencies:
+        patterns:
+          - "compose/**/*"
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+
+  # Enable version updates for Python/Pip - Production
+  - package-ecosystem: 'pip'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "dev-deps"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy: 'increase'
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"

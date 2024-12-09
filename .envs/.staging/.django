@@ -1,0 +1,39 @@
+# General
+# ------------------------------------------------------------------------------
+ENVIRONMENT="dev"
+DJANGO_SETTINGS_MODULE=config.settings.prod
+DJANGO_SECRET_KEY=""
+DJANGO_ADMIN_URL="pYeLUByN7zfgE5Yl6H98CRXsR6uaWlZF/"
+DJANGO_ALLOWED_HOSTS=".example.com"
+DOMAIN_NAME="dev.example.com"
+TRAEFIK_EMAIL="omargawdaat@gmail.com"
+API_KEY=""
+
+# Security
+# ------------------------------------------------------------------------------
+# TIP: better off using DNS, however, redirect is OK too
+DJANGO_SECURE_SSL_REDIRECT=False
+
+# AWS
+# ------------------------------------------------------------------------------
+DJANGO_AWS_ACCESS_KEY_ID=""
+DJANGO_AWS_SECRET_ACCESS_KEY=""
+DJANGO_AWS_S3_REGION_NAME=""
+DJANGO_AWS_STORAGE_BUCKET_NAME=""
+
+# Sentry
+# ------------------------------------------------------------------------------
+SENTRY_DSN=""
+
+# SuperAdmin
+# ------------------------------------------------------------------------------
+DJANGO_SUPERUSER_USERNAME=""
+DJANGO_SUPERUSER_PASSWORD=""
+
+# Firebase
+# ------------------------------------------------------------------------------
+GOOGLE_APPLICATION_CREDENTIALS = "firebase_cred.json"
+
+# payment
+# ------------------------------------------------------------------------------
+TAPS_SECRET_KEY=""
