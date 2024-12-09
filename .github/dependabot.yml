@@ -1,26 +1,40 @@
-# Config for Dependabot updates. See Documentation here:
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
   # Update GitHub actions in workflows
   - package-ecosystem: 'github-actions'
     directory: '/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
   # Enable version updates for Docker
-  # We need to specify each Dockerfile in a separate entry because Dependabot doesn't
-  # support wildcards or recursively checking subdirectories. Check this issue for updates:
-  # https://github.com/dependabot/dependabot-core/issues/2178
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/local/django` directory
     directory: 'compose/local/django/'
-    # Every weekday
     schedule:
-      interval: 'daily'
-    # Ignore minor version updates (3.10 -> 3.11) but update patch versions
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      django-dependencies:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: '*'
         update-types:
@@ -28,12 +42,22 @@ updates:
           - 'version-update:semver-minor'
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/local/docs` directory
     directory: 'compose/local/docs/'
-    # Every weekday
     schedule:
-      interval: 'daily'
-    # Ignore minor version updates (3.10 -> 3.11) but update patch versions
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      docs-dependencies:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: '*'
         update-types:
@@ -41,26 +65,58 @@ updates:
           - 'version-update:semver-minor'
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/local/node` directory
     directory: 'compose/local/node/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      node-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/prod/aws` directory
     directory: 'compose/prod/aws/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      aws-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/prod/django` directory
     directory: 'compose/prod/django/'
-    # Every weekday
     schedule:
-      interval: 'daily'
-    # Ignore minor version updates (3.10 -> 3.11) but update patch versions
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      django-prod-dependencies:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: '*'
         update-types:
@@ -68,24 +124,58 @@ updates:
           - 'version-update:semver-minor'
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/prod/postgres` directory
     directory: 'compose/prod/postgres/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      postgres-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/prod/traefik` directory
     directory: 'compose/prod/traefik/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    open-pull-requests-limit: 5
+    versioning-strategy:
+      increase: "patch"
+    groups:
+      traefik-dependencies:
+        patterns:
+          - "*"
 
   # Enable version updates for Python/Pip - Production
   - package-ecosystem: 'pip'
-    # Look for a `requirements.txt` in the `root` directory
-    # also 'setup.cfg', 'runtime.txt' and 'requirements/*.txt'
     directory: '/'
-    # Every weekday
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "dev-deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+    versioning-strategy:
+      increase: "patch"
+      update-type: "semver:minor"
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"

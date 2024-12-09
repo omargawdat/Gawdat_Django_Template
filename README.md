@@ -8,6 +8,8 @@
     - make sure the domain is pointing into the instance IP.
 3. **Fill the `.envs/.prod/.django` file**
 4. **Try the Local Development**
+5. create `dev` branch
+6. database in pycharm
 
   ```
   docker compose -f docker-compose.local.yml up --build -d
