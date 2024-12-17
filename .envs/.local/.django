@@ -1,0 +1,22 @@
+# General
+# ------------------------------------------------------------------------------
+DJANGO_SETTINGS_MODULE=config.settings.local
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+API_KEY=""
+
+ENVIRONMENT="local"
+DJANGO_SECRET_KEY="k2HX7O47nQhCCoHvtebDIsUIzCD9ZzZcEvJ5t3k9sIttEAQVdqabf4FLuciVJIkv" # pragma: allowlist secret
+
+# SuperAdmin
+# ------------------------------------------------------------------------------
+DJANGO_SUPERUSER_USERNAME="omar"
+DJANGO_SUPERUSER_PASSWORD="123"
+
+# Firebase
+# ------------------------------------------------------------------------------
+GOOGLE_APPLICATION_CREDENTIALS = "firebase_cred.json"
+
+# payment
+# ------------------------------------------------------------------------------
+TAPS_SECRET_KEY=""
