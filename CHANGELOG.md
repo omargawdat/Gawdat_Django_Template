@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.1.1 (2024-12-17)
+
+### Bug Fixes
+
+- Install hadolint
+  ([`c5fe626`](https://github.com/omargawdat/Gawdat_Django_Template/commit/c5fe626eff339d8032863094b816928ed3f18c32))
+
+
 ## v0.1.0 (2024-12-17)
 
 ### Bug Fixes
