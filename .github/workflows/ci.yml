@@ -29,7 +29,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      # Consider using pre-commit.ci for open source project
+
+      - name: Install hadolint
+        run: |
+          wget -O /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x /usr/local/bin/hadolint
+
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
