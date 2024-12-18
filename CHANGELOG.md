@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.0 (2024-12-18)
+
+### Features
+
+- Get jwt tokens lifetime from .env file
+  ([`fcdee5f`](https://github.com/omargawdat/Gawdat_Django_Template/commit/fcdee5fafbb773cf06c63b0f86d7560a68141ba8))
+
+
 ## v0.1.1 (2024-12-17)
 
 ### Bug Fixes
