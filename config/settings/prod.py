@@ -177,13 +177,15 @@ sentry_sdk.init(
 SPECTACULAR_SETTINGS["SERVERS"] = [
     {"url": "https://example.com", "description": "Production server"}  # type: ignore[list-item]
 ]
+
+# todo: use the time in the .env instead
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30)
-    if env("ENVIRONMENT") == "dev"
-    else timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30)
-    if env("ENVIRONMENT") == "dev"
-    else timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=env.int("JWT_ACCESS_TOKEN_LIFETIME_MINUTES")
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        minutes=env.int("JWT_REFRESH_TOKEN_LIFETIME_MINUTES")
+    ),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "ALGORITHM": "HS256",

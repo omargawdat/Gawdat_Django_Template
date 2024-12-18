@@ -37,3 +37,8 @@ GOOGLE_APPLICATION_CREDENTIALS = "firebase_cred.json"
 # payment
 # ------------------------------------------------------------------------------
 TAPS_SECRET_KEY=""
+
+# tokens
+# ----------------------------------------------------------------------------
+JWT_ACCESS_TOKEN_LIFETIME_MINUTES=60
+JWT_REFRESH_TOKEN_LIFETIME_MINUTES=1440

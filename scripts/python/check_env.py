@@ -23,6 +23,8 @@ REQUIRED_ENV_VARS: dict[str, list[str]] = {
         "POSTGRES_PASSWORD",
         "TAPS_SECRET_KEY",
         "GOOGLE_APPLICATION_CREDENTIALS",
+        "JWT_ACCESS_TOKEN_LIFETIME_MINUTES",
+        "JWT_REFRESH_TOKEN_LIFETIME_MINUTES",
     ],
     "local": [
         "USE_DOCKER",
