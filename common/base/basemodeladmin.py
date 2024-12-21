@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from rest_framework.exceptions import APIException
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from unfold.contrib.forms.widgets import ArrayWidget
 from unfold.contrib.forms.widgets import WysiwygWidget
@@ -42,6 +43,37 @@ class BaseModelAdmin(
     }
     compressed_fields = True
     warn_unsaved_form = True
+
+    def get_form(self, request, obj=None, **kwargs):
+        form_class = super().get_form(request, obj, **kwargs)  # N806 fixed
+
+        # Explicitly ignore SLF001 for accessing protected members
+        original_post_clean = form_class.clean
+
+        def handle_api_exception(form_instance, api_error):
+            if hasattr(api_error.detail, "items"):
+                errors = {}
+                for field, error in api_error.detail.items():
+                    if field in form_instance.fields:
+                        form_instance.add_error(field, error)
+                    else:
+                        errors[field] = error
+                if errors:
+                    form_instance.add_error(None, errors)
+            else:
+                form_instance.add_error(None, str(api_error.detail))
+
+        def clean(form_instance):  # Renamed from _post_clean
+            try:
+                original_post_clean(form_instance)
+            except APIException as api_error:
+                try:
+                    handle_api_exception(form_instance, api_error)
+                except (ValueError, AttributeError, KeyError):  # BLE001 fixed
+                    form_instance.add_error(None, str(api_error.detail))
+
+        form_class.clean = clean
+        return form_class
 
     @property
     @abstractmethod
