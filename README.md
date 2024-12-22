@@ -15,6 +15,7 @@
   docker compose -f docker-compose.local.yml up --build -d
   ```
 
+
 ## 2. Git Repository Setup
 
 1. **Uncomment the `.gitignore`, `ci.yml`, `dependabot`  Files**
