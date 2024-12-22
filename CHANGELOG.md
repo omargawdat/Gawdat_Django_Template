@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.3.0 (2024-12-22)
+
+### Documentation
+
+- Add dummy space
+  ([`d0ad911`](https://github.com/omargawdat/Gawdat_Django_Template/commit/d0ad911870742a37b6d09c9dbacf7d9cb9fdba65))
+
+### Features
+
+- Update model admin base to handle the form errors in a better way
+  ([`966a1ae`](https://github.com/omargawdat/Gawdat_Django_Template/commit/966a1ae702b2e88eae50f41d944ffe8df93a789d))
+
+
 ## v0.2.0 (2024-12-18)
 
 ### Features
