@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.4.0 (2024-12-22)
+
+### Bug Fixes
+
+- Expost local postgres port
+  ([`3adacd6`](https://github.com/omargawdat/Gawdat_Django_Template/commit/3adacd62ba96eaf2a986a560a46cb00bc38f27b4))
+
+### Features
+
+- Make the validation of the endpoints only inside the restframework
+  ([`e04e826`](https://github.com/omargawdat/Gawdat_Django_Template/commit/e04e82624325b6eb522040f5852aeed0ca4ede07))
+
+- Make validation inside api instead of middleware
+  ([`61c67f0`](https://github.com/omargawdat/Gawdat_Django_Template/commit/61c67f0ed788e83b5a566622938624e4dd721773))
+
+
 ## v0.3.0 (2024-12-22)
 
 ### Documentation
