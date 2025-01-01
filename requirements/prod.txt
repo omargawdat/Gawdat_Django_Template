@@ -1,7 +1,7 @@
 -r base.txt
 
 gunicorn==23.0.0
-Collectfasta==3.2.0
+Collectfasta==3.2.1
 sentry-sdk[django]==2.19.2
 
 # Django
