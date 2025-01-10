@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.5.0 (2025-01-10)
+
+### Chores
+
+- Add openpyxl package
+  ([`739642f`](https://github.com/omargawdat/Gawdat_Django_Template/commit/739642f3aa6baefb59b2ea9de46571e35163af4c))
+
+- Add openpyxl package
+  ([`0c3592e`](https://github.com/omargawdat/Gawdat_Django_Template/commit/0c3592e661c8d53170282d4a608441bd31f969b6))
+
+### Features
+
+- Better error handling in only the model
+  ([`961091e`](https://github.com/omargawdat/Gawdat_Django_Template/commit/961091ec1a068bb5d364689f492ac870f770aab1))
+
+
 ## v0.4.0 (2024-12-22)
 
 ### Bug Fixes
