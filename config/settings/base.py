@@ -221,6 +221,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "600/day", "user": "2000/day"},
 }
+
 DRF_STANDARDIZED_ERRORS = {
     "ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True,
     "EXCEPTION_HANDLER_CLASS": "config.custom_exception_handler.CustomExceptionHandler",
