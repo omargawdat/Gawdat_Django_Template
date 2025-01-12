@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.6.0 (2025-01-12)
+
+### Chores
+
+- Empty
+  ([`e6a651d`](https://github.com/omargawdat/Gawdat_Django_Template/commit/e6a651df74c8ab9b30df89f670045934b84532cd))
+
+### Features
+
+- Only require api-key on endpoints that require permissions
+  ([`9de845b`](https://github.com/omargawdat/Gawdat_Django_Template/commit/9de845bd2b51d5a03ba5fd8e83893c7a33842d45))
+
+### Refactoring
+
+- Enhance code
+  ([`488ce03`](https://github.com/omargawdat/Gawdat_Django_Template/commit/488ce032c704871cbb22fc268342a8a359adcebb))
+
+
 ## v0.5.0 (2025-01-10)
 
 ### Chores
