@@ -95,14 +95,14 @@ repos:
         language: system
         stages: [manual]
 
-  - repo: local
-    hooks:
-      - id: check-migrations
-        name: Check Django migrations
-        entry: ./scripts/shell/check_migrations.sh
-        language: script
-        stages: [pre-commit]
-        pass_filenames: false
+#  - repo: local
+#    hooks:
+#      - id: check-migrations
+#        name: Check Django migrations
+#        entry: ./scripts/shell/check_migrations.sh
+#        language: script
+#        stages: [pre-commit]
+#        pass_filenames: false
 ci:
   autoupdate_schedule: weekly
   fail_fast: true

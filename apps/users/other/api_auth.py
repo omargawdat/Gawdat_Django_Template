@@ -10,15 +10,8 @@ class AuthenticationFailedMessages:
 
 class APIKeyAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
-        path = request.path_info.lower()
-
-        if "web" in path or "callback" in path:
-            return
-
         api_key = request.headers.get("x-api-key")
         expected_api_key = os.environ.get("API_KEY")
 
         if not api_key or api_key != expected_api_key:
             raise AuthenticationFailed(AuthenticationFailedMessages.INVALID_API_KEY)
-
-        return
