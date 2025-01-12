@@ -54,10 +54,7 @@ class CustomExceptionHandler(ExceptionHandler):
             code = constraint_match.group(1) if constraint_match else "integrity_error"
 
             error_message = ApplicationError.get_message(code)
-            if error_message:
-                detail = {"error": error_message}
-            else:
-                detail = {"error": error_message}
+            detail = {"error": error_message}
 
             return ValidationError(detail=detail, code=code)
 
