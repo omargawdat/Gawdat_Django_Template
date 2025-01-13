@@ -1,16 +1,18 @@
 # ruff: noqa: F405
 
-from datetime import timedelta
+import socket
 
-from .base import *  # noqa: F403
+from .base import *  # noqa
 
-# GENERAL
+# ------------------------------------------------------------------------------
+# CORE DEVELOPMENT SETTINGS
 # ------------------------------------------------------------------------------
 DEBUG = True
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="local-secret-key")
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
-# CACHES
+# ------------------------------------------------------------------------------
+# CACHING CONFIGURATION
 # ------------------------------------------------------------------------------
 CACHES = {
     "default": {
@@ -19,48 +21,31 @@ CACHES = {
     },
 }
 
-# EMAIL
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.console.EmailBackend",
-)
-
-# django-debug-toolbar
+# DEBUG TOOLBAR CONFIGURATION
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ["debug_toolbar"]
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
         "debug_toolbar.panels.redirects.RedirectsPanel",
-        # Disable profiling panel due to an issue with Python 3.12:
+        # Example if profiling panel is incompatible with your local python:
         "debug_toolbar.panels.profiling.ProfilingPanel",
     ],
     "SHOW_TEMPLATE_CONTEXT": True,
 }
-# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
-INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-if env("USE_DOCKER") == "yes":
-    import socket
 
+# Internal IPs Configuration
+INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
+
+# Docker-specific IP configuration
+if env("USE_DOCKER", default="no") == "yes":
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
-# django-extensions
 # ------------------------------------------------------------------------------
+# DEVELOPMENT TOOLS
+# ------------------------------------------------------------------------------
+# Django Extensions
 INSTALLED_APPS += ["django_extensions"]
-
-# Your stuff...
-# ------------------------------------------------------------------------------
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": env("DJANGO_SECRET_KEY"),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
-}

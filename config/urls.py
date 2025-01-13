@@ -24,14 +24,9 @@ api_doc_patterns = [
     ),
 ]
 
-api_core_patterns = [
-    path("", include("config.api_router")),
-]
-
 api_app_patterns: list[URLPattern | URLResolver] = []
 
 api_patterns = [
-    path("", include(api_core_patterns)),
     path("", include(api_app_patterns)),
     path("", include(api_doc_patterns)),
 ]

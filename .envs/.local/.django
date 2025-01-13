@@ -26,3 +26,6 @@ TAPS_SECRET_KEY=""
 # ----------------------------------------------------------------------------
 JWT_ACCESS_TOKEN_LIFETIME_MINUTES=10080
 JWT_REFRESH_TOKEN_LIFETIME_MINUTES=20160
+
+DJANGO_ADMIN_NAME="Omar"
+DJANGO_ADMIN_EMAIL=""admin@example.com"

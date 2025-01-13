@@ -1,42 +1,34 @@
 # ruff: noqa: F405
 
-from datetime import timedelta
+from .base import *  # noqa
+from .base import env
 
-from .base import *  # noqa: F403
-
-# GENERAL
 # ------------------------------------------------------------------------------
-
-SECRET_KEY = env(
-    "DJANGO_SECRET_KEY",
-    default="Kv5FNxRdDWymnTrpU4zUsRDB2WVqa73tZmkDarcM179g87t2xZOqoMkCIPv8JVep",  # pragma: allowlist secret
-)
+# CORE TEST SETTINGS
+# ------------------------------------------------------------------------------
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="test-secret-key")
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
-# PASSWORDS
 # ------------------------------------------------------------------------------
+# SECURITY AND AUTHENTICATION
+# ------------------------------------------------------------------------------
+# Use fast password hashing for tests
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
-# EMAIL
 # ------------------------------------------------------------------------------
+# EMAIL CONFIGURATION
+# ------------------------------------------------------------------------------
+# Store emails in memory for testing
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
-# DEBUGGING FOR TEMPLATES
 # ------------------------------------------------------------------------------
+# TEMPLATE CONFIGURATION
+# ------------------------------------------------------------------------------
+# Enable template debugging during tests
 TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore[index]
 
-# MEDIA
 # ------------------------------------------------------------------------------
+# MEDIA CONFIGURATION
+# ------------------------------------------------------------------------------
+# Use a test server for media files
 MEDIA_URL = "http://media.testserver"
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": env("DJANGO_SECRET_KEY"),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
-}

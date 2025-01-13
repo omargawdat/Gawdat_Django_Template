@@ -1,22 +1,18 @@
 from pathlib import Path
 
-import environ
 from django.utils.translation import gettext_lazy as _
-from firebase_admin import initialize_app
 
-from ..integrations.django_money import *  # noqa
-from ..integrations.unfold import *  # noqa
+from config.env import env
 
-FIREBASE_APP = initialize_app()
-
+# ------------------------------------------------------------------------------
+# PATH CONFIGURATION
+# ------------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
 
-env = environ.Env()
-
-# GENERAL
 # ------------------------------------------------------------------------------
-DEBUG = env.bool("DJANGO_DEBUG", False)
+# INTERNATIONALIZATION SETTINGS
+# ------------------------------------------------------------------------------
 TIME_ZONE = "Asia/Riyadh"
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [
@@ -28,7 +24,8 @@ USE_I18N = True
 USE_TZ = True
 LOCALE_PATHS = [str(ASSETS_DIR / "locale")]
 
-# DATABASES
+# ------------------------------------------------------------------------------
+# DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
@@ -47,29 +44,20 @@ DATABASES = {
     },
 }
 
-# URLS
+# ------------------------------------------------------------------------------
+# APPLICATION CONFIGURATION
 # ------------------------------------------------------------------------------
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
 
-# APPS
-DJANGO_APPS = [
+# Third-party applications
+THIRD_PARTY_APPS = [
     "unfold",
     "unfold.contrib.filters",
     "unfold.contrib.forms",
     "unfold.contrib.import_export",
     "unfold.contrib.inlines",
     "fcm_django",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.sites",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.admin",
-    "django.forms",
-]
-THIRD_PARTY_APPS = [
     "rules",
     "imagekit",
     "rest_framework",
@@ -81,26 +69,38 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
     "djmoney",
 ]
+
+# Django core applications
+DJANGO_APPS = [
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.admin",
+    "django.forms",
+]
+
+# Project applications
 LOCAL_APPS = [
     "common",
     "apps.users",
     "apps.notification",
     "apps.appInfo",
 ]
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# AUTHENTICATION
+INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
+
+# ------------------------------------------------------------------------------
+# AUTHENTICATION CONFIGURATION
 # ------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
-    # "rules.permissions.ObjectPermissionBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
-
-# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 
-# PASSWORDS
-# ------------------------------------------------------------------------------
+# Password settings
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
@@ -112,7 +112,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
 ]
 
-# MIDDLEWARE
+# ------------------------------------------------------------------------------
+# MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -126,7 +127,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# STATIC
+# ------------------------------------------------------------------------------
+# STATIC AND MEDIA CONFIGURATION
+# ------------------------------------------------------------------------------
 STATIC_ROOT = str(ASSETS_DIR / "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [str(ASSETS_DIR / "static")]
@@ -135,12 +138,11 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-# MEDIA
-# ------------------------------------------------------------------------------
 MEDIA_ROOT = str(ASSETS_DIR / "media")
 MEDIA_URL = "/media/"
 
-# TEMPLATES
+# ------------------------------------------------------------------------------
+# TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
 TEMPLATES = [
     {
@@ -162,27 +164,33 @@ TEMPLATES = [
     },
 ]
 
-# SECURITY
+# ------------------------------------------------------------------------------
+# SECURITY CONFIGURATION
 # ------------------------------------------------------------------------------
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
 
-# EMAIL
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
+# EMAIL CONFIGURATION
+# ------------------------------------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_TIMEOUT = 5
 
-# ADMIN
+# ------------------------------------------------------------------------------
+# ADMIN CONFIGURATION
 # ------------------------------------------------------------------------------
 ADMIN_URL = "admin/"
-ADMINS = [("omargawdat", "omargawdaat@gmail.com")]
+ADMINS = [
+    (
+        env("DJANGO_ADMIN_NAME", default="admin"),
+        env("DJANGO_ADMIN_EMAIL", default="admin@example.com"),
+    )
+]
 MANAGERS = ADMINS
 
-# LOGGING
+# ------------------------------------------------------------------------------
+# LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
 LOGGING = {
     "version": 1,
@@ -202,54 +210,22 @@ LOGGING = {
     "root": {"level": "INFO", "handlers": ["console"]},
 }
 
+# ------------------------------------------------------------------------------
+# REDIS CONFIGURATION
+# ------------------------------------------------------------------------------
 REDIS_URL = env("REDIS_URL", default="redis://redis:6379/0")
 REDIS_SSL = REDIS_URL.startswith("rediss://")
 
-# django-rest-framework
-# -------------------------------------------------------------------------------
-REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "apps.users.other.api_auth.APIKeyAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_SCHEMA_CLASS": "drf_standardized_errors.openapi.AutoSchema",
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {"anon": "600/day", "user": "2000/day"},
-}
-
-DRF_STANDARDIZED_ERRORS = {
-    "ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True,
-    "EXCEPTION_HANDLER_CLASS": "config.custom_exception_handler.CustomExceptionHandler",
-}
-CORS_URLS_REGEX = r"^/api/.*$"
-
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Temp-Project API",
-    "DESCRIPTION": "Documentation of API endpoints of projectname App",
-    "VERSION": "1.0.0",
-    "SCHEMA_PATH_PREFIX": "/api/",
-    "ENUM_NAME_OVERRIDES": {
-        "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
-        "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
-        "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
-        "ErrorCode401Enum": "drf_standardized_errors.openapi_serializers.ErrorCode401Enum.choices",
-        "ErrorCode403Enum": "drf_standardized_errors.openapi_serializers.ErrorCode403Enum.choices",
-        "ErrorCode404Enum": "drf_standardized_errors.openapi_serializers.ErrorCode404Enum.choices",
-        "ErrorCode405Enum": "drf_standardized_errors.openapi_serializers.ErrorCode405Enum.choices",
-        "ErrorCode406Enum": "drf_standardized_errors.openapi_serializers.ErrorCode406Enum.choices",
-        "ErrorCode415Enum": "drf_standardized_errors.openapi_serializers.ErrorCode415Enum.choices",
-        "ErrorCode429Enum": "drf_standardized_errors.openapi_serializers.ErrorCode429Enum.choices",
-        "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
-    },
-    "POSTPROCESSING_HOOKS": [
-        "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
-    ],
-}
-
+# ------------------------------------------------------------------------------
+# FILE UPLOAD CONFIGURATION
+# ------------------------------------------------------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
+
+# ------------------------------------------------------------------------------
+# THIRD-PARTY INTEGRATIONS
+# ------------------------------------------------------------------------------
+from config.integrations.drf import *  # noqa
+from config.integrations.djmoney import *  # noqa
+from config.integrations.unfold import *  # noqa
+from config.integrations.firebase import *  # noqa
