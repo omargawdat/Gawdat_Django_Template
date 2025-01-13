@@ -8,6 +8,7 @@ DJANGO_ALLOWED_HOSTS=".example.com"
 DOMAIN_NAME="dev.example.com"
 TRAEFIK_EMAIL="omargawdaat@gmail.com"
 API_KEY=""
+DOMAIN_NAME="dev.example.com"
 
 # Security
 # ------------------------------------------------------------------------------

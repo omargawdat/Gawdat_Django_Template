@@ -15,6 +15,7 @@ from .base import REDIS_URL
 # ------------------------------------------------------------------------------
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+DOMAIN_NAME = env("DOMAIN_NAME")
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -175,7 +176,7 @@ sentry_sdk.init(
 # django-rest-framework
 # -------------------------------------------------------------------------------
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://example.com", "description": "Production server"}  # type: ignore[list-item]
+    {"url": f"https://{DOMAIN_NAME}", "description": "Production server"}  # type: ignore[list-item]
 ]
 
 # todo: use the time in the .env instead

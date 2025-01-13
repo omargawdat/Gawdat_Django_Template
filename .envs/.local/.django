@@ -4,6 +4,7 @@ DJANGO_SETTINGS_MODULE=config.settings.local
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 API_KEY=""
+DOMAIN_NAME="localhost"
 
 ENVIRONMENT="local"
 DJANGO_SECRET_KEY="k2HX7O47nQhCCoHvtebDIsUIzCD9ZzZcEvJ5t3k9sIttEAQVdqabf4FLuciVJIkv" # pragma: allowlist secret
