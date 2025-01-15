@@ -170,6 +170,7 @@ TEMPLATES = [
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ------------------------------------------------------------------------------
 # EMAIL CONFIGURATION
