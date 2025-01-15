@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.7.0 (2025-01-15)
+
+### Features
+
+- Enable cors for websites
+  ([`1504deb`](https://github.com/omargawdat/Gawdat_Django_Template/commit/1504deb289f4c5fcc48edd88c75b16b5c4d319cd))
+
+### Refactoring
+
+- Cleaner convert error message
+  ([`82f4422`](https://github.com/omargawdat/Gawdat_Django_Template/commit/82f4422d671beb0d3fc632aeaa0feae8e6ce5ed1))
+
+- Get the domain name from the .env file
+  ([`2416e19`](https://github.com/omargawdat/Gawdat_Django_Template/commit/2416e19a15372155589b928e453d31b99928ba2f))
+
+- Restructure the settings into more cleaner way
+  ([`cc1951f`](https://github.com/omargawdat/Gawdat_Django_Template/commit/cc1951f86f22e23845798d166155b2ac0fe07dfd))
+
+
 ## v0.6.0 (2025-01-12)
 
 ### Chores
