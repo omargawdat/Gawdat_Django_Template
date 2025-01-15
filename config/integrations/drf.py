@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from config.env import env
+from config.helpers.env import env
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -20,7 +20,7 @@ REST_FRAMEWORK = {
 
 DRF_STANDARDIZED_ERRORS = {
     "ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True,
-    "EXCEPTION_HANDLER_CLASS": "config.exception_handler.CustomExceptionHandler",
+    "EXCEPTION_HANDLER_CLASS": "config.helpers.exception_handler.CustomExceptionHandler",
 }
 CORS_URLS_REGEX = r"^/api/.*$"
 
