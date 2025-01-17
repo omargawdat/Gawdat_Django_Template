@@ -4,14 +4,9 @@ import os
 import sys
 from pathlib import Path
 
-from scripts.python.check_env import run_env_validation
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
-
-    # Run validation after setting DJANGO_SETTINGS_MODULE but before any Django imports
-    if os.getenv("CI", "").lower() != "true":
-        run_env_validation()
 
     try:
         from django.core.management import execute_from_command_line

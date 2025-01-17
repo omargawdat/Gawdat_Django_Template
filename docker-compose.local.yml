@@ -1,7 +1,6 @@
 volumes:
-  temp_project_local_postgres_data: { }
-  temp_project_local_postgres_data_backups: { }
-
+  temp_project_local_postgres_data: {}
+  temp_project_local_postgres_data_backups: {}
 
 services:
   django:
@@ -14,10 +13,11 @@ services:
     volumes:
       - .:/app:z
     env_file:
-      - ./.envs/.local/.django
-      - ./.envs/.local/.postgres
-    environment:
-      - CI=${CI:-false}
+      - ./.envs/.local/django.env
+      - ./.envs/.local/postgres.env
+      - ./.envs/.local/general.env
+      - ./.envs/.local/firebase.env
+      - ./.envs/.local/payment.env
     ports:
       - '8000:8000'
     command: /start
@@ -31,6 +31,6 @@ services:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
       - temp_project_local_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.local/.postgres
+      - ./.envs/.local/postgres.env
     ports:
       - '5432:5432'
