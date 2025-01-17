@@ -1,3 +1,7 @@
+## NOTES
+for local environments use local_ prefix for the .envs.
+
+
 ## 1. Initial Project Configuration
 
 1. **Rename Project**

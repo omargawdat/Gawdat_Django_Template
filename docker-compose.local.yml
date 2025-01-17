@@ -13,11 +13,7 @@ services:
     volumes:
       - .:/app:z
     env_file:
-      - ./.envs/.local/django.env
-      - ./.envs/.local/postgres.env
-      - ./.envs/.local/general.env
-      - ./.envs/.local/firebase.env
-      - ./.envs/.local/payment.env
+        - .env
     ports:
       - '8000:8000'
     command: /start
@@ -31,6 +27,6 @@ services:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
       - temp_project_local_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.local/postgres.env
+      - .env
     ports:
       - '5432:5432'
