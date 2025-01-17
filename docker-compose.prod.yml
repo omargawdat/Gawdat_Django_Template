@@ -3,6 +3,7 @@ volumes:
   production_postgres_data_backups: { }
   production_traefik: { }
 
+
 services:
   django:
     build:
@@ -11,18 +12,8 @@ services:
     depends_on:
       - postgres
       - redis
-    environment:
-      # Django environment variables
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DJANGO_ADMIN_URL=${DJANGO_ADMIN_URL}
-      # Database environment variables
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+        - .env
     command: /start
 
   postgres:
@@ -32,10 +23,8 @@ services:
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+        - .env
 
   traefik:
     build:
@@ -48,8 +37,8 @@ services:
     ports:
       - '0.0.0.0:80:80'
       - '0.0.0.0:443:443'
-    environment:
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    env_file:
+        - .env
 
   redis:
     image: docker.io/redis:6
@@ -58,9 +47,7 @@ services:
     build:
       context: .
       dockerfile: compose/prod/aws/Dockerfile
-    environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+    env_file:
+        - .env
     volumes:
       - production_postgres_data_backups:/backups:z
