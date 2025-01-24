@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.8.0 (2025-01-24)
+
+### Chores
+
+- Collect settings helper methods
+  ([`a50b77d`](https://github.com/omargawdat/Gawdat_Django_Template/commit/a50b77d0d3ed77d4f646550460cf44e54be0df95))
+
+- Update github action versions
+  ([`83949e6`](https://github.com/omargawdat/Gawdat_Django_Template/commit/83949e663dd9e285043374847374c0e45ff1703b))
+
+### Features
+
+- Ensure api key passed
+  ([`f3d1be6`](https://github.com/omargawdat/Gawdat_Django_Template/commit/f3d1be6ee2acaebd89d98b2e96adcdcf1f2a568c))
+
+### Refactoring
+
+- Checkout
+  ([`625f53a`](https://github.com/omargawdat/Gawdat_Django_Template/commit/625f53a6393c77024bb83e94d9939d9a86fe51ab))
+
+- Checkout
+  ([`4b3541e`](https://github.com/omargawdat/Gawdat_Django_Template/commit/4b3541e625f769b05080f0c6946dc1f943e30252))
+
+
 ## v0.7.0 (2025-01-15)
 
 ### Features
