@@ -2,6 +2,8 @@
 python-slugify==8.0.4
 Pillow==11.0.0
 argon2-cffi==23.1.0
+pydantic==2.10.6
+pydantic-settings==2.7.1
 
 # Redis
 redis==5.2.1
