@@ -24,7 +24,7 @@ fcm-django==2.2.1
 django-solo==2.4.0
 rules==3.5
 django-imagekit==5.0.0
-django-filter==24.3
+django-filter==25.1
 django-money==3.5.3
 django-cors-headers==4.7.0
 dj-database-url==2.3.0
