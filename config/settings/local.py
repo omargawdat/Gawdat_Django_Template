@@ -18,7 +18,7 @@ CACHES = {
 # DEBUG TOOLBAR CONFIGURATION
 # ------------------------------------------------------------------------------
 DEBUG = True
-ALLOWED_HOSTS = [env_vars.domain_name]  # todo: ensure this is correct
+ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS += ["debug_toolbar"]
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 

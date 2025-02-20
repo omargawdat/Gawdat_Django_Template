@@ -3,7 +3,7 @@
 from .base import *  # noqa
 
 DEBUG = False
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [env_vars.domain_name]  # todo: ensure this is correct
 
 # ------------------------------------------------------------------------------
 # CACHE CONFIGURATION

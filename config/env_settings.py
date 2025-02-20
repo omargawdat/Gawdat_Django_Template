@@ -1,7 +1,6 @@
 from typing import Annotated
 from typing import Literal
 
-from pydantic import EmailStr
 from pydantic import Field
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
@@ -25,7 +24,7 @@ class EnvSettings(BaseSettings):
     django_superuser_username: str
     django_superuser_password: SecretStr
     django_admin_name: str
-    django_admin_email: EmailStr
+    django_admin_email: str
 
     # Django JWT Settings
     django_jwt_access_token_lifetime_minutes: Annotated[int, Field(gt=0)]
