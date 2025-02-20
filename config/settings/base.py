@@ -3,6 +3,7 @@ from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 
+from config.env_settings import EnvSettings
 from config.helpers.env import env
 
 # ------------------------------------------------------------------------------
@@ -11,6 +12,8 @@ from config.helpers.env import env
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
 
+env_vars = EnvSettings()
+print(env_vars.domain_name)
 
 # ------------------------------------------------------------------------------
 # CORE SETTINGS
