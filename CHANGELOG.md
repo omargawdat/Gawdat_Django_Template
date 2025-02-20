@@ -1,6 +1,45 @@
 # CHANGELOG
 
 
+## v0.9.0 (2025-02-20)
+
+### Bug Fixes
+
+- Allowed hosts
+  ([`f97711d`](https://github.com/omargawdat/Gawdat_Django_Template/commit/f97711d013dac9fd9e028e17d5ea61e4f2944a60))
+
+- Remove
+  ([`4819054`](https://github.com/omargawdat/Gawdat_Django_Template/commit/4819054211ee4bce80b12796f79be62b7ecfe0ae))
+
+### Chores
+
+- Update pydantic
+  ([`60b02fd`](https://github.com/omargawdat/Gawdat_Django_Template/commit/60b02fd1f48b91520ae8cf04462d6ebe907cd159))
+
+### Features
+
+- Add pydantic
+  ([`1be8c86`](https://github.com/omargawdat/Gawdat_Django_Template/commit/1be8c86a9679597a78db7838b2ab32e6b622edec))
+
+- Checkout
+  ([`e37faa7`](https://github.com/omargawdat/Gawdat_Django_Template/commit/e37faa7da8dc82a89a18c3a1f9ba94c6651760b1))
+
+- Checkout
+  ([`781ae61`](https://github.com/omargawdat/Gawdat_Django_Template/commit/781ae6139b3e8a79d92cc224a283a5863406d0cc))
+
+- Checkout
+  ([`db8b3cc`](https://github.com/omargawdat/Gawdat_Django_Template/commit/db8b3cc8ca6e84e37c77b4d2c9cf4d4442e92690))
+
+- Load aws secrets
+  ([`9c3df10`](https://github.com/omargawdat/Gawdat_Django_Template/commit/9c3df104d5c07491b654b4e619e0c7d411974d36))
+
+- Pass environment into the container
+  ([`6cb9ce0`](https://github.com/omargawdat/Gawdat_Django_Template/commit/6cb9ce072f9ccf0273e2e8d68480d6be1fdac6d9))
+
+- Working refactor
+  ([`b9268bb`](https://github.com/omargawdat/Gawdat_Django_Template/commit/b9268bb68234ad49cdb092428818e998e4977886))
+
+
 ## v0.8.0 (2025-01-24)
 
 ### Chores
