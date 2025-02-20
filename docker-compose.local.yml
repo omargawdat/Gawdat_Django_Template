@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    container_name: temp_project_local_django
+    container_name: django
     depends_on:
       - postgres
     volumes:
@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: compose/prod/postgres/Dockerfile
-    container_name: temp_project_local_postgres
+    container_name: postgres
     volumes:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
       - temp_project_local_postgres_data_backups:/backups

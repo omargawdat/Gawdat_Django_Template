@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -37,9 +38,15 @@ LOCALE_PATHS = [str(ASSETS_DIR / "locale")]
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 DATABASES = {
     "default": {
-        **env.db("DATABASE_URL"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "myproject_db"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres_user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "db_password_789!"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
             "pool": {
