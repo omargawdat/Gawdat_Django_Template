@@ -17,6 +17,8 @@ services:
     ports:
       - '8000:8000'
     command: /start
+    environment:
+      ENVIRONMENT: 'local'
 
   postgres:
     build:
