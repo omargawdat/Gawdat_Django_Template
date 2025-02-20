@@ -50,16 +50,16 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=env.int("DJANGO_JWT_ACCESS_TOKEN_LIFETIME_MINUTES")
+        minutes=env.django_jwt_access_token_lifetime_minutes
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        minutes=env.int("DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES")
+        minutes=env.django_jwt_refresh_token_lifetime_minutes
     ),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "REUSE_REFRESH_TOKENS": False,
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": env("DJANGO_SECRET_KEY"),
+    "SIGNING_KEY": env.django_secret_key,
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",

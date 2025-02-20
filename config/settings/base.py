@@ -1,10 +1,11 @@
-import os
 from pathlib import Path
 
+import dj_database_url
 from django.utils.translation import gettext_lazy as _
 
-from config.env_settings import EnvSettings
 from config.helpers.env import env
+
+print("loading base settings")
 
 # ------------------------------------------------------------------------------
 # PATH CONFIGURATION
@@ -12,16 +13,11 @@ from config.helpers.env import env
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
 
-env_vars = EnvSettings()
-print(env_vars.domain_name)
 
 # ------------------------------------------------------------------------------
 # CORE SETTINGS
 # ------------------------------------------------------------------------------
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
-DOMAIN_NAME = env("DOMAIN_NAME")
-
+SECRET_KEY = env.django_secret_key
 
 # ------------------------------------------------------------------------------
 # INTERNATIONALIZATION SETTINGS
@@ -44,12 +40,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "myproject_db"),
-        "USER": os.environ.get("POSTGRES_USER", "postgres_user"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "db_password_789!"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        **dj_database_url.parse(str(env.database_url)),
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
             "pool": {
@@ -201,13 +192,7 @@ EMAIL_TIMEOUT = 5
 # ADMIN CONFIGURATION
 # ------------------------------------------------------------------------------
 ADMIN_URL = "admin/"
-ADMINS = [
-    (
-        env("DJANGO_ADMIN_NAME"),
-        env("DJANGO_ADMIN_EMAIL"),
-    )
-]
-MANAGERS = ADMINS
+
 
 # ------------------------------------------------------------------------------
 # LOGGING CONFIGURATION
@@ -234,7 +219,7 @@ LOGGING = {
 # ------------------------------------------------------------------------------
 # REDIS CONFIGURATION
 # ------------------------------------------------------------------------------
-REDIS_URL = env("REDIS_URL", default="redis://redis:6379/0")
+REDIS_URL = "redis://redis:6379/0"
 REDIS_SSL = REDIS_URL.startswith("rediss://")
 
 # ------------------------------------------------------------------------------

@@ -1,3 +1,3 @@
-import environ
+from config.env_settings import EnvSettings
 
-env = environ.Env()
+env = EnvSettings()

@@ -1,12 +1,11 @@
 # ruff: noqa: F405
 
 from .base import *  # noqa
-from .base import env
 
 # ------------------------------------------------------------------------------
 # CORE TEST SETTINGS
 # ------------------------------------------------------------------------------
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="test-secret-key")
+SECRET_KEY = env.django_secret_key
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
 # ------------------------------------------------------------------------------

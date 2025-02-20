@@ -13,8 +13,8 @@ sentry_logging = LoggingIntegration(
 )
 
 sentry_sdk.init(
-    dsn=env("SENTRY_DSN"),
+    dsn=env.sentry_sdk_dsn,
     integrations=[sentry_logging, DjangoIntegration(), RedisIntegration()],
-    environment=env("ENVIRONMENT"),
+    environment=env.environment,
     traces_sample_rate=0.0,
 )
