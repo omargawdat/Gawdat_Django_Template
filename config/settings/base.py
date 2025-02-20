@@ -10,6 +10,15 @@ from config.helpers.env import env
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
 
+
+# ------------------------------------------------------------------------------
+# CORE SETTINGS
+# ------------------------------------------------------------------------------
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+DOMAIN_NAME = env("DOMAIN_NAME")
+
+
 # ------------------------------------------------------------------------------
 # INTERNATIONALIZATION SETTINGS
 # ------------------------------------------------------------------------------
@@ -193,6 +202,7 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
+# todo: is that needed when using docker and app runner or local?
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

@@ -125,26 +125,27 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+.ipython/
 
-## Security and Credentials
-#firebase_cred.json
-#*.pem
-#*.key
-#*.crt
-#
-## Django
-#staticfiles/
-#
-# Documentation
-#docs/_build/
-#/site
+# Security and Credentials
+firebase_cred.json
+*.pem
+*.key
+*.crt
 
-## Other
-#assets/media/
-#dump.rdb
-#.devcontainer/bash_history
+# Django
+staticfiles/
 
-## Environments
-#.env
-#.envs/*
-#!.envs/.example/
+ Documentation
+docs/_build/
+/site
+
+# Other
+assets/media/
+dump.rdb
+.devcontainer/bash_history
+
+# Environments
+.env
+.envs/*
+!.envs/.example/

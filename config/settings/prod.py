@@ -3,13 +3,6 @@
 from .base import *  # noqa
 
 # ------------------------------------------------------------------------------
-# CORE PRODUCTION SETTINGS
-# ------------------------------------------------------------------------------
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
-DOMAIN_NAME = env("DOMAIN_NAME")
-
-# ------------------------------------------------------------------------------
 # CACHE CONFIGURATION
 # ------------------------------------------------------------------------------
 CACHES = {
@@ -18,7 +11,7 @@ CACHES = {
         "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "IGNORE_EXCEPTIONS": True,  # Mimic memcache ignoring connection errors
+            "IGNORE_EXCEPTIONS": True,
         },
     },
 }
@@ -36,15 +29,12 @@ SESSION_COOKIE_NAME = "__Secure-sessionid"
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = "__Secure-csrftoken"
 
+
 # HSTS Settings
-SECURE_HSTS_SECONDS = 60  # eventually increase to 518400 once confirmed stable
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
-)
-SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
-SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
-    "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True
-)
+SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # ------------------------------------------------------------------------------
 # AWS S3 STORAGE CONFIGURATION
@@ -52,8 +42,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 INSTALLED_APPS += ["storages"]  # type: ignore
 
 # AWS Credentials
-AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID", default="")
-AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY", default="")
 AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME", default="")
 
 # AWS S3 Settings
@@ -111,7 +99,7 @@ ANYMAIL = {}
 # ------------------------------------------------------------------------------
 # ADMIN CONFIGURATION
 # ------------------------------------------------------------------------------
-ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
+ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 # ------------------------------------------------------------------------------
 # ADDITIONAL APPS AND SETTINGS
