@@ -4,6 +4,7 @@ Pillow==11.1.0
 argon2-cffi==23.1.0
 pydantic==2.10.6
 pydantic-settings==2.7.1
+boto3==1.36.24
 
 # Redis
 redis==5.2.1
