@@ -38,5 +38,4 @@ class EnvSettings(BaseSettings):
     # Environment
     domain_name: str
     environment: Literal["local", "development", "staging", "production"]
-    allowed_hosts: list[str] = Field(default_factory=list)
     sentry_sdk_dsn: str
