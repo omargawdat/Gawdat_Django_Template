@@ -1,10 +1,4 @@
 name: CI
-
-# Enable Buildkit and let compose use it to speed up image building
-env:
-  DOCKER_BUILDKIT: 1
-  COMPOSE_DOCKER_CLI_BUILD: 1
-  CI: true
 on:
   pull_request:
     branches: [ 'master', 'main' ]
@@ -38,10 +32,13 @@ jobs:
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
-  # With no caching at all the entire ci process takes 3m to complete!
   pytest:
     runs-on: ubuntu-latest
-
+    env:
+      AWS_SECRETS_REGION: ${{ secrets.AWS_SECRETS_REGION }}
+      AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4

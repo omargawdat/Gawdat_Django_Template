@@ -12,13 +12,22 @@ services:
       - postgres
     volumes:
       - .:/app:z
-    env_file:
-      - .env.local
     ports:
       - '8000:8000'
     command: /start
     environment:
+      # Embedded environment variables for Django
       ENVIRONMENT: 'local'
+      POSTGRES_HOST: 'postgres'
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: 'mydatabase'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres_password' # pragma: allowlist secret
+      AWS_SECRETS_REGION: 'eu-central-1' # pragma: allowlist secret
+      AWS_SECRET_ID: 'dev/weem'
+      AWS_ACCESS_KEY_ID: ''
+      AWS_SECRET_ACCESS_KEY: ''
+
 
   postgres:
     build:
@@ -28,7 +37,9 @@ services:
     volumes:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
       - temp_project_local_postgres_data_backups:/backups
-    env_file:
-      - .env.local
     ports:
       - '5432:5432'
+    environment:
+      POSTGRES_DB: 'mydatabase'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres_password' # pragma: allowlist secret

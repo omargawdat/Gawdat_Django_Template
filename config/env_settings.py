@@ -4,9 +4,14 @@ from typing import Literal
 from pydantic import Field
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
 
 
 class EnvSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
+    )
+
     django_secret_key: SecretStr = Field(..., min_length=20)
     django_superuser_username: str
     django_superuser_password: SecretStr

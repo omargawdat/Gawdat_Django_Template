@@ -16,9 +16,14 @@ def load_aws_secrets():
     client = boto3.Session().client("secretsmanager", region_name=region)
     response = client.get_secret_value(SecretId=secret_id)
     secrets_dict = json.loads(response["SecretString"])
+    print("Loaded AWS Secrets into environment variables", secrets_dict)
     for key, value in secrets_dict.items():
         os.environ[key.lower()] = str(value)
 
 
-load_aws_secrets()
+try:
+    load_aws_secrets()
+except Exception:  # noqa: BLE001
+    print("Could not load AWS Secrets into environment variables")
+
 env = EnvSettings()
