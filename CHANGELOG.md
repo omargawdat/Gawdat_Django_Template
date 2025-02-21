@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.0 (2025-02-21)
+
+### Features
+
+- Add local .env
+  ([`a3e772d`](https://github.com/omargawdat/Gawdat_Django_Template/commit/a3e772d290bb39e7fa6f76a1237595218d2a4be1))
+
+### Refactoring
+
+- Remove allowed hosts
+  ([`dd20602`](https://github.com/omargawdat/Gawdat_Django_Template/commit/dd2060295b51ffaf6fc1828c9330e0aea9542524))
+
+
 ## v0.9.0 (2025-02-20)
 
 ### Bug Fixes
