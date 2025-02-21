@@ -13,7 +13,7 @@ services:
     volumes:
       - .:/app:z
     env_file:
-        - .env
+      - .env.local
     ports:
       - '8000:8000'
     command: /start
@@ -29,6 +29,6 @@ services:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
       - temp_project_local_postgres_data_backups:/backups
     env_file:
-      - .env
+      - .env.local
     ports:
       - '5432:5432'

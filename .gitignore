@@ -146,6 +146,7 @@ dump.rdb
 .devcontainer/bash_history
 
 # Environments
-.env
+#.env.local
 .envs/*
 !.envs/.example/
+my_awesome_project
