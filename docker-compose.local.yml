@@ -23,10 +23,10 @@ services:
       POSTGRES_DB: 'mydatabase'
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres_password' # pragma: allowlist secret
-      AWS_SECRETS_REGION: 'eu-central-1' # pragma: allowlist secret
-      AWS_SECRET_ID: 'dev/weem'
-      AWS_ACCESS_KEY_ID: ''
-      AWS_SECRET_ACCESS_KEY: ''
+      AWS_SECRETS_REGION: ${AWS_SECRETS_REGION}
+      AWS_SECRET_ID: ${AWS_SECRET_ID}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
 
 
   postgres:
