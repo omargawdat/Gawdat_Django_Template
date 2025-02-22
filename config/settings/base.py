@@ -17,7 +17,7 @@ ASSETS_DIR = BASE_DIR / "assets"
 # ------------------------------------------------------------------------------
 # CORE SETTINGS
 # ------------------------------------------------------------------------------
-SECRET_KEY = env.django_secret_key
+SECRET_KEY = env.django_secret_key.get_secret_value()
 
 # ------------------------------------------------------------------------------
 # INTERNATIONALIZATION SETTINGS

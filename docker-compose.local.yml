@@ -6,7 +6,7 @@ services:
   django:
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: ./compose/prod/django/Dockerfile
     container_name: django
     depends_on:
       - postgres
@@ -17,7 +17,7 @@ services:
     command: /start
     environment:
       # Embedded environment variables for Django
-      ENVIRONMENT: 'local'
+      ENVIRONMENT: 'production'
       POSTGRES_HOST: 'postgres'
       POSTGRES_PORT: '5432'
       POSTGRES_DB: 'mydatabase'

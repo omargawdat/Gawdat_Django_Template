@@ -59,7 +59,7 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "REUSE_REFRESH_TOKENS": False,
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": env.django_secret_key,
+    "SIGNING_KEY": env.django_secret_key.get_secret_value(),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",

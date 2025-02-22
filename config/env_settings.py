@@ -12,7 +12,7 @@ class EnvSettings(BaseSettings):
         env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
-    django_secret_key: SecretStr = Field(..., min_length=20)
+    django_secret_key: SecretStr
     django_superuser_username: str
     django_superuser_password: SecretStr
     django_admin_name: str
