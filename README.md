@@ -20,6 +20,7 @@ for local environments use local_ prefix for the .envs.
   ```
 
 
+
 ## 2. Git Repository Setup
 
 1. **Uncomment the `.gitignore`, `ci.yml`, `dependabot`  Files**
