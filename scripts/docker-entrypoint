@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# Fetch secrets from AWS Secrets Manager if not running locally
+if [ "$IS_LOCAL" = "false" ]; then
+    eval "$(python /app/scripts/fetch_secrets.py)"
+fi
+
+if [ "$IS_LOCAL" = "true" ]; then
+    export DJANGO_SETTINGS_MODULE="config.settings.local"
+else
+    export DJANGO_SETTINGS_MODULE="config.settings.prod"
+fi
+
+# Wait for PostgreSQL to be available
+wait-for-it "${POSTGRES_HOST}:${POSTGRES_PORT}" -t 30
+>&2 echo 'PostgreSQL is available'
+
+# Run Django migrations
+python manage.py migrate
+
+# Start the appropriate server based on environment
+if [ "$IS_LOCAL" = "true" ]; then
+    exec python manage.py runserver_plus 0.0.0.0:8000
+else
+    # python /app/manage.py collectstatic --noinput
+    exec /usr/local/bin/gunicorn config.wsgi \
+        --bind 0.0.0.0:5000 \
+        --chdir=/app \
+        --workers 3 \
+        --threads 2 \
+        --worker-class gevent \
+        --worker-connections 1000 \
+        --max-requests 1000 \
+        --max-requests-jitter 50 \
+        --timeout 60 \
+        --keep-alive 5
+fi

@@ -1,0 +1,10 @@
+-r base.txt
+
+gunicorn==23.0.0
+Collectfasta==3.2.1
+sentry-sdk[django]==2.22.0
+
+# Django
+# ------------------------------------------------------------------------------
+django-storages[s3]==1.14.5
+gevent==24.11.1

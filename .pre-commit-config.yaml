@@ -1,0 +1,96 @@
+exclude: '^docs/|/migrations/|^devcontainer.json$|.*\.tmp$'
+default_stages: [pre-commit]
+
+default_language_version:
+  python: python3.12
+
+repos:
+  # General hooks from pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+#      - id: no-commit-to-branch
+#        args: [--branch, 'main']
+
+  - repo: https://github.com/python-openapi/openapi-spec-validator
+    rev: 0.7.1
+    hooks:
+      - id: openapi-spec-validator  # OpenAPI Spec Validation
+
+  # Django-specific tools
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: '1.22.2'
+    hooks:
+      - id: django-upgrade
+        args: ['--target-version', '5.1']
+
+  # Django-specific tools
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.36.3
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django  # Django template linting
+
+  # Commit message validation
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.1.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # Python linting and formatting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.2
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format  # Ruff for formatting
+
+  # Security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        args: [
+          '-s', 'B101,B602,B404,B603,B607',  # Skip multiple checks
+          '-ll',  # Only report high and medium severity issues
+        ]
+
+  # Static type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+
+  # Secret detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+    -   id: shellcheck
+
+  # Local hooks
+  - repo: local
+    hooks:
+      - id: auto-update-hooks
+        name: Auto-update pre-commit hooks
+        entry: pre-commit autoupdate
+        language: system
+        stages: [manual]
+
+
+ci:
+  autoupdate_schedule: weekly
+  fail_fast: true
+  skip: []
+  submodules: false
