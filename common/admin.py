@@ -8,7 +8,6 @@ from django.utils.timezone import timedelta
 from unfold.components import BaseComponent
 from unfold.components import register_component
 
-
 # Constants
 MIN_COLOR_VALUE = 2
 MAX_COLOR_VALUE = 6

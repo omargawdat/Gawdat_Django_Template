@@ -8,6 +8,12 @@ UNFOLD = {
     "LOGIN": {
         "image": lambda request: static("images/login.png"),
     },
+    "STYLES": [
+        lambda request: static("css/style.css"),
+    ],
+    "SCRIPTS": [
+        lambda request: static("js/script.js"),
+    ],
     "SITE_SYMBOL": "anchor",
     "SITE_ICON": {
         "light": lambda request: static("images/identity.png"),

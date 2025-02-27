@@ -147,7 +147,4 @@ dump.rdb
 docker-compose.prod.yml
 
 # Environments
-#.env.local
-.envs/*
-!.envs/.example/
 .env
