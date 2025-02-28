@@ -1,3 +1,6 @@
+for local commands use `docker-compose exec django python manage.py`
+for running the docker compose `docker-compose up --build -d`
+
 ## NOTES
 for local environments use local_ prefix for the .envs.
 

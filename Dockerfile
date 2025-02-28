@@ -37,6 +37,7 @@ FROM docker.io/python:3.12.7-slim-bookworm AS python-run-stage
 ARG is_local
 ENV IS_LOCAL=$is_local
 
+
 # Set common environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
@@ -51,6 +52,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libpq-dev \
     gettext \
     wait-for-it \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
