@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 
 # Fetch secrets from AWS Secrets Manager if not running locally
-if [ "$IS_LOCAL" = "false" ]; then
+if [ "$IS_LOCAL" != "true" ]; then
     eval "$(python /app/scripts/fetch_secrets.py)"
 fi
 
@@ -15,7 +15,8 @@ else
     export DJANGO_SETTINGS_MODULE="config.settings.prod"
 fi
 
-# Wait for PostgreSQL to be available
+# Wait for PostgreSQL to be a
+# vailable
 wait-for-it "${POSTGRES_HOST}:${POSTGRES_PORT}" -t 30
 >&2 echo 'PostgreSQL is available'
 
