@@ -131,16 +131,13 @@ jobs:
         run: |
           ECR_REPO="${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}"
           COMMIT_TAG="${ECR_REPO}:${{ github.sha }}"
-          PR_TAG="${ECR_REPO}:pr-${{ github.event.number }}"
 
           docker tag app:latest $COMMIT_TAG
-          docker tag app:latest $PR_TAG
           docker push $COMMIT_TAG
-          docker push $PR_TAG
 
           # Save image URI for use in deployment
-          echo "image_uri=${PR_TAG}" >> $GITHUB_OUTPUT
-          echo "Image successfully pushed to ECR with tags: ${{ github.sha }} and pr-${{ github.event.number }}"
+          echo "image_uri=${COMMIT_TAG}" >> $GITHUB_OUTPUT
+          echo "Image successfully pushed to ECR with tag: ${{ github.sha }}"
 
   deploy_to_app_runner:
     needs: build_test
@@ -166,7 +163,7 @@ jobs:
         uses: awslabs/amazon-app-runner-deploy@main
         with:
           service: pr-${{ github.event.number }}-preview
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
           access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
           region: ${{ secrets.AWS_REGION_NAME }}
           cpu: 1
