@@ -16,11 +16,11 @@ services:
     ports:
       - '8000:8000'
     environment:
-      POSTGRES_HOST: 'postgres'
-      POSTGRES_PORT: '5432'
-      POSTGRES_DB: 'mydatabase'
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres' # pragma: allowlist secret
+      DB_HOST: 'postgres'
+      DB_PORT: '5432'
+      DB_DB: 'mydatabase'
+      DB_USER: 'postgres'
+      DB_PASSWORD: 'postgres' # pragma: allowlist secret
 
   postgres:
     image: postgres:17-alpine

@@ -21,15 +21,15 @@ class EnvSettings(BaseSettings):
     django_jwt_refresh_token_lifetime_minutes: Annotated[int, Field(gt=0)]
 
     # Database Configuration
-    postgres_host: str
-    postgres_port: Annotated[int, Field(ge=1, le=65535)] = 5432
-    postgres_db: str
-    postgres_user: str
-    postgres_password: SecretStr
+    db_host: str
+    db_port: Annotated[int, Field(ge=1, le=65535)] = 5432
+    db_user: str
+    db_password: SecretStr
+    db_name: str
 
     @property
     def database_url(self) -> str:
-        return f"postgresql://{self.postgres_user}:{self.postgres_password.get_secret_value()}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        return f"postgresql://{self.db_user}:{self.db_password.get_secret_value()}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     # AWS Settings
     aws_storage_bucket_name: str

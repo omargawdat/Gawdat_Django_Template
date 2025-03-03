@@ -144,7 +144,7 @@ docs/_build/
 assets/media/
 dump.rdb
 .devcontainer/bash_history
-docker-compose.prod.yml
+temp.txt
 
 # Environments
 .env

@@ -15,9 +15,9 @@ else
     export DJANGO_SETTINGS_MODULE="config.settings.prod"
 fi
 
-# Wait for PostgreSQL to be a
-# vailable
-wait-for-it "${POSTGRES_HOST}:${POSTGRES_PORT}" -t 30
+
+# Wait for PostgreSQL
+wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
 >&2 echo 'PostgreSQL is available'
 
 # Run Django migrations
