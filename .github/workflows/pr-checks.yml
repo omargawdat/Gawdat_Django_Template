@@ -30,24 +30,11 @@ jobs:
             exit 1
           fi
 
-  linter:
+  build_test:
     needs: check_branch
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Run pre-commit
-        uses: pre-commit/action@v3.0.1
-
-  test:
-    needs: check_branch
-    runs-on: ubuntu-latest
+    outputs:
+      image_uri: ${{ steps.tag_push.outputs.image_uri }}
     env:
       PR_NUMBER: ${{ github.event.number }}
       DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
@@ -60,16 +47,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Run linting checks
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
+      # Build and test
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
 
       - name: Build Docker Image
         uses: docker/build-push-action@v6
@@ -97,6 +86,7 @@ jobs:
           echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
 
       - name: Run Tests Pipeline
+        id: run_tests
         run: |
           docker run --rm \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
@@ -121,6 +111,7 @@ jobs:
               pytest && \
               echo '✓ All tests completed successfully'"
 
+      # Configure AWS only once
       - name: Configure AWS credentials
         if: success()
         uses: aws-actions/configure-aws-credentials@v4
@@ -136,9 +127,114 @@ jobs:
 
       - name: Tag and Push to ECR
         if: success()
+        id: tag_push
         run: |
-          docker tag app:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
-          docker tag app:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
+          ECR_REPO="${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}"
+          COMMIT_TAG="${ECR_REPO}:${{ github.sha }}"
+          PR_TAG="${ECR_REPO}:pr-${{ github.event.number }}"
+
+          docker tag app:latest $COMMIT_TAG
+          docker tag app:latest $PR_TAG
+          docker push $COMMIT_TAG
+          docker push $PR_TAG
+
+          # Save image URI for use in deployment
+          echo "image_uri=${PR_TAG}" >> $GITHUB_OUTPUT
           echo "Image successfully pushed to ECR with tags: ${{ github.sha }} and pr-${{ github.event.number }}"
+
+  deploy_to_app_runner:
+    needs: build_test
+    runs-on: ubuntu-latest
+    environment: pr-preview
+    timeout-minutes: 15
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Set environment variables for App Runner
+        run: |
+          echo "DOMAIN_NAME=pr-${{ github.event.number }}.gawdat.eramapps.com" >> $GITHUB_ENV
+          echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
+          echo "IS_LOCAL=false" >> $GITHUB_ENV
+
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: pr-${{ github.event.number }}-preview
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
+          access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
+          region: ${{ secrets.AWS_REGION_NAME }}
+          cpu: 1
+          memory: 2
+          port: 8000
+          wait-for-service-stability: true
+          copy-env-vars: |
+            DOMAIN_NAME
+            DB_NAME
+            IS_LOCAL
+          tags: |
+            Environment=PR-Preview
+            PR=${{ github.event.number }}
+            ManagedBy=GitHub-Actions
+
+      # Add comment to PR with deployment URL
+      - name: Comment on PR with Preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const appRunnerUrl = process.env.APP_RUNNER_SERVICE_URL;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **PR Preview deployed successfully!**\n\n📱 Preview URL: https://${appRunnerUrl}\n\nThis preview environment will remain active until this PR is closed or merged.`
+            })
+        env:
+          APP_RUNNER_SERVICE_URL: ${{ steps.deploy-apprunner.outputs.service-url }}
+
+cleanup_on_pr_close:
+  if: github.event_name == 'pull_request' && github.event.action == 'closed'
+  runs-on: ubuntu-latest
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+    - name: Delete App Runner service
+      run: |
+        # Find the service ARN by name
+        SERVICE_NAME="pr-${{ github.event.number }}-preview"
+        SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='${SERVICE_NAME}'].ServiceArn" --output text)
+
+        if [ -n "$SERVICE_ARN" ]; then
+          echo "Deleting App Runner service: ${SERVICE_NAME}"
+          aws apprunner delete-service --service-arn $SERVICE_ARN
+
+          # Wait for service deletion (optional)
+          echo "Waiting for service deletion to complete..."
+          aws apprunner wait service-deleted --service-arn $SERVICE_ARN
+          echo "Service deleted successfully"
+        else
+          echo "Service ${SERVICE_NAME} not found or already deleted"
+        fi
+
+    - name: Clean up database
+      run: |
+        # Install PostgreSQL client
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+
+        # Drop the PR database
+        PR_NUMBER="${{ github.event.number }}"
+        DB_NAME="pr_${PR_NUMBER}_appdb"
+        PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
+
+        echo "Database ${DB_NAME} dropped successfully"
