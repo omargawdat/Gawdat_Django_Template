@@ -139,58 +139,43 @@ jobs:
           echo "image_uri=${COMMIT_TAG}" >> $GITHUB_OUTPUT
           echo "Image successfully pushed to ECR with tag: ${{ github.sha }}"
 
-  deploy_to_app_runner:
-    needs: build_test
-    runs-on: ubuntu-latest
-    environment: pr-preview
-    timeout-minutes: 15
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION_NAME }}
+    deploy_to_app_runner:
+      needs: build_test
+      runs-on: ubuntu-latest
+      environment: pr-preview
+      timeout-minutes: 15
+      steps:
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-      - name: Set environment variables for App Runner
-        run: |
-          echo "DOMAIN_NAME=pr-${{ github.event.number }}.gawdat.eramapps.com" >> $GITHUB_ENV
-          echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
-          echo "IS_LOCAL=false" >> $GITHUB_ENV
+        - name: Set environment variables for App Runner
+          run: |
+            echo "DOMAIN_NAME=pr-${{ github.event.number }}.gawdat.eramapps.com" >> $GITHUB_ENV
+            echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
+            echo "IS_LOCAL=false" >> $GITHUB_ENV
 
-      - name: Deploy to App Runner
-        id: deploy-apprunner
-        uses: awslabs/amazon-app-runner-deploy@main
-        with:
-          service: pr-${{ github.event.number }}-preview
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
-          access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
-          region: ${{ secrets.AWS_REGION_NAME }}
-          cpu: 1
-          memory: 2
-          port: 8000
-          wait-for-service-stability-seconds: 600
-          copy-env-vars: |
-            DOMAIN_NAME
-            DB_NAME
-            IS_LOCAL
-          tags: '{"Environment":"PR-Preview","PR":"${{ github.event.number }}","ManagedBy":"GitHub-Actions"}'
+        - name: Deploy to App Runner
+          id: deploy-apprunner
+          uses: awslabs/amazon-app-runner-deploy@main
+          with:
+            service: pr-${{ github.event.number }}-preview
+            image: ${{ needs.build_test.outputs.image_uri }}
+            access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
+            region: ${{ secrets.AWS_REGION_NAME }}
+            cpu: 1
+            memory: 2
+            port: 8000
+            wait-for-service-stability-seconds: 600
+            copy-env-vars: |
+              DOMAIN_NAME
+              DB_NAME
+              IS_LOCAL
+            tags: '{"Environment":"PR-Preview","PR":"${{ github.event.number }}","ManagedBy":"GitHub-Actions"}'
 
-
-      # Add comment to PR with deployment URL
-      - name: Comment on PR with Preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const appRunnerUrl = process.env.APP_RUNNER_SERVICE_URL;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `✅ **PR Preview deployed successfully!**\n\n📱 Preview URL: https://${appRunnerUrl}\n\nThis preview environment will remain active until this PR is closed or merged.`
-            })
-        env:
-          APP_RUNNER_SERVICE_URL: ${{ steps.deploy-apprunner.outputs.service-url }}
 
   cleanup_on_pr_close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
