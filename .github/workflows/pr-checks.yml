@@ -122,13 +122,26 @@ jobs:
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main
         with:
-          service: pr-${{ github.event.number }}-service
+          service:  app-runner-git-deploy-service
           image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
           access-role-arn: ${{ secrets.ROLE_ARN }}
           region: ${{ secrets.AWS_REGION_NAME }}
           cpu: 1
           memory: 2
           wait-for-service-stability-seconds: 1200
+          copy-env-vars: |
+            PR_NUMBER
+            DOMAIN_NAME
+            S3_BUCKET_NAME
+            DB_NAME
+            IS_LOCAL
+            DB_HOST
+            DB_PORT
+            DB_USER
+          copy-secret-env-vars: |
+            DB_PASSWORD
+            AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY
 
       - name: App Runner URL
         run: echo "App runner URL ${{ steps.deploy-apprunner.outputs.service-url }}"
