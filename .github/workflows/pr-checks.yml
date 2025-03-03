@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build -t app .
+        run: docker build --build-arg is_local=false -t app .
 
       - name: Run Tests Pipeline
         run: |
