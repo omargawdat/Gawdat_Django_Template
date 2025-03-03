@@ -3,28 +3,50 @@ on:
   pull_request:
     branches: [ 'master', 'main' ]
     paths-ignore: [ 'docs/**' ]
-  workflow_dispatch:  # <-- Allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
+  check_branch:
+    runs-on: ubuntu-latest
+    outputs:
+      branch_up_to_date: ${{ steps.branch_check.outcome }}
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure branch is up-to-date
+        id: branch_check
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD; then
+            echo "Branch is up-to-date."
+          else
+            echo "Branch is not up-to-date with '${{ github.base_ref }}'. Please update your branch."
+            exit 1
+          fi
+
   linter:
+    needs: check_branch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
   test:
+    needs: check_branch
     runs-on: ubuntu-latest
     env:
       PR_NUMBER: ${{ github.event.number }}
@@ -32,13 +54,38 @@ jobs:
       S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
       DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
-
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Build Docker Image
-        run: docker build --build-arg is_local=false -t app .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: app:latest
+          build-args: |
+            is_local=false
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Run Tests Pipeline
         run: |
@@ -48,7 +95,7 @@ jobs:
             -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
             -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
             -e DOMAIN_NAME=${DOMAIN_NAME} \
-            -e S3_BUCKET_NAME=${S3_BUCKET_NAME} \
+            -e S3_BUCKET_NAME=${S3_BUCKET_NAME}} \
             -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_NAME=${DB_NAME} \
