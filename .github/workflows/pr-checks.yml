@@ -174,10 +174,8 @@ jobs:
             DOMAIN_NAME
             DB_NAME
             IS_LOCAL
-          tags: |
-            Environment=PR-Preview
-            PR=${{ github.event.number }}
-            ManagedBy=GitHub-Actions
+          tags: '{"Environment":"PR-Preview","PR":"${{ github.event.number }}","ManagedBy":"GitHub-Actions"}'
+
 
       # Add comment to PR with deployment URL
       - name: Comment on PR with Preview URL
