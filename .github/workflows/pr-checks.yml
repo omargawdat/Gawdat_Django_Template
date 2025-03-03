@@ -157,25 +157,23 @@ jobs:
           echo "DOMAIN_NAME=pr-${{ github.event.number }}.gawdat.eramapps.com" >> $GITHUB_ENV
           echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
           echo "IS_LOCAL=false" >> $GITHUB_ENV
-
-      - name: Deploy to App Runner Image
-        id: deploy-apprunner
+      - name: Deploy to App Runner
         uses: awslabs/amazon-app-runner-deploy@main
         with:
-          service: app-runner-git-deploy-service
+          service: my-app-service
           image: ${{ needs.build_test.outputs.image_uri }}
-          access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
+          access-role-arn: ${{ secrets.ROLE_ARN }}
           region: ${{ secrets.AWS_REGION_NAME }}
           cpu: 1
           memory: 2
           port: 8000
-          wait-for-service-stability-seconds: 600
           copy-env-vars: |
+            AWS_REGION_NAME
             DOMAIN_NAME
-            DB_NAME
-            IS_LOCAL
-          tags: '{"Environment":"PR-Preview","PR":"${{ github.event.number }}","ManagedBy":"GitHub-Actions"}'
-
+          copy-secret-env-vars: |
+            AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY
+          wait-for-service-stability-seconds: 600
 
   cleanup_on_pr_close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
