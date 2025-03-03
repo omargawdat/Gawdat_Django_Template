@@ -169,7 +169,7 @@ jobs:
           cpu: 1
           memory: 2
           port: 8000
-          wait-for-service-stability: true
+          wait-for-service-stability-seconds: 600
           copy-env-vars: |
             DOMAIN_NAME
             DB_NAME
