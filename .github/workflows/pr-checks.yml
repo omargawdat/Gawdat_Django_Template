@@ -158,11 +158,11 @@ jobs:
           echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
           echo "IS_LOCAL=false" >> $GITHUB_ENV
 
-      - name: Deploy to App Runner
+      - name: Deploy to App Runner Image
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main
         with:
-          service: pr-${{ github.event.number }}-preview
+          service: app-runner-git-deploy-service
           image: ${{ needs.build_test.outputs.image_uri }}
           access-role-arn: ${{ secrets.APP_RUNNER_ACCESS_ROLE_ARN }}
           region: ${{ secrets.AWS_REGION_NAME }}
