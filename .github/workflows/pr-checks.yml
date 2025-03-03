@@ -197,44 +197,44 @@ jobs:
         env:
           APP_RUNNER_SERVICE_URL: ${{ steps.deploy-apprunner.outputs.service-url }}
 
-cleanup_on_pr_close:
-  if: github.event_name == 'pull_request' && github.event.action == 'closed'
-  runs-on: ubuntu-latest
-  steps:
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION_NAME }}
+  cleanup_on_pr_close:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-    - name: Delete App Runner service
-      run: |
-        # Find the service ARN by name
-        SERVICE_NAME="pr-${{ github.event.number }}-preview"
-        SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='${SERVICE_NAME}'].ServiceArn" --output text)
+      - name: Delete App Runner service
+        run: |
+          # Find the service ARN by name
+          SERVICE_NAME="pr-${{ github.event.number }}-preview"
+          SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='${SERVICE_NAME}'].ServiceArn" --output text)
 
-        if [ -n "$SERVICE_ARN" ]; then
-          echo "Deleting App Runner service: ${SERVICE_NAME}"
-          aws apprunner delete-service --service-arn $SERVICE_ARN
+          if [ -n "$SERVICE_ARN" ]; then
+            echo "Deleting App Runner service: ${SERVICE_NAME}"
+            aws apprunner delete-service --service-arn $SERVICE_ARN
 
-          # Wait for service deletion (optional)
-          echo "Waiting for service deletion to complete..."
-          aws apprunner wait service-deleted --service-arn $SERVICE_ARN
-          echo "Service deleted successfully"
-        else
-          echo "Service ${SERVICE_NAME} not found or already deleted"
-        fi
+            # Wait for service deletion (optional)
+            echo "Waiting for service deletion to complete..."
+            aws apprunner wait service-deleted --service-arn $SERVICE_ARN
+            echo "Service deleted successfully"
+          else
+            echo "Service ${SERVICE_NAME} not found or already deleted"
+          fi
 
-    - name: Clean up database
-      run: |
-        # Install PostgreSQL client
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client
+      - name: Clean up database
+        run: |
+          # Install PostgreSQL client
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
 
-        # Drop the PR database
-        PR_NUMBER="${{ github.event.number }}"
-        DB_NAME="pr_${PR_NUMBER}_appdb"
-        PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
+          # Drop the PR database
+          PR_NUMBER="${{ github.event.number }}"
+          DB_NAME="pr_${PR_NUMBER}_appdb"
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
 
-        echo "Database ${DB_NAME} dropped successfully"
+          echo "Database ${DB_NAME} dropped successfully"
