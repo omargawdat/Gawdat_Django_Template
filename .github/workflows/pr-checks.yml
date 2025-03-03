@@ -144,6 +144,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: pr-preview
     timeout-minutes: 15
+    env:
+      PR_NUMBER: ${{ github.event.number }}
+      DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
+      S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
+      DB_NAME: pr_${{ github.event.number }}_appdb
+      IS_LOCAL: "false"
+      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_USER: ${{ secrets.DB_USER }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -152,15 +162,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-      - name: Set environment variables for App Runner
-        run: |
-          echo "DOMAIN_NAME=pr-${{ github.event.number }}.gawdat.eramapps.com" >> $GITHUB_ENV
-          echo "DB_NAME=pr_${{ github.event.number }}_appdb" >> $GITHUB_ENV
-          echo "IS_LOCAL=false" >> $GITHUB_ENV
       - name: Deploy to App Runner
         uses: awslabs/amazon-app-runner-deploy@main
         with:
-          service: my-app-service
+          service: pr-${{ env.PR_NUMBER }}-service
           image: ${{ needs.build_test.outputs.image_uri }}
           access-role-arn: ${{ secrets.ROLE_ARN }}
           region: ${{ secrets.AWS_REGION_NAME }}
@@ -170,9 +175,16 @@ jobs:
           copy-env-vars: |
             AWS_REGION_NAME
             DOMAIN_NAME
+            S3_BUCKET_NAME
+            DB_HOST
+            DB_PORT
+            DB_NAME
+            DB_USER
+            IS_LOCAL
           copy-secret-env-vars: |
             AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY
+            DB_PASSWORD
           wait-for-service-stability-seconds: 600
 
   cleanup_on_pr_close:
