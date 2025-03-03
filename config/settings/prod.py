@@ -49,7 +49,7 @@ INSTALLED_APPS += ["storages"]  # type: ignore
 
 
 # AWS S3 Settings
-AWS_STORAGE_BUCKET_NAME = env.aws_storage_bucket_name
+AWS_STORAGE_BUCKET_NAME = env.s3_bucket_name
 AWS_S3_REGION_NAME = env.aws_region_name
 AWS_QUERYSTRING_AUTH = False
 _AWS_EXPIRY = 60 * 60 * 24 * 7

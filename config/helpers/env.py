@@ -32,7 +32,7 @@ class EnvSettings(BaseSettings):
         return f"postgresql://{self.db_user}:{self.db_password.get_secret_value()}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     # AWS Settings
-    aws_storage_bucket_name: str
+    s3_bucket_name: str
     aws_region_name: str
 
     # External Services
