@@ -102,6 +102,7 @@ jobs:
             -e DB_USER=${{ secrets.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e IS_LOCAL=${IS_LOCAL} \
+            -e TEST_MODE=true \
             app /bin/bash -c "set -e && \
               echo '→ Checking migrations...' && \
               python manage.py makemigrations --check && \
