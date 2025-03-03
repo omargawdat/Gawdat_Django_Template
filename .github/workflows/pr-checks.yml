@@ -1,4 +1,5 @@
 name: PR Build Check
+
 on:
   pull_request:
     branches: [ 'master', 'main' ]
@@ -12,15 +13,12 @@ concurrency:
 jobs:
   check_branch:
     runs-on: ubuntu-latest
-    outputs:
-      branch_up_to_date: ${{ steps.branch_check.outcome }}
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Ensure branch is up-to-date
-        id: branch_check
         run: |
           git fetch origin ${{ github.base_ref }}
           if git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD; then
@@ -30,109 +28,110 @@ jobs:
             exit 1
           fi
 
-  name: PR Workflow
-  needs: check_branch
-  runs-on: ubuntu-latest
-  env:
-    PR_NUMBER: ${{ github.event.number }}
-    DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
-    S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
-    DB_NAME: pr_${{ github.event.number }}_appdb
-    IS_LOCAL: "false"
-  steps:
-    - name: Checkout Code Repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+  build_and_deploy:
+    needs: check_branch
+    runs-on: ubuntu-latest
+    env:
+      PR_NUMBER: ${{ github.event.number }}
+      DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
+      S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
+      DB_NAME: pr_${{ github.event.number }}_appdb
+      IS_LOCAL: "false"
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Run pre-commit
-      uses: pre-commit/action@v3.0.1
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build Docker Image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        load: true
-        tags: app:latest
-        build-args: |
-          is_local=false
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: app:latest
+          build-args: |
+            is_local=false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-    - name: Clone database from dev for migration testing
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client
-        PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
-        PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
-        echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
+      - name: Clone database from dev for migration testing
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
+          echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
 
-    - name: Run Tests Pipeline
-      run: |
-        docker run --rm \
-          -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-          -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
-          -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
-          -e DOMAIN_NAME=${DOMAIN_NAME} \
-          -e S3_BUCKET_NAME=${S3_BUCKET_NAME} \
-          -e DB_HOST=${{ secrets.DB_HOST }} \
-          -e DB_PORT=${{ secrets.DB_PORT }} \
-          -e DB_NAME=${DB_NAME} \
-          -e DB_USER=${{ secrets.DB_USER }} \
-          -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-          -e IS_LOCAL=${IS_LOCAL} \
-          -e TEST_MODE=true \
-          app /bin/bash -c "set -e && \
-            echo '→ Checking migrations...' && \
-            python manage.py makemigrations --check && \
-            echo '→ Running migrations...' && \
-            python manage.py migrate && \
-            echo '→ Running tests...' && \
-            pytest && \
-            echo '✓ All tests completed successfully'"
+      - name: Run Tests Pipeline
+        run: |
+          docker run --rm \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
+            -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
+            -e DOMAIN_NAME=${DOMAIN_NAME} \
+            -e S3_BUCKET_NAME=${S3_BUCKET_NAME} \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_NAME=${DB_NAME} \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e IS_LOCAL=${IS_LOCAL} \
+            -e TEST_MODE=true \
+            app /bin/bash -c "set -e && \
+              echo '→ Checking migrations...' && \
+              python manage.py makemigrations --check && \
+              echo '→ Running migrations...' && \
+              python manage.py migrate && \
+              echo '→ Running tests...' && \
+              pytest && \
+              echo '✓ All tests completed successfully'"
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION_NAME }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Tag and Push Image to ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Tag and Push Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Deploy to App Runner
-      id: deploy-apprunner
-      uses: awslabs/amazon-app-runner-deploy@main
-      with:
-        service: pr-${{ github.event.number }}-service
-        image: ${{ steps.login-ecr.outputs.registry }}/myapp:${{ github.sha }}
-        access-role-arn: ${{ secrets.ROLE_ARN }}
-        region: ${{ secrets.AWS_REGION_NAME }}
-        cpu: 1
-        memory: 2
-        wait-for-service-stability-seconds: 1200
-    - name: App Runner URL
-      run: echo "App runner URL ${{ steps.deploy-apprunner.outputs.service-url }}"
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: pr-${{ github.event.number }}-service
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          access-role-arn: ${{ secrets.ROLE_ARN }}
+          region: ${{ secrets.AWS_REGION_NAME }}
+          cpu: 1
+          memory: 2
+          wait-for-service-stability-seconds: 1200
+
+      - name: App Runner URL
+        run: echo "App runner URL ${{ steps.deploy-apprunner.outputs.service-url }}"
 
   cleanup_on_pr_close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -147,15 +146,11 @@ jobs:
 
       - name: Delete App Runner service
         run: |
-          # Find the service ARN by name
-          SERVICE_NAME="pr-${{ github.event.number }}-preview"
+          SERVICE_NAME="pr-${{ github.event.number }}-service"
           SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='${SERVICE_NAME}'].ServiceArn" --output text)
-
           if [ -n "$SERVICE_ARN" ]; then
             echo "Deleting App Runner service: ${SERVICE_NAME}"
             aws apprunner delete-service --service-arn $SERVICE_ARN
-
-            # Wait for service deletion (optional)
             echo "Waiting for service deletion to complete..."
             aws apprunner wait service-deleted --service-arn $SERVICE_ARN
             echo "Service deleted successfully"
@@ -165,13 +160,9 @@ jobs:
 
       - name: Clean up database
         run: |
-          # Install PostgreSQL client
           sudo apt-get update
           sudo apt-get install -y postgresql-client
-
-          # Drop the PR database
           PR_NUMBER="${{ github.event.number }}"
           DB_NAME="pr_${PR_NUMBER}_appdb"
           PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
-
           echo "Database ${DB_NAME} dropped successfully"
