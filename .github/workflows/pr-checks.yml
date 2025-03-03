@@ -79,13 +79,8 @@ jobs:
           tags: app:latest
           build-args: |
             is_local=false
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Check if database exists and create if not
         run: |
@@ -113,7 +108,7 @@ jobs:
             -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
             -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
             -e DOMAIN_NAME=${DOMAIN_NAME} \
-            -e S3_BUCKET_NAME=${S3_BUCKET_NAME}} \
+            -e S3_BUCKET_NAME=${S3_BUCKET_NAME} \
             -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_NAME=${DB_NAME} \
