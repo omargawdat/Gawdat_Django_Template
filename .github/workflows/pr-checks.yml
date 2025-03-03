@@ -82,23 +82,19 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Check if database exists and create if not
+      - name: Clone database from dev for migration testing
         run: |
           # Install PostgreSQL client
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
-          # Check if database exists
-          DB_EXISTS=$(PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'")
+          # Drop the PR database if it exists
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
 
-          # Create database if it doesn't exist
-          if [ -z "$DB_EXISTS" ]; then
-            echo "Database ${DB_NAME} does not exist. Creating..."
-            PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME};"
-            echo "Database ${DB_NAME} created successfully."
-          else
-            echo "Database ${DB_NAME} already exists."
-          fi
+          # Create the PR database as a clone of the dev database
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
+
+          echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
 
       - name: Run Tests Pipeline
         run: |
