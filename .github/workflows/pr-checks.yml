@@ -1,65 +1,65 @@
-name: PR Checks & Ephemeral Deploy
-on: [pull_request]
+name: PR Build Check
+on:
+  pull_request:
+    branches: [ 'master', 'main' ]
+    paths-ignore: [ 'docs/**' ]
+  workflow_dispatch:  # <-- Allows manual trigger from GitHub UI
 
-env:
-  AWS_REGION: us-east-1
-  ECR_URI: 123456789.dkr.ecr.us-east-1.amazonaws.com/myapp
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  unit-tests:
+  linter:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code Repository
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
 
-      - name: Run Django checks
-        run: python manage.py check --deploy --fail-level WARNING
-
-      - name: Run unit tests
-        run: pytest tests/unit/ --cov=.
-
-  deploy-ephemeral:
-    needs: unit-tests
+  test:
     runs-on: ubuntu-latest
+    env:
+      PR_NUMBER: ${{ github.event.number }}
+      DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
+      S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
+      DB_NAME: pr_${{ github.event.number }}_appdb
+      IS_LOCAL: "false"
+
     steps:
-      - name: Checkout code
+      - name: Checkout Code Repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Build Docker Image
+        run: docker build -t app .
 
-      - name: Build and push Docker image
+      - name: Run Tests Pipeline
         run: |
-          docker build -t $ECR_URI:$GITHUB_SHA .
-          aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URI
-          docker push $ECR_URI:$GITHUB_SHA
-
-      - name: Deploy to App Runner (Ephemeral)
-        run: |
-          aws apprunner create-service \
-            --service-name pr-${{ github.event.number }} \
-            --source-configuration '{
-              "ImageRepository": {
-                "ImageIdentifier": "'$ECR_URI:$GITHUB_SHA'",
-                "ImageRepositoryType": "ECR"
-              }
-            }' \
-            --environment-variables '[
-              {"Name": "DB_HOST", "Value": "${{ secrets.EPHEMERAL_DB_HOST }}"},
-              {"Name": "DB_USER", "Value": "${{ secrets.DB_USER }}"},
-              {"Name": "DB_PASSWORD", "Value": "${{ secrets.DB_PASSWORD }}"}
-            ]'
+          docker run --rm \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
+            -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
+            -e DOMAIN_NAME=${DOMAIN_NAME} \
+            -e S3_BUCKET_NAME=${S3_BUCKET_NAME} \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_NAME=${DB_NAME} \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e IS_LOCAL=${IS_LOCAL} \
+            app /bin/bash -c "set -e && \
+              echo '→ Checking migrations...' && \
+              python manage.py makemigrations --check && \
+              echo '→ Running migrations...' && \
+              python manage.py migrate && \
+              echo '→ Running tests...' && \
+              pytest && \
+              echo '✓ All tests completed successfully'"
