@@ -120,3 +120,25 @@ jobs:
               echo '→ Running tests...' && \
               pytest && \
               echo '✓ All tests completed successfully'"
+
+      - name: Configure AWS credentials
+        if: success()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Login to Amazon ECR
+        if: success()
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Tag and Push to ECR
+        if: success()
+        run: |
+          docker tag app:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          docker tag app:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:pr-${{ github.event.number }}
+          echo "Image successfully pushed to ECR with tags: ${{ github.sha }} and pr-${{ github.event.number }}"
