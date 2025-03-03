@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           load: true
@@ -86,6 +86,24 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          
+      - name: Check if database exists and create if not
+        run: |
+          # Install PostgreSQL client
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          
+          # Check if database exists
+          DB_EXISTS=$(PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'")
+          
+          # Create database if it doesn't exist
+          if [ -z "$DB_EXISTS" ]; then
+            echo "Database ${DB_NAME} does not exist. Creating..."
+            PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME};"
+            echo "Database ${DB_NAME} created successfully."
+          else
+            echo "Database ${DB_NAME} already exists."
+          fi
 
       - name: Run Tests Pipeline
         run: |
