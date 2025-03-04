@@ -40,7 +40,6 @@ jobs:
       S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
       DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
-      TEST_MODE: "false"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
@@ -101,7 +100,7 @@ jobs:
             -e DB_USER=${{ secrets.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e IS_LOCAL=${{ env.IS_LOCAL }} \
-            -e TEST_MODE=${{ env.TEST_MODE }} \
+            -e TEST_MODE="true" \
             app \
             /bin/bash -c "
               set -ex
