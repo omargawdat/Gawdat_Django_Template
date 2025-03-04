@@ -132,6 +132,7 @@ jobs:
           region: ${{ secrets.AWS_REGION_NAME }}
           cpu: 1
           memory: 2
+          port: 5000
           wait-for-service-stability-seconds: 1200
           copy-env-vars: |
             PR_NUMBER
