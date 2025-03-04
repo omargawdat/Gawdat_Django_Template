@@ -70,9 +70,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
-          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
-          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
-          echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
+
+          # Only create database if it doesn't exist
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -tc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'" | grep -q 1 || {
+            echo "Creating database ${DB_NAME} from template..."
+            PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
+            echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME}}."
+          }
 
       - name: Execute Test Suite
         run: |
