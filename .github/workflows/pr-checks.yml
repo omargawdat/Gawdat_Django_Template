@@ -140,6 +140,7 @@ jobs:
           DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
           S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
           IS_LOCAL: "false"
+          TEST_MODE: "false"
         with:
           service: pr-${{ github.event.number }}-service
           image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
@@ -163,6 +164,7 @@ jobs:
             DB_PASSWORD
             IS_LOCAL
             PR_NUMBER
+            TEST_MODE
 
       - name: Check App Runner Service Status
         run: |
