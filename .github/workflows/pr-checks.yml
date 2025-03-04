@@ -186,7 +186,7 @@ jobs:
           aws apprunner update-service \
             --service-arn ${{ steps.deploy-apprunner.outputs.service-arn }} \
             --region ${{ secrets.AWS_REGION_NAME }} \
-            --source-configuration "{\"EnvironmentVariables\":{\"DOMAIN_NAME\":\"$APP_RUNNER_DOMAIN\"}}"
+            --service-configuration "{\"EnvironmentVariables\":{\"DOMAIN_NAME\":\"$APP_RUNNER_DOMAIN\"}}"
 
           echo "Domain name set to $APP_RUNNER_DOMAIN"
 
