@@ -177,6 +177,19 @@ jobs:
       - name: App Runner URL
         run: echo "App runner URL ${{ steps.deploy-apprunner.outputs.service-url }}"
 
+      - name: Update Domain Name Environment Variable
+        run: |
+          # Extract the domain from the App Runner service URL
+          APP_RUNNER_DOMAIN=$(echo "${{ steps.deploy-apprunner.outputs.service-url }}" | sed 's/https:\/\///')
+
+          # Update the environment variable in the App Runner service
+          aws apprunner update-service \
+            --service-arn ${{ steps.deploy-apprunner.outputs.service-arn }} \
+            --region ${{ secrets.AWS_REGION_NAME }} \
+            --source-configuration "{\"EnvironmentVariables\":{\"DOMAIN_NAME\":\"$APP_RUNNER_DOMAIN\"}}"
+
+          echo "Domain name set to $APP_RUNNER_DOMAIN"
+
   cleanup_on_pr_close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
