@@ -66,16 +66,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Prepare Test Database
+      - name: Clone database from dev for migration testing
         run: |
-          docker run --rm \
-            -e PGPASSWORD=${{ secrets.DB_PASSWORD }} \
-            postgres:alpine \
-            sh -c "
-              psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} \
-                -c 'DROP DATABASE IF EXISTS ${{ env.DB_NAME }};' \
-                -c 'CREATE DATABASE ${{ env.DB_NAME }} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};'
-            "
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${DB_NAME};"
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
+          echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME }} for migration testing."
 
       - name: Execute Test Suite
         run: |
@@ -188,8 +185,7 @@ jobs:
 
       - name: Drop Test Database
         run: |
-          docker run --rm \
-            -e PGPASSWORD=${{ secrets.DB_PASSWORD }} \
-            postgres:alpine \
-            psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} \
-              -c "DROP DATABASE IF EXISTS ${{ env.DB_NAME }};"
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${{ env.DB_NAME }};"
+          echo "Database ${{ env.DB_NAME }} successfully dropped."
