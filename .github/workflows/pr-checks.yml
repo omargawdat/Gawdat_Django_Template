@@ -40,7 +40,15 @@ jobs:
       S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
       DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
-      TEST_MODE: "true"
+      TEST_MODE: "false"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+      AWS_SECRET_MANAGER_NAME: ${{ secrets.AWS_SECRET_MANAGER_NAME }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -83,6 +91,8 @@ jobs:
           docker run --rm \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
+            -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
             -e DOMAIN_NAME=${{ env.DOMAIN_NAME }} \
             -e S3_BUCKET_NAME=${{ env.S3_BUCKET_NAME }} \
             -e DB_HOST=${{ secrets.DB_HOST }} \
@@ -132,6 +142,10 @@ jobs:
           port: 5000
           wait-for-service-stability-seconds: 1200
           copy-env-vars: |
+            AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY
+            AWS_REGION_NAME
+            AWS_SECRET_MANAGER_NAME
             DOMAIN_NAME
             S3_BUCKET_NAME
             DB_HOST
