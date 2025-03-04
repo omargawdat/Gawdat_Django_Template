@@ -155,7 +155,7 @@ jobs:
           fi
 
       - name: Output Service URL
-        run:
+        run: |
           echo "🌐 App Runner URL: ${{ steps.apprunner-deploy.outputs.service-url }}"
 
   cleanup_on_pr_close:
