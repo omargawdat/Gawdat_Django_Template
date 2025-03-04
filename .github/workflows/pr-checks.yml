@@ -147,6 +147,16 @@ jobs:
             AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY
 
+      - name: Check Deployment Status
+        shell: bash
+        run: |
+          if [[ "$GITHUB_OUTPUT" == *"CREATE_FAILED"* || "$GITHUB_OUTPUT" == *"UPDATE_FAILED"* ]]; then
+            echo "App Runner deployment failed!"
+            exit 1
+          fi
+        env:
+          GITHUB_OUTPUT: ${{ toJson(steps.deploy-apprunner.outputs) }}
+
       - name: App Runner URL
         run: echo "App runner URL ${{ steps.deploy-apprunner.outputs.service-url }}"
 
