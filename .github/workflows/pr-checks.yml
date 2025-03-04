@@ -122,9 +122,24 @@ jobs:
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main
         env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # AWS credentials and config
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+          AWS_SECRET_MANAGER_NAME: ${{ secrets.AWS_SECRET_MANAGER_NAME }}
+
+          # Database connection info
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: pr_${{ github.event.number }}_appdb
+
+          # Other environment variables
+          PR_NUMBER: ${{ github.event.number }}
+          DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
+          S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
+          IS_LOCAL: "false"
         with:
           service: pr-${{ github.event.number }}-service
           image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
@@ -135,17 +150,19 @@ jobs:
           port: 5000
           wait-for-service-stability-seconds: 1200
           copy-env-vars: |
-            PR_NUMBER
-            DOMAIN_NAME
-            S3_BUCKET_NAME
-            DB_NAME
-            IS_LOCAL
-            DB_HOST
-            DB_PORT
-            DB_USER
-            DB_PASSWORD
             AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY
+            AWS_REGION_NAME
+            AWS_SECRET_MANAGER_NAME
+            DOMAIN_NAME
+            S3_BUCKET_NAME
+            DB_HOST
+            DB_PORT
+            DB_NAME
+            DB_USER
+            DB_PASSWORD
+            IS_LOCAL
+            PR_NUMBER
 
       - name: Check App Runner Service Status
         run: |
