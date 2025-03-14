@@ -119,6 +119,8 @@ $RECYCLE.BIN/
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+!bootstrap/*.tfstate
+!bootstrap/*.tfstate.backup
 override.tf
 override.tf.json
 *_override.tf
