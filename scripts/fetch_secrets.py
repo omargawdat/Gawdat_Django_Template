@@ -20,7 +20,6 @@ session = boto3.session.Session(
     aws_access_key_id=access_key, aws_secret_access_key=secret_key, region_name=region
 )
 client = session.client("secretsmanager")
-
 # Fetch and process secrets
 try:
     print(f"# Fetching secrets from {secret_id}", file=sys.stderr)
