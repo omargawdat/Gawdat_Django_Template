@@ -138,7 +138,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: '5.90.0'
+          terraform_version: '1.11.2'
 
       - name: Deploy to App Runner using script
         run: |
