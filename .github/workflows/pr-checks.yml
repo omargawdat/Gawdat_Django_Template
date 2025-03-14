@@ -135,6 +135,10 @@ jobs:
         run: |
           docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '5.90.0'
 
       - name: Deploy to App Runner using script
         run: |
