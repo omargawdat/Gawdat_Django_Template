@@ -42,3 +42,8 @@ variable "db_name" {
   description = "The name of the database"
   type        = string
 }
+
+variable "apprunner_instance_role_arn" {
+  description = "The ARN of the IAM role that provides permissions to the App Runner service"
+  type        = string
+}

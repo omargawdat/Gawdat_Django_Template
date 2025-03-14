@@ -43,6 +43,10 @@ resource "aws_apprunner_service" "example" {
       image_repository_type = "ECR"
     }
   }
+
+  instance_configuration {
+    instance_role_arn = var.apprunner_instance_role_arn
+  }
 }
 
 resource "aws_apprunner_custom_domain_association" "example" {

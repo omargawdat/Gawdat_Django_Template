@@ -156,3 +156,4 @@ jobs:
             --state-bucket "gawdat-company-terraform-states" \
             --dynamodb-table "gawdat-company-terraform-locks" \
             --apprunner-ecr-role-arn "arn:aws:iam::975049989256:role/apprunner-ecr-access-role-new"
+            --apprunner-instance-role-arn "arn:aws:iam::975049989256:role/temp-instance-role"

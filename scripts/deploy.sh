@@ -14,6 +14,7 @@ REGION=""
 STATE_BUCKET=""
 DYNAMODB_TABLE=""
 APPRUNNER_ECR_ROLE_ARN=""
+APPRUNNER_INSTANCE_ROLE_ARN=""
 
 # Parse parameters
 while [[ $# -gt 0 ]]; do
@@ -30,8 +31,9 @@ while [[ $# -gt 0 ]]; do
         --state-bucket)          STATE_BUCKET="$2"; shift 2 ;;
         --dynamodb-table)        DYNAMODB_TABLE="$2"; shift 2 ;;
         --apprunner-ecr-role-arn) APPRUNNER_ECR_ROLE_ARN="$2"; shift 2 ;;
+        --apprunner-instance-role-arn) APPRUNNER_INSTANCE_ROLE_ARN="$2"; shift 2 ;;
         -h|--help)
-            echo "Usage: $(basename "$0") --key VALUE --app-name VALUE --region VALUE --state-bucket VALUE --dynamodb-table VALUE --apprunner-ecr-role-arn VALUE [other options]"
+            echo "Usage: $(basename "$0") --key VALUE --app-name VALUE --region VALUE --state-bucket VALUE --dynamodb-table VALUE --apprunner-ecr-role-arn VALUE --apprunner-instance-role-arn VALUE [other options]"
             exit 0 ;;
         *)
             echo "Unknown option: $1" >&2
@@ -53,6 +55,7 @@ MISSING=()
 [[ -z "$STATE_BUCKET" ]] && MISSING+=("--state-bucket")
 [[ -z "$DYNAMODB_TABLE" ]] && MISSING+=("--dynamodb-table")
 [[ -z "$APPRUNNER_ECR_ROLE_ARN" ]] && MISSING+=("--apprunner-ecr-role-arn")
+[[ -z "$APPRUNNER_INSTANCE_ROLE_ARN" ]] && MISSING+=("--apprunner-instance-role-arn")
 
 if [[ ${#MISSING[@]} -gt 0 ]]; then
     echo "Missing required parameters: ${MISSING[*]}" >&2
@@ -64,6 +67,7 @@ TF_VARS=(
     "aws_region=${REGION}"
     "app_name=${APP_NAME}"
     "apprunner_ecr_access_role_arn=${APPRUNNER_ECR_ROLE_ARN}"
+    "apprunner_instance_role_arn=${APPRUNNER_INSTANCE_ROLE_ARN}"
     "domain_name=${DOMAIN_NAME}"
     "ecr_image_identifier=${ECR_IMAGE_IDENTIFIER}"
     "container_port=${CONTAINER_PORT}"
