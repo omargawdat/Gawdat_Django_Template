@@ -140,9 +140,6 @@ jobs:
         with:
           terraform_version: '1.10.5'
 
-      - name: Initialize Terraform
-        run: terraform init
-
       - name: Deploy to App Runner using script
         run: |
           chmod +x ./scripts/deploy.sh

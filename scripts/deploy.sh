@@ -77,6 +77,10 @@ for var in "${TF_VARS[@]}"; do
     TF_ARGS+=("-var" "${var}")
 done
 
+# Navigate to the Terraform directory
+echo "Navigating to Terraform directory..."
+cd terraform/
+
 # Run Terraform commands
 echo "Initializing Terraform..."
 terraform init -reconfigure \
