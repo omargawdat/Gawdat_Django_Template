@@ -48,7 +48,8 @@ if [[ ${#MISSING[@]} -gt 0 ]]; then
 fi
 
 # Get Terraform bootstrap outputs
-cd ./terraform/bootstrap || { echo "Bootstrap directory not found"; exit 1; }
+cd ../terraform/bootstrap || { echo "Bootstrap directory not found"; exit 1; }
+terraform init
 REGION=$(terraform output -raw region)
 STATE_BUCKET=$(terraform output -raw state_bucket_name)
 DYNAMODB_TABLE=$(terraform output -raw dynamodb_table_name)
