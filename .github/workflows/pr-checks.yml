@@ -155,7 +155,7 @@ jobs:
             --media-bucket-name "${{ env.S3_BUCKET_NAME }}" \
             --secret-manager-name "${{ env.AWS_SECRET_MANAGER_NAME }}" \
             --db-name "${{ env.DB_NAME }}" \
-            --region "eu-central-1"
-            --state-bucket "gawdat-company-terraform-states"
-            --dynamodb-table "gawdat-company-terraform-locks"
+            --region "eu-central-1" \
+            --state-bucket "gawdat-company-terraform-states" \
+            --dynamodb-table "gawdat-company-terraform-locks" \
             --apprunner-ecr-role-arn "arn:aws:iam::975049989256:role/apprunner-ecr-access-role-new"
