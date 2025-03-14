@@ -154,8 +154,4 @@ jobs:
             --container-port "5000" \
             --media-bucket-name "${{ env.S3_BUCKET_NAME }}" \
             --secret-manager-name "${{ env.AWS_SECRET_MANAGER_NAME }}" \
-            --db-name "${{ env.DB_NAME }}" \
-            --region "${{ env.AWS_REGION }}" \
-            --state-bucket "${{ env.STATE_BUCKET }}" \
-            --dynamodb-table "${{ env.DYNAMODB_TABLE }}" \
-            --apprunner-ecr-role-arn "${{ env.APPRUNNER_ECR_ROLE_ARN }}"
+            --db-name "${{ env.DB_NAME }}"
