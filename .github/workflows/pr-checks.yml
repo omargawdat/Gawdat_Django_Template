@@ -23,9 +23,7 @@ jobs:
       - name: Validate Branch Sync
         run: |
           git fetch origin ${{ github.base_ref }}
-          if git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD; then
-            echo "✅ Branch is current with ${{ github.base_ref }}"
-          else
+          if ! git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD; then
             echo "❌ Branch diverged from ${{ github.base_ref }}"
             exit 1
           fi
@@ -120,6 +118,16 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Generate ECR Image URI
+        id: ecr-image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+        run: |
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_OUTPUT
+          echo "Created image URI: ${IMAGE_URI}"
+
       - name: Push Docker Image
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
@@ -128,46 +136,15 @@ jobs:
           docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Deploy to App Runner
-        id: apprunner-deploy
-        uses: awslabs/amazon-app-runner-deploy@main
-        with:
-          service: pr-${{ env.PR_NUMBER }}-service
-          image: ${{ steps.ecr-login.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
-          access-role-arn: ${{ secrets.ROLE_ARN }}
-          region: ${{ secrets.AWS_REGION_NAME }}
-          cpu: 1
-          memory: 2
-          port: 5000
-          wait-for-service-stability-seconds: 1200
-          copy-env-vars: |
-            AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY
-            AWS_REGION_NAME
-            AWS_SECRET_MANAGER_NAME
-            DOMAIN_NAME
-            S3_BUCKET_NAME
-            DB_HOST
-            DB_PORT
-            DB_NAME
-            DB_USER
-            DB_PASSWORD
-            IS_LOCAL
-            PR_NUMBER
-
-      - name: Verify Deployment Health
+      - name: Deploy to App Runner using script
         run: |
-          STATUS=$(aws apprunner describe-service \
-            --service-arn ${{ steps.apprunner-deploy.outputs.service-arn }} \
-            --query 'Service.Status' \
-            --output text \
-            --region ${{ secrets.AWS_REGION_NAME }})
-
-          if [ "$STATUS" != "RUNNING" ]; then
-            echo "❌ Deployment failed with status: $STATUS"
-            exit 1
-          fi
-
-      - name: Output Service URL
-        run: |
-          echo "🌐 App Runner URL: ${{ steps.apprunner-deploy.outputs.service-url }}"
+          chmod +x ./scripts/deploy.sh
+          ./scripts/deploy.sh \
+            --key "prod/terraform.tfstate" \
+            --app-name "pr-${{ github.event.number }}" \
+            --domain-name "${{ env.DOMAIN_NAME }}" \
+            --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
+            --container-port "5000" \
+            --media-bucket-name "${{ env.S3_BUCKET_NAME }}" \
+            --secret-manager-name "${{ env.AWS_SECRET_MANAGER_NAME }}" \
+            --db-name "${{ env.DB_NAME }}"
