@@ -10,10 +10,6 @@ CONTAINER_PORT=""
 S3_BUCKET_NAME=""
 AWS_SECRET_MANAGER_NAME=""
 DB_NAME=""
-REGION=""
-STATE_BUCKET=""
-DYNAMODB_TABLE=""
-APPRUNNER_ECR_ROLE_ARN=""
 
 # Parse parameters
 while [[ $# -gt 0 ]]; do
@@ -26,10 +22,6 @@ while [[ $# -gt 0 ]]; do
         --media-bucket-name)    S3_BUCKET_NAME="$2"; shift 2 ;;
         --secret-manager-name)  AWS_SECRET_MANAGER_NAME="$2"; shift 2 ;;
         --db-name)              DB_NAME="$2"; shift 2 ;;
-        --region)               REGION="$2"; shift 2 ;;
-        --state-bucket)         STATE_BUCKET="$2"; shift 2 ;;
-        --dynamodb-table)       DYNAMODB_TABLE="$2"; shift 2 ;;
-        --apprunner-ecr-role-arn) APPRUNNER_ECR_ROLE_ARN="$2"; shift 2 ;;
         -h|--help)
             echo "Usage: $(basename "$0") --key VALUE --app-name VALUE [other options]"
             exit 0 ;;
@@ -49,15 +41,20 @@ MISSING=()
 [[ -z "$S3_BUCKET_NAME" ]] && MISSING+=("--media-bucket-name")
 [[ -z "$AWS_SECRET_MANAGER_NAME" ]] && MISSING+=("--secret-manager-name")
 [[ -z "$DB_NAME" ]] && MISSING+=("--db-name")
-[[ -z "$REGION" ]] && MISSING+=("--region")
-[[ -z "$STATE_BUCKET" ]] && MISSING+=("--state-bucket")
-[[ -z "$DYNAMODB_TABLE" ]] && MISSING+=("--dynamodb-table")
-[[ -z "$APPRUNNER_ECR_ROLE_ARN" ]] && MISSING+=("--apprunner-ecr-role-arn")
 
 if [[ ${#MISSING[@]} -gt 0 ]]; then
     echo "Missing required parameters: ${MISSING[*]}" >&2
     exit 1
 fi
+
+# Get Terraform bootstrap outputs
+cd ./terraform/bootstrap || { echo "Bootstrap directory not found"; exit 1; }
+terraform init
+REGION=$(terraform output -raw region)
+STATE_BUCKET=$(terraform output -raw state_bucket_name)
+DYNAMODB_TABLE=$(terraform output -raw dynamodb_table_name)
+APPRUNNER_ECR_ROLE_ARN=$(terraform output -raw apprunner_ecr_access_role_arn)
+cd ..
 
 # Build Terraform variables
 TF_VARS=(
