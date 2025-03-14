@@ -14,6 +14,7 @@ client = session.client("secretsmanager")
 response = client.get_secret_value(SecretId=secret_id)
 secret_data = json.loads(response["SecretString"])
 
+
 # Output as shell export commands
 for key, value in secret_data.items():
     quoted_value = shlex.quote(str(value))
