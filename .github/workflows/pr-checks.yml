@@ -145,6 +145,7 @@ jobs:
           chmod +x ./scripts/deploy.sh
           ./scripts/deploy.sh \
             --key "prod/terraform.tfstate" \
+            --parent-domain "eramapps.com" \
             --domain-name "${{ env.DOMAIN_NAME }}" \
             --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
             --container-port "5000" \

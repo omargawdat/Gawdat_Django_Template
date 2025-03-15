@@ -8,6 +8,11 @@ variable "apprunner_ecr_access_role_arn" {
   type        = string
 }
 
+variable "parent_domain" {
+  description = "The parent domain (e.g., eramapps.com)"
+  type        = string
+}
+
 variable "domain_name" {
   description = "The root domain name for the application"
   type        = string

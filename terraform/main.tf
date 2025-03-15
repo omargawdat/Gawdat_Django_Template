@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 data "aws_route53_zone" "existing" {
-  name = var.domain_name
+  name = var.parent_domain
 }
 
 resource "aws_apprunner_service" "example" {
