@@ -35,7 +35,7 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.number }}
       PARENT_DOMAIN: ${{ secrets.PARENT_DOMAIN }}
-      DOMAIN_NAME: pr-${{ github.event.number }}.${{ secrets.PARENT_DOMAIN }
+      DOMAIN_NAME: pr-${{ github.event.number }}.${{ secrets.PARENT_DOMAIN }}
       S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
       DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
