@@ -3,11 +3,6 @@ variable "aws_region" {
   type        = string
 }
 
-variable "app_name" {
-  description = "The name of the application, used in the service name and subdomain"
-  type        = string
-}
-
 variable "apprunner_ecr_access_role_arn" {
   description = "ARN of the IAM role that allows App Runner to access ECR"
   type        = string
