@@ -87,6 +87,7 @@ STORAGES = {
 # Media and Static URLs
 MEDIA_URL = f"https://{aws_s3_domain}/media/"
 STATIC_URL = f"https://{aws_s3_domain}/static/"
+COLLECTFASTA_STRATEGY = "collectfasta.strategies.boto3.Boto3Strategy"
 
 
 # ------------------------------------------------------------------------------
