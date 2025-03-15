@@ -3,7 +3,6 @@ set -euo pipefail
 
 # Parse command-line arguments
 KEY=""
-APP_NAME=""
 DOMAIN_NAME=""
 ECR_IMAGE_IDENTIFIER=""
 CONTAINER_PORT=""
@@ -20,7 +19,6 @@ APPRUNNER_INSTANCE_ROLE_ARN=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --key)                   KEY="$2"; shift 2 ;;
-        --app-name)              APP_NAME="$2"; shift 2 ;;
         --domain-name)           DOMAIN_NAME="$2"; shift 2 ;;
         --ecr-image-identifier)  ECR_IMAGE_IDENTIFIER="$2"; shift 2 ;;
         --container-port)        CONTAINER_PORT="$2"; shift 2 ;;
@@ -33,7 +31,7 @@ while [[ $# -gt 0 ]]; do
         --apprunner-ecr-role-arn) APPRUNNER_ECR_ROLE_ARN="$2"; shift 2 ;;
         --apprunner-instance-role-arn) APPRUNNER_INSTANCE_ROLE_ARN="$2"; shift 2 ;;
         -h|--help)
-            echo "Usage: $(basename "$0") --key VALUE --app-name VALUE --region VALUE --state-bucket VALUE --dynamodb-table VALUE --apprunner-ecr-role-arn VALUE --apprunner-instance-role-arn VALUE [other options]"
+            echo "Usage: $(basename "$0") --key VALUE --domain-name VALUE --region VALUE --state-bucket VALUE --dynamodb-table VALUE --apprunner-ecr-role-arn VALUE --apprunner-instance-role-arn VALUE [other options]"
             exit 0 ;;
         *)
             echo "Unknown option: $1" >&2
@@ -44,7 +42,6 @@ done
 # Validate required parameters
 MISSING=()
 [[ -z "$KEY" ]] && MISSING+=("--key")
-[[ -z "$APP_NAME" ]] && MISSING+=("--app-name")
 [[ -z "$DOMAIN_NAME" ]] && MISSING+=("--domain-name")
 [[ -z "$ECR_IMAGE_IDENTIFIER" ]] && MISSING+=("--ecr-image-identifier")
 [[ -z "$CONTAINER_PORT" ]] && MISSING+=("--container-port")
@@ -65,7 +62,6 @@ fi
 # Build Terraform variables
 TF_VARS=(
     "aws_region=${REGION}"
-    "app_name=${APP_NAME}"
     "apprunner_ecr_access_role_arn=${APPRUNNER_ECR_ROLE_ARN}"
     "apprunner_instance_role_arn=${APPRUNNER_INSTANCE_ROLE_ARN}"
     "domain_name=${DOMAIN_NAME}"

@@ -145,7 +145,6 @@ jobs:
           chmod +x ./scripts/deploy.sh
           ./scripts/deploy.sh \
             --key "prod/terraform.tfstate" \
-            --app-name "pr-${{ github.event.number }}" \
             --domain-name "${{ env.DOMAIN_NAME }}" \
             --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
             --container-port "5000" \

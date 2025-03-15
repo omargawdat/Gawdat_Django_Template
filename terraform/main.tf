@@ -12,13 +12,12 @@ provider "aws" {
   region = var.aws_region
 }
 
-
 data "aws_route53_zone" "existing" {
   name = var.domain_name
 }
 
 resource "aws_apprunner_service" "example" {
-  service_name = "${var.app_name}-apprunner-service"
+  service_name = replace(var.domain_name, ".", "-")
 
   source_configuration {
     authentication_configuration {
@@ -50,8 +49,8 @@ resource "aws_apprunner_service" "example" {
 }
 
 resource "aws_apprunner_custom_domain_association" "example" {
-  domain_name = "${var.app_name}.${var.domain_name}"
-  service_arn          = aws_apprunner_service.example.arn
+  domain_name = var.domain_name
+  service_arn = aws_apprunner_service.example.arn
   enable_www_subdomain = false
 }
 
@@ -67,10 +66,10 @@ resource "aws_route53_record" "cert_validation" {
   ttl     = 60
 }
 
-# Create CNAME record to point the subdomain to the App Runner service
+# Create CNAME record to point the domain to the App Runner service
 resource "aws_route53_record" "cname" {
   zone_id = data.aws_route53_zone.existing.zone_id
-  name = "${var.app_name}.${var.domain_name}"
+  name    = var.domain_name
   type    = "CNAME"
   records = [aws_apprunner_custom_domain_association.example.dns_target]
   ttl     = 300
