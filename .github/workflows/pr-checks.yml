@@ -34,7 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PR_NUMBER: ${{ github.event.number }}
-      DOMAIN_NAME: pr-${{ github.event.number }}.gawdat.eramapps.com
+      PARENT_DOMAIN: ${{ secrets.PARENT_DOMAIN }}
+      DOMAIN_NAME: pr-${{ github.event.number }}.${{ secrets.PARENT_DOMAIN }
       S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
       DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
@@ -135,6 +136,7 @@ jobs:
         run: |
           docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -145,7 +147,7 @@ jobs:
           chmod +x ./scripts/deploy.sh
           ./scripts/deploy.sh \
             --key "prod/terraform.tfstate" \
-            --parent-domain "eramapps.com" \
+            --parent-domain "${{ env.PARENT_DOMAIN }}" \
             --domain-name "${{ env.DOMAIN_NAME }}" \
             --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
             --container-port "5000" \
