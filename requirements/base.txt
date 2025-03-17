@@ -9,7 +9,7 @@ boto3==1.36.24
 # Redis
 redis==5.2.1
 hiredis==3.1.0
-psycopg[pool]==3.2.4
+psycopg[pool]==3.2.6
 
 # Django and Extensions
 django==5.1.6
