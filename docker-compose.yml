@@ -18,7 +18,7 @@ services:
     environment:
       DB_HOST: 'postgres'
       DB_PORT: '5432'
-      DB_DB: 'mydatabase'
+      DB_NAME: 'mydatabase'
       DB_USER: 'postgres'
       DB_PASSWORD: 'postgres' # pragma: allowlist secret
 
