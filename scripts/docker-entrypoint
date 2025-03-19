@@ -9,12 +9,6 @@ if [ "$IS_LOCAL" != "true" ]; then
     eval "$(python /app/scripts/fetch_secrets.py)"
 fi
 
-if [ "$IS_LOCAL" = "true" ]; then
-    export DJANGO_SETTINGS_MODULE="config.settings.local"
-else
-    export DJANGO_SETTINGS_MODULE="config.settings.prod"
-fi
-
 
 # Wait for PostgreSQL
 wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
