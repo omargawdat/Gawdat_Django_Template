@@ -19,7 +19,9 @@ class Command(BaseCommand):
             return
 
         if not User.objects.filter(username=username).exists():
-            StaffUser.objects.create_superuser(username, password=password)
+            StaffUser.objects.create_superuser(
+                username, password=password.get_secret_value()
+            )
             self.stdout.write(
                 self.style.SUCCESS(f"Superuser {username} created successfully"),
             )
