@@ -1,23 +1,43 @@
-name: Production Deployment
+name: PR Build Check
 
 on:
-  push:
+  pull_request:
     branches: [ master, main ]
+    paths-ignore: [ docs/** ]
   workflow_dispatch:
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
+  check_branch:
+    name: Verify Branch Status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Branch Sync
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if ! git merge-base --is-ancestor origin/${{ github.base_ref }} HEAD; then
+            echo "❌ Branch diverged from ${{ github.base_ref }}"
+            exit 1
+          fi
+
   build_and_deploy:
     name: Build and Deploy
+    needs: check_branch
     runs-on: ubuntu-latest
     env:
+      PR_NUMBER: ${{ github.event.number }}
       PARENT_DOMAIN: ${{ secrets.PARENT_DOMAIN }}
-      DOMAIN_NAME: prod.${{ secrets.PARENT_DOMAIN }}
-      S3_BUCKET_NAME: prod-gawdat
-      DB_NAME: prod_appdb
+      DOMAIN_NAME: pr-${{ github.event.number }}.${{ secrets.PARENT_DOMAIN }}
+      S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
+      DB_NAME: pr_${{ github.event.number }}_appdb
       IS_LOCAL: "false"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -27,6 +47,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Pre-commit Checks
+        uses: pre-commit/action@v3.0.1
+
       - name: Configure Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -34,10 +62,33 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          load: true
           tags: app:latest
           build-args: is_local=${{ env.IS_LOCAL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # Database cloning step removed since it references DB_HOST/DB_PORT/DB_USER/DB_PASSWORD
+
+      - name: Execute Test Suite
+        run: |
+          docker run --rm \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
+            -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
+            -e DOMAIN_NAME=${{ env.DOMAIN_NAME }} \
+            -e S3_BUCKET_NAME=${{ env.S3_BUCKET_NAME }} \
+            -e DB_NAME=${{ env.DB_NAME }} \
+            -e IS_LOCAL=${{ env.IS_LOCAL }} \
+            -e TEST_MODE="true" \
+            app \
+            /bin/bash -c "
+              set -ex
+              python manage.py makemigrations --check
+              python manage.py migrate
+              pytest
+            "
 
       - name: Configure AWS Access
         uses: aws-actions/configure-aws-credentials@v4
@@ -73,7 +124,7 @@ jobs:
         with:
           terraform_version: '1.10.5'
 
-      - name: Deploy to App Runner
+      - name: Deploy to App Runner using script
         run: |
           chmod +x ./scripts/deploy.sh
           ./scripts/deploy.sh \

@@ -6,9 +6,9 @@ on:
     paths-ignore: [ docs/** ]
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+#concurrency:
+#  group: pr-${{ github.head_ref || github.run_id }}
+#  cancel-in-progress: true
 
 jobs:
   check_branch:
@@ -28,116 +28,46 @@ jobs:
             exit 1
           fi
 
-  build_and_deploy:
-    name: Build and Deploy
-    needs: check_branch
-    runs-on: ubuntu-latest
-    env:
-      PR_NUMBER: ${{ github.event.number }}
-      PARENT_DOMAIN: ${{ secrets.PARENT_DOMAIN }}
-      DOMAIN_NAME: pr-${{ github.event.number }}.${{ secrets.PARENT_DOMAIN }}
-      S3_BUCKET_NAME: pr-${{ github.event.number }}-gawdat
-      DB_NAME: pr_${{ github.event.number }}_appdb
-      IS_LOCAL: "false"
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
-      AWS_SECRET_MANAGER_NAME: ${{ secrets.AWS_SECRET_MANAGER_NAME }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+build_and_test:
+  name: Build and Test
+  needs: check_branch
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Set Up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+    - name: Setup Environment File
+      run: cp dummy.env .env
 
-      - name: Run Pre-commit Checks
-        uses: pre-commit/action@v3.0.1
+    - name: Set Up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-      - name: Configure Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Run Pre-commit Checks
+      uses: pre-commit/action@v3.0.1
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          load: true
-          tags: app:latest
-          build-args: is_local=${{ env.IS_LOCAL }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+    - name: Start Services with Docker Compose
+      run: |
+        docker-compose -f docker-compose.local.yml up -d --build
 
-      # Database cloning step removed since it references DB_HOST/DB_PORT/DB_USER/DB_PASSWORD
+    - name: Check for Missing Migrations
+      run: |
+        docker-compose -f docker-compose.local.yml exec -T app python manage.py makemigrations --check --dry-run
 
-      - name: Execute Test Suite
-        run: |
-          docker run --rm \
-            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            -e AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} \
-            -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
-            -e DOMAIN_NAME=${{ env.DOMAIN_NAME }} \
-            -e S3_BUCKET_NAME=${{ env.S3_BUCKET_NAME }} \
-            -e DB_NAME=${{ env.DB_NAME }} \
-            -e IS_LOCAL=${{ env.IS_LOCAL }} \
-            -e TEST_MODE="true" \
-            app \
-            /bin/bash -c "
-              set -ex
-              python manage.py makemigrations --check
-              python manage.py migrate
-              pytest
-            "
+    - name: Apply Migrations
+      run: |
+        docker-compose -f docker-compose.local.yml exec -T app python manage.py migrate --noinput
 
-      - name: Configure AWS Access
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION_NAME }}
+    - name: Run Django System Checks
+      run: |
+        docker-compose -f docker-compose.local.yml exec -T app python manage.py check
 
-      - name: Authenticate with ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2
+    - name: Run Django  Pytest
+      run: |
+        docker-compose -f docker-compose.local.yml exec -T app python manage.py pytest
 
-      - name: Generate ECR Image URI
-        id: ecr-image
-        env:
-          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-        run: |
-          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
-          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_OUTPUT
-          echo "Created image URI: ${IMAGE_URI}"
-
-      - name: Push Docker Image
-        env:
-          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-        run: |
-          docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: '1.10.5'
-
-      - name: Deploy to App Runner using script
-        run: |
-          chmod +x ./scripts/deploy.sh
-          ./scripts/deploy.sh \
-            --key "prod/terraform.tfstate" \
-            --parent-domain "${{ env.PARENT_DOMAIN }}" \
-            --domain-name "${{ env.DOMAIN_NAME }}" \
-            --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
-            --container-port "5000" \
-            --media-bucket-name "${{ env.S3_BUCKET_NAME }}" \
-            --secret-manager-name "${{ env.AWS_SECRET_MANAGER_NAME }}" \
-            --db-name "${{ env.DB_NAME }}" \
-            --region "eu-central-1" \
-            --state-bucket "gawdat-company-terraform-states" \
-            --dynamodb-table "gawdat-company-terraform-locks" \
-            --apprunner-ecr-role-arn "arn:aws:iam::975049989256:role/apprunner-ecr-access-role-new" \
-            --apprunner-instance-role-arn "arn:aws:iam::975049989256:role/temp-instance-role"
+    - name: Cleanup Docker Resources
+      if: always()
+      run: |
+        docker-compose -f docker-compose.local.yml down -v
