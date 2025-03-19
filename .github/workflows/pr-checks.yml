@@ -28,46 +28,46 @@ jobs:
             exit 1
           fi
 
-build_and_test:
-  name: Build and Test
-  needs: check_branch
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+  build_and_test:
+    name: Build and Test
+    needs: check_branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Setup Environment File
-      run: cp dummy.env .env
+      - name: Setup Environment File
+        run: cp dummy.env .env
 
-    - name: Set Up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Run Pre-commit Checks
-      uses: pre-commit/action@v3.0.1
+      - name: Run Pre-commit Checks
+        uses: pre-commit/action@v3.0.1
 
-    - name: Start Services with Docker Compose
-      run: |
-        docker-compose -f docker-compose.local.yml up -d --build
+      - name: Start Services with Docker Compose
+        run: |
+          docker-compose -f docker-compose.local.yml up -d --build
 
-    - name: Check for Missing Migrations
-      run: |
-        docker-compose -f docker-compose.local.yml exec -T app python manage.py makemigrations --check --dry-run
+      - name: Check for Missing Migrations
+        run: |
+          docker-compose -f docker-compose.local.yml exec -T app python manage.py makemigrations --check --dry-run
 
-    - name: Apply Migrations
-      run: |
-        docker-compose -f docker-compose.local.yml exec -T app python manage.py migrate --noinput
+      - name: Apply Migrations
+        run: |
+          docker-compose -f docker-compose.local.yml exec -T app python manage.py migrate --noinput
 
-    - name: Run Django System Checks
-      run: |
-        docker-compose -f docker-compose.local.yml exec -T app python manage.py check
+      - name: Run Django System Checks
+        run: |
+          docker-compose -f docker-compose.local.yml exec -T app python manage.py check
 
-    - name: Run Django  Pytest
-      run: |
-        docker-compose -f docker-compose.local.yml exec -T app python manage.py pytest
+      - name: Run Django  Pytest
+        run: |
+          docker-compose -f docker-compose.local.yml exec -T app python manage.py pytest
 
-    - name: Cleanup Docker Resources
-      if: always()
-      run: |
-        docker-compose -f docker-compose.local.yml down -v
+      - name: Cleanup Docker Resources
+        if: always()
+        run: |
+          docker-compose -f docker-compose.local.yml down -v
