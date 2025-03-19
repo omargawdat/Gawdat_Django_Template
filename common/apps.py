@@ -1,5 +1,4 @@
 import importlib
-import os
 from pathlib import Path
 
 from django.apps import AppConfig
@@ -43,11 +42,11 @@ class CoreConfig(AppConfig):
 
     def import_modules_from_directory(self, base_path, subdirectory, app_name):
         directory_path = Path(base_path) / subdirectory
-        if Path(directory_path).exists():
+        if directory_path.exists():
             modules = [
-                f[:-3]
-                for f in os.listdir(directory_path)
-                if f.endswith(".py") and not f.startswith("__")
+                f.stem
+                for f in directory_path.iterdir()
+                if f.is_file() and f.suffix == ".py" and not f.name.startswith("__")
             ]
             for module in modules:
                 importlib.import_module(f"{app_name}.{subdirectory}.{module}")

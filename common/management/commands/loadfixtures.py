@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from django.core.management import call_command
@@ -35,7 +34,11 @@ class Command(BaseCommand):
         try:
             # Get all .json files, sort them, and process
             fixture_files = sorted(
-                [f for f in os.listdir(fixtures_root_path) if f.endswith(".json")],
+                [
+                    f.name
+                    for f in Path(fixtures_root_path).iterdir()
+                    if f.is_file() and f.suffix == ".json"
+                ]
             )
             for fixture_file in fixture_files:
                 fixture_file_path = str(Path(fixtures_root_path) / fixture_file)
