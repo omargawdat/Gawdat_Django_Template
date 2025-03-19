@@ -81,7 +81,6 @@ jobs:
             -e S3_BUCKET_NAME=${{ env.S3_BUCKET_NAME }} \
             -e DB_NAME=${{ env.DB_NAME }} \
             -e IS_LOCAL=${{ env.IS_LOCAL }} \
-            -e TEST_MODE="true" \
             app \
             /bin/bash -c "
               set -ex

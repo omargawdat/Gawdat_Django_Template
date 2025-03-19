@@ -8,7 +8,7 @@ services:
       dockerfile: ./Dockerfile
       args:
         is_local: 'true'
-    container_name: django
+    container_name: temp_project_django
     depends_on:
       - postgres
     volumes:
@@ -24,7 +24,7 @@ services:
 
   postgres:
     image: postgres:17-alpine
-    container_name: postgres
+    container_name: temp_project_postgres
     volumes:
       - temp_project_local_postgres_data:/var/lib/postgresql/data
     ports:
