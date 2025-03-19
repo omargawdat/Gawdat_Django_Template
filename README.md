@@ -1,64 +1,60 @@
-for local commands use `docker-compose exec django python manage.py`
-for running the docker compose `docker-compose up --build -d`
+## 🚀 Getting Started
 
-## NOTES
-for local environments use local_ prefix for the .envs.
+### 1. Project Setup
 
-
-## 1. Initial Project Configuration
-
-1. **Rename Project**
-   Replace `temp_project` with the actual name of your project to better reflect its identity.
-
-2. **Domain Configuration**
-    - Update any instance of `example.com` into real domain.
-    - make sure the domain is pointing into the instance IP.
-3. **Fill the `.envs/.prod/.django` file**
-4. **Try the Local Development**
-5. create `dev` branch
-6. database in pycharm
-
-  ```
-  docker compose -f docker-compose.local.yml up --build -d
-  ```
-
-
-
-## 2. Git Repository Setup
-
-1. **Uncomment the `.gitignore`, `ci.yml`, `dependabot`  Files**
-2. **Initialize the Git Repository**
-   ```
-   brew install hadolint
+1. Clone this repository
+2. Replace `temp_project` with your `project name`
+3. Uncomment the `.gitignore` file
+4. Initialize the Git repository:
+   ```bash
    sudo rm -r .git
    git init
-   pre-commit install
-   pre-commit install --hook-type commit-msg
    git add .
    git commit -m "Initial commit"
    ```
-3. **Share the project on GitHub**
-4.
+5. Share the project on GitHub
 
-## 3. Server Ready Configuration
+### 2. Local Development
 
-1. **Create Ec2 instance using AMI image with IAM Role Full access**
-2. **Create S3 Bucket**
-3. **Clone the repository to your server.**
-    ```
-      git clone repo_url
-    ```
-4. **Upload the .envs files into the server**
-    ```
-      mkdir .envs/.prod/
-    ```
-    ```
-       nano .envs/.prod/.django
-    ```
-    ```
-       nano .envs/.prod/.postgres
-    ```
-5. Run the docker container
+1. Install pre-commit hooks:
+   ```bash
+   pip install pre-commit
+   pre-commit install --hook-type commit-msg
    ```
-    sudo docker-compose -f docker-compose.prod.yml up --build
+
+2. Create `.env` file in the root directory:
+   ```
+   # Django Settings
+   DJANGO_SECRET_KEY=your-secure-secret-key-here
+   DJANGO_SUPERUSER_USERNAME=omar
+   DJANGO_SUPERUSER_PASSWORD=123
+   DJANGO_ADMIN_NAME=Admin User
+   DJANGO_ADMIN_EMAIL=admin@example.com
+   DJANGO_JWT_ACCESS_TOKEN_LIFETIME_MINUTES=60
+   DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES=1440
+
+   # AWS Settings
+   AWS_STORAGE_BUCKET_NAME=local-development-bucket
+   AWS_REGION_NAME=eu-central-1
+
+   # External Services
+   GOOGLE_APPLICATION_CREDENTIALS=/app/google-credentials.json
+   API_KEY=dummy-api-key-for-local-development
+   TAPS_SECRET_KEY=dummy-taps-secret-key
+
+   # Environment
+   DOMAIN_NAME=localhost
+   ENVIRONMENT=local
+   SENTRY_SDK_DSN=https://dummy@sentry.example.com/123
+   S3_BUCKET_NAME=local-development-bucket
+   ```
+
+3. Build and run the application with Docker Compose:
+   ```bash
+   docker-compose -f docker-compose.local.yml up --build -d
+   ```
+
+4. Run Django management commands:
+   ```bash
+   docker-compose -f docker-compose.local.yml exec django python manage.py [command]
    ```
