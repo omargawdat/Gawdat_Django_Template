@@ -1,8 +1,11 @@
 ## 🚀 Getting Started
 
-### 1. Project Setup
+### 1. One-Time Project Setup
 
 1. Clone this repository
+    ```bash
+    git clone https://github.com/omargawdat/Gawdat_Django_Template.git
+    ```
 2. Replace `temp_project` with your `project name`
 3. Uncomment the `.gitignore` file
 4. Initialize the Git repository:
