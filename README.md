@@ -61,3 +61,8 @@
    ```bash
    docker-compose -f docker-compose.local.yml exec django python manage.py [command]
    ```
+
+## todo:
+
+1. mention how the deployment will work and the needed setups for envs
+2. consider making scripts to automate the process
