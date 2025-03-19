@@ -13,13 +13,14 @@ fi
 wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
 >&2 echo 'PostgreSQL is available'
 
-# Run Django migrations
-python manage.py migrate
-
 # If arguments are provided, execute them
 if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
+
+# Run Django migrations
+python manage.py migrate
+
 
 # Start the appropriate server based on environment
 if [ "$IS_LOCAL" = "true" ]; then

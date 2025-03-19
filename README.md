@@ -41,7 +41,7 @@
 
 4. Run Django management commands:
    ```bash
-   docker-compose -f docker-compose.local.yml exec django python manage.py [command]
+   docker compose -f docker-compose.local.yml run --rm django python manage.py [command]
    ```
 
 ## todo:
