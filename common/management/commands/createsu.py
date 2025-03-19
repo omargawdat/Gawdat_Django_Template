@@ -1,17 +1,16 @@
-import os
-
 from django.core.management.base import BaseCommand
 
 from apps.users.models import User
 from apps.users.models.staff import StaffUser
+from config.helpers.env import env
 
 
 class Command(BaseCommand):
     help = "Creates a superuser if one does not exist"
 
     def handle(self, *args, **options):
-        username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-        password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+        username = env.django_superuser_username
+        password = env.django_superuser_password
 
         if not username or not password:
             self.stdout.write(
