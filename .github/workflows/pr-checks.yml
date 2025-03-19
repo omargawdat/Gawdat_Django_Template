@@ -43,10 +43,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
       AWS_SECRET_MANAGER_NAME: ${{ secrets.AWS_SECRET_MANAGER_NAME }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -72,17 +68,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Clone database from dev for migration testing
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-
-          # Only create database if it doesn't exist
-          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -tc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'" | grep -q 1 || {
-            echo "Creating database ${DB_NAME} from template..."
-            PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${DB_NAME} WITH TEMPLATE ${{ secrets.DB_DEV_NAME }};"
-            echo "Database ${DB_NAME} successfully cloned from ${{ secrets.DB_DEV_NAME}}."
-          }
+      # Database cloning step removed since it references DB_HOST/DB_PORT/DB_USER/DB_PASSWORD
 
       - name: Execute Test Suite
         run: |
@@ -93,11 +79,7 @@ jobs:
             -e AWS_SECRET_MANAGER_NAME=${{ secrets.AWS_SECRET_MANAGER_NAME }} \
             -e DOMAIN_NAME=${{ env.DOMAIN_NAME }} \
             -e S3_BUCKET_NAME=${{ env.S3_BUCKET_NAME }} \
-            -e DB_HOST=${{ secrets.DB_HOST }} \
-            -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_NAME=${{ env.DB_NAME }} \
-            -e DB_USER=${{ secrets.DB_USER }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e IS_LOCAL=${{ env.IS_LOCAL }} \
             -e TEST_MODE="true" \
             app \
