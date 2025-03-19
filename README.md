@@ -18,6 +18,7 @@
    git init
    git add .
    git commit -m "Initial commit"
+   pre-commit install --hook-type commit-msg
    ```
 5. Share the project on GitHub
 
