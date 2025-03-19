@@ -40,20 +40,20 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Build and Start Stack
-        run: docker compose -f docker-compose.local.yml up -d --build
+      - name: Build Stack
+        run: docker compose -f docker-compose.local.yml build
 
       - name: Check for Missing Migrations
-        run: docker compose -f docker-compose.local.yml exec -T django python manage.py makemigrations --check --dry-run
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
 
       - name: Apply DB Migrations
-        run: docker compose -f docker-compose.local.yml exec -T django python manage.py migrate --noinput
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py migrate --noinput
 
       - name: Django System Checks
-        run: docker compose -f docker-compose.local.yml exec -T django python manage.py check
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py check
 
       - name: Django Unit Tests
-        run: docker compose -f docker-compose.local.yml exec -T django pytest
+        run: docker compose -f docker-compose.local.yml run --rm django pytest
 
       - name: Tear down the Stack
         if: always()
