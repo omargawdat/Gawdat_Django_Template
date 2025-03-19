@@ -9,7 +9,6 @@ if [ "$IS_LOCAL" != "true" ]; then
     eval "$(python /app/scripts/fetch_secrets.py)"
 fi
 
-
 # Wait for PostgreSQL
 wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
 >&2 echo 'PostgreSQL is available'
@@ -17,12 +16,18 @@ wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
 # Run Django migrations
 python manage.py migrate
 
+# If arguments are provided, execute them
+if [ "$#" -gt 0 ]; then
+    exec "$@"
+fi
 
+# Otherwise, proceed with test mode check and server startup
 TEST_MODE=${TEST_MODE:-false}
 if [ "$TEST_MODE" = "true" ]; then
     echo "Test mode enabled, skipping server startup"
     exit 0
 fi
+
 # Start the appropriate server based on environment
 if [ "$IS_LOCAL" = "true" ]; then
     python manage.py createsu
