@@ -2,9 +2,9 @@
 python-slugify==8.0.4
 Pillow==11.1.0
 argon2-cffi==23.1.0
-pydantic==2.10.6
+pydantic==2.11.1
 pydantic-settings==2.8.1
-boto3==1.37.15
+boto3==1.37.24
 
 # Redis
 redis==5.2.1
@@ -19,18 +19,18 @@ django-import-export==4.3.7
 openpyxl==3.1.5
 django-phonenumber-field[phonenumbers]==8.0.0
 django-polymorphic==3.1.0
-django-unfold==0.52.0
+django-unfold==0.54.0
 fcm-django==2.2.1
 django-solo==2.4.0
 rules==3.5
 django-imagekit==5.0.0
-django-filter==24.3
+django-filter==25.1
 django-money==3.5.3
 django-cors-headers==4.7.0
 dj-database-url==2.3.0
 
 # Django REST Framework and Extensions
-djangorestframework==3.15.2
+djangorestframework==3.16.0
 djangorestframework-simplejwt==5.5.0
 drf-spectacular==0.28.0
 drf-standardized-errors[openapi]==0.14.1
