@@ -15,76 +15,76 @@ class BaseCustomerPermissions:
 
         return {
             CustomerFields.PASSWORD: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.LAST_LOGIN: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.IS_SUPERUSER: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.POLYMORPHIC_CTYPE: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.USERNAME: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.IS_ACTIVE: FieldPermissions(
-                visible=(context.is_superuser and context.is_created),
+                visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
             CustomerFields.IS_STAFF: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.DATE_JOINED: FieldPermissions(
-                visible=(context.is_superuser and context.is_created),
+                visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
             CustomerFields.GROUPS: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.USER_PERMISSIONS: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.PHONE_NUMBER: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.EMAIL: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.IMAGE: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.FULL_NAME: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.GENDER: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.BIRTH_DATE: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.COUNTRY: FieldPermissions(
-                visible=(context.is_superuser and context.is_created),
+                visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
             CustomerFields.PRIMARY_ADDRESS: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
         }
 

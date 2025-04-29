@@ -15,24 +15,24 @@ class BaseNotificationPermissions:
 
         return {
             NotificationFields.NOTIFICATION_TYPE: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             NotificationFields.TITLE: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             NotificationFields.MESSAGE_BODY: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             NotificationFields.CREATED_AT: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             NotificationFields.USERS: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
         }
 

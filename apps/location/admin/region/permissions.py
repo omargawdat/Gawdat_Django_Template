@@ -15,24 +15,24 @@ class BaseRegionPermissions:
 
         return {
             RegionFields.CODE: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             RegionFields.COUNTRY: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             RegionFields.GEOMETRY: FieldPermissions(
-                visible=(context.is_superuser),
+                visible=(context.is_staff),
                 editable=(),
             ),
             RegionFields.NAME_AR: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             RegionFields.NAME_EN: FieldPermissions(
-                visible=(context.is_superuser),
-                editable=(context.is_superuser),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
         }
 
