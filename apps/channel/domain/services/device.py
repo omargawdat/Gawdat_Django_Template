@@ -15,11 +15,11 @@ class DeviceService:
     ) -> None:
         FCMDevice.objects.update_or_create(
             registration_id=device_data.registration_id,
-            device_id=device_data.device_id,
             defaults={
                 "user": user,
                 "type": device_data.type,
                 "active": True,
+                "device_id": device_data.device_id,
             },
         )
 
