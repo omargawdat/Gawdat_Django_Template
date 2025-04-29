@@ -56,4 +56,7 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
             "birth_date",
             "primary_address",
             "email",
+            "birth_date",
+            "gender",
+            "language",
         ]
