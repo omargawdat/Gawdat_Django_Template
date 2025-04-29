@@ -1,0 +1,37 @@
+volumes:
+  projectname_local_postgres_data: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        is_local: 'true'
+    container_name: projectname_django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    environment:
+      DB_HOST: 'postgres'
+      DB_PORT: '5432'
+      DB_NAME: 'mydatabase'
+      DB_USER: 'postgres'
+      DB_PASSWORD: 'postgres' # pragma: allowlist secret
+
+  postgres:
+    image: imresamu/postgis:17-3.5.0-alpine3.20
+    container_name: projectname_postgres
+    volumes:
+      - projectname_local_postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: 'mydatabase'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres' # pragma: allowlist secret

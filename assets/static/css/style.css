@@ -1,0 +1,13 @@
+[dir="rtl"] {
+    direction: ltr !important;
+}
+
+[dir="rtl"] .unfold-sidebar {
+    left: 0 !important;
+    right: auto !important;
+}
+
+[dir="rtl"] .unfold-main-wrapper {
+    margin-left: 280px !important;
+    margin-right: 0 !important;
+}

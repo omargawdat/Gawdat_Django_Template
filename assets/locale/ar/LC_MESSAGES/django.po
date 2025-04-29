@@ -1,0 +1,597 @@
+# Arabic translations for PACKAGE package.
+# Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# OpenAI Assistant <noreply@example.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-11 12:29+0300\n"
+"PO-Revision-Date: 2025-04-11 12:30+0300\n"
+"Last-Translator: OpenAI Assistant <noreply@example.com>\n"
+"Language-Team: Arabic <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: apps/appInfo/admin/appinfo/change_view.py:12
+msgid "Organizational Overview"
+msgstr "نظرة عامة على المنظمة"
+
+#: apps/appInfo/admin/appinfo/change_view.py:18
+msgid "Terms"
+msgstr "الشروط"
+
+#: apps/appInfo/admin/appinfo/change_view.py:24
+msgid "Policy"
+msgstr "السياسة"
+
+#: apps/appInfo/admin/faq/chanage_view.py:10
+msgid "FAQ Details"
+msgstr "تفاصيل الأسئلة الشائعة"
+
+#: apps/appInfo/admin/socialaccount/change_view.py:10
+msgid "Contact Information"
+msgstr "معلومات الاتصال"
+
+#: apps/appInfo/admin/socialaccount/change_view.py:13
+msgid "Primary contact details for the organization."
+msgstr "بيانات الاتصال الرئيسية للمنظمة."
+
+#: apps/appInfo/admin/socialaccount/change_view.py:17
+msgid "Social Media Links"
+msgstr "روابط وسائل التواصل الاجتماعي"
+
+#: apps/appInfo/admin/socialaccount/change_view.py:20
+msgid "Links to social media profiles."
+msgstr "روابط لحسابات وسائل التواصل الاجتماعي."
+
+#: apps/appInfo/admin/socialaccount/change_view.py:25
+#: apps/appInfo/models/social.py:25
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#: apps/appInfo/admin/socialaccount/change_view.py:28
+msgid "Official website URL."
+msgstr "عنوان الموقع الرسمي."
+
+#: apps/appInfo/models/app_info.py:8
+msgid "About Us"
+msgstr "من نحن"
+
+#: apps/appInfo/models/app_info.py:9
+msgid "Description about the organization."
+msgstr "وصف عن المنظمة."
+
+#: apps/appInfo/models/app_info.py:13
+msgid "Terms of Service"
+msgstr "شروط الخدمة"
+
+#: apps/appInfo/models/app_info.py:14
+msgid "Terms and conditions for organization."
+msgstr "الشروط والأحكام الخاصة بالمنظمة."
+
+#: apps/appInfo/models/app_info.py:18
+msgid "Privacy Policy"
+msgstr "سياسة الخصوصية"
+
+#: apps/appInfo/models/app_info.py:19
+msgid "Privacy policy details for the organization."
+msgstr "تفاصيل سياسة الخصوصية للمنظمة."
+
+#: apps/appInfo/models/app_info.py:24 apps/appInfo/models/app_info.py:25
+msgid "Application Information"
+msgstr "معلومات التطبيق"
+
+#: apps/appInfo/models/app_info.py:28
+msgid "App Information"
+msgstr "معلومات التطبيق"
+
+#: apps/appInfo/models/social.py:11
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: apps/appInfo/models/social.py:17 apps/users/models/customer.py:20
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#: apps/appInfo/models/social.py:18
+msgid "Phones start with: '+20'/'+966'"
+msgstr "يجب أن تبدأ أرقام الهواتف بـ '+20' أو '+966'"
+
+#: apps/appInfo/models/social.py:22
+msgid "Twitter Account"
+msgstr "حساب تويتر"
+
+#: apps/appInfo/models/social.py:23
+msgid "Instagram Account"
+msgstr "حساب إنستغرام"
+
+#: apps/appInfo/models/social.py:24
+msgid "Tiktok Account"
+msgstr "حساب تيك توك"
+
+#: apps/appInfo/models/social.py:28 apps/appInfo/models/social.py:29
+msgid "Social Media"
+msgstr "وسائل التواصل الاجتماعي"
+
+#: apps/appInfo/models/social.py:32
+msgid "Social Media Configuration"
+msgstr "تهيئة وسائل التواصل الاجتماعي"
+
+#: apps/appInfo/models/system_config.py:11
+msgid "Cancellation Fees"
+msgstr "رسوم الإلغاء"
+
+#: apps/appInfo/models/system_config.py:12
+msgid "cancellation feed."
+msgstr "رسوم الإلغاء."
+
+#: apps/appInfo/models/system_config.py:16
+#: apps/appInfo/models/system_config.py:17
+#: apps/appInfo/models/system_config.py:20 config/integrations/unfold.py:164
+msgid "System Configuration"
+msgstr "تهيئة النظام"
+
+#: apps/appInfo/other/constants.py:6
+msgid "General"
+msgstr "عام"
+
+#: apps/appInfo/other/constants.py:7
+msgid "Support"
+msgstr "الدعم"
+
+#: apps/appInfo/other/constants.py:8
+msgid "Feedback"
+msgstr "ملاحظات"
+
+#: apps/appInfo/other/constants.py:9 apps/channel/constants.py:9
+msgid "Other"
+msgstr "أخرى"
+
+#: apps/appInfo/other/constants.py:10
+msgid "Complaint"
+msgstr "شكوى"
+
+#: apps/channel/admin/notification/change_view.py:11
+msgid "Notification 📢"
+msgstr "إشعار 📢"
+
+#: apps/channel/admin/notification/change_view.py:17
+#: config/integrations/unfold.py:93
+msgid "Users 👥"
+msgstr "المستخدمون 👥"
+
+#: apps/channel/admin/notification/change_view.py:23
+msgid "Choices"
+msgstr "خيارات"
+
+#: apps/channel/admin/notification/display.py:12
+msgid "Notification ID"
+msgstr "معرّف الإشعار"
+
+#: apps/channel/admin/notification/display.py:19
+msgid "O"
+msgstr "O"
+
+#: apps/channel/admin/notification/display.py:28
+#: apps/channel/models/notification.py:13
+msgid "Notification Type"
+msgstr "نوع الإشعار"
+
+#: apps/channel/admin/notification/display.py:36
+msgid "Created ago"
+msgstr "تم الإنشاء منذ"
+
+#: apps/channel/admin/notification/display.py:36
+msgid "info"
+msgstr "معلومات"
+
+#: apps/channel/admin/notification/list_view.py:25
+msgid "Search By Notification ID...🔍"
+msgstr "البحث بواسطة معرّف الإشعار...🔍"
+
+#: apps/channel/constants.py:8
+msgid "Product Ordered"
+msgstr "تم طلب المنتج"
+
+#: apps/channel/models/notification.py:9 config/integrations/unfold.py:97
+msgid "Users"
+msgstr "المستخدمون"
+
+#: apps/channel/models/notification.py:10
+msgid "Title"
+msgstr "العنوان"
+
+#: apps/channel/models/notification.py:11
+msgid "Message Body"
+msgstr "نص الرسالة"
+
+#: apps/channel/models/notification.py:17
+msgid "Send SMS"
+msgstr "إرسال رسالة نصية"
+
+#: apps/channel/models/notification.py:18
+msgid "Send FCM"
+msgstr "إرسال FCM"
+
+#: apps/channel/models/notification.py:19
+msgid "Object ID"
+msgstr "معرّف الكائن"
+
+#: apps/channel/models/notification.py:20
+msgid "Created At"
+msgstr "تاريخ الإنشاء"
+
+#: apps/channel/models/notification.py:23 config/integrations/unfold.py:108
+msgid "Notification"
+msgstr "إشعار"
+
+#: apps/channel/models/notification.py:24
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: apps/channel/notification_type.py:9
+#, python-brace-format
+msgid ""
+"Thank you for ordering {product}! Your order #{order_id} is being processed."
+msgstr "شكرًا لطلبك {product}! طلبك رقم #{order_id} قيد المعالجة."
+
+#: apps/channel/notification_type.py:12
+#, python-brace-format
+msgid "New order #{order_id} for {product} is awaiting your confirmation."
+msgstr "طلب جديد رقم #{order_id} للمنتج {product} في انتظار تأكيدك."
+
+#: apps/location/admin/country/change_view.py:10
+msgid "Country Information"
+msgstr "معلومات الدولة"
+
+#: apps/location/admin/country/display.py:8 apps/location/models/country.py:23
+#: apps/location/models/region.py:13 apps/users/models/customer.py:44
+msgid "Country"
+msgstr "الدولة"
+
+#: apps/location/admin/country/display.py:12
+msgid "Currency: {}"
+msgstr "العملة: {}"
+
+#: apps/location/admin/country/display.py:21
+#: apps/location/admin/region/display.py:17 apps/location/models/country.py:20
+#: apps/users/admin/adminuser/display.py:27
+#: apps/users/admin/customer/display.py:25
+msgid "Is Active"
+msgstr "نشط"
+
+#: apps/location/admin/country/list_view.py:20
+msgid "Search by name..."
+msgstr "ابحث بالاسم..."
+
+#: apps/location/admin/region/change_view.py:8
+msgid "Region Information"
+msgstr "معلومات المنطقة"
+
+#: apps/location/admin/region/display.py:8 config/integrations/unfold.py:125
+msgid "region"
+msgstr "منطقة"
+
+#: apps/location/admin/region/list_view.py:15
+msgid "Search By Name..."
+msgstr "ابحث بالاسم..."
+
+#: apps/location/api/common/exceptions.py:8
+msgid "The provided location is not in a supported region."
+msgstr "الموقع المقدم غير موجود في منطقة مدعومة."
+
+#: apps/location/api/common/exceptions.py:15
+msgid "The region of the provided location does not match the user's country."
+msgstr "المنطقة الخاصة بالموقع المقدم لا تتطابق مع بلد المستخدم."
+
+#: apps/location/constants.py:6
+msgid "Egypt"
+msgstr "مصر"
+
+#: apps/location/constants.py:7
+msgid "Saudi Arabia"
+msgstr "المملكة العربية السعودية"
+
+#: apps/location/constants.py:8
+msgid "United Arab Emirates"
+msgstr "الإمارات العربية المتحدة"
+
+#: apps/location/constants.py:9
+msgid "Kuwait"
+msgstr "الكويت"
+
+#: apps/location/constants.py:10
+msgid "Qatar"
+msgstr "قطر"
+
+#: apps/location/constants.py:11
+msgid "Oman"
+msgstr "عُمان"
+
+#: apps/location/constants.py:12
+msgid "Bahrain"
+msgstr "البحرين"
+
+#: apps/location/constants.py:17
+msgid "Egyptian Pound"
+msgstr "الجنيه المصري"
+
+#: apps/location/constants.py:18
+msgid "Saudi Riyal"
+msgstr "الريال السعودي"
+
+#: apps/location/constants.py:19
+msgid "Emirati Dirham"
+msgstr "الدرهم الإماراتي"
+
+#: apps/location/constants.py:20
+msgid "Kuwaiti Dinar"
+msgstr "الدينار الكويتي"
+
+#: apps/location/constants.py:21
+msgid "Qatari Riyal"
+msgstr "الريال القطري"
+
+#: apps/location/constants.py:22
+msgid "Omani Rial"
+msgstr "الريال العماني"
+
+#: apps/location/constants.py:23
+msgid "Bahraini Dinar"
+msgstr "الدينار البحريني"
+
+#: apps/location/domain/selector/country.py:28
+msgid "Country code not found for phone"
+msgstr "لم يتم العثور على رمز البلد لرقم الهاتف"
+
+#: apps/location/models/country.py:13 apps/location/models/region.py:9
+msgid "Code"
+msgstr "الرمز"
+
+#: apps/location/models/country.py:17
+msgid "Currency"
+msgstr "العملة"
+
+#: apps/location/models/country.py:19
+msgid "Flag"
+msgstr "العلم"
+
+#: apps/location/models/country.py:24
+msgid "Countries"
+msgstr "الدول"
+
+#: apps/location/models/region.py:11
+msgid "Name"
+msgstr "الاسم"
+
+#: apps/location/models/region.py:15
+msgid "Geometry"
+msgstr "الهندسة"
+
+#: apps/location/models/region.py:21
+msgid "Region"
+msgstr "منطقة"
+
+#: apps/location/models/region.py:22
+msgid "Regions"
+msgstr "المناطق"
+
+#: apps/users/admin/adminuser/display.py:10 config/integrations/unfold.py:137
+msgid "Admin"
+msgstr "مشرف"
+
+#: apps/users/admin/adminuser/display.py:14
+#, python-format
+msgid "ID: %s"
+msgstr "المعرّف: %s"
+
+#: apps/users/admin/adminuser/display.py:31
+#: apps/users/admin/customer/display.py:31
+msgid "Date joined ago"
+msgstr "تاريخ الانضمام منذ"
+
+#: apps/users/admin/customer/change_view.py:11
+msgid "Customer Information👨‍🦰"
+msgstr "معلومات العميل👨‍🦰"
+
+#: apps/users/admin/customer/change_view.py:15
+msgid "Advanced Settings🔧"
+msgstr "إعدادات متقدمة🔧"
+
+#: apps/users/admin/customer/display.py:10
+msgid "Customer"
+msgstr "عميل"
+
+#: apps/users/admin/customer/display.py:14
+#, python-format
+msgid "Phone: %s"
+msgstr "الهاتف: %s"
+
+#: apps/users/admin/customer/display.py:29
+msgid "True"
+msgstr "نعم"
+
+#: apps/users/admin/customer/display.py:29
+msgid "False"
+msgstr "لا"
+
+#: apps/users/admin/customer/list_view.py:20
+msgid "search phone...🔍"
+msgstr "البحث برقم الهاتف...🔍"
+
+#: apps/users/admin/group/admin.py:14
+msgid "Search by group name...🔍"
+msgstr "ابحث باسم المجموعة...🔍"
+
+#: apps/users/api/common/exceptions.py:8
+msgid "The provided OTP is invalid or has expired."
+msgstr "رمز التحقق المدخل غير صالح أو منتهي الصلاحية."
+
+#: apps/users/api/common/exceptions.py:16
+msgid "Phone number is already registered to a user of a different type."
+msgstr "رقم الهاتف مسجل بالفعل لمستخدم من نوع مختلف."
+
+#: apps/users/api/common/exceptions.py:24
+msgid "Phone number is not in a working country"
+msgstr "رقم الهاتف ليس في دولة مدعومة"
+
+#: apps/users/api/common/exceptions.py:31
+msgid "User account is deactivated. Please contact support for assistance."
+msgstr "حساب المستخدم معطل. يرجى التواصل مع الدعم للحصول على المساعدة."
+
+#: apps/users/constants.py:6
+msgid "Male"
+msgstr "ذكر"
+
+#: apps/users/constants.py:7
+msgid "Female"
+msgstr "أنثى"
+
+#: apps/users/constants.py:8
+msgid "Not Selected"
+msgstr "غير محدد"
+
+#: apps/users/models/admin.py:14 apps/users/models/customer.py:29
+msgid "Image"
+msgstr "صورة"
+
+#: apps/users/models/customer.py:32
+msgid "Full Name"
+msgstr "الاسم الكامل"
+
+#: apps/users/models/customer.py:38
+msgid "Gender"
+msgstr "الجنس"
+
+#: apps/users/models/customer.py:40
+msgid "Birth Date"
+msgstr "تاريخ الميلاد"
+
+#: assets/templates/admin/index.html:8 common/insights/dashboard_callback.py:48
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+#: assets/templates/admin/index.html:8
+msgid "Django site admin"
+msgstr "إدارة موقع Django"
+
+#: assets/templates/admin/index.html:32
+msgid "Last 7 days"
+msgstr "آخر 7 أيام"
+
+#: assets/templates/admin/index.html:45
+msgid "Product performance in last 28 days"
+msgstr "أداء المنتج خلال آخر 28 يومًا"
+
+#: assets/templates/admin/index.html:49
+msgid "The most trending products in last 2 weeks"
+msgstr "أكثر المنتجات رواجًا خلال آخر أسبوعين"
+
+#: assets/templates/admin/index.html:54
+#, python-format
+msgid ""
+"\n"
+"              Total revenue between\n"
+"              <strong class=\"font-semibold text-font-important-light dark:"
+"text-font-important-dark dark:text-white\">1 -\n"
+"                31 October</strong>. Increase\n"
+"              <span class=\"text-green-700 font-semibold dark:text-"
+"green-400\">+3.14%%</span> comparing to previous month\n"
+"              <strong class=\"font-semibold text-font-important-light dark:"
+"text-font-important-dark dark:text-white\">1 -\n"
+"                30 September</strong>.\n"
+"            "
+msgstr ""
+"\n"
+"              إجمالي الإيرادات بين\n"
+"              <strong class=\"font-semibold text-font-important-light dark:"
+"text-font-important-dark dark:text-white\">1 -\n"
+"                31 أكتوبر</strong>. زيادة\n"
+"              <span class=\"text-green-700 font-semibold dark:text-"
+"green-400\">+3.14%%</span> مقارنة بالشهر السابق\n"
+"              <strong class=\"font-semibold text-font-important-light dark:"
+"text-font-important-dark dark:text-white\">1 -\n"
+"                30 سبتمبر</strong>.\n"
+"            "
+
+#: assets/templates/admin/index.html:72
+msgid "View detailed analytics"
+msgstr "عرض التحليلات التفصيلية"
+
+#: assets/templates/admin/index.html:80
+msgid "Current system health"
+msgstr "حالة النظام الحالية"
+
+#: common/insights/dashboard_callback.py:49
+msgid "Analytics"
+msgstr "التحليلات"
+
+#: common/insights/dashboard_callback.py:50
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: common/insights/dashboard_callback.py:53
+msgid "All"
+msgstr "الكل"
+
+#: common/insights/dashboard_callback.py:54
+msgid "New"
+msgstr "جديد"
+
+#: common/insights/dashboard_callback.py:124
+msgid "Last week revenue"
+msgstr "إيرادات الأسبوع الماضي"
+
+#: common/insights/dashboard_callback.py:142
+msgid "Last week expenses"
+msgstr "مصاريف الأسبوع الماضي"
+
+#: config/integrations/unfold.py:104
+msgid "Notification  📢"
+msgstr "إشعار 📢"
+
+#: config/integrations/unfold.py:115
+msgid "Location 📍"
+msgstr "الموقع 📍"
+
+#: config/integrations/unfold.py:120
+msgid "country"
+msgstr "دولة"
+
+#: config/integrations/unfold.py:132
+msgid "Admin & Group 👥"
+msgstr "المشرف والمجموعة 👥"
+
+#: config/integrations/unfold.py:142
+msgid "Groups"
+msgstr "المجموعات"
+
+#: config/integrations/unfold.py:149
+msgid "App Info ⓘ"
+msgstr "معلومات التطبيق ⓘ"
+
+#: config/integrations/unfold.py:154
+msgid "App Info"
+msgstr "معلومات التطبيق"
+
+#: config/integrations/unfold.py:159
+msgid "FAQs"
+msgstr "الأسئلة الشائعة"
+
+#: config/integrations/unfold.py:169
+msgid "Social Accounts"
+msgstr "حسابات التواصل الاجتماعي"
+
+#: config/settings/base.py:40
+msgid "Arabic"
+msgstr "العربية"
+
+#: config/settings/base.py:41
+msgid "English"
+msgstr "الإنجليزية"

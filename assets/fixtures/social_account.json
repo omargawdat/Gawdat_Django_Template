@@ -1,0 +1,14 @@
+[
+  {
+    "model": "appInfo.SocialAccount",
+    "pk": 1,
+    "fields": {
+      "email": "contact@example.com",
+      "phone_number": "+12025550179",
+      "twitter": "https://twitter.com/example",
+      "instagram": "https://instagram.com/example",
+      "tiktok": "https://tiktok.com/@example",
+      "website": "https://example.com"
+    }
+  }
+]

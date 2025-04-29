@@ -1,0 +1,26 @@
+[
+  {
+    "model": "location.country",
+    "pk": "EG",
+    "fields": {
+      "currency": "EGP",
+      "flag": "flags/EG.png",
+      "is_active": true,
+      "phone_code": "+20",
+      "name_ar": "مصر",
+      "name_en": "Egypt"
+    }
+  },
+  {
+    "model": "location.country",
+    "pk": "SA",
+    "fields": {
+      "currency": "SAR",
+      "flag": "flags/SA.png",
+      "is_active": true,
+      "phone_code": "+966",
+      "name_ar": "المملكة العربية السعودية",
+      "name_en": "Saudi Arabia"
+    }
+  }
+]

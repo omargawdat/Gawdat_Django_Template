@@ -1,0 +1,58 @@
+import logging
+
+from django.contrib.auth.base_user import AbstractBaseUser
+from phonenumbers import PhoneNumber
+from phonenumbers import parse
+from phonenumbers.phonenumberutil import is_possible_number
+from phonenumbers.phonenumberutil import is_valid_number
+
+from apps.channel.constants import Language
+from apps.location.domain.selector.country import CountrySelector
+from apps.users.constants import UserType
+from apps.users.models import User
+from apps.users.models.customer import Customer
+
+logger = logging.getLogger(__name__)
+
+
+class UserSelector:
+    @staticmethod
+    def phone_country(phone_number: PhoneNumber) -> bool:
+        country = CountrySelector.country_by_phone(phone_number)
+        return bool(country)
+
+    @staticmethod
+    def phone_format(phone_number: PhoneNumber) -> bool:
+        parsed_number = parse(str(phone_number))
+        return is_possible_number(parsed_number) and is_valid_number(parsed_number)
+
+    @staticmethod
+    def group_users_by_type(
+        users: list[AbstractBaseUser],
+    ) -> dict[UserType, list[User]]:
+        """Group users by their type."""
+        user_groups = {}
+        for user in users:
+            if isinstance(user, Customer):
+                user_type = UserType.CUSTOMER
+            else:
+                logger.exception("Unsupported user type: %s", type(user))
+                continue
+
+            if user_type not in user_groups:
+                user_groups[user_type] = []
+            user_groups[user_type].append(user)
+
+        return user_groups
+
+    @staticmethod
+    def group_by_language(users) -> dict[Language, list[User]]:
+        """Group users by their preferred language."""
+        user_groups = {}
+        for user in users:
+            language = user.language
+            if language not in user_groups:
+                user_groups[language] = []
+            user_groups[language].append(user)
+
+        return user_groups

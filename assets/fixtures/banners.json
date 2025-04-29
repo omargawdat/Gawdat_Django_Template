@@ -1,0 +1,18 @@
+[
+{
+  "model": "products.banner",
+  "pk": 1,
+  "fields": {
+    "image": "banners/banner.jpg",
+    "banner_type": "MAIN_BANNER"
+  }
+},
+{
+  "model": "products.banner",
+  "pk": 2,
+  "fields": {
+    "image": "banners/banner.jpg",
+    "banner_type": "SIDE_BANNER"
+  }
+}
+]

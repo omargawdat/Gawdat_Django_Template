@@ -1,0 +1,92 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    env:
+      PARENT_DOMAIN: ${{ secrets.PARENT_DOMAIN }}
+      DOMAIN_NAME: prod.${{ secrets.PARENT_DOMAIN }}
+      S3_BUCKET_NAME: prod-gawdat
+      DB_NAME: prod_appdb
+      IS_LOCAL: "false"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+      AWS_SECRET_MANAGER_NAME: ${{ secrets.AWS_SECRET_MANAGER_NAME }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: app:latest
+          build-args: is_local=${{ env.IS_LOCAL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Configure AWS Access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Authenticate with ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate ECR Image URI
+        id: ecr-image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+        run: |
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${{ github.sha }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> $GITHUB_OUTPUT
+          echo "Created image URI: ${IMAGE_URI}"
+
+      - name: Push Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+        run: |
+          docker tag app:latest $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.10.5'
+
+      - name: Deploy to App Runner
+        run: |
+          chmod +x ./scripts/deploy.sh
+          ./scripts/deploy.sh \
+            --key "prod/terraform.tfstate" \
+            --parent-domain "${{ env.PARENT_DOMAIN }}" \
+            --domain-name "${{ env.DOMAIN_NAME }}" \
+            --ecr-image-identifier "${{ steps.ecr-image.outputs.IMAGE_URI }}" \
+            --container-port "5000" \
+            --media-bucket-name "${{ env.S3_BUCKET_NAME }}" \
+            --secret-manager-name "${{ env.AWS_SECRET_MANAGER_NAME }}" \
+            --db-name "${{ env.DB_NAME }}" \
+            --region "eu-central-1" \
+            --state-bucket "gawdat-company-terraform-states" \
+            --dynamodb-table "gawdat-company-terraform-locks" \
+            --apprunner-ecr-role-arn "arn:aws:iam::975049989256:role/apprunner-ecr-access-role-new" \
+            --apprunner-instance-role-arn "arn:aws:iam::975049989256:role/temp-instance-role"

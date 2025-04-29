@@ -1,0 +1,177 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n unfold %}
+
+{% block breadcrumbs %}
+{% endblock breadcrumbs %}
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% url 'admin:jsi18n' %}"></script>
+  {{ form.media }}
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+{% endblock extrahead %}
+{% block content %}
+  <div class="max-w-full mx-auto px-6">
+    <div class="flex gap-6">
+      <!-- Left Column: User & Wallet Info -->
+      <div class="w-1/4 min-w-[300px]">
+        <div class="border border-gray-200 rounded p-6 mb-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <h2 class="text-xl font-bold mb-6 text-black dark:text-white">
+            <i class="fas fa-user mr-2"></i> {% trans "User Information" %}
+          </h2>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-black dark:text-white">
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <i class="fas fa-phone mr-1"></i> {% trans "Phone Number" %}
+            </div>
+            <div>{{ phone_number }}</div>
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <i class="fas fa-at mr-1"></i> {% trans "Username" %}
+            </div>
+            <div>{{ username }}</div>
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <i class="fas fa-wallet mr-1"></i> {% trans "Current Balance" %}
+            </div>
+            <div id="current-balance" class="text-black dark:text-white">{{ balance }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Right Column: Transaction Form -->
+      <div class="w-3/4">
+        <form id="transaction-form"
+              action=""
+              method="post"
+              enctype="multipart/form-data"
+              novalidate>
+          <div class="border border-gray-200 rounded p-6 dark:border-gray-700 dark:bg-gray-800">
+            <h2 class="text-xl font-bold mb-6 text-black dark:text-white">
+              <i class="fas fa-exchange-alt mr-2"></i> {{ title }}
+            </h2>
+            {% csrf_token %}
+            <div class="space-y-6">
+              {% for field in form %}
+                {% include "unfold/helpers/field.html" with field=field %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="flex justify-end items-center gap-4 mt-6">
+            <a href="{% url 'admin:payment_wallet_changelist' %}"
+               class="px-4 py-2 text-sm font-medium rounded-md text-black dark:text-white">
+              <i class="fas fa-times mr-1"></i> {% trans "Cancel" %}
+            </a>
+            <button id="submit-btn"
+                    type="button"
+                    class="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition">
+              <i class="fas fa-check mr-1"></i> {% trans "Process Transaction" %}
+            </button>
+          </div>
+        </form>
+        <!-- Confirmation Modal -->
+        <div id="confirm-modal"
+             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-60 backdrop-blur-sm hidden z-50">
+          <div id="confirm-modal-box"
+               class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-white rounded-lg shadow-lg dark:shadow-xl p-6 w-80 transform scale-95 opacity-0 transition-all duration-200 ease-in-out text-center">
+            <!-- Icon at top -->
+            <div class="flex justify-center mb-5">
+              <div class="h-16 w-16 rounded-full bg-blue-50 dark:bg-gray-700 flex items-center justify-center">
+                <i class="fas fa-exchange-alt text-blue-500 dark:text-blue-400 text-xl"></i>
+              </div>
+            </div>
+            <!-- Dynamic Information -->
+            <div class="mb-5 p-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800 space-y-2">
+              <p class="text-center pb-2 border-b border-blue-200 dark:border-blue-800">
+                <i id="action-icon" class="fas mr-1"></i>
+                <span id="modal-action" class="font-medium"></span>
+                <span id="modal-amount" class="font-medium ml-1"></span>
+              </p>
+              <p class="flex justify-between">
+                <strong>{% trans "Current Balance" %}:</strong>
+                <span id="modal-before" class="font-medium"></span>
+              </p>
+              <p class="flex justify-between">
+                <strong>{% trans "Balance After" %}:</strong>
+                <span id="modal-after" class="font-medium"></span>
+              </p>
+            </div>
+            <!-- Buttons -->
+            <div class="flex justify-between gap-4">
+              <button id="modal-cancel-btn"
+                      type="button"
+                      class="flex-1 px-4 py-2 text-sm rounded-lg bg-red-600 dark:bg-red-500 text-white hover:bg-red-700 dark:hover:bg-red-600 transition duration-200">
+                <i class="fas fa-times mr-1"></i>{% trans "Cancel" %}
+              </button>
+              <button id="modal-confirm-btn"
+                      type="button"
+                      class="flex-1 px-4 py-2 text-sm rounded-lg bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-200">
+                <i class="fas fa-check mr-1"></i>{% trans "Confirm" %}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      const form = document.getElementById('transaction-form');
+      const modal = document.getElementById('confirm-modal');
+      const box = document.getElementById('confirm-modal-box');
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      const cancelBtn = document.getElementById('modal-cancel-btn');
+      const submitBtn = document.getElementById('submit-btn');
+
+      submitBtn.addEventListener('click', function() {
+        // Get current balance (strip non-numeric)
+        const rawBeforeText = document.getElementById('current-balance').textContent;
+        const before = parseFloat(rawBeforeText.replace(/[^0-9.-]+/g, '')) || 0;
+
+        // Get amount from form (as string first to check for "-")
+        const amountField = form.querySelector('[name="amount"]');
+        const amountInput = amountField?.value.trim() || '0';
+        const amount = parseFloat(amountInput) || 0;
+
+        // Determine action based on whether "-" is present before parsing
+        const isWithdrawal = amountInput.startsWith('-');
+        const actionLabel = isWithdrawal ? '{% trans "Subtract" %}' : '{% trans "Add" %}';
+        const absoluteAmount = Math.abs(amount); // Use absolute value for display
+
+        // Calculate new balance
+        const newBalance = isWithdrawal ? before - absoluteAmount : before + absoluteAmount;
+
+        // Set modal values
+        const actionIcon = document.getElementById('action-icon');
+        actionIcon.className = 'fas mr-1 ' + (isWithdrawal ? 'fa-minus text-red-600 dark:text-red-400' : 'fa-plus text-green-600 dark:text-green-400');
+        document.getElementById('modal-action').textContent = actionLabel;
+
+        const modalAmount = document.getElementById('modal-amount');
+        modalAmount.textContent = (isWithdrawal ? '- ' : '+ ') + absoluteAmount.toFixed(2);
+        modalAmount.className = 'font-medium ' + (isWithdrawal ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400');
+
+        document.getElementById('modal-before').textContent = before.toFixed(2);
+        document.getElementById('modal-after').textContent = newBalance.toFixed(2);
+
+        // Show modal
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          box.classList.remove('scale-95', 'opacity-0');
+          box.classList.add('scale-100', 'opacity-100');
+        }, 10);
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        box.classList.add('scale-95', 'opacity-0');
+        box.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        box.classList.add('scale-95', 'opacity-0');
+        box.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+          form.submit();
+        }, 200);
+      });
+    })();
+  </script>
+{% endblock content %}

@@ -1,0 +1,31 @@
+name: Docker Compose Test (PR)
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  docker_compose_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Environment File
+        run: cp dummy.env .env
+      - name: Build Stack
+        run: docker compose -f docker-compose.local.yml build
+      - name: Check Missing Migrations
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
+      - name: Apply DB Migrations
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py migrate --noinput
+      - name: Django System Checks
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py check
+      - name: Django Unit Tests
+        run: docker compose -f docker-compose.local.yml run --rm django pytest
+      - name: Tear down Stack
+        if: always()
+        run: docker compose -f docker-compose.local.yml down -v
