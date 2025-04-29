@@ -22,6 +22,7 @@ class CustomerMinimalSerializer(serializers.ModelSerializer):
             "birth_date",
             "primary_address",
             "is_profile_completed",
+            "language",
         ]
 
 
