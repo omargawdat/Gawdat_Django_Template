@@ -2,9 +2,9 @@
 
 gunicorn==23.0.0
 Collectfasta==3.2.1
-sentry-sdk[django]==2.25.0
+sentry-sdk[django]==2.27.0
 
 # Django
 # ------------------------------------------------------------------------------
-django-storages[s3]==1.14.5
-gevent==24.11.1
+django-storages[s3]==1.14.6
+gevent==25.4.2
