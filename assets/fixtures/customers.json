@@ -1,0 +1,78 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1000,
+    "fields": {
+      "username": "+201001690789",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-01-01T00:00:00Z",
+      "language": "ar",
+      "polymorphic_ctype": [
+        "users",
+        "customer"
+      ]
+    }
+  },
+  {
+    "model": "users.customer",
+    "pk": 1000,
+    "fields": {
+      "phone_number": "+201001690789",
+      "image": "flags/EG.png",
+      "full_name": "mezo mezoo",
+      "gender": "M",
+      "birth_date": "2005-03-21",
+      "country": "EG"
+    }
+  },
+  {
+    "model": "payment.wallet",
+    "pk": 1000,
+    "fields": {
+      "user": 1000,
+      "balance": "0.00",
+      "balance_currency": "EGP",
+      "is_use_wallet_in_payment": true,
+      "last_update": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 1001,
+    "fields": {
+      "username": "+9668001280006",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-01-01T00:00:00Z",
+      "language": "ar",
+      "polymorphic_ctype": [
+        "users",
+        "customer"
+      ]
+    }
+  },
+  {
+    "model": "users.customer",
+    "pk": 1001,
+    "fields": {
+      "phone_number": "+9668001280006",
+      "image": "flags/SA.png",
+      "full_name": "mezo mezo mezo",
+      "gender": "M",
+      "birth_date": "2005-03-21",
+      "country": "SA"
+    }
+  },
+  {
+    "model": "payment.wallet",
+    "pk": 1001,
+    "fields": {
+      "user": 1001,
+      "balance": "0.00",
+      "balance_currency": "SAR",
+      "is_use_wallet_in_payment": true,
+      "last_update": "2023-01-01T00:00:00Z"
+    }
+  }
+]

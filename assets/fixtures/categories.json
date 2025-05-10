@@ -1,0 +1,22 @@
+[
+{
+  "model": "products.category",
+  "pk": 1,
+  "fields": {
+    "name": "Clothes",
+    "name_ar": "ملابس",
+    "name_en": "Clothes",
+    "image": "categories/category.jpg"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 2,
+  "fields": {
+    "name": "Drinks",
+    "name_ar": "مشروبات",
+    "name_en": "Drinks",
+    "image": "categories/category.jpg"
+  }
+}
+]

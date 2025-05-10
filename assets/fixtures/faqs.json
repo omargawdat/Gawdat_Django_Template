@@ -1,0 +1,57 @@
+[
+  {
+    "model": "appInfo.FAQ",
+    "pk": 1,
+    "fields": {
+      "question_en": "How do I create an account?",
+      "question_ar": "كيف يمكنني إنشاء حساب؟",
+      "answer_en": "Creating an account is simple. Click the 'Sign Up' button in the top right corner of our homepage. Fill in your email address, create a password, and follow the verification steps sent to your email. Once verified, you can immediately access all features of your account.",
+      "answer_ar": "إنشاء حساب أمر بسيط. انقر على زر 'التسجيل' في الزاوية العليا اليمنى من صفحتنا الرئيسية. املأ عنوان بريدك الإلكتروني، وأنشئ كلمة مرور، واتبع خطوات التحقق المرسلة إلى بريدك الإلكتروني. بمجرد التحقق، يمكنك الوصول على الفور إلى جميع ميزات حسابك.",
+      "order": 1
+    }
+  },
+  {
+    "model": "appInfo.FAQ",
+    "pk": 2,
+    "fields": {
+      "question_en": "How can I reset my password?",
+      "question_ar": "كيف يمكنني إعادة تعيين كلمة المرور الخاصة بي؟",
+      "answer_en": "To reset your password, click the 'Forgot Password' link on the login page. Enter the email address associated with your account, and we'll send you a secure link to create a new password. For security reasons, these reset links expire after 24 hours.",
+      "answer_ar": "لإعادة تعيين كلمة المرور الخاصة بك، انقر على رابط 'نسيت كلمة المرور' على صفحة تسجيل الدخول. أدخل عنوان البريد الإلكتروني المرتبط بحسابك، وسنرسل لك رابطًا آمنًا لإنشاء كلمة مرور جديدة. لأسباب أمنية، تنتهي صلاحية روابط إعادة التعيين هذه بعد 24 ساعة.",
+      "order": 2
+    }
+  },
+  {
+    "model": "appInfo.FAQ",
+    "pk": 3,
+    "fields": {
+      "question_en": "Is my data secure?",
+      "question_ar": "هل بياناتي آمنة؟",
+      "answer_en": "Yes, we take data security very seriously. All data is encrypted both in transit and at rest using industry-standard encryption protocols. We implement strict access controls, regular security audits, and comply with relevant data protection regulations. For more details, please refer to our Privacy Policy.",
+      "answer_ar": "نعم، نحن نأخذ أمن البيانات على محمل الجد. يتم تشفير جميع البيانات أثناء النقل وفي حالة الاستقرار باستخدام بروتوكولات التشفير القياسية في الصناعة. نقوم بتنفيذ ضوابط صارمة للوصول، وعمليات تدقيق أمنية منتظمة، ونمتثل للوائح حماية البيانات ذات الصلة. لمزيد من التفاصيل، يرجى الرجوع إلى سياسة الخصوصية الخاصة بنا.",
+      "order": 3
+    }
+  },
+  {
+    "model": "appInfo.FAQ",
+    "pk": 4,
+    "fields": {
+      "question_en": "Can I cancel my subscription at any time?",
+      "question_ar": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
+      "answer_en": "Absolutely. You can cancel your subscription at any time through your account settings under 'Subscription Management.' There are no cancellation fees. If you cancel mid-billing cycle, you'll maintain access to premium features until the end of your current billing period.",
+      "answer_ar": "بالتأكيد. يمكنك إلغاء اشتراكك في أي وقت من خلال إعدادات حسابك ضمن 'إدارة الاشتراك'. لا توجد رسوم إلغاء. إذا قمت بالإلغاء في منتصف دورة الفوترة، فستحتفظ بإمكانية الوصول إلى الميزات المتميزة حتى نهاية فترة الفوترة الحالية.",
+      "order": 4
+    }
+  },
+  {
+    "model": "appInfo.FAQ",
+    "pk": 5,
+    "fields": {
+      "question_en": "How do I contact customer support?",
+      "question_ar": "كيف يمكنني التواصل مع دعم العملاء؟",
+      "answer_en": "Our customer support team is available 24/7. You can reach us via email at support@innotech-solutions.com, through the live chat feature in the bottom right corner of our application, or by phone at +1 (555) 123-4567. For the fastest response, please include your account information and any relevant screenshots.",
+      "answer_ar": "فريق دعم العملاء لدينا متاح على مدار الساعة طوال أيام الأسبوع. يمكنك التواصل معنا عبر البريد الإلكتروني على support@innotech-solutions.com، أو من خلال ميزة الدردشة المباشرة في الزاوية السفلية اليمنى من تطبيقنا، أو عبر الهاتف على +1 (555) 123-4567. للحصول على أسرع استجابة، يرجى تضمين معلومات حسابك وأي لقطات شاشة ذات صلة.",
+      "order": 5
+    }
+  }
+]

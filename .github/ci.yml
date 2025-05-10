@@ -1,0 +1,60 @@
+name: CI
+on:
+  pull_request:
+    branches: [ 'master', 'main' ]
+    paths-ignore: [ 'docs/**' ]
+
+  push:
+    branches: [ 'master', 'main' ]
+    paths-ignore: [ 'docs/**' ]
+
+env:
+  AWS_SECRETS_REGION: ${{ secrets.AWS_SECRETS_REGION }}
+  AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
+  pytest:
+    runs-on: ubuntu-latest
+    env:
+      AWS_SECRETS_REGION: ${{ secrets.AWS_SECRETS_REGION }}
+      AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Build the Stack
+        run: docker compose -f docker-compose.yml build django
+
+      - name: Check DB Migrations
+        run: docker compose -f docker-compose.yml run --rm django python manage.py makemigrations --check
+
+      - name: Run DB Migrations
+        run: docker compose -f docker-compose.yml run --rm django python manage.py migrate
+
+      - name: Run Django Tests
+        run: docker compose -f docker-compose.yml run django pytest
+
+      - name: Tear down the Stack
+        run: docker compose -f docker-compose.yml down

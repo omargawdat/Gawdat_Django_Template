@@ -1,0 +1,64 @@
+name: Backend Tests & Docker Push (Main)
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+on:
+  workflow_run:
+    workflows: [ 'Linter' ]
+    types:
+      - completed
+    branches: [ 'main' ]
+
+jobs:
+  backend_tests_and_push:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Setup Environment File
+        run: cp dummy.env .env
+      - name: Build Docker Stack
+        run: docker compose -f docker-compose.local.yml build
+      - name: Check Missing Migrations
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
+      - name: Apply DB Migrations
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py migrate --noinput
+      - name: Django System Checks
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py check
+      - name: Django Unit Tests
+        run: docker compose -f docker-compose.local.yml run --rm django pytest
+
+      # Push Docker image to AWS ECR
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Authenticate to AWS ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build --build-arg is_local=false -t "$IMAGE_URI" .
+          docker push "$IMAGE_URI"
+          echo "Docker image successfully pushed to: $IMAGE_URI"
+
+      - name: Tear down Stack
+        if: always()
+        run: docker compose -f docker-compose.local.yml down -v

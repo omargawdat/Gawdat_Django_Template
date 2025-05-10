@@ -1,0 +1,30 @@
+name: Deploy to Production
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify main branch
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Production deployments only allowed from main!"
+            exit 1
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to App Runner (Prod)
+        run: |
+          aws apprunner update-service \
+            --service-arn ${{ secrets.PROD_APP_RUNNER_ARN }} \
+            --source-configuration "ImageRepository={ImageIdentifier=$ECR_URI:prod,ImageRepositoryType=ECR}"

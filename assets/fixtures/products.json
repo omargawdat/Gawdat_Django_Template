@@ -1,0 +1,78 @@
+[
+{
+  "model": "products.category",
+  "pk": 1,
+  "fields": {
+    "name": "Clothes",
+    "name_ar": "ملابس",
+    "name_en": "Clothes",
+    "image": "categories/category.jpg"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 2,
+  "fields": {
+    "name": "Drinks",
+    "name_ar": "مشروبات",
+    "name_en": "Drinks",
+    "image": "categories/category.jpg"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "name": "Laptop",
+    "name_ar": null,
+    "name_en": "Laptop",
+    "description": "A high-performance laptop",
+    "price_currency": "SAR",
+    "price": "999.99",
+    "image": "products/product.jpg"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 2,
+  "fields": {
+    "category": 1,
+    "name": "Smartphone",
+    "name_ar": null,
+    "name_en": "Smartphone",
+    "description": "A latest model smartphone",
+    "price_currency": "SAR",
+    "price": "499.99",
+    "image": "products/product.jpg"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 3,
+  "fields": {
+    "category": 2,
+    "name": "T-shirt",
+    "name_ar": null,
+    "name_en": "T-shirt",
+    "description": "A comfortable cotton t-shirt",
+    "price_currency": "EGP",
+    "price": "19.99",
+    "image": "products/product.jpg"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 4,
+  "fields": {
+    "category": 2,
+    "name": "Jeans",
+    "name_ar": null,
+    "name_en": "Jeans",
+    "description": "Durable denim jeans",
+    "price_currency": "EGP",
+    "price": "39.99",
+    "image": "products/product.jpg"
+  }
+}
+]

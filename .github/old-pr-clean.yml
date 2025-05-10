@@ -1,0 +1,63 @@
+name: Cleanup Resources
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    name: Cleanup Resources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Environment Variables
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            PR_NUM="${{ github.event.pull_request.number }}"
+          else
+            PR_NUM="${{ github.event.inputs.pr_number }}"
+          fi
+          echo "PR_NUMBER=$PR_NUM" >> $GITHUB_ENV
+          echo "DB_NAME=pr_${PR_NUM}_appdb" >> $GITHUB_ENV
+
+      - name: Configure AWS Access
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Remove App Runner Service
+        run: |
+          SERVICE_NAME="pr-${{ env.PR_NUMBER }}-service"
+          SERVICE_ARN=$(aws apprunner list-services \
+            --query "ServiceSummaryList[?ServiceName=='${SERVICE_NAME}'].ServiceArn" \
+            --output text)
+
+          if [ -n "$SERVICE_ARN" ]; then
+            if aws apprunner delete-service --service-arn $SERVICE_ARN; then
+              aws apprunner wait service-deleted --service-arn $SERVICE_ARN
+              echo "✅ Successfully removed service: ${SERVICE_NAME}"
+            else
+              echo "❌ Failed to delete service: ${SERVICE_NAME}"
+              exit 1
+            fi
+          else
+            echo "No service found for ${SERVICE_NAME}"
+          fi
+
+      - name: Drop Test Database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          if PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -c "DROP DATABASE IF EXISTS ${{ env.DB_NAME }};"; then
+            echo "✅ Database ${{ env.DB_NAME }} successfully dropped."
+          else
+            echo "❌ Failed to drop database ${{ env.DB_NAME }}"
+            exit 1
+          fi

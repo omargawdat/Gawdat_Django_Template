@@ -1,0 +1,18 @@
+[
+{
+  "model": "products.brand",
+  "pk": 1,
+  "fields": {
+    "name": "Zara",
+    "logo": "brands/logo.jpg"
+  }
+},
+{
+  "model": "products.brand",
+  "pk": 2,
+  "fields": {
+    "name": "H&M",
+    "logo": "brands/logo.jpg"
+  }
+}
+]
