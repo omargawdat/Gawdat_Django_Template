@@ -1,5 +1,5 @@
 # Build stage
-FROM docker.io/python:3.12.7-slim-bookworm AS python-build-stage
+FROM docker.io/python:3.12.9-slim-bookworm AS python-build-stage
 
 # Only keep is_local as build argument since it affects build-time behavior
 ARG is_local
