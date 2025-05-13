@@ -10,7 +10,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
-        args: [ --maxkb=5120 ]
+        args: [ --maxkb=500 ]
       - id: check-toml
       - id: check-yaml
       - id: check-case-conflict
