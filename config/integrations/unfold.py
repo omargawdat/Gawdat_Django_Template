@@ -100,36 +100,6 @@ UNFOLD = {
                     },
                 ],
             },
-            # {
-            #     "title": _("Products 🛍️"),
-            #     "separator": True,
-            #     "items": [
-            #         {
-            #             "title": _("Product"),
-            #             "icon": "inventory",
-            #             "link": reverse_lazy("admin:products_product_changelist"),
-            #             "permission": lambda request: request.user.has_perm(
-            #                 "products.view_product"
-            #             ),
-            #         },
-            #         {
-            #             "title": _("Category"),
-            #             "icon": "category",
-            #             "link": reverse_lazy("admin:products_category_changelist"),
-            #             "permission": lambda request: request.user.has_perm(
-            #                 "products.view_category"
-            #             ),
-            #         },
-            #         {
-            #             "title": _("Brand"),
-            #             "icon": "branding_watermark",
-            #             "link": reverse_lazy("admin:products_brand_changelist"),
-            #             "permission": lambda request: request.user.has_perm(
-            #                 "products.view_brand"
-            #             ),
-            #         },
-            #     ],
-            # },
             {
                 "title": _("Payment 💳"),
                 "separator": True,
@@ -249,14 +219,6 @@ UNFOLD = {
                         "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "appInfo.view_socialaccount"
-                        ),
-                    },
-                    {
-                        "title": _("Banner"),
-                        "icon": "image",
-                        "link": reverse_lazy("admin:products_banner_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "products.view_banner"
                         ),
                     },
                 ],
