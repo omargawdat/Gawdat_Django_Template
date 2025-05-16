@@ -4,7 +4,7 @@ import socket
 
 from .base import *  # noqa
 
-print("loading local settings")
+print("loading local settings")  # noqa: T201
 
 # ------------------------------------------------------------------------------
 # CACHING CONFIGURATION

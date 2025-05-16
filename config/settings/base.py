@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from config.helpers.env import env
 
-print("loading base settings")
+print("loading base settings")  # noqa: T201
 
 # ------------------------------------------------------------------------------
 # Fields Settings
@@ -69,7 +69,6 @@ DATABASES = {
         },
     },
 }
-
 
 # ------------------------------------------------------------------------------
 # Third-party applications
@@ -201,7 +200,6 @@ TEMPLATES = [
     },
 ]
 
-
 # ------------------------------------------------------------------------------
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -223,7 +221,6 @@ LOGGING = {
     },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
-
 
 # ------------------------------------------------------------------------------
 # THIRD-PARTY INTEGRATIONS

@@ -3,7 +3,7 @@
 from .base import *  # noqa
 from ..helpers.env import env
 
-print("loading production settings")
+print("loading production settings")  # noqa: T201
 
 DEBUG = False
 ALLOWED_HOSTS = [env.domain_name]
@@ -35,7 +35,6 @@ SESSION_COOKIE_NAME = "__Secure-sessionid"
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_NAME = "__Secure-csrftoken"
 
-
 # HSTS Settings
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -46,7 +45,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # AWS S3 STORAGE CONFIGURATION
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ["storages"]  # type: ignore
-
 
 # AWS S3 Settings
 AWS_STORAGE_BUCKET_NAME = env.s3_bucket_name
@@ -88,7 +86,6 @@ MEDIA_URL = f"https://{aws_s3_domain}/media/"
 STATIC_URL = f"https://{aws_s3_domain}/static/"
 COLLECTFASTA_STRATEGY = "collectfasta.strategies.boto3.Boto3Strategy"
 
-
 # ------------------------------------------------------------------------------
 # ADDITIONAL APPS AND SETTINGS
 # ------------------------------------------------------------------------------
@@ -99,7 +96,6 @@ INSTALLED_APPS = ["collectfasta", *INSTALLED_APPS]
 SPECTACULAR_SETTINGS["SERVERS"] = [
     {"url": f"https://{env.domain_name}", "description": "Production server"}  # type: ignore[list-item]
 ]
-
 
 # ------------------------------------------------------------------------------
 # EXTERNAL INTEGRATIONS
