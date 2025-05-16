@@ -120,9 +120,7 @@ LOCAL_APPS = [
     "apps.channel",
     "apps.appInfo",
     "apps.location",
-    "apps.products",
     "apps.payment",
-    "apps.cart",
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS

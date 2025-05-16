@@ -27,8 +27,6 @@ api_doc_patterns = [
 
 api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.users.api.customer.urls")),
-    path("", include("apps.products.api.home.urls")),
-    path("", include("apps.products.api.product.urls")),
     path("", include("apps.users.api.user.urls")),
     path("", include("apps.location.api.country.urls")),
     path("", include("apps.location.api.region.urls")),
@@ -37,7 +35,6 @@ api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.channel.api.sms.urls")),
     path("", include("apps.appInfo.api.info.urls")),
     path("", include("apps.payment.api.wallet_transaction.urls")),
-    path("", include("apps.cart.api.cart.urls")),
 ]
 
 api_patterns = [

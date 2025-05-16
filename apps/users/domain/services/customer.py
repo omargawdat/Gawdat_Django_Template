@@ -1,4 +1,3 @@
-from apps.cart.domain.services.cart import CartService
 from apps.location.domain.selector.country import CountrySelector
 from apps.payment.domain.services.wallet import WalletService
 from apps.users.domain.validators.user import UserValidator
@@ -31,5 +30,4 @@ class CustomerService:
 
         if created:
             WalletService.create_wallet_for_user(customer)
-            CartService.create_associated_cart(customer)
         return customer, created
