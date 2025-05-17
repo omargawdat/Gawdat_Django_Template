@@ -54,6 +54,7 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
     ],
+    "OAS_VERSION": "3.1.0",
 }
 
 SIMPLE_JWT = {
