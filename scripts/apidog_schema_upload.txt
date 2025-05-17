@@ -1,0 +1,28 @@
+# Define variables
+SCHEMA_PATH="/Users/omar/Main/Software_Projects/Projects/Eram/nemo/schema.yaml"
+API_URL="https://api.apidog.com/v1/projects/project-id/import-openapi"
+API_TOKEN="API-Token"
+API_VERSION="2024-03-28"
+REQUEST_BODY_FILE="request_body.json"
+
+# Load schema content into a variable
+SCHEMA_CONTENT=$(python3 -c "import json; print(json.dumps(open('$SCHEMA_PATH').read()))")
+
+# Create the request body JSON using variables
+cat <<EOF > $REQUEST_BODY_FILE
+{
+  "input": $SCHEMA_CONTENT,
+  "options": {
+    "endpointOverwriteBehavior": "CREATE_NEW",
+    "endpointCaseOverwriteBehavior": "CREATE_NEW",
+    "updateFolderOfChangedEndpoint": false
+  }
+}
+EOF
+
+# Make the API call using variables
+curl -X POST "$API_URL" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "X-Apidog-Api-Version: $API_VERSION" \
+  -H "Content-Type: application/json" \
+  -d @"$REQUEST_BODY_FILE"
