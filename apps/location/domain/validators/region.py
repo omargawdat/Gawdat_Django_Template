@@ -1,7 +1,7 @@
 from django.contrib.gis.geos import Point
 
-from apps.location.api.common.exceptions import RegionCountryMismatchException
-from apps.location.api.common.exceptions import UnsupportedRegionException
+from apps.location.api.exceptions import RegionCountryMismatchException
+from apps.location.api.exceptions import UnsupportedRegionException
 from apps.location.domain.selector.location import LocationSelector
 from apps.location.domain.selector.region import RegionSelector
 from apps.location.models.region import Region
