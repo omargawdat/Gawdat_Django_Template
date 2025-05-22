@@ -14,7 +14,6 @@ from apps.location.domain.selector.region import RegionSelector
 @extend_schema(
     tags=["Location/Region"],
     operation_id="GetRegionByPoint",
-    summary="Get region by coordinates",
     description="""
     - Cairo, Egypt: `?long=31.235712&lat=30.044420`
     - Riyadh, Saudi Arabia: `?long=46.738586&lat=24.774265`
@@ -28,7 +27,6 @@ from apps.location.domain.selector.region import RegionSelector
                 OpenApiExample(
                     "Saudi Arabia Example",
                     value=46.738586,
-                    summary="Longitude for Riyadh, Saudi Arabia",
                 ),
             ],
         ),
@@ -40,7 +38,6 @@ from apps.location.domain.selector.region import RegionSelector
                 OpenApiExample(
                     "Saudi Arabia Example",
                     value=24.774265,
-                    summary="Latitude for Riyadh, Saudi Arabia",
                 ),
             ],
         ),
