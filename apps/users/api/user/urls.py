@@ -4,6 +4,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from apps.users.api.user.views import LogoutView
 
 urlpatterns = [
-    path("user/refresh-token/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("user/logout/", LogoutView.as_view(), name="logout"),
+    path("users/refresh-token/", TokenRefreshView.as_view(), name="user-refresh-token"),
+    path("users/logout/", LogoutView.as_view(), name="user-logout"),
 ]

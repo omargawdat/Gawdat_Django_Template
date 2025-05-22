@@ -7,11 +7,11 @@ from apps.users.api.customer.views import CustomerUpdateView
 
 urlpatterns = [
     path(
-        "customer/authenticate/",
+        "customers/authenticate/",
         CustomerAuthView.as_view(),
         name="customer-authenticate",
     ),
-    path("customer/update/", CustomerUpdateView.as_view(), name="customer-update"),
-    path("customer/delete/", CustomerDeleteView.as_view(), name="customer-delete"),
-    path("customer/me/", CustomerDetailView.as_view(), name="customer-detail"),
+    path("customers/me/", CustomerDetailView.as_view(), name="customer-detail"),
+    path("customers/me/update/", CustomerUpdateView.as_view(), name="customer-update"),
+    path("customers/me/delete/", CustomerDeleteView.as_view(), name="customer-delete"),
 ]

@@ -4,14 +4,14 @@ from . import views
 
 urlpatterns = [
     path("addresses/", views.AddressListView.as_view(), name="address-list"),
-    path("address/create/", views.AddressCreateView.as_view(), name="address-create"),
+    path("addresses/create/", views.AddressCreateView.as_view(), name="address-create"),
     path(
-        "address/<int:pk>/update/",
+        "addresses/<int:pk>/update/",
         views.AddressUpdateView.as_view(),
         name="address-update",
     ),
     path(
-        "address/<int:pk>/delete/",
+        "addresses/<int:pk>/delete/",
         views.AddressDeleteView.as_view(),
         name="address-delete",
     ),

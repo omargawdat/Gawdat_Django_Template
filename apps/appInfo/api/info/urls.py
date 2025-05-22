@@ -5,7 +5,9 @@ from apps.appInfo.api.info.views import FAQListView
 from apps.appInfo.api.info.views import SocialAccountsAPIView
 
 urlpatterns = [
-    path("social-accounts/", SocialAccountsAPIView.as_view(), name="social-accounts"),
-    path("app-info/", AppInfoAPIView.as_view(), name="app-info"),
-    path("faq/", FAQListView.as_view(), name="faq"),
+    path(
+        "app/social-accounts/", SocialAccountsAPIView.as_view(), name="social-accounts"
+    ),
+    path("app/info/", AppInfoAPIView.as_view(), name="app-info"),
+    path("app/faqs/", FAQListView.as_view(), name="faqs"),
 ]

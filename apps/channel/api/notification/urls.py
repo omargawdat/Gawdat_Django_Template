@@ -9,20 +9,20 @@ router = DefaultRouter()
 router.register("devices", FCMDeviceAuthorizedViewSet, basename="fcmdevice")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("devices/", include(router.urls)),
     path(
         "notifications/",
         views.NotificationListView.as_view(),
-        name="list_notifications",
+        name="notifications-list",
     ),
     path(
         "notifications/<int:pk>/",
         views.NotificationDeleteView.as_view(),
-        name="delete_notification",
+        name="notifications-delete",
     ),
     path(
         "notifications/bulk-delete/",
         views.NotificationBulkDeleteView.as_view(),
-        name="delete_all_notifications",
+        name="notifications-bulk-delete",
     ),
 ]
