@@ -24,11 +24,10 @@ class DeviceService:
         )
 
     @staticmethod
-    def deactivate_user_device(
-        *, user: User, registration_id: str, device_id: str
-    ) -> None:
+    def deactivate_user_device(*, user: User, registration_id: str) -> None:
         FCMDevice.objects.filter(
-            user=user, registration_id=registration_id, device_id=device_id
+            user=user,
+            registration_id=registration_id,
         ).update(active=False)
 
     @staticmethod
