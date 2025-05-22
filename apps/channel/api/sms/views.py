@@ -1,4 +1,6 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -6,9 +8,15 @@ from apps.channel.api.sms.serializers import OTPSendSerializer
 from apps.channel.domain.services.otp import OTPUtils
 
 
+@extend_schema(
+    tags=["users"],
+    operation_id="SendOTP",
+    request=OTPSendSerializer,
+)
 class OTPSendView(APIView):
     permission_classes = []
     serializer_class = OTPSendSerializer
+    parser_classes = [JSONParser]
 
     def post(self, request, *args, **kwargs):
         serializer = OTPSendSerializer(data=request.data)
@@ -19,4 +27,4 @@ class OTPSendView(APIView):
             otp_type=serializer.validated_data["otp_type"],
         )
 
-        return Response({"message": "OTP has been sent"}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)

@@ -16,7 +16,6 @@ from .pagination import NotificationCursorPagination
 
 @extend_schema(
     tags=["FCM/Devices"],
-    operation_id="ListFCMDevices",
 )
 class CustomFCMDeviceViewSet(FCMDeviceAuthorizedViewSet):
     pass
