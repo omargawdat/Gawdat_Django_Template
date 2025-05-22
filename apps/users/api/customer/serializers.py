@@ -1,3 +1,5 @@
+from drf_spectacular.utils import OpenApiExample
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -46,6 +48,24 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
         return AddressMinimalSerializer(addresses, many=True).data
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            "Customer Authentication Example",
+            value={
+                "phone_number": "+201234567890",
+                "otp": "123456",
+                "device": {
+                    "registration_id": "your_registration_id",
+                    "device_id": "your_device_id",
+                    "type": "android",
+                },
+                "language": "en",
+            },
+            request_only=True,
+        ),
+    ]
+)
 class CustomerCreateSerializer(serializers.Serializer):
     phone_number = ValidCountryPhoneNumberField()
     otp = serializers.CharField()
@@ -53,6 +73,22 @@ class CustomerCreateSerializer(serializers.Serializer):
     language = serializers.ChoiceField(choices=Language.choices)
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            "Update Customer Profile",
+            value={
+                "full_name": "John Doe",
+                "email": "john.doe@example.com",
+                "gender": "male",
+                "birth_date": "1990-01-01",
+                "primary_address": 1,
+                "language": "en",
+            },
+            request_only=True,
+        ),
+    ]
+)
 class CustomerUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
