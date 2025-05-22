@@ -1,15 +1,20 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.location.api.country.serializers import CountryDetailedSerializer
+from apps.location.api.country.serializers import CountrySerializer
 from apps.location.domain.selector.country import CountrySelector
 
 
-@extend_schema(
-    tags=["Location/Country"],
-    operation_id="ListCountries",
-)
-class ActiveCountryList(generics.ListAPIView):
-    serializer_class = CountryDetailedSerializer
-    queryset = CountrySelector.get_active_countries()
+class ActiveCountryList(APIView):
     permission_classes = []
+
+    @extend_schema(
+        tags=["Location/Country"],
+        operation_id="ListCountries",
+        responses={200: CountrySerializer(many=True)},
+    )
+    def get(self, request):
+        queryset = CountrySelector.get_active_countries()
+        serializer = CountrySerializer(queryset, many=True)
+        return Response(serializer.data)

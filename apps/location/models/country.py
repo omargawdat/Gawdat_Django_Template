@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apps.location.constants import CountryCode
+from apps.location.constants import CountryChoices
 from apps.location.constants import CurrencyCode
 
 
@@ -11,7 +11,7 @@ class Country(models.Model):
         unique=True,
         primary_key=True,
         verbose_name=_("Code"),
-        choices=CountryCode.choices,
+        choices=CountryChoices.choices,
     )
     name = models.CharField(
         max_length=100, verbose_name=_("Name"), default=""

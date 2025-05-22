@@ -8,16 +8,16 @@ from apps.channel.api.sms.serializers import OTPSendSerializer
 from apps.channel.domain.services.otp import OTPUtils
 
 
-@extend_schema(
-    tags=["User/Authentication"],
-    operation_id="sendOTP",
-    request=OTPSendSerializer,
-)
 class OTPSendView(APIView):
     permission_classes = []
     serializer_class = OTPSendSerializer
     parser_classes = [JSONParser]
 
+    @extend_schema(
+        tags=["User/Authentication"],
+        operation_id="sendOTP",
+        request=OTPSendSerializer,
+    )
     def post(self, request, *args, **kwargs):
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

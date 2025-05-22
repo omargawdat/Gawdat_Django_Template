@@ -11,44 +11,44 @@ from apps.location.api.region.serializers import RegionMinimalSerializer
 from apps.location.domain.selector.region import RegionSelector
 
 
-@extend_schema(
-    tags=["Location/Region"],
-    operation_id="GetRegionByPoint",
-    description="""
-    - Cairo, Egypt: `?long=31.235712&lat=30.044420`
-    - Riyadh, Saudi Arabia: `?long=46.738586&lat=24.774265`
-    """,
-    parameters=[
-        OpenApiParameter(
-            name="long",
-            type=OpenApiTypes.FLOAT,
-            required=True,
-            examples=[
-                OpenApiExample(
-                    "Saudi Arabia Example",
-                    value=46.738586,
-                ),
-            ],
-        ),
-        OpenApiParameter(
-            name="lat",
-            type=OpenApiTypes.FLOAT,
-            required=True,
-            examples=[
-                OpenApiExample(
-                    "Saudi Arabia Example",
-                    value=24.774265,
-                ),
-            ],
-        ),
-    ],
-    responses={
-        200: RegionMinimalSerializer,
-    },
-)
 class RegionByPointView(APIView):
     permission_classes = []
 
+    @extend_schema(
+        tags=["Location/Region"],
+        operation_id="GetRegionByPoint",
+        description="""
+        - Cairo, Egypt: `?long=31.235712&lat=30.044420`
+        - Riyadh, Saudi Arabia: `?long=46.738586&lat=24.774265`
+        """,
+        parameters=[
+            OpenApiParameter(
+                name="long",
+                type=OpenApiTypes.FLOAT,
+                required=True,
+                examples=[
+                    OpenApiExample(
+                        "Saudi Arabia Example",
+                        value=46.738586,
+                    ),
+                ],
+            ),
+            OpenApiParameter(
+                name="lat",
+                type=OpenApiTypes.FLOAT,
+                required=True,
+                examples=[
+                    OpenApiExample(
+                        "Saudi Arabia Example",
+                        value=24.774265,
+                    ),
+                ],
+            ),
+        ],
+        responses={
+            200: RegionMinimalSerializer,
+        },
+    )
     def get(self, request):
         try:
             longitude = float(request.query_params.get("long"))

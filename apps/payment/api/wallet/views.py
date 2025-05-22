@@ -19,31 +19,33 @@ from apps.payment.api.wallet_transaction.serializers import (
 from apps.payment.domain.selectors.wallet_transactions import WalletTransactionSelector
 
 
-@extend_schema(
-    tags=["Wallet"],
-    operation_id="listWalletDetails",
-    responses={
-        200: OpenApiResponse(
-            response=inline_serializer(
-                name="WalletTransactionResponse",
-                fields={
-                    "wallet": WalletDetailedSerializer(),
-                    "wallet_transactions": inline_serializer(
-                        name="PaginatedWalletTransactions",
-                        fields={
-                            "next": serializers.URLField(allow_null=True),
-                            "previous": serializers.URLField(allow_null=True),
-                            "results": WalletTransactionDetailedSerializer(many=True),
-                        },
-                    ),
-                },
-            ),
-        ),
-    },
-)
 class WalletDetailAPI(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["Wallet"],
+        operation_id="listWalletDetails",
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="WalletTransactionResponse",
+                    fields={
+                        "wallet": WalletDetailedSerializer(),
+                        "wallet_transactions": inline_serializer(
+                            name="PaginatedWalletTransactions",
+                            fields={
+                                "next": serializers.URLField(allow_null=True),
+                                "previous": serializers.URLField(allow_null=True),
+                                "results": WalletTransactionDetailedSerializer(
+                                    many=True
+                                ),
+                            },
+                        ),
+                    },
+                ),
+            ),
+        },
+    )
     def get(self, request):
         # Paginate wallet transactions
         wallet_queryset = WalletTransactionSelector.user_wallet_transactions(
@@ -72,18 +74,18 @@ class WalletDetailAPI(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-@extend_schema(
-    tags=["Wallet"],
-    operation_id="updateWallet",
-    request=WalletUpdateSerializer,
-    responses={
-        200: WalletDetailedSerializer,
-    },
-)
 class WalletUpdateView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser]
 
+    @extend_schema(
+        tags=["Wallet"],
+        operation_id="updateWallet",
+        request=WalletUpdateSerializer,
+        responses={
+            200: WalletDetailedSerializer,
+        },
+    )
     def patch(self, request):
         wallet = request.user.wallet
 

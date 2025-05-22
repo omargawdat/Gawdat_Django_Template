@@ -6,7 +6,7 @@ from config.helpers.env import env
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "config.helpers.authentication.CustomJWTAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PARSER_CLASSES": (
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
@@ -56,6 +56,14 @@ SPECTACULAR_SETTINGS = {
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
     ],
     "OAS_VERSION": "3.1.0",
+    # 'SECURITY_SCHEMES': {
+    #     'bearerAuth': {
+    #         'type': 'http',
+    #         'scheme': 'bearer',
+    #         'bearerFormat': 'JWT',
+    #     },
+    # },
+    # 'SECURITY': [{'bearerAuth': []}],
 }
 
 SIMPLE_JWT = {

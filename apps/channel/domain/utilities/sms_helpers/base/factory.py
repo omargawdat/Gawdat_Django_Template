@@ -5,7 +5,7 @@ from phonenumbers import PhoneNumber
 from apps.channel.domain.utilities.sms_helpers.base.base_class import OTPSenderBase
 from apps.channel.domain.utilities.sms_helpers.providers.oursms import OurSMSUtils
 from apps.channel.domain.utilities.sms_helpers.providers.smsmisr import SMSMisrUtils
-from apps.location.constants import CountryCode
+from apps.location.constants import CountryChoices
 from apps.location.domain.selector.country import CountrySelector
 
 if TYPE_CHECKING:
@@ -17,9 +17,9 @@ class SMSProviderFactory:
     def get_sms_provider_by_country(phone: PhoneNumber) -> OTPSenderBase:
         country: Country = CountrySelector.country_by_phone(phone)
 
-        if country.code == CountryCode.SAUDI_ARABIA:
+        if country.code == CountryChoices.SAUDI_ARABIA:
             return OurSMSUtils()
-        elif country.code == CountryCode.EGYPT:
+        elif country.code == CountryChoices.EGYPT:
             return SMSMisrUtils()
         else:
             raise NotImplementedError("Country not supported")

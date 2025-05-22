@@ -16,7 +16,7 @@ class WalletTransactionMinimalSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_transaction_type_text(self, obj):
+    def get_transaction_type_text(self, obj) -> str:
         return obj.get_transaction_type_display()
 
 

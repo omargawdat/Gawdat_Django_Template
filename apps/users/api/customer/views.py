@@ -1,10 +1,8 @@
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
-from rest_framework import generics
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -22,37 +20,36 @@ from apps.users.domain.services.token import TokenService
 from apps.users.domain.services.user import UserServices
 
 
-@extend_schema(
-    tags=["User/Customer"],
-    operation_id="AuthenticateCustomer",
-    description="Authenticate a customer using phone number and OTP. Creates a new customer if one doesn't exist.",
-    request=CustomerCreateSerializer,
-    responses={
-        200: inline_serializer(
-            name="CustomerAuthResponse",
-            fields={
-                "access": serializers.CharField(),
-                "refresh": serializers.CharField(),
-                "customer": CustomerDetailedSerializer(),
-            },
-        ),
-        201: inline_serializer(
-            name="CustomerCreatedResponse",
-            fields={
-                "access": serializers.CharField(),
-                "refresh": serializers.CharField(),
-                "customer": CustomerDetailedSerializer(),
-            },
-        ),
-    },
-)
-class CustomerAuthView(generics.GenericAPIView):
+class CustomerAuthView(APIView):
     parser_classes = [JSONParser]
     permission_classes = []
-    serializer_class = CustomerCreateSerializer
 
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="AuthenticateCustomer",
+        description="Authenticate a customer using phone number and OTP. Creates a new customer if one doesn't exist.",
+        request=CustomerCreateSerializer,
+        responses={
+            200: inline_serializer(
+                name="CustomerAuthResponse",
+                fields={
+                    "access": serializers.CharField(),
+                    "refresh": serializers.CharField(),
+                    "customer": CustomerDetailedSerializer(),
+                },
+            ),
+            201: inline_serializer(
+                name="CustomerCreatedResponse",
+                fields={
+                    "access": serializers.CharField(),
+                    "refresh": serializers.CharField(),
+                    "customer": CustomerDetailedSerializer(),
+                },
+            ),
+        },
+    )
     def post(self, request):
-        serializer = self.get_serializer(
+        serializer = CustomerCreateSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
@@ -85,19 +82,19 @@ class CustomerAuthView(generics.GenericAPIView):
         )
 
 
-@extend_schema(
-    tags=["User/Customer"],
-    operation_id="UpdateCustomer",
-    description="Update the authenticated customer's profile information.",
-    request=CustomerUpdateSerializer,
-    responses={
-        200: CustomerDetailedSerializer,
-    },
-)
 class CustomerUpdateView(APIView):
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="UpdateCustomer",
+        description="Update the authenticated customer's profile information.",
+        request=CustomerUpdateSerializer,
+        responses={
+            200: CustomerDetailedSerializer,
+        },
+    )
     def patch(self, request):
         serializer = CustomerUpdateSerializer(
             request.user, data=request.data, partial=True, context={"request": request}
@@ -109,33 +106,32 @@ class CustomerUpdateView(APIView):
         )
 
 
-@extend_schema(
-    tags=["User/Customer"],
-    operation_id="GetCustomerDetails",
-    description="Retrieve the authenticated customer's profile details.",
-    responses={
-        200: CustomerDetailedSerializer,
-    },
-)
-class CustomerDetailView(RetrieveAPIView):
+class CustomerDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = CustomerDetailedSerializer
 
-    def get_object(self):
-        return self.request.user
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="GetCustomerDetails",
+        responses={
+            200: CustomerDetailedSerializer,
+        },
+    )
+    def get(self, request):
+        customer = request.user
+        serializer = CustomerDetailedSerializer(customer, context={"request": request})
+        return Response(serializer.data)
 
 
-@extend_schema(
-    tags=["User/Customer"],
-    operation_id="DeleteCustomer",
-    description="Deactivate the authenticated customer's account and log out from all devices.",
-    responses={
-        204: OpenApiResponse(description="Account successfully deactivated."),
-    },
-)
 class CustomerDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="DeleteCustomer",
+        responses={
+            204: OpenApiResponse(description="Account successfully deactivated."),
+        },
+    )
     def delete(self, request):
         customer = request.user
         customer.is_active = False

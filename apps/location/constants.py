@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class CountryCode(models.TextChoices):
+class CountryChoices(models.TextChoices):
     EGYPT = "EG", _("Egypt")
     SAUDI_ARABIA = "SA", _("Saudi Arabia")
     UNITED_ARAB_EMIRATES = "AE", _("United Arab Emirates")
