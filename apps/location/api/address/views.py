@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -32,13 +34,27 @@ class AddressListView(generics.ListAPIView):
 @extend_schema(
     tags=["Location/Address"],
     operation_id="CreateAddress",
-    request=AddressCreateSerializer,
+    request={"multipart/form-data": AddressCreateSerializer},
     responses={201: AddressDetailedSerializer},
+    examples=[
+        # todo: this code isn't loaded correctly into apidog but working in postman  so just keep it to know how to deal with example values in form-data requests
+        OpenApiExample(
+            "Create Address Example",
+            value={
+                "point": '{"type": "Point", "coordinates": [31.235712, 30.044420]}',
+                "description": "My home address",
+                "map_description": "Near the main square",
+                "location_type": "home",
+                "map_image": "select a file",
+            },
+            media_type="multipart/form-data",
+            request_only=True,
+        ),
+    ],
 )
 class AddressCreateView(APIView):
     permission_classes = []
-
-    # parser_classes = [JSONParser]
+    parser_classes = [MultiPartParser]
 
     def post(self, request, *args, **kwargs):
         serializer = AddressCreateSerializer(data=request.data)

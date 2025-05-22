@@ -34,7 +34,7 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # drf-spectacular
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Temp-Project API",
+    "TITLE": "projectname API",
     "DESCRIPTION": "Documentation of API endpoints of projectname App",
     "VERSION": "1.0.0",
     "SORT_OPERATIONS": False,
