@@ -3,5 +3,5 @@ from django.urls import path
 from apps.location.api.region.views import RegionByPointView
 
 urlpatterns = [
-    path("regions/by-point/", RegionByPointView.as_view(), name="region-by-point"),
+    path("regions/", RegionByPointView.as_view(), name="region-by-point"),
 ]

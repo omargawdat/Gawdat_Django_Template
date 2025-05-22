@@ -37,6 +37,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Temp-Project API",
     "DESCRIPTION": "Documentation of API endpoints of projectname App",
     "VERSION": "1.0.0",
+    "SORT_OPERATIONS": False,
     "SCHEMA_PATH_PREFIX": "/api/",
     "ENUM_NAME_OVERRIDES": {
         "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",

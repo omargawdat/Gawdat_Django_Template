@@ -9,7 +9,7 @@ router = DefaultRouter()
 router.register("devices", FCMDeviceAuthorizedViewSet, basename="fcmdevice")
 
 urlpatterns = [
-    path("devices/", include(router.urls)),
+    path("/", include(router.urls)),
     path(
         "notifications/",
         views.NotificationListView.as_view(),
