@@ -12,7 +12,7 @@ from apps.users.domain.services.user import UserServices
 
 
 @extend_schema(
-    tags=["Authentication"],
+    tags=["User/Authentication"],
     operation_id="logoutUser",
     description="Log out the current user from all devices by invalidating their refresh tokens.",
     responses={
@@ -38,7 +38,7 @@ class DocumentedTokenRefreshView(TokenRefreshView):
 
 
 @extend_schema(
-    tags=["Authentication"],
+    tags=["User/Authentication"],
     operation_id="logoutDevice",
     request=DeviceLogoutSerializer,
     responses={
