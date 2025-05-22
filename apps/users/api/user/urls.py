@@ -6,7 +6,7 @@ from apps.users.api.user.views import LogoutDeviceView
 
 urlpatterns = [
     path(
-        "users/refresh-token/",
+        "refresh-token/",
         DocumentedTokenRefreshView.as_view(),
         name="user-refresh-token",
     ),
