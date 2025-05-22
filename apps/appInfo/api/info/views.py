@@ -1,5 +1,6 @@
-from rest_framework.generics import ListAPIView
-from rest_framework.generics import RetrieveAPIView
+from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.appInfo.api.info.serializers import AppInfoSerializer
 from apps.appInfo.api.info.serializers import FAQSerializer
@@ -9,24 +10,43 @@ from apps.appInfo.models.faq import FAQ
 from apps.appInfo.models.social import SocialAccount
 
 
-class SocialAccountsAPIView(RetrieveAPIView):
-    serializer_class = SocialAccountsSerializer
+@extend_schema(
+    tags=["Info"],
+    operation_id="GetSocialAccounts",
+    responses={200: SocialAccountsSerializer},
+)
+class SocialAccountsAPIView(APIView):
     permission_classes = []
 
-    def get_object(self):
-        return SocialAccount.get_solo()
+    def get(self, request, *args, **kwargs):
+        social_media = SocialAccount.get_solo()
+        serializer = SocialAccountsSerializer(social_media)
+        return Response(serializer.data)
 
 
-class AppInfoAPIView(RetrieveAPIView):
-    serializer_class = AppInfoSerializer
+@extend_schema(
+    tags=["Info"],
+    operation_id="GetAppInfo",
+    responses={200: AppInfoSerializer},
+)
+class AppInfoAPIView(APIView):
     permission_classes = []
 
-    def get_object(self):
-        return AppInfo.get_solo()
+    def get(self, request, *args, **kwargs):
+        app_info = AppInfo.get_solo()
+        serializer = AppInfoSerializer(app_info)
+        return Response(serializer.data)
 
 
-class FAQListView(ListAPIView):
-    queryset = FAQ.objects.all()
-    serializer_class = FAQSerializer
+@extend_schema(
+    tags=["Info"],
+    operation_id="ListFaqs",
+    responses={200: FAQSerializer(many=True)},
+)
+class FAQListView(APIView):
     permission_classes = []
-    authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        queryset = FAQ.objects.all()
+        serializer = FAQSerializer(queryset, many=True)
+        return Response(serializer.data)
