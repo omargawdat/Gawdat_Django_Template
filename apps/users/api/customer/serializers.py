@@ -1,13 +1,10 @@
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 
 from apps.channel.api.notification.serializers import FCMDeviceCreateSerializer
 from apps.channel.constants import Language
-from apps.location.api.address.serializers import AddressMinimalSerializer
 from apps.location.api.country.serializers import CountryMinimalSerializer
-from apps.location.domain.selector.address import AddressSelector
 from apps.payment.api.wallet.serializers import WalletMinimalSerializer
 from apps.users.api.serializer_validations import ValidCountryPhoneNumberField
 from apps.users.models.customer import Customer
@@ -32,20 +29,14 @@ class CustomerMinimalSerializer(serializers.ModelSerializer):
 
 class CustomerDetailedSerializer(CustomerMinimalSerializer):
     country = CountryMinimalSerializer(read_only=True)
-    addresses = SerializerMethodField()
     wallet = WalletMinimalSerializer(read_only=True)
 
     class Meta(CustomerMinimalSerializer.Meta):
         fields = [
             *CustomerMinimalSerializer.Meta.fields,
             "country",
-            "addresses",
             "wallet",
         ]
-
-    def get_addresses(self, obj):
-        addresses = AddressSelector.get_all_customer_addresses(customer=obj)
-        return AddressMinimalSerializer(addresses, many=True).data
 
 
 @extend_schema_serializer(
