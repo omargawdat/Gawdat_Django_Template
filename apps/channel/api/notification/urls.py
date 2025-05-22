@@ -1,15 +1,15 @@
 from django.urls import include
 from django.urls import path
-from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
 
 from apps.channel.api.notification import views
+from apps.channel.api.notification.views import CustomFCMDeviceViewSet
 
 router = DefaultRouter()
-router.register("devices", FCMDeviceAuthorizedViewSet, basename="fcmdevice")
+router.register("devices", CustomFCMDeviceViewSet, basename="fcmdevice")
 
 urlpatterns = [
-    path("/", include(router.urls)),
+    path("", include(router.urls)),
     path(
         "notifications/",
         views.NotificationListView.as_view(),
