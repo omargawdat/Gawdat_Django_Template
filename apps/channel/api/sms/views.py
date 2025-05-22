@@ -10,7 +10,7 @@ from apps.channel.domain.services.otp import OTPUtils
 
 @extend_schema(
     tags=["User/Authentication"],
-    operation_id="SendOTP",
+    operation_id="sendOTP",
     request=OTPSendSerializer,
 )
 class OTPSendView(APIView):

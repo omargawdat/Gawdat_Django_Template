@@ -11,8 +11,8 @@ from apps.appInfo.models.social import SocialAccount
 
 
 @extend_schema(
-    tags=["Info"],
-    operation_id="GetSocialAccounts",
+    tags=["AppInfo"],
+    operation_id="getSocialAccounts",
     responses={200: SocialAccountsSerializer},
 )
 class SocialAccountsAPIView(APIView):
@@ -25,8 +25,8 @@ class SocialAccountsAPIView(APIView):
 
 
 @extend_schema(
-    tags=["Info"],
-    operation_id="GetAppInfo",
+    tags=["AppInfo"],
+    operation_id="getAppInfo",
     responses={200: AppInfoSerializer},
 )
 class AppInfoAPIView(APIView):
@@ -39,8 +39,8 @@ class AppInfoAPIView(APIView):
 
 
 @extend_schema(
-    tags=["Info"],
-    operation_id="ListFaqs",
+    tags=["AppInfo"],
+    operation_id="listFaqs",
     responses={200: FAQSerializer(many=True)},
 )
 class FAQListView(APIView):

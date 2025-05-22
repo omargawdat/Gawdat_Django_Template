@@ -23,7 +23,7 @@ class CustomFCMDeviceViewSet(FCMDeviceAuthorizedViewSet):
 
 @extend_schema(
     tags=["FCM/Notification"],
-    operation_id="ListNotifications",
+    operation_id="listNotifications",
     responses={200: NotificationDetailedSerializer(many=True)},
 )
 class NotificationListView(ListAPIView):
@@ -37,7 +37,7 @@ class NotificationListView(ListAPIView):
 
 @extend_schema(
     tags=["FCM/Notification"],
-    operation_id="DeleteNotification",
+    operation_id="deleteNotification",
     responses={204: None},
 )
 class NotificationDeleteView(APIView):
@@ -51,7 +51,7 @@ class NotificationDeleteView(APIView):
 
 @extend_schema(
     tags=["FCM/Notification"],
-    operation_id="BulkDeleteNotifications",
+    operation_id="bulkDeleteNotifications",
     responses={204: None},
 )
 class NotificationBulkDeleteView(APIView):
