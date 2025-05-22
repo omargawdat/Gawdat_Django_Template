@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
 from apps.channel.constants import OTPType
-from apps.users.api.common.serializer_validations import ValidCountryPhoneNumberField
+from apps.users.api.serializer_validations import ValidCountryPhoneNumberField
 
 
 @extend_schema_serializer(

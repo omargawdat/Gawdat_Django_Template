@@ -9,7 +9,7 @@ from apps.channel.domain.services.otp import OTPUtils
 
 
 @extend_schema(
-    tags=["users"],
+    tags=["Authentication"],
     operation_id="SendOTP",
     request=OTPSendSerializer,
 )

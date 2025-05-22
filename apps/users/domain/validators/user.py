@@ -1,4 +1,4 @@
-from apps.users.api.common.exceptions import InvalidOTPException
+from apps.users.api.exceptions import InvalidOTPException
 from apps.users.models import User
 
 

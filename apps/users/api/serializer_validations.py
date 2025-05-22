@@ -1,6 +1,6 @@
 from phonenumber_field.serializerfields import PhoneNumberField
 
-from apps.users.api.common.exceptions import InvalidPhoneException
+from apps.users.api.exceptions import InvalidPhoneException
 from apps.users.domain.selectors.user import UserSelector
 
 

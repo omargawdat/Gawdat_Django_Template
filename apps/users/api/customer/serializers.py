@@ -7,7 +7,7 @@ from apps.location.api.address.serializers import AddressMinimalSerializer
 from apps.location.api.country.serializers import CountryMinimalSerializer
 from apps.location.domain.selector.address import AddressSelector
 from apps.payment.api.wallet.serializers import WalletMinimalSerializer
-from apps.users.api.common.serializer_validations import ValidCountryPhoneNumberField
+from apps.users.api.serializer_validations import ValidCountryPhoneNumberField
 from apps.users.models.customer import Customer
 
 
