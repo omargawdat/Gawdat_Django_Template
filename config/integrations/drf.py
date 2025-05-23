@@ -64,7 +64,15 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
     ],
-    "SECURITY": [],
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "jwtAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                # No bearerFormat specified # todo: as apidog has bug when the bearerFormat is specified it detect the whole schema as jwt
+            }
+        }
+    },
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
 }
 

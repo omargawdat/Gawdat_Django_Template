@@ -1,3 +1,6 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiExample
+from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
@@ -94,6 +97,22 @@ class CustomerUpdateView(APIView):
         operation_id="UpdateCustomer",
         description="Update the authenticated customer's profile information.",
         request=CustomerUpdateSerializer,
+        parameters=[
+            OpenApiParameter(
+                name="Accept-Language",
+                type=OpenApiTypes.STR,
+                location="header",
+                required=False,
+                description="Language preference for the response",
+                examples=[
+                    OpenApiExample(
+                        name="English (US)",
+                        value="en",
+                        description="English with US locale preference",
+                    ),
+                ],
+            ),
+        ],
         responses={
             200: CustomerDetailedSerializer,
         },
@@ -133,6 +152,22 @@ class CustomerDeleteView(APIView):
     @extend_schema(
         tags=["User/Customer"],
         operation_id="DeleteCustomer",
+        parameters=[
+            OpenApiParameter(
+                name="Accept-Language",
+                type=OpenApiTypes.STR,
+                location="header",
+                required=False,
+                description="Language preference for the response",
+                examples=[
+                    OpenApiExample(
+                        name="English (US)",
+                        value="en",
+                        description="English with US locale preference",
+                    ),
+                ],
+            ),
+        ],
         responses={
             204: OpenApiResponse(description="Account successfully deactivated."),
         },
