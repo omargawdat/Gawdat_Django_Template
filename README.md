@@ -106,3 +106,4 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "SMS_MISR_SENDER": "example_sms_sender_id"
    }
    ```
+    4. create app runner, port 5000 include permissions and write the secrets of the apprunner itself
