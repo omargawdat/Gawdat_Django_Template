@@ -56,14 +56,9 @@ SPECTACULAR_SETTINGS = {
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
     ],
     "OAS_VERSION": "3.1.0",
-    # 'SECURITY_SCHEMES': {
-    #     'bearerAuth': {
-    #         'type': 'http',
-    #         'scheme': 'bearer',
-    #         'bearerFormat': 'JWT',
-    #     },
-    # },
-    # 'SECURITY': [{'bearerAuth': []}],
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 SIMPLE_JWT = {
