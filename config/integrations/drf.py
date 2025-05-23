@@ -34,11 +34,20 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # drf-spectacular
 SPECTACULAR_SETTINGS = {
+    "VERSION": "1.0.0",
+    "OAS_VERSION": "3.1.0",
     "TITLE": "projectname API",
     "DESCRIPTION": "Documentation of API endpoints of projectname App",
-    "VERSION": "1.0.0",
-    "SORT_OPERATIONS": False,
     "SCHEMA_PATH_PREFIX": "/api/",
+    "SORT_OPERATIONS": False,
+    "SORT_OPERATION_PARAMETERS": True,
+    "CAMELIZE_NAMES": False,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "COMPONENT_SPLIT_PATCH": True,
+    "COMPONENT_SPLIT_RESPONSE": True,
+    "ENABLE_DJANGO_DEPLOY_CHECK": True,
+    "ENUM_SUFFIX": "Enum",
     "ENUM_NAME_OVERRIDES": {
         "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
@@ -55,10 +64,8 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
     ],
-    "OAS_VERSION": "3.1.0",
-    "SERVE_INCLUDE_SCHEMA": False,
+    "SECURITY": [],
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
-    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 SIMPLE_JWT = {
