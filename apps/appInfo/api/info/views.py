@@ -11,6 +11,7 @@ from apps.appInfo.models.social import SocialAccount
 
 
 class SocialAccountsAPIView(APIView):
+    authentication_classes = []
     permission_classes = []
 
     @extend_schema(
@@ -25,6 +26,7 @@ class SocialAccountsAPIView(APIView):
 
 
 class AppInfoAPIView(APIView):
+    authentication_classes = []
     permission_classes = []
 
     @extend_schema(
@@ -39,6 +41,7 @@ class AppInfoAPIView(APIView):
 
 
 class FAQListView(APIView):
+    authentication_classes = []
     permission_classes = []
 
     @extend_schema(

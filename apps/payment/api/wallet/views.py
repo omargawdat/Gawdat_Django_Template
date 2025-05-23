@@ -7,6 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.payment.api.wallet.serializers import WalletDetailedSerializer
 from apps.payment.api.wallet.serializers import WalletUpdateSerializer
@@ -20,6 +21,7 @@ from apps.payment.domain.selectors.wallet_transactions import WalletTransactionS
 
 
 class WalletDetailAPI(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -75,6 +77,7 @@ class WalletDetailAPI(APIView):
 
 
 class WalletUpdateView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser]
 

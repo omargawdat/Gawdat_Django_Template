@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.channel.api.notification.serializers import NotificationDetailedSerializer
 from apps.channel.domain.selectors.notification import NotificationSelector
@@ -21,6 +22,7 @@ class CustomFCMDeviceViewSet(FCMDeviceAuthorizedViewSet):
 
 
 class NotificationListView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = NotificationCursorPagination
 
@@ -32,18 +34,16 @@ class NotificationListView(APIView):
     def get(self, request):
         queryset = NotificationSelector.get_notifications_by_user(request.user)
 
-        # Apply pagination
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(queryset, request, view=self)
 
-        # Serialize the paginated data
         serializer = NotificationDetailedSerializer(paginated_queryset, many=True)
 
-        # Return paginated response
         return paginator.get_paginated_response(serializer.data)
 
 
 class NotificationDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -58,6 +58,7 @@ class NotificationDeleteView(APIView):
 
 
 class NotificationBulkDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

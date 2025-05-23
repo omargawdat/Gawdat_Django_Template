@@ -7,6 +7,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.location.domain.selector.address import AddressSelector
 
@@ -18,6 +19,7 @@ from .serializers import AddressUpdateSerializer
 
 
 class AddressListView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -32,7 +34,8 @@ class AddressListView(APIView):
 
 
 class AddressCreateView(APIView):
-    permission_classes = []
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser]
 
     @extend_schema(
@@ -74,6 +77,7 @@ class AddressCreateView(APIView):
 
 
 class AddressUpdateView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -103,6 +107,7 @@ class AddressUpdateView(APIView):
 
 
 class AddressDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

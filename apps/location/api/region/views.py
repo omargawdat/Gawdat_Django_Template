@@ -12,6 +12,7 @@ from apps.location.domain.selector.region import RegionSelector
 
 
 class RegionByPointView(APIView):
+    authentication_classes = []
     permission_classes = []
 
     @extend_schema(

@@ -7,6 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.channel.constants import OTPType
 from apps.channel.domain.services.device import DeviceData
@@ -21,8 +22,9 @@ from apps.users.domain.services.user import UserServices
 
 
 class CustomerAuthView(APIView):
-    parser_classes = [JSONParser]
+    authentication_classes = []
     permission_classes = []
+    parser_classes = [JSONParser]
 
     @extend_schema(
         tags=["User/Customer"],
@@ -83,8 +85,9 @@ class CustomerAuthView(APIView):
 
 
 class CustomerUpdateView(APIView):
-    parser_classes = [JSONParser]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
 
     @extend_schema(
         tags=["User/Customer"],
@@ -107,6 +110,7 @@ class CustomerUpdateView(APIView):
 
 
 class CustomerDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -123,6 +127,7 @@ class CustomerDetailView(APIView):
 
 
 class CustomerDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

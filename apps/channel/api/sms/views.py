@@ -9,6 +9,7 @@ from apps.channel.domain.services.otp import OTPUtils
 
 
 class OTPSendView(APIView):
+    authentication_classes = []
     permission_classes = []
     serializer_class = OTPSendSerializer
     parser_classes = [JSONParser]

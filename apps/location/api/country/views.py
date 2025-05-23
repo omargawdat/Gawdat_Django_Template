@@ -7,6 +7,7 @@ from apps.location.domain.selector.country import CountrySelector
 
 
 class ActiveCountryList(APIView):
+    authentication_classes = []
     permission_classes = []
 
     @extend_schema(
