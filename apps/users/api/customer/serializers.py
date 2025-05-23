@@ -44,8 +44,8 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
         OpenApiExample(
             "Customer Authentication Example",
             value={
-                "phone_number": "+201234567890",
-                "otp": "123456",
+                "phone_number": "+966111111111",
+                "otp": "000000",
                 "device": {
                     "registration_id": "your_registration_id",
                     "device_id": "your_device_id",

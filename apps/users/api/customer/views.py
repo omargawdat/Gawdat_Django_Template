@@ -99,7 +99,7 @@ class CustomerUpdateView(APIView):
         request=CustomerUpdateSerializer,
         parameters=[
             OpenApiParameter(
-                name="Accept-Language",
+                name="Accept-Language",  # todo: it should be for all endpoints
                 type=OpenApiTypes.STR,
                 location="header",
                 required=False,
@@ -154,7 +154,7 @@ class CustomerDeleteView(APIView):
         operation_id="DeleteCustomer",
         parameters=[
             OpenApiParameter(
-                name="Accept-Language",
+                name="Accept-Language",  # todo: it should be for all endpoints
                 type=OpenApiTypes.STR,
                 location="header",
                 required=False,
