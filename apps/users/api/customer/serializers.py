@@ -45,7 +45,7 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
             "Customer Authentication Example",
             value={
                 "phone_number": "+966111111111",
-                "otp": "000000",
+                "otp": "00000",
                 "device": {
                     "registration_id": "your_registration_id",
                     "device_id": "your_device_id",
