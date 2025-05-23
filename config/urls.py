@@ -39,7 +39,9 @@ api_app_patterns: list[URLPattern | URLResolver] = [
 
 api_patterns = [
     path("", include(api_app_patterns)),
-    path("", include(api_doc_patterns)),
+    path(
+        "", include(api_doc_patterns)
+    ),  # todo: comment this as we will use Apidog for documentation
 ]
 
 # Main URL patterns
