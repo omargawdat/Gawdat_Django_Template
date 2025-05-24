@@ -19,37 +19,27 @@
    git init
    git add .
    git commit -m "Initial commit"
+   pre-commit install
    pre-commit install --hook-type commit-msg
    ```
 6. Share the project on GitHub
 
 ### 2. Local Development
 
-1. Install pre-commit hooks:
-   ```bash
-   pip3 install pre-commit
-   pre-commit install --hook-type commit-msg
-   ```
-
-2. Create `.env` file in the root directory:
+1. Create `.env` file in the root directory:
     ```bash
     cp dummy.env .env
     ```
 
-3. Build and run the application with Docker Compose:
+2. Build and run the application with Docker Compose:
    ```bash
    docker-compose -f docker-compose.local.yml up --build -d
    ```
 
-4. Run Django management commands:
+3. Run Django management commands:
    ```bash
    docker compose -f docker-compose.local.yml run --rm django python manage.py [command]
    ```
-
-## todo:
-
-1. mention how the deployment will work and the needed setups for envs
-2. consider making scripts to automate the process
 
 ### 3. Deployment
 
