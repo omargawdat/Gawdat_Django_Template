@@ -1,4 +1,5 @@
 from djangorestframework_camel_case.parser import CamelCaseJSONParser
+from djangorestframework_camel_case.parser import CamelCaseMultiPartParser
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -7,7 +8,6 @@ from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -91,7 +91,7 @@ class CustomerAuthView(APIView):
 class CustomerUpdateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, CamelCaseJSONParser]
+    parser_classes = [CamelCaseMultiPartParser, CamelCaseJSONParser]
 
     @extend_schema(
         tags=["User/Customer"],

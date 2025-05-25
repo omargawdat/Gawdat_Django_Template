@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
+from djangorestframework_camel_case.parser import CamelCaseMultiPartParser
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -36,7 +36,7 @@ class AddressListView(APIView):
 class AddressCreateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser]
+    parser_classes = [CamelCaseMultiPartParser]
 
     @extend_schema(
         tags=["Location/Address"],
