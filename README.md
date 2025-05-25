@@ -26,17 +26,23 @@
 
 ### 2. Local Development
 
-1. Create `.env` file in the root directory:
+1. install pre-commit hooks
+   ```bash
+   pre-commit install
+   pre-commit install --hook-type commit-msg
+   ```
+
+2. Create `.env` file in the root directory:
     ```bash
     cp dummy.env .env
     ```
 
-2. Build and run the application with Docker Compose:
+3. Build and run the application with Docker Compose:
    ```bash
    docker-compose -f docker-compose.local.yml up --build -d
    ```
 
-3. Run Django management commands:
+4. Run Django management commands:
    ```bash
    docker compose -f docker-compose.local.yml run --rm django python manage.py [command]
    ```
