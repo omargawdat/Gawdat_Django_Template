@@ -14,8 +14,10 @@ class Country(models.Model):
         choices=CountryChoices.choices,
     )
     name = models.CharField(
-        max_length=100, verbose_name=_("Name"), default=""
-    )  # todo: remove the default and set unique as true
+        max_length=100,
+        verbose_name=_("Name"),
+        unique=True,
+    )
     currency = models.CharField(
         max_length=3, verbose_name=_("Currency"), choices=CurrencyCode.choices
     )
