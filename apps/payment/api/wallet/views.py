@@ -1,9 +1,9 @@
+from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -79,7 +79,7 @@ class WalletDetailAPI(APIView):
 class WalletUpdateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [JSONParser]
+    parser_classes = [CamelCaseJSONParser]
 
     @extend_schema(
         tags=["Wallet"],
