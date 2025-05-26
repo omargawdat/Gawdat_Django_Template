@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from djangorestframework_camel_case.parser import CamelCaseMultiPartParser
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
@@ -36,7 +35,6 @@ class AddressListView(APIView):
 class AddressCreateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [CamelCaseMultiPartParser]
 
     @extend_schema(
         tags=["Location/Address"],
@@ -83,7 +81,7 @@ class AddressUpdateView(APIView):
     @extend_schema(
         tags=["Location/Address"],
         operation_id="UpdateAddress",
-        request=AddressUpdateSerializer,
+        request={"multipart/form-data": AddressUpdateSerializer},
         responses={200: AddressDetailedSerializer},
     )
     def patch(self, request, pk):

@@ -1,4 +1,3 @@
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
@@ -79,12 +78,13 @@ class WalletDetailAPI(APIView):
 class WalletUpdateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [CamelCaseJSONParser]
 
     @extend_schema(
         tags=["Wallet"],
         operation_id="updateWallet",
-        request=WalletUpdateSerializer,
+        request={
+            "application/json": WalletUpdateSerializer,
+        },
         responses={
             200: WalletDetailedSerializer,
         },

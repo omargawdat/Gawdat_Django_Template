@@ -1,4 +1,3 @@
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,12 +11,13 @@ class OTPSendView(APIView):
     authentication_classes = []
     permission_classes = []
     serializer_class = OTPSendSerializer
-    parser_classes = [CamelCaseJSONParser]
 
     @extend_schema(
         tags=["User/Authentication"],
         operation_id="sendOTP",
-        request=OTPSendSerializer,
+        request={
+            "application/json": OTPSendSerializer,
+        },
     )
     def post(self, request, *args, **kwargs):
         serializer = OTPSendSerializer(data=request.data)

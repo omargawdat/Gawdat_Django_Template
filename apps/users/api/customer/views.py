@@ -1,5 +1,3 @@
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
-from djangorestframework_camel_case.parser import CamelCaseMultiPartParser
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -28,13 +26,14 @@ from apps.users.domain.services.user import UserServices
 class CustomerAuthView(APIView):
     authentication_classes = []
     permission_classes = []
-    parser_classes = [CamelCaseJSONParser]
 
     @extend_schema(
         tags=["User/Customer"],
         operation_id="AuthenticateCustomer",
         description="Authenticate a customer using phone number and OTP. Creates a new customer if one doesn't exist.",
-        request=CustomerCreateSerializer,
+        request={
+            "application/json": CustomerCreateSerializer,
+        },
         responses={
             200: inline_serializer(
                 name="CustomerAuthResponse",
@@ -91,13 +90,14 @@ class CustomerAuthView(APIView):
 class CustomerUpdateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    parser_classes = [CamelCaseMultiPartParser, CamelCaseJSONParser]
 
     @extend_schema(
         tags=["User/Customer"],
         operation_id="UpdateCustomer",
         description="Update the authenticated customer's profile information.",
-        request=CustomerUpdateSerializer,
+        request={
+            "multipart/form-data": CustomerUpdateSerializer,
+        },
         parameters=[
             OpenApiParameter(
                 name="Accept-Language",  # todo: it should be for all endpoints
