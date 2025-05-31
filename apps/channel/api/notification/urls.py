@@ -16,7 +16,7 @@ urlpatterns = [
         name="notifications-list",
     ),
     path(
-        "notifications/<int:pk>/",
+        "notifications/<int:notification_id>/",
         views.NotificationDeleteView.as_view(),
         name="notifications-delete",
     ),
