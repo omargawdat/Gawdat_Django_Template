@@ -51,8 +51,10 @@ class NotificationDeleteView(APIView):
         operation_id="deleteNotification",
         responses={204: None},
     )
-    def delete(self, request, pk):
-        notification = get_object_or_404(Notification, id=pk, users=request.user)
+    def delete(self, request, notification_id):
+        notification = get_object_or_404(
+            Notification, id=notification_id, users=request.user
+        )
         notification.users.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

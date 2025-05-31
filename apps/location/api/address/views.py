@@ -84,11 +84,11 @@ class AddressUpdateView(APIView):
         request={"multipart/form-data": AddressUpdateSerializer},
         responses={200: AddressDetailedSerializer},
     )
-    def patch(self, request, pk):
+    def patch(self, request, address_id):
         user_addresses = AddressSelector.get_all_customer_addresses(
             customer=request.user
         )
-        address = get_object_or_404(user_addresses, pk=pk)
+        address = get_object_or_404(user_addresses, pk=address_id)
 
         serializer = AddressUpdateSerializer(address, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -116,10 +116,10 @@ class AddressDeleteView(APIView):
             404: OpenApiResponse(description="Address not found"),
         },
     )
-    def delete(self, request, pk):
+    def delete(self, request, address_id):
         queryset = AddressSelector.get_all_customer_addresses(customer=request.user)
 
-        address = get_object_or_404(queryset, pk=pk)
+        address = get_object_or_404(queryset, pk=address_id)
 
         AddressValidator.validate_not_primary_address(
             address=address, customer=request.user
