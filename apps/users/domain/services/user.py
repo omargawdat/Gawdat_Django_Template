@@ -16,7 +16,9 @@ class UserServices:
 
     @staticmethod
     def user_logout_specific_device(
-        user: User, refresh_token: str, registration_id: str, device_id: str
+        user: User,
+        refresh_token: str,
+        registration_id: str,
     ):
         try:
             token = OutstandingToken.objects.get(token=refresh_token, user_id=user.id)
