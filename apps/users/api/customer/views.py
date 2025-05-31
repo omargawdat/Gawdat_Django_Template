@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -18,6 +20,7 @@ from apps.channel.domain.services.otp import OTPUtils
 from apps.users.api.customer.serializers import CustomerCreateSerializer
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.customer.serializers import CustomerUpdateSerializer
+from apps.users.domain.selectors.customer import CustomerSelector
 from apps.users.domain.services.customer import CustomerService
 from apps.users.domain.services.token import TokenService
 from apps.users.domain.services.user import UserServices
@@ -63,6 +66,14 @@ class CustomerAuthView(APIView):
         language = serializer.validated_data.get("language")
         device_dict = serializer.validated_data.get("device", {})
         device_data = DeviceData(**device_dict)
+
+        customer = CustomerSelector.get_customer_by_phone(phone_number=phone_number)
+
+        if customer and not customer.is_active:
+            raise ValidationError(
+                _("This account has been deactivated. Please contact support."),
+                code="account_deactivated",
+            )
 
         OTPUtils.validate_correct_otp(
             phone_number=phone_number, code=otp, otp_type=OTPType.CUSTOMER_AUTH

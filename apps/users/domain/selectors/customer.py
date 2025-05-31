@@ -21,3 +21,10 @@ class CustomerSelector:
             customer.birth_date,
         ]
         return all(required_fields)
+
+    @staticmethod
+    def get_customer_by_phone(*, phone_number):
+        try:
+            return Customer.objects.get(phone_number=phone_number)
+        except Customer.DoesNotExist:
+            return None
