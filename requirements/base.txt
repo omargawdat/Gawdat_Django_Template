@@ -1,15 +1,15 @@
 # Python Utilities
 python-slugify==8.0.4
-Pillow==11.1.0
+Pillow==11.2.1
 argon2-cffi==23.1.0
-pydantic==2.11.1
-pydantic-settings==2.8.1
-boto3==1.37.24
+pydantic==2.11.5
+pydantic-settings==2.9.1
+boto3==1.38.27
 
 # Redis
-redis==5.3.0
-hiredis==3.1.1
-psycopg[pool]==3.2.7
+redis==6.2.0
+hiredis==3.2.1
+psycopg[pool]==3.2.9
 
 # Django and Extensions
 django==5.2.1
@@ -18,8 +18,8 @@ django-redis==5.4.0
 django-import-export==4.3.7
 openpyxl==3.1.5
 django-phonenumber-field[phonenumbers]==8.1.0
-django-polymorphic==3.1.0
-django-unfold==0.58.0
+django-polymorphic==4.1.0
+django-unfold==0.59.0
 fcm-django==2.2.1
 django-solo==2.4.0
 rules==3.5
@@ -36,7 +36,7 @@ django-soft-delete==1.0.18
 django-guardian==3.0.0
 
 # Django REST Framework and Extensions
-djangorestframework==3.15.2 # djangorestframework-gis 1.1 don't accept 3.16
+djangorestframework==3.16.0 # djangorestframework-gis 1.1 don't accept 3.16
 # djangorestframework-gis==1.1
 git+https://github.com/openwisp/django-rest-framework-gis.git # noqa
 

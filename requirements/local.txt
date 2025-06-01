@@ -6,7 +6,7 @@ ipdb==0.13.13
 watchfiles==1.0.5
 
 # Testing
-mypy==1.15.0
+mypy==1.16.0
 django-stubs[compatible-mypy]==5.2.0
 pytest==8.3.5
 pytest-sugar==1.0.0
@@ -14,8 +14,8 @@ djangorestframework-stubs[compatible-mypy]==3.16.0
 pytest-django==4.11.1
 
 # Code Quality
-ruff==0.11.9
-coverage==7.8.0
+ruff==0.11.12
+coverage==7.8.2
 djlint==1.36.4
 pre-commit==4.2.0
 django-coverage-plugin==3.1.0
@@ -23,4 +23,4 @@ django-coverage-plugin==3.1.0
 # Django Utilities
 factory-boy==3.3.3
 django-debug-toolbar==5.2.0
-django-extensions==3.2.3
+django-extensions==4.1
