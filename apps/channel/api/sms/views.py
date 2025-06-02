@@ -13,7 +13,7 @@ class OTPSendView(APIView):
     serializer_class = OTPSendSerializer
 
     @extend_schema(
-        tags=["User/Authentication"],
+        tags=["User/Common"],
         operation_id="sendOTP",
         request={
             "application/json": OTPSendSerializer,
