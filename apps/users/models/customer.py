@@ -32,7 +32,7 @@ class Customer(User):
         max_length=255, default="", blank=True, verbose_name=_("Full Name")
     )
     gender = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=GenderChoices.choices,
         default=GenderChoices.NOT_SELECTED,
         verbose_name=_("Gender"),
