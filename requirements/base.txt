@@ -18,7 +18,7 @@ django-redis==5.4.0
 django-import-export==4.3.7
 openpyxl==3.1.5
 django-phonenumber-field[phonenumbers]==8.1.0
-django-polymorphic==3.1.0
+django-polymorphic==4.1.0
 django-unfold==0.58.0
 fcm-django==2.2.1
 django-solo==2.4.0

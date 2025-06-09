@@ -85,7 +85,7 @@ SIMPLE_JWT = {
         minutes=env.django_jwt_refresh_token_lifetime_minutes
     ),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False,  # todo: temporary disabled, enable it later when they fix the bug in the client
     "REUSE_REFRESH_TOKENS": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": env.django_secret_key.get_secret_value(),
