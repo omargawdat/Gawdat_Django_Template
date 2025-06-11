@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "→ Running pre-commit checks on all files…"
+if ! pre-commit run --all-files; then
+  echo "❌ pre-commit checks failed. Aborting."
+  exit 1
+fi
+
 REMOTE="origin"
 MERGE_PR=false
 
