@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "→ Running pre-commit checks on all files…"
-if ! pre-commit run --all-files; then
-  echo "❌ pre-commit checks failed. Aborting."
-  exit 1
-fi
-
 REMOTE="origin"
 MERGE_PR=false
 
 usage() {
   cat <<EOF
 Usage: $0 [--merge|-m]
-  --merge, -m   after creating (or finding) the PR, squash-merge it and clean up
+
+  --merge, -m   after creating the PR, squash-merge it, delete the branch,
+                switch back to main and pull the updates
 EOF
   exit 1
 }
@@ -22,98 +18,84 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -m|--merge) MERGE_PR=true; shift ;;
-    -* )         echo "Unknown option: $1"; usage ;;
-    *  )         usage ;;
+    -h|--help)  usage         ;;
+    -*          ) echo "Unknown option: $1" >&2; usage ;;
+    *           ) usage      ;;
   esac
 done
 
-# 1. If on main/master, prompt for a new branch and carry over any local commits
+# 1. Ensure we're on main
 current_branch=$(git symbolic-ref --short HEAD)
-if [[ "$current_branch" =~ ^(main|master)$ ]]; then
-  base_branch="$current_branch"
-  echo "On '$base_branch' → creating feature branch (migrating any local commits)."
-  read -rp "Enter new branch name: " branch
-  while git show-ref --verify --quiet "refs/heads/$branch"; do
-    echo "Branch '$branch' already exists."
-    read -rp "Enter a different branch name: " branch
-  done
-
-  git fetch "$REMOTE"
-  local_commits=$(git rev-list --count "$REMOTE/$base_branch"..HEAD)
-
-  if (( local_commits > 0 )); then
-    echo "→ You have $local_commits local commit(s). Spinning them off onto '$branch'."
-    git checkout -b "$branch"
-    git checkout "$base_branch"
-    git reset --hard "$REMOTE/$base_branch"
-    git checkout "$branch"
-  else
-    git checkout -b "$branch" "$REMOTE/$base_branch"
-  fi
-else
-  branch="$current_branch"
-  echo "Working on existing branch '$branch'."
-fi
-
-# 2. Commit any unstaged changes
-if ! git diff-index --quiet HEAD --; then
-  echo "→ Uncommitted changes detected."
-  read -rp "Commit message: " msg
-  git add --all
-  git commit -m "$msg"
-else
-  echo "→ No changes to commit."
-fi
-
-# 3. Push branch
-git push -u "$REMOTE" "$branch"
-
-# 4. Check for GitHub CLI
-if ! command -v gh &>/dev/null; then
-  echo "⚠️  GitHub CLI ('gh') not found. Install it to automate PR creation/merging."
+if [[ "$current_branch" != "main" ]]; then
+  echo "❌ Please switch to 'main' first (you’re on '$current_branch')." >&2
   exit 1
 fi
 
-# 5. Detect or create PR
-if pr_number=$(gh pr view "$branch" --json number --jq .number 2>/dev/null); then
-  echo "→ Found existing PR #$pr_number for '$branch'."
-  gh pr view --web
-  read -rp "Open that PR in browser and exit? (y/N) " yn
-  if [[ "$yn" =~ ^[Yy]$ ]]; then
-    exit 0
-  fi
-else
-  pr_out=$(gh pr create --base main --head "$branch" --fill)
-  pr_url=$(echo "$pr_out" | tail -n1)
-  pr_number=${pr_url##*/}
-  echo "→ Created PR #$pr_number."
+# 2. Ensure no uncommitted changes
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "❌ Uncommitted changes detected. Please commit or stash before running." >&2
+  exit 1
 fi
 
-# 6. Optionally squash-merge, delete branches, and update main
+# 3. Ensure local main isn’t behind origin/main (no fetching)
+behind_count=$(git rev-list --count main.."$REMOTE"/main)
+if (( behind_count > 0 )); then
+  echo "❌ Your local 'main' is behind '$REMOTE/main' by $behind_count commit(s)."
+  echo "   Please pull the latest changes and re-run."
+  exit 1
+fi
+
+# 4. Count how many commits on main need moving
+ahead_count=$(git rev-list --count "$REMOTE"/main..main)
+if (( ahead_count == 0 )); then
+  echo "→ No local commits on 'main' to move; nothing to do."
+  exit 0
+fi
+echo "→ Found $ahead_count local commit(s) on 'main'."
+
+# 5. Prompt for a new branch name
+read -rp "Enter new branch name: " branch
+while git show-ref --verify --quiet "refs/heads/$branch"; do
+  echo "Branch '$branch' already exists."
+  read -rp "Enter a different branch name: " branch
+done
+
+# 6. Create the feature branch with your commits
+echo "→ Creating branch '$branch' with your commits…"
+git checkout -b "$branch"
+
+# 7. Reset main back to origin/main
+echo "→ Resetting 'main' to match '$REMOTE/main'…"
+git checkout main
+git reset --hard "$REMOTE/main"
+
+# 8. Push the feature branch
+echo "→ Pushing '$branch' to '$REMOTE'…"
+git push -u "$REMOTE" "$branch"
+
+# 9. Create the PR
+echo "→ Creating pull request for '$branch'…"
+pr_url=$(gh pr create --base main --head "$branch" --fill)
+pr_number=${pr_url##*/}
+pr_number="${pr_number//[![:ascii:]]/}"
+echo "→ Created PR #${pr_number}."
+
+# 10. If --merge, squash-merge & clean up
 if [[ "$MERGE_PR" == true ]]; then
-  echo "→ Squash-merging PR #$pr_number…"
-  if gh pr merge "$pr_number" --squash; then
-    echo "→ PR #$pr_number squash-merged successfully."
-
-    # Switch back to main
-    echo "→ Checking out 'main'…"
+  echo "→ Squash-merging PR #${pr_number} and deleting remote branch…"
+  if gh pr merge "${pr_number}" --squash --delete-branch; then
+    echo "→ PR #${pr_number} merged successfully."
+    echo "→ Switching back to 'main' and pulling latest…"
     git checkout main
-
-    # Delete the feature branch locally
+    git pull "$REMOTE" main
     echo "→ Deleting local branch '$branch'…"
     git branch -d "$branch"
-
-    # Delete the feature branch remotely
-    echo "→ Deleting remote branch '$branch'…"
-    git push "$REMOTE" --delete "$branch"
-
-    # Pull the updated main
-    echo "→ Pulling latest 'main' from '$REMOTE'…"
-    git pull "$REMOTE" main
-
-    echo "→ Local 'main' is now up-to-date with the squash-merge."
+    echo "→ Done!"
   else
-    echo "❌ Failed to squash-merge PR #$pr_number."
+    echo "❌ Failed to merge PR #${pr_number}." >&2
     exit 1
   fi
+else
+  echo "→ Leaving you on feature branch '$branch'."
+  git checkout "$branch"
 fi
