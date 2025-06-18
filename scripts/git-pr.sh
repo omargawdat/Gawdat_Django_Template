@@ -83,7 +83,7 @@ echo "→ Created PR #${pr_number}."
 # 10. If --merge, squash-merge & clean up
 if [[ "$MERGE_PR" == true ]]; then
   echo "→ Squash-merging PR #${pr_number} with auto-merge…"
-  gh pr merge "${pr_number}" --squash --delete-branch --auto
+  gh pr merge "${pr_number}" --squash --delete-branch --admin
 else
   echo "→ Leaving you on feature branch '$branch'."
   git checkout "$branch"
