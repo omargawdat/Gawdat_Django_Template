@@ -82,19 +82,8 @@ echo "→ Created PR #${pr_number}."
 
 # 10. If --merge, squash-merge & clean up
 if [[ "$MERGE_PR" == true ]]; then
-  echo "→ Squash-merging PR #${pr_number} and deleting remote branch…"
-  if gh pr merge "${pr_number}" --squash --delete-branch; then
-    echo "→ PR #${pr_number} merged successfully."
-    echo "→ Switching back to 'main' and pulling latest…"
-    git checkout main
-    git pull "$REMOTE" main
-    echo "→ Deleting local branch '$branch'…"
-    git branch -d "$branch"
-    echo "→ Done!"
-  else
-    echo "❌ Failed to merge PR #${pr_number}." >&2
-    exit 1
-  fi
+  echo "→ Squash-merging PR #${pr_number} with auto-merge…"
+  gh pr merge "${pr_number}" --squash --delete-branch --auto
 else
   echo "→ Leaving you on feature branch '$branch'."
   git checkout "$branch"
