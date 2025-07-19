@@ -24,6 +24,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "600/day", "user": "2000/day"},
+    "COERCE_DECIMAL_TO_STRING": False,
 }
 
 DRF_STANDARDIZED_ERRORS = {
