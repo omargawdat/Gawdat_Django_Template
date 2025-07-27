@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from django.contrib.admin.options import ModelAdmin
 from django.contrib.admin.options import ShowFacets
 from django.http import HttpRequest
-from simple_history.admin import SimpleHistoryAdmin
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from unfold.admin import StackedInline
 from unfold.admin import TabularInline
@@ -113,7 +112,6 @@ class BaseModelAdminMeta(ModelAdmin.__class__, ABCMeta):
 
 class BaseModelAdmin(
     DynamicAdminFields,
-    SimpleHistoryAdmin,
     UnfoldModelAdmin,
     ABC,
     metaclass=BaseModelAdminMeta,
