@@ -185,24 +185,16 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("App Info ⓘ"),
+                "title": _("Configuration ⓘ"),
                 "separator": True,
                 "collapsible": True,
                 "items": [
                     {
-                        "title": _("App Info"),
-                        "icon": "public",
-                        "link": reverse_lazy("admin:appInfo_appinfo_changelist"),
+                        "title": _("Contact Us"),
+                        "icon": "call",
+                        "link": reverse_lazy("admin:appInfo_contactus_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_appinfo"
-                        ),
-                    },
-                    {
-                        "title": _("FAQs"),
-                        "icon": "help",
-                        "link": reverse_lazy("admin:appInfo_faq_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_faq"
+                            "appInfo.view_contactus"
                         ),
                     },
                     {
@@ -219,6 +211,22 @@ UNFOLD = {
                         "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "appInfo.view_socialaccount"
+                        ),
+                    },
+                    {
+                        "title": _("FAQs"),
+                        "icon": "help",
+                        "link": reverse_lazy("admin:appInfo_faq_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_faq"
+                        ),
+                    },
+                    {
+                        "title": _("App Info"),
+                        "icon": "public",
+                        "link": reverse_lazy("admin:appInfo_appinfo_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_appinfo"
                         ),
                     },
                 ],
