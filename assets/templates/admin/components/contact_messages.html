@@ -1,0 +1,72 @@
+<div class="contact-messages-container">
+    <div class="messages-header">
+        <h3 class="messages-title">Contact Messages 📧</h3>
+        <div class="messages-subtitle">Recent customer inquiries and feedback</div>
+    </div>
+
+    {% if contact_messages %}
+        <div class="messages-list">
+            {% for message in contact_messages %}
+                <div class="message-item {% if not message.has_checked %}unread{% endif %}">
+                    <div class="message-header">
+                        <div class="customer-info">
+                            <div class="customer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="customer-details">
+                                <h4 class="customer-name">{{ message.customer.first_name }} {{ message.customer.last_name }}</h4>
+                                <p class="message-type">{{ message.get_contact_type_display }}</p>
+                            </div>
+                        </div>
+                        <div class="message-meta">
+                            <span class="message-date">{{ message.created_at|date:"M d, Y" }}</span>
+                            {% if not message.has_checked %}
+                                <span class="unread-badge">New</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="message-content">
+                        <p class="message-description">{{ message.description|truncatewords:20 }}</p>
+                    </div>
+
+                    <div class="message-actions">
+                        <button class="action-btn view-btn" onclick="viewMessage({{ message.id }})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        {% if not message.has_checked %}
+                            <button class="action-btn mark-read-btn" onclick="markAsRead({{ message.id }})">
+                                <i class="fas fa-check"></i> Mark Read
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if contact_messages|length > 5 %}
+            <div class="messages-footer">
+                <button class="view-all-btn">
+                    <i class="fas fa-envelope-open-text"></i>
+                    View All Messages ({{ total_messages_count }})
+                </button>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-messages">
+            <div class="no-messages-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <h4 class="no-messages-title">Great! No New Messages</h4>
+            <p class="no-messages-description">
+                You're all caught up! No customer inquiries at the moment.
+                When customers reach out, their messages will appear here.
+            </p>
+            <div class="celebration-icons">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-star"></i>
+            </div>
+        </div>
+    {% endif %}
+</div>
