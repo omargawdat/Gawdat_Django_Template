@@ -23,45 +23,30 @@
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <script src="{% static 'js/top_cards.js' %}"></script>
+  <script src="{% static 'js/line_chart.js' %}"></script>
+  <script src="{% static 'js/top_providers.js' %}"></script>
+  <script src="{% static 'js/contact_messages.js' %}"></script>
 {% endblock extrahead %}
 {% block content %}
   {% include "unfold/helpers/messages.html" %}
   {% component "unfold/components/container.html" %}
   <div class="flex flex-col gap-8 mb-12">
+
+
+
+
     <!-- Top Cards Section -->
     {% include "admin/components/top_cards.html" %}
-    <!-- Orders Chart Section -->
-    {% component "unfold/components/card.html" with title=_("Total Orders Last 30 Days 🛍️") %}
-    {% component "unfold/components/chart/bar.html" with data=chart height=320 %}
-  {% endcomponent %}
-{% endcomponent %}
-<!-- Providers and Performance Section -->
-<div class="flex flex-col gap-8 lg:flex-row">
-  <!-- Top Providers -->
-  {% component "unfold/components/card.html" with class="lg:w-1/2" title=_("Top Providers by Orders") %}
-  <div class="flex flex-col gap-5">
-    {% for metric in progress %}
-      {% component "unfold/components/progress.html" with title=metric.title description=metric.description value=metric.value %}
-    {% endcomponent %}
-  {% endfor %}
-</div>
-{% endcomponent %}
-<!-- Revenue Performance -->
-<div class="flex flex-col gap-8 lg:w-1/2">
-  {% for stats in performance %}
-    {% component "unfold/components/card.html" %}
-    {% component "unfold/components/text.html" %}
-    {{ stats.title }}
-  {% endcomponent %}
-  {% component "unfold/components/title.html" with class="mb-8" %}
-  {{ stats.title }}
-{% endcomponent %}
-{% component "unfold/components/chart/line.html" with data=stats.chart %}
-{% endcomponent %}
-{% endcomponent %}
-{% endfor %}
-</div>
-</div>
-</div>
+
+    <!-- Revenue Line Chart Section -->
+    {% include "admin/components/line_chart.html" %}
+
+    <!-- Top Providers Section -->
+    {% include "admin/components/top_providers.html" %}
+
+    <!-- Contact Messages Section -->
+    {% include "admin/components/contact_messages.html" %}
+
+  </div>
 {% endcomponent %}
 {% endblock content %}

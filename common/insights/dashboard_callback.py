@@ -7,6 +7,8 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from moneyed import Money
 
+from apps.appInfo.models.contact_us import ContactUs
+
 
 def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
     # Weekday labels for charts, used to display day names in charts (e.g., "Mon", "Tue")
@@ -94,6 +96,12 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
     date_list = [last_month_start + timezone.timedelta(days=i) for i in range(30)]
     labels_daily = [weekdays[date.weekday()] for date in date_list]
 
+    # Get recent contact messages (last 5 messages)
+    contact_messages = ContactUs.objects.select_related("customer").order_by(
+        "-created_at"
+    )[:5]
+    total_messages_count = ContactUs.objects.count()
+
     # Update the context dictionary with data for the dashboard template
     context.update(
         {
@@ -101,6 +109,9 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
             "navigation": [
                 {"title": _("Analytics"), "link": "#", "active": True},
             ],
+            # Contact messages for the dashboard
+            "contact_messages": contact_messages,
+            "total_messages_count": total_messages_count,
             # Key Performance Indicators (KPIs) for display
             "kpi": [
                 {
