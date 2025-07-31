@@ -149,11 +149,6 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Notification 📢"),
-                "separator": True,
-                "items": [],
-            },
-            {
                 "title": _("Location 📍"),
                 "separator": True,
                 # "collapsible": True,
@@ -172,6 +167,14 @@ UNFOLD = {
                         "link": reverse_lazy("admin:location_region_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "location.view_region"
+                        ),
+                    },
+                    {
+                        "title": _("Address"),
+                        "icon": "map",
+                        "link": reverse_lazy("admin:location_address_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "location.view_address"
                         ),
                     },
                 ],
