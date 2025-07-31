@@ -99,14 +99,6 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("Notification"),
-                        "icon": "notifications",
-                        "link": reverse_lazy("admin:channel_notification_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "channel.view_notification"
-                        ),
-                    },
-                    {
                         "title": _("Admin"),
                         "icon": "person",
                         "link": reverse_lazy("admin:users_adminuser_changelist"),
@@ -120,6 +112,14 @@ UNFOLD = {
                         "link": reverse_lazy("admin:auth_group_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "auth.view_group"
+                        ),
+                    },
+                    {
+                        "title": _("Notification"),
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:channel_notification_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_notification"
                         ),
                     },
                 ],
