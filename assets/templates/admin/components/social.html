@@ -1,0 +1,136 @@
+
+
+<div class="modern-social-accounts-container" style="margin-bottom:2rem;">
+  <h2 style="font-size:2rem;font-weight:800;color:#764ba2;margin-bottom:2rem;text-align:center;letter-spacing:-1px;">Social Accounts</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Email Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:#fbbf24;"><i class="fas fa-envelope"></i></div>
+      <div class="social-info">
+        <div class="social-label">Email</div>
+        <div class="social-value">{{ social_account.email|default:'—' }}</div>
+      </div>
+    </div>
+    <!-- Phone Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:#38bdf8;"><i class="fas fa-phone"></i></div>
+      <div class="social-info">
+        <div class="social-label">Phone Number</div>
+        <div class="social-value">{{ social_account.phone_number|default:'—' }}</div>
+      </div>
+    </div>
+    <!-- Twitter Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:#1da1f2;"><i class="fab fa-twitter"></i></div>
+      <div class="social-info">
+        <div class="social-label">Twitter</div>
+        <div class="social-value">
+          {% if social_account.twitter %}
+            <a href="{{ social_account.twitter }}" target="_blank" style="color:#1da1f2;font-weight:600;word-break:break-all;"><i class="fab fa-twitter"></i> {{ social_account.twitter }}</a>
+          {% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Instagram Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);"><i class="fab fa-instagram"></i></div>
+      <div class="social-info">
+        <div class="social-label">Instagram</div>
+        <div class="social-value">
+          {% if social_account.instagram %}
+            <a href="{{ social_account.instagram }}" target="_blank" style="color:#dd2a7b;font-weight:600;word-break:break-all;"><i class="fab fa-instagram"></i> {{ social_account.instagram }}</a>
+          {% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- TikTok Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:#000;"><i class="fab fa-tiktok"></i></div>
+      <div class="social-info">
+        <div class="social-label">Tiktok</div>
+        <div class="social-value">
+          {% if social_account.tiktok %}
+            <a href="{{ social_account.tiktok }}" target="_blank" style="color:#000;font-weight:600;word-break:break-all;"><i class="fab fa-tiktok"></i> {{ social_account.tiktok }}</a>
+          {% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Website Card -->
+    <div class="social-card">
+      <div class="social-icon" style="background:#4ade80;"><i class="fas fa-globe"></i></div>
+      <div class="social-info">
+        <div class="social-label">Website</div>
+        <div class="social-value">
+          {% if social_account.website %}
+            <a href="{{ social_account.website }}" target="_blank" style="color:#4ade80;font-weight:600;word-break:break-all;"><i class="fas fa-globe"></i> {{ social_account.website }}</a>
+          {% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.modern-social-accounts-container {
+  animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
+}
+.modern-social-accounts-container .social-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+  padding: 1.5rem 1.25rem;
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1.5px solid rgba(255,255,255,0.10);
+}
+.modern-social-accounts-container .social-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.13);
+}
+.modern-social-accounts-container .social-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.modern-social-accounts-container .social-info {
+  flex: 1;
+}
+.modern-social-accounts-container .social-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e0e7ff;
+  margin-bottom: 0.25rem;
+}
+.modern-social-accounts-container .social-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  word-break: break-all;
+}
+@media (max-width: 768px) {
+  .modern-social-accounts-container .grid {
+    grid-template-columns: 1fr !important;
+  }
+  .modern-social-accounts-container .social-card {
+    padding: 1.1rem 0.9rem;
+    font-size: 0.98rem;
+  }
+  .modern-social-accounts-container h2 {
+    font-size: 1.3rem;
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

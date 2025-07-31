@@ -147,6 +147,11 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
     )[:5]
     total_messages_count = ContactUs.objects.count()
 
+    # Get social accounts (singleton)
+    from apps.appInfo.models.social import SocialAccount
+
+    social_account = SocialAccount.get_solo()
+
     # Update the context dictionary with data for the dashboard template
     context.update(
         {
@@ -282,6 +287,8 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
                     ),
                 },
             ],
+            # Social account for display in the dashboard
+            "social_account": social_account,
         }
     )
 
