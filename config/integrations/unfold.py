@@ -185,6 +185,44 @@ UNFOLD = {
                 ],
             },
             {
+                "title": _("Application Content 📱"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Onboarding"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:appInfo_onboarding_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_onboarding"
+                        ),
+                    },
+                    # {
+                    #     "title": _("Banner Group"),
+                    #     "icon": "category",
+                    #     "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
+                    #     "permission": lambda request: request.user.has_perm(
+                    #         "channel.view_bannergroup"
+                    #     ),
+                    # },
+                    # {
+                    #     "title": _("Banner"),
+                    #     "icon": "photo",
+                    #     "link": reverse_lazy("admin:appInfo_banner_changelist"),
+                    #     "permission": lambda request: request.user.has_perm(
+                    #         "channel.view_banner"
+                    #     ),
+                    # },
+                    # {
+                    #     "title": _("PopUp Banner"),
+                    #     "icon": "campaign",
+                    #     "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
+                    #     "permission": lambda request: request.user.has_perm(
+                    #         "channel.view_popupbanner"
+                    #     ),
+                    # },
+                ],
+            },
+            {
                 "title": _("Configuration ⓘ"),
                 "separator": True,
                 "collapsible": True,
