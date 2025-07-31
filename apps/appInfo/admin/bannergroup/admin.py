@@ -1,7 +1,7 @@
 from django.contrib import admin
 from modeltranslation.admin import TabbedTranslationAdmin
 
-# from apps.appInfo.admin.banner.inline import BannerInline
+from apps.appInfo.admin.banner.inline import BannerInline
 from apps.appInfo.models.banner_group import BannerGroup
 from common.base.admin import BaseModelAdmin
 
@@ -20,5 +20,4 @@ class BannerGroupAdmin(
     BaseModelAdmin,
     TabbedTranslationAdmin,
 ):
-    # inlines = [BannerInline]
-    pass
+    inlines = [BannerInline]
