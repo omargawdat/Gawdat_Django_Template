@@ -196,14 +196,14 @@ UNFOLD = {
                             "appInfo.view_onboarding"
                         ),
                     },
-                    # {
-                    #     "title": _("Banner Group"),
-                    #     "icon": "category",
-                    #     "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
-                    #     "permission": lambda request: request.user.has_perm(
-                    #         "channel.view_bannergroup"
-                    #     ),
-                    # },
+                    {
+                        "title": _("Banner Group"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_bannergroup"
+                        ),
+                    },
                     # {
                     #     "title": _("Banner"),
                     #     "icon": "photo",
