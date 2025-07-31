@@ -224,7 +224,7 @@ LOGGING = {
 
 
 # Google Map Widget
-GOOGLE_MAP_API_KEY = ""
+GOOGLE_MAP_API_KEY = env.google_map_api_key.get_secret_value()
 
 MAP_WIDGETS = {
     "GoogleMap": {
