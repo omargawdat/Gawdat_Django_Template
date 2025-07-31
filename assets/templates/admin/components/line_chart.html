@@ -1,4 +1,4 @@
-<div class="chart-container" style="background: linear-gradient(135deg, #4ade80 0%, #9333ea 100%); box-shadow: 0 8px 32px 0 rgba(74,222,128,0.25);">
+<div class="chart-container" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); box-shadow: 0 8px 32px 0 rgba(37,99,235,0.25);">
     <div class="chart-header">
         <h3 class="chart-title" id="growthChartTitle" style="color: #fff; text-shadow: 0 2px 8px #4ade80cc;">Customer Growth - New Customers Per Day 🌱</h3>
         <div class="chart-legend">
@@ -7,9 +7,29 @@
                 New Customers
             </span>
         </div>
-        <div style="margin-left:auto;">
-            <button id="switchGrowthChart" style="background: #fff; color: #4ade80; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-weight: 700; font-size: 1rem; box-shadow: 0 2px 8px #4ade8033; cursor: pointer; transition: background 0.2s;">Per Year</button>
+        <div style="margin-left:auto; display: flex; gap: 0.5rem;">
+            <button id="growthChartDayBtn" class="growth-switch-btn active">Per Day</button>
+            <button id="growthChartYearBtn" class="growth-switch-btn">Per Year</button>
         </div>
+    <style>
+      .growth-switch-btn {
+        background: #fff;
+        color: #2563eb;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px #2563eb33;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        outline: none;
+      }
+      .growth-switch-btn.active, .growth-switch-btn:focus {
+        background: #2563eb;
+        color: #fff;
+      }
+    </style>
     </div>
     <div class="chart-wrapper">
         <canvas id="customerGrowthLineChart" width="800" height="400" style="background: transparent;"></canvas>
@@ -28,14 +48,10 @@
 
         function getGradient(ctx, color) {
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            if (color === '#9333ea') {
-                gradient.addColorStop(0, 'rgba(147,51,234,0.4)');
-                gradient.addColorStop(1, 'rgba(147,51,234,0.05)');
-            } else {
-                gradient.addColorStop(0, 'rgba(74,222,128,0.5)');
-                gradient.addColorStop(0.5, 'rgba(147,51,234,0.15)');
-                gradient.addColorStop(1, 'rgba(74,222,128,0.05)');
-            }
+            // Use blue gradients for all modes
+            gradient.addColorStop(0, 'rgba(37,99,235,0.5)'); // #2563eb
+            gradient.addColorStop(0.5, 'rgba(30,64,175,0.15)'); // #1e40af
+            gradient.addColorStop(1, 'rgba(37,99,235,0.05)');
             return gradient;
         }
 
@@ -46,11 +62,11 @@
                 const ctx = chart.ctx;
                 chart.getDatasetMeta(0).data.forEach(point => {
                     ctx.save();
-                    ctx.shadowColor = currentMode === 'yearly' ? '#9333ea' : '#4ade80';
+                    ctx.shadowColor = '#2563eb';
                     ctx.shadowBlur = 16;
                     ctx.beginPath();
                     ctx.arc(point.x, point.y, 9, 0, 2 * Math.PI);
-                    ctx.fillStyle = currentMode === 'yearly' ? 'rgba(147,51,234,0.18)' : 'rgba(74,222,128,0.25)';
+                    ctx.fillStyle = 'rgba(37,99,235,0.18)';
                     ctx.fill();
                     ctx.restore();
                 });
@@ -59,6 +75,12 @@
 
         function renderChart(mode) {
             const data = chartData[mode];
+            // Set line and point color to white for yearly mode, else keep original
+            if (mode === 'yearly') {
+                data.datasets[0].borderColor = '#fff';
+                data.datasets[0].pointBorderColor = '#fff';
+                data.datasets[0].pointBackgroundColor = '#fff';
+            }
             // Set gradient background for the dataset
             data.datasets[0].backgroundColor = getGradient(ctx, data.datasets[0].borderColor);
             if (chartInstance) chartInstance.destroy();
@@ -80,8 +102,8 @@
                         tooltip: {
                             backgroundColor: 'rgba(255,255,255,0.98)',
                             titleColor: data.datasets[0].borderColor,
-                            bodyColor: '#9333ea',
-                            borderColor: 'rgba(74,222,128,0.3)',
+                            bodyColor: '#2563eb',
+                            borderColor: 'rgba(37,99,235,0.3)',
                             borderWidth: 2,
                             cornerRadius: 10,
                             displayColors: false,
@@ -99,7 +121,7 @@
                     scales: {
                         x: {
                             grid: {
-                                color: mode === 'yearly' ? 'rgba(147,51,234,0.15)' : 'rgba(74,222,128,0.15)',
+                                color: 'rgba(37,99,235,0.15)',
                                 drawBorder: false
                             },
                             ticks: {
@@ -110,7 +132,7 @@
                         },
                         y: {
                             grid: {
-                                color: mode === 'yearly' ? 'rgba(147,51,234,0.12)' : 'rgba(74,222,128,0.12)',
+                                color: 'rgba(37,99,235,0.12)',
                                 drawBorder: false
                             },
                             ticks: {
@@ -159,12 +181,32 @@
 
         renderChart(currentMode);
 
-        // Switch button logic
-        const switchBtn = document.getElementById('switchGrowthChart');
-        switchBtn.addEventListener('click', function() {
-            currentMode = currentMode === 'daily' ? 'yearly' : 'daily';
-            renderChart(currentMode);
-            switchBtn.textContent = currentMode === 'daily' ? 'Per Year' : 'Per Day';
+        // Two-button switch logic
+        const dayBtn = document.getElementById('growthChartDayBtn');
+        const yearBtn = document.getElementById('growthChartYearBtn');
+        function setActiveBtn(mode) {
+            if (mode === 'daily') {
+                dayBtn.classList.add('active');
+                yearBtn.classList.remove('active');
+            } else {
+                yearBtn.classList.add('active');
+                dayBtn.classList.remove('active');
+            }
+        }
+        dayBtn.addEventListener('click', function() {
+            if (currentMode !== 'daily') {
+                currentMode = 'daily';
+                renderChart(currentMode);
+                setActiveBtn(currentMode);
+            }
         });
+        yearBtn.addEventListener('click', function() {
+            if (currentMode !== 'yearly') {
+                currentMode = 'yearly';
+                renderChart(currentMode);
+                setActiveBtn(currentMode);
+            }
+        });
+        setActiveBtn(currentMode);
     });
 </script>
