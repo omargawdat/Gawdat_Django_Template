@@ -94,6 +94,7 @@ THIRD_PARTY_APPS = [
     "solo",
     "drf_standardized_errors",
     "djmoney",
+    "mapwidgets",
 ]
 
 # Django core applications
@@ -220,6 +221,34 @@ LOGGING = {
     },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
+
+
+# Google Map Widget
+GOOGLE_MAP_API_KEY = env.google_map_api_key.get_secret_value()
+
+MAP_WIDGETS = {
+    "GoogleMap": {
+        "apiKey": GOOGLE_MAP_API_KEY,
+        "PointField": {
+            "interactive": {
+                "mapOptions": {
+                    "zoom": 15,
+                    "streetViewControl": False,
+                },
+                "GooglePlaceAutocompleteOptions": {
+                    "componentRestrictions": {"country": "sa"}
+                },
+            }
+        },
+    },
+    "Leaflet": {
+        "PointField": {
+            "interactive": {"mapOptions": {"zoom": 12, "scrollWheelZoom": False}}
+        },
+        "markerFitZoom": 14,
+    },
+}
+
 
 # ------------------------------------------------------------------------------
 # THIRD-PARTY INTEGRATIONS

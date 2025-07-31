@@ -55,6 +55,7 @@ class EnvSettings(BaseSettings):
     domain_name: str
     environment: Literal["local", "development", "staging", "production"]
     sentry_sdk_dsn: str
+    google_map_api_key: SecretStr
 
 
 env = EnvSettings()

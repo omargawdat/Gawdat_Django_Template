@@ -12,7 +12,7 @@ UNFOLD = {
     "SHOW_BACK_BUTTON": True,
     "SITE_URL": "https://www.google.com/",  # todo: set this to the actual site url
     "LOGIN": {
-        "image": lambda request: static("images/login.png"),
+        "image": lambda request: static("images/logo.png"),
     },
     "STYLES": [
         lambda request: static("css/style.css"),
@@ -98,6 +98,30 @@ UNFOLD = {
                             "users.view_customer"
                         ),
                     },
+                    {
+                        "title": _("Admin"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_adminuser_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "users.view_adminuser"
+                        ),
+                    },
+                    {
+                        "title": _("Groups"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "auth.view_group"
+                        ),
+                    },
+                    {
+                        "title": _("Notification"),
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:channel_notification_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_notification"
+                        ),
+                    },
                 ],
             },
             {
@@ -125,20 +149,6 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Notification 📢"),
-                "separator": True,
-                "items": [
-                    {
-                        "title": _("Notification"),
-                        "icon": "notifications",
-                        "link": reverse_lazy("admin:channel_notification_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "channel.view_notification"
-                        ),
-                    },
-                ],
-            },
-            {
                 "title": _("Location 📍"),
                 "separator": True,
                 # "collapsible": True,
@@ -159,27 +169,50 @@ UNFOLD = {
                             "location.view_region"
                         ),
                     },
+                    {
+                        "title": _("Address"),
+                        "icon": "map",
+                        "link": reverse_lazy("admin:location_address_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "location.view_address"
+                        ),
+                    },
                 ],
             },
             {
-                "title": _("Admin & Group 👥"),
+                "title": _("Application Content 📱"),
                 "separator": True,
-                # "collapsible": True,
                 "items": [
                     {
-                        "title": _("Admin"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:users_adminuser_changelist"),
+                        "title": _("Onboarding"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:appInfo_onboarding_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "users.view_adminuser"
+                            "appInfo.view_onboarding"
                         ),
                     },
                     {
-                        "title": _("Groups"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "title": _("Banner Group"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "auth.view_group"
+                            "channel.view_bannergroup"
+                        ),
+                    },
+                    {
+                        "title": _("Banner"),
+                        "icon": "photo",
+                        "link": reverse_lazy("admin:appInfo_banner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_banner"
+                        ),
+                    },
+                    {
+                        "title": _("PopUp Banner"),
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_popupbanner"
                         ),
                     },
                 ],
@@ -262,4 +295,4 @@ def get_site_icon(request):
     user = request.user
     if user.is_authenticated and isinstance(user, AdminUser) and user.image:
         return user.image.url
-    return static("images/identity.png")
+    return static("images/logo.png")

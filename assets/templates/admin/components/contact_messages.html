@@ -1,72 +1,278 @@
-<div class="contact-messages-container">
-    <div class="messages-header">
-        <h3 class="messages-title">Contact Messages 📧</h3>
-        <div class="messages-subtitle">Recent customer inquiries and feedback</div>
+{% load i18n %}
+<!-- Enhanced Contact Messages Component -->
+<div class="contact-messages-widget">
+  <div class="contact-header">
+    <div class="contact-title">
+      <div class="contact-icon">
+        <i class="fas fa-envelope"></i>
+      </div>
+      {% trans "Contact Messages" %}
+      {% if unread_contacts_count %}
+        <span class="contact-badge">{{ unread_contacts_count }} {% trans "New" %}</span>
+      {% endif %}
     </div>
-
-    {% if contact_messages %}
-        <div class="messages-list">
-            {% for message in contact_messages %}
-                <div class="message-item {% if not message.has_checked %}unread{% endif %}">
-                    <div class="message-header">
-                        <div class="customer-info">
-                            <div class="customer-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="customer-details">
-                                <h4 class="customer-name">{{ message.customer.first_name }} {{ message.customer.last_name }}</h4>
-                                <p class="message-type">{{ message.get_contact_type_display }}</p>
-                            </div>
-                        </div>
-                        <div class="message-meta">
-                            <span class="message-date">{{ message.created_at|date:"M d, Y" }}</span>
-                            {% if not message.has_checked %}
-                                <span class="unread-badge">New</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="message-content">
-                        <p class="message-description">{{ message.description|truncatewords:20 }}</p>
-                    </div>
-
-                    <div class="message-actions">
-                        <button class="action-btn view-btn" onclick="viewMessage({{ message.id }})">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        {% if not message.has_checked %}
-                            <button class="action-btn mark-read-btn" onclick="markAsRead({{ message.id }})">
-                                <i class="fas fa-check"></i> Mark Read
-                            </button>
-                        {% endif %}
-                    </div>
+    <a href="{% url 'admin:appInfo_contactus_changelist' %}" class="view-all-btn">
+      {% trans "View All" %} <i class="fas fa-arrow-right ml-1"></i>
+    </a>
+  </div>
+<style>
+  .contact-messages-widget {
+    background: linear-gradient(135deg, #181c2f 60%, #232b50 100%);
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.18);
+    padding: 0 0 18px 0;
+    margin-bottom: 32px;
+    font-family: 'Inter', Arial, sans-serif;
+  }
+  .contact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 0 24px;
+    border-bottom: 1px solid #232b50;
+  }
+  .contact-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .contact-icon {
+    background: linear-gradient(135deg, #232b50 60%, #181c2f 100%);
+    color: #fff;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px 0 rgba(25,118,210,0.10);
+  }
+  .contact-badge {
+    background: #232b50;
+    color: #90caf9;
+    border-radius: 12px;
+    font-size: 0.95em;
+    padding: 2px 10px;
+    margin-left: 12px;
+    font-weight: 500;
+  }
+  .view-all-btn {
+    color: #90caf9;
+    background: #232b50;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 0.98em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .view-all-btn:hover {
+    background: #181c2f;
+    color: #fff;
+  }
+  .contact-table-container {
+    overflow-x: auto;
+    padding: 0 24px;
+  }
+  .contact-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 12px;
+    background: transparent;
+  }
+  .contact-table th, .contact-table td {
+    padding: 14px 10px;
+    text-align: left;
+    font-size: 1em;
+    color: #e3eafc;
+  }
+  .contact-table th {
+    color: #90caf9;
+    font-weight: 700;
+    background: #232b50;
+    border-bottom: 2px solid #181c2f;
+  }
+  .contact-table tbody tr {
+    border-radius: 12px;
+    background: #181c2f;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .contact-table tbody tr:hover {
+    box-shadow: 0 2px 8px 0 rgba(25,118,210,0.08);
+    background: #232b50;
+  }
+  .customer-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .customer-avatar {
+    background: #232b50;
+    color: #90caf9;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+  }
+  .customer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .customer-name {
+    font-weight: 600;
+    color: #e3eafc;
+    font-size: 1em;
+  }
+  .customer-phone {
+    color: #90caf9;
+    font-size: 0.97em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .contact-type-badge {
+    background: #232b50;
+    color: #ffe082;
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-size: 0.97em;
+    font-weight: 500;
+    display: inline-block;
+  }
+  .message-preview {
+    color: #e3eafc;
+    font-size: 0.98em;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .message-time {
+    color: #90caf9;
+    font-size: 0.97em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .view-contact-btn {
+    color: #232b50;
+    background: #90caf9;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 0.97em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    box-shadow: 0 1px 4px 0 rgba(25,118,210,0.08);
+  }
+  .view-contact-btn:hover {
+    background: #232b50;
+    color: #90caf9;
+  }
+  .empty-contacts {
+    text-align: center;
+    color: #90caf9;
+    padding: 32px 0 24px 0;
+    font-size: 1.1em;
+  }
+  .empty-contacts i {
+    font-size: 2em;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .contact-stats {
+    padding: 10px 24px 0 24px;
+    color: #90caf9;
+    font-size: 0.98em;
+    text-align: right;
+  }
+  @media (max-width: 700px) {
+    .contact-header, .contact-table-container, .contact-stats {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    .contact-table th, .contact-table td {
+      padding: 10px 4px;
+    }
+    .message-preview {
+      max-width: 120px;
+    }
+  }
+</style>
+  <div class="contact-table-container">
+    <table class="contact-table">
+      <thead>
+        <tr>
+          <th>{% trans "Customer" %}</th>
+          <th>{% trans "Message" %}</th>
+          <th>{% trans "Date" %}</th>
+          <th style="text-align: right;">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for contact in unread_contacts %}
+        <tr>
+          <td>
+            <div class="customer-info">
+              <div class="customer-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="customer-details">
+                <div class="customer-name">{{ contact.customer_name }}</div>
+                <div class="customer-phone">
+                  <i class="fas fa-phone-alt"></i>{{ contact.customer_phone }}
                 </div>
-            {% endfor %}
-        </div>
-
-        {% if contact_messages|length > 5 %}
-            <div class="messages-footer">
-                <button class="view-all-btn">
-                    <i class="fas fa-envelope-open-text"></i>
-                    View All Messages ({{ total_messages_count }})
-                </button>
+              </div>
             </div>
-        {% endif %}
-    {% else %}
-        <div class="no-messages">
-            <div class="no-messages-icon">
-                <i class="fas fa-inbox"></i>
+          </td>
+          <td>
+            <div class="message-preview" title="{{ contact.description }}">
+              {{ contact.description|truncatechars:60 }}
             </div>
-            <h4 class="no-messages-title">Great! No New Messages</h4>
-            <p class="no-messages-description">
-                You're all caught up! No customer inquiries at the moment.
-                When customers reach out, their messages will appear here.
-            </p>
-            <div class="celebration-icons">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-heart"></i>
-                <i class="fas fa-star"></i>
+          </td>
+          <td>
+            <div class="message-time">
+              <i class="far fa-clock"></i>{{ contact.created_at }}
             </div>
-        </div>
-    {% endif %}
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'admin:appInfo_contactus_change' contact.id %}" class="view-contact-btn">
+              <i class="fas fa-eye"></i> {% trans "View" %}
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">
+            <div class="empty-contacts">
+              <i class="far fa-check-circle"></i>
+              <p>{% trans "All messages have been read" %}</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if unread_contacts %}
+  <div class="contact-stats">
+    {% blocktrans with count=unread_contacts|length total=unread_contacts_count %}Showing {{ count }} of {{ total }} unread messages{% endblocktrans %}
+  </div>
+  {% endif %}
 </div>

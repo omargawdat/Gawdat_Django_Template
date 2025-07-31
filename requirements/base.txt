@@ -34,6 +34,8 @@ django-modeltranslation==0.19.14
 django-tasks==0.7.0
 django-soft-delete==1.0.18
 django-guardian==3.0.0
+django-location-field==2.7.3
+django-map-widgets==0.5.1
 
 # Django REST Framework and Extensions
 djangorestframework==3.16.0

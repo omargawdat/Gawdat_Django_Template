@@ -1,14 +1,212 @@
-<div class="chart-container">
+<div class="chart-container" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); box-shadow: 0 8px 32px 0 rgba(37,99,235,0.25);">
     <div class="chart-header">
-        <h3 class="chart-title">Revenue Analytics - Last 30 Days 📈</h3>
+        <h3 class="chart-title" id="growthChartTitle" style="color: #fff; text-shadow: 0 2px 8px #4ade80cc;">Customer Growth - New Customers Per Day 🌱</h3>
         <div class="chart-legend">
             <span class="legend-item">
-                <span class="legend-color" style="background: #667eea;"></span>
-                Revenue
+                <span class="legend-color" style="background: #4ade80; box-shadow: 0 0 8px 2px #4ade8099;"></span>
+                New Customers
             </span>
         </div>
+        <div style="margin-left:auto; display: flex; gap: 0.5rem;">
+            <button id="growthChartDayBtn" class="growth-switch-btn active">Per Day</button>
+            <button id="growthChartYearBtn" class="growth-switch-btn">Per Year</button>
+        </div>
+    <style>
+      .growth-switch-btn {
+        background: #fff;
+        color: #2563eb;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px #2563eb33;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        outline: none;
+      }
+      .growth-switch-btn.active, .growth-switch-btn:focus {
+        background: #2563eb;
+        color: #fff;
+      }
+    </style>
     </div>
     <div class="chart-wrapper">
-        <canvas id="revenueLineChart" width="800" height="400"></canvas>
+        <canvas id="customerGrowthLineChart" width="800" height="400" style="background: transparent;"></canvas>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get chart data from Django context
+        const chartData = JSON.parse('{{ customer_growth_chart|safe }}');
+        let currentMode = 'daily';
+        const canvas = document.getElementById('customerGrowthLineChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let chartInstance = null;
+
+        function getGradient(ctx, color) {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            // Use blue gradients for all modes
+            gradient.addColorStop(0, 'rgba(37,99,235,0.5)'); // #2563eb
+            gradient.addColorStop(0.5, 'rgba(30,64,175,0.15)'); // #1e40af
+            gradient.addColorStop(1, 'rgba(37,99,235,0.05)');
+            return gradient;
+        }
+
+        // Custom plugin for glowing points
+        const glowPlugin = {
+            id: 'glow',
+            afterDatasetsDraw(chart) {
+                const ctx = chart.ctx;
+                chart.getDatasetMeta(0).data.forEach(point => {
+                    ctx.save();
+                    ctx.shadowColor = '#2563eb';
+                    ctx.shadowBlur = 16;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 9, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(37,99,235,0.18)';
+                    ctx.fill();
+                    ctx.restore();
+                });
+            }
+        };
+
+        function renderChart(mode) {
+            const data = chartData[mode];
+            // Set line and point color to white for yearly mode, else keep original
+            if (mode === 'yearly') {
+                data.datasets[0].borderColor = '#fff';
+                data.datasets[0].pointBorderColor = '#fff';
+                data.datasets[0].pointBackgroundColor = '#fff';
+            }
+            // Set gradient background for the dataset
+            data.datasets[0].backgroundColor = getGradient(ctx, data.datasets[0].borderColor);
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: data.datasets[0].type,
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.98)',
+                            titleColor: data.datasets[0].borderColor,
+                            bodyColor: '#2563eb',
+                            borderColor: 'rgba(37,99,235,0.3)',
+                            borderWidth: 2,
+                            cornerRadius: 10,
+                            displayColors: false,
+                            padding: 16,
+                            callbacks: {
+                                title: function(context) {
+                                    return mode === 'yearly' ? 'Month: ' + context[0].label : 'Day: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return 'New Customers: ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(37,99,235,0.15)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#fff',
+                                font: { size: 13, weight: 'bold' },
+                                maxTicksLimit: mode === 'yearly' ? 12 : 10
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(37,99,235,0.12)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#fff',
+                                font: { size: 13, weight: 'bold' },
+                                callback: function(value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 4,
+                            borderColor: data.datasets[0].borderColor,
+                            tension: 0.45,
+                            fill: true,
+                            shadowBlur: 24,
+                            shadowColor: data.datasets[0].borderColor
+                        },
+                        point: {
+                            radius: 7,
+                            backgroundColor: '#fff',
+                            borderColor: data.datasets[0].borderColor,
+                            borderWidth: 4,
+                            hoverRadius: 12,
+                            hoverBackgroundColor: data.datasets[0].borderColor,
+                            hoverBorderColor: '#fff',
+                            shadowBlur: 16,
+                            shadowColor: data.datasets[0].borderColor
+                        }
+                    },
+                    animation: {
+                        duration: 2200,
+                        easing: 'easeOutElastic'
+                    }
+                },
+                plugins: [glowPlugin]
+            });
+            // Update chart title
+            const title = document.getElementById('growthChartTitle');
+            if (title) {
+                title.textContent = mode === 'yearly' ? 'Customer Growth - New Customers Per Month 🌱' : 'Customer Growth - New Customers Per Day 🌱';
+            }
+        }
+
+        renderChart(currentMode);
+
+        // Two-button switch logic
+        const dayBtn = document.getElementById('growthChartDayBtn');
+        const yearBtn = document.getElementById('growthChartYearBtn');
+        function setActiveBtn(mode) {
+            if (mode === 'daily') {
+                dayBtn.classList.add('active');
+                yearBtn.classList.remove('active');
+            } else {
+                yearBtn.classList.add('active');
+                dayBtn.classList.remove('active');
+            }
+        }
+        dayBtn.addEventListener('click', function() {
+            if (currentMode !== 'daily') {
+                currentMode = 'daily';
+                renderChart(currentMode);
+                setActiveBtn(currentMode);
+            }
+        });
+        yearBtn.addEventListener('click', function() {
+            if (currentMode !== 'yearly') {
+                currentMode = 'yearly';
+                renderChart(currentMode);
+                setActiveBtn(currentMode);
+            }
+        });
+        setActiveBtn(currentMode);
+    });
+</script>

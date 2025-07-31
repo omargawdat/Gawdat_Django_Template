@@ -3,6 +3,7 @@ from import_export.admin import ExportActionModelAdmin
 from import_export.formats.base_formats import CSV
 from unfold.contrib.import_export.forms import ExportForm
 
+from apps.location.admin.address.form import AddressForm
 from apps.location.models.address import Address
 from common.base.admin import BaseModelAdmin
 
@@ -26,3 +27,4 @@ class AddressAdmin(
     export_form_class = ExportForm
     formats = [CSV]
     inlines = []
+    form = AddressForm
