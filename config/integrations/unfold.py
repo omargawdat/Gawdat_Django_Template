@@ -98,6 +98,30 @@ UNFOLD = {
                             "users.view_customer"
                         ),
                     },
+                    {
+                        "title": _("Notification"),
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:channel_notification_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_notification"
+                        ),
+                    },
+                    {
+                        "title": _("Admin"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_adminuser_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "users.view_adminuser"
+                        ),
+                    },
+                    {
+                        "title": _("Groups"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "auth.view_group"
+                        ),
+                    },
                 ],
             },
             {
@@ -127,16 +151,7 @@ UNFOLD = {
             {
                 "title": _("Notification 📢"),
                 "separator": True,
-                "items": [
-                    {
-                        "title": _("Notification"),
-                        "icon": "notifications",
-                        "link": reverse_lazy("admin:channel_notification_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "channel.view_notification"
-                        ),
-                    },
-                ],
+                "items": [],
             },
             {
                 "title": _("Location 📍"),
@@ -157,29 +172,6 @@ UNFOLD = {
                         "link": reverse_lazy("admin:location_region_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "location.view_region"
-                        ),
-                    },
-                ],
-            },
-            {
-                "title": _("Admin & Group 👥"),
-                "separator": True,
-                # "collapsible": True,
-                "items": [
-                    {
-                        "title": _("Admin"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:users_adminuser_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "users.view_adminuser"
-                        ),
-                    },
-                    {
-                        "title": _("Groups"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:auth_group_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "auth.view_group"
                         ),
                     },
                 ],
@@ -212,14 +204,14 @@ UNFOLD = {
                             "channel.view_banner"
                         ),
                     },
-                    # {
-                    #     "title": _("PopUp Banner"),
-                    #     "icon": "campaign",
-                    #     "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
-                    #     "permission": lambda request: request.user.has_perm(
-                    #         "channel.view_popupbanner"
-                    #     ),
-                    # },
+                    {
+                        "title": _("PopUp Banner"),
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_popupbanner"
+                        ),
+                    },
                 ],
             },
             {
