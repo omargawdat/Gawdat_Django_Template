@@ -12,7 +12,7 @@ UNFOLD = {
     "SHOW_BACK_BUTTON": True,
     "SITE_URL": "https://www.google.com/",  # todo: set this to the actual site url
     "LOGIN": {
-        "image": lambda request: static("images/login.png"),
+        "image": lambda request: static("images/login.jpg"),
     },
     "STYLES": [
         lambda request: static("css/style.css"),
@@ -292,4 +292,4 @@ def get_site_icon(request):
     user = request.user
     if user.is_authenticated and isinstance(user, AdminUser) and user.image:
         return user.image.url
-    return static("images/identity.png")
+    return static("images/log.jpg")

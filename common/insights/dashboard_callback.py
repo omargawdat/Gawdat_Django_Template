@@ -10,9 +10,54 @@ from moneyed import Money
 from apps.appInfo.models.contact_us import ContactUs
 
 
+def get_customer_growth_data():
+    """Return daily and yearly customer growth data and labels."""
+    import calendar
+    from collections import Counter
+
+    from apps.users.models.customer import Customer
+
+    today = timezone.now().date()
+    # Daily (current month)
+    first_day_of_month = today.replace(day=1)
+    num_days = (today - first_day_of_month).days + 1
+    date_list_month = [
+        first_day_of_month + timezone.timedelta(days=i) for i in range(num_days)
+    ]
+    customers_this_month = Customer.objects.filter(
+        date_joined__date__gte=first_day_of_month, date_joined__date__lte=today
+    )
+    joined_per_day = Counter(c.date_joined.date() for c in customers_this_month)
+    customer_growth_daily = [joined_per_day.get(day, 0) for day in date_list_month]
+    labels_month = [day.strftime("%b %-d") for day in date_list_month]
+    # Yearly (per month)
+    first_day_of_year = today.replace(month=1, day=1)
+    customers_this_year = Customer.objects.filter(
+        date_joined__date__gte=first_day_of_year, date_joined__date__lte=today
+    )
+    joined_per_month = Counter(
+        (c.date_joined.year, c.date_joined.month) for c in customers_this_year
+    )
+    customer_growth_monthly = [
+        joined_per_month.get((today.year, m), 0) for m in range(1, 13)
+    ]
+    labels_year = [calendar.month_abbr[m] for m in range(1, 13)]
+    return {
+        "daily": {"labels": labels_month, "data": customer_growth_daily},
+        "yearly": {"labels": labels_year, "data": customer_growth_monthly},
+    }
+
+
 def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
     # Weekday labels for charts, used to display day names in charts (e.g., "Mon", "Tue")
     weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+    # --- Customer growth for the current month and year ---
+    growth = get_customer_growth_data()
+    labels_month = growth["daily"]["labels"]
+    customer_growth_daily = growth["daily"]["data"]
+    labels_year = growth["yearly"]["labels"]
+    customer_growth_monthly = growth["yearly"]["data"]
 
     # Placeholder for providers with the most orders
     # This should be replaced with an actual queryset, e.g., Provider.objects.annotate(order_count=Count('orders')).order_by('-order_count')[:10]
@@ -157,6 +202,39 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
                             "borderColor": "#f0abfc",
                         },
                     ],
+                }
+            ),
+            # Chart data for customer growth (per day and per year)
+            "customer_growth_chart": json.dumps(
+                {
+                    "daily": {
+                        "labels": labels_month,
+                        "datasets": [
+                            {
+                                "label": "New Customers (Daily)",
+                                "type": "line",
+                                "data": customer_growth_daily,
+                                "borderColor": "#4ade80",
+                                "backgroundColor": "rgba(74,222,128,0.2)",
+                                "fill": True,
+                                "tension": 0.4,
+                            },
+                        ],
+                    },
+                    "yearly": {
+                        "labels": labels_year,
+                        "datasets": [
+                            {
+                                "label": "New Customers (Monthly)",
+                                "type": "line",
+                                "data": customer_growth_monthly,
+                                "borderColor": "#9333ea",
+                                "backgroundColor": "rgba(147,51,234,0.15)",
+                                "fill": True,
+                                "tension": 0.4,
+                            },
+                        ],
+                    },
                 }
             ),
             # Performance metrics for revenue in Egypt and Saudi Arabia over the last 30 days
