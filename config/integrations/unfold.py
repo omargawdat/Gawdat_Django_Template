@@ -204,14 +204,14 @@ UNFOLD = {
                             "channel.view_bannergroup"
                         ),
                     },
-                    # {
-                    #     "title": _("Banner"),
-                    #     "icon": "photo",
-                    #     "link": reverse_lazy("admin:appInfo_banner_changelist"),
-                    #     "permission": lambda request: request.user.has_perm(
-                    #         "channel.view_banner"
-                    #     ),
-                    # },
+                    {
+                        "title": _("Banner"),
+                        "icon": "photo",
+                        "link": reverse_lazy("admin:appInfo_banner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "channel.view_banner"
+                        ),
+                    },
                     # {
                     #     "title": _("PopUp Banner"),
                     #     "icon": "campaign",
