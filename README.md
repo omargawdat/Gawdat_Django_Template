@@ -99,7 +99,16 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "OUR_SMS_SENDER_NAME": "ExampleApp",
      "SMS_MISR_USERNAME": "sms-misr-user-id-abc123",
      "SMS_MISR_PASSWORD": "secure-sms-misr-pass-xyz789",
-     "SMS_MISR_SENDER": "example_sms_sender_id"
+     "SMS_MISR_SENDER": "example_sms_sender_id",
+     "GOOGLE_MAP_API_KEY": "MUST-BE-REPLACED",
+     "GOOGLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
+     "GOOGLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
+     "FACEBOOK_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
+     "FACEBOOK_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
+     "APPLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
+     "APPLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
+     "KEY_ID": "MUST-BE-REPLACED",
+     "TEAM_ID": "MUST-BE-REPLACED"
    }
    ```
     4. create app runner, port 5000 include permissions and write the secrets of the apprunner itself
