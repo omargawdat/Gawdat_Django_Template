@@ -86,6 +86,7 @@ THIRD_PARTY_APPS = [
     "rules",
     "imagekit",
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_gis",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -112,6 +113,14 @@ DJANGO_APPS = [
     "django_tasks",
     "django_tasks.backends.database",
     "django.contrib.gis",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.apple",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
 ]
 
 # Project applications
@@ -131,6 +140,7 @@ INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 AUTH_USER_MODEL = "users.User"
 
@@ -157,6 +167,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "djangorestframework_camel_case.middleware.CamelCaseMiddleWare",
