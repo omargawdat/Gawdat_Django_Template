@@ -250,6 +250,55 @@ MAP_WIDGETS = {
 }
 
 
+# Oauth Configure
+REST_USE_JWT = True
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_UNIQUE_EMAIL = True
+
+SOCIALACCOUNT_ADAPTER = "config.helpers.oauth_adapter.CustomerSocialAccountAdapter"
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env.google_oauth2_client_id,
+            "secret": env.google_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "OAUTH_PKCE_ENABLED": True,
+    },
+    "facebook": {
+        "METHOD": "oauth2",
+        "SCOPE": ["email", "public_profile"],
+        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
+        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
+        "APP": {
+            "client_id": env.facebook_oauth2_client_id,
+            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+    },
+    "apple": {
+        "APP": {
+            "client_id": env.apple_oauth2_client_id,
+            "secret": {
+                "key": env.apple_oauth2_client_secret.get_secret_value(),
+                "key_id": env.key_id,
+                "team_id": env.team_id,
+            },
+        },
+    },
+}
+
+
 # ------------------------------------------------------------------------------
 # THIRD-PARTY INTEGRATIONS
 # ------------------------------------------------------------------------------

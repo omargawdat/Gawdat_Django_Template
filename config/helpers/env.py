@@ -57,5 +57,17 @@ class EnvSettings(BaseSettings):
     sentry_sdk_dsn: str
     google_map_api_key: SecretStr
 
+    # Oauth
+    google_oauth2_client_id: str
+    google_oauth2_client_secret: SecretStr
+
+    facebook_oauth2_client_id: str
+    facebook_oauth2_client_secret: SecretStr
+
+    apple_oauth2_client_id: str
+    apple_oauth2_client_secret: SecretStr
+    key_id: str
+    team_id: str
+
 
 env = EnvSettings()

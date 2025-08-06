@@ -22,5 +22,17 @@
       "name_ar": "المملكة العربية السعودية",
       "name_en": "Saudi Arabia"
     }
+  },
+  {
+    "model": "location.country",
+    "pk": "UNSELECTED",
+    "fields": {
+      "currency": "",
+      "flag": "",
+      "is_active": false,
+      "phone_code": "",
+      "name_ar": "دولة غير محددة",
+      "name_en": "Unselected Country"
+    }
   }
 ]
