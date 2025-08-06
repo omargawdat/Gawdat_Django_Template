@@ -14,7 +14,7 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
         username = (
             email.split("@")[0] if email else super().generate_unique_username([name])
         )
-        country = Country.objects.filter(pk="UNSELECTED")  # TODO remove it
+        country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
         customer = Customer(
             username=username,
             email=email,

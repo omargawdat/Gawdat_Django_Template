@@ -19,7 +19,6 @@ class Customer(User):
         help_text="Should start with country code as (+966)",
         verbose_name=_("Phone Number"),
     )
-    email = models.EmailField(_("Email"), default="", blank=True)
     image = ProcessedImageField(
         upload_to="users/",
         processors=[ResizeToFit(1200, 800)],
