@@ -7,7 +7,7 @@ from apps.location.constants import CurrencyCode
 
 class Country(models.Model):
     code = models.CharField(
-        max_length=3,
+        max_length=10,
         unique=True,
         primary_key=True,
         verbose_name=_("Code"),

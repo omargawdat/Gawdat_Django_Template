@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
 
 from apps.channel.constants import Language
@@ -12,6 +13,8 @@ from apps.users.model_manager import CustomUserManager
 
 class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True)
+    email = models.EmailField(_("Email"), default="", blank=True)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

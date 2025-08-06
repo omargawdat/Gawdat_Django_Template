@@ -86,6 +86,7 @@ THIRD_PARTY_APPS = [
     "rules",
     "imagekit",
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_gis",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -112,6 +113,14 @@ DJANGO_APPS = [
     "django_tasks",
     "django_tasks.backends.database",
     "django.contrib.gis",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.apple",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
 ]
 
 # Project applications
@@ -131,6 +140,7 @@ INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 AUTH_USER_MODEL = "users.User"
 
@@ -157,6 +167,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "djangorestframework_camel_case.middleware.CamelCaseMiddleWare",
@@ -246,6 +257,55 @@ MAP_WIDGETS = {
             "interactive": {"mapOptions": {"zoom": 12, "scrollWheelZoom": False}}
         },
         "markerFitZoom": 14,
+    },
+}
+
+
+# Oauth Configure
+REST_USE_JWT = True
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_UNIQUE_EMAIL = True
+
+SOCIALACCOUNT_ADAPTER = "config.helpers.oauth_adapter.CustomerSocialAccountAdapter"
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env.google_oauth2_client_id,
+            "secret": env.google_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "OAUTH_PKCE_ENABLED": True,
+    },
+    "facebook": {
+        "METHOD": "oauth2",
+        "SCOPE": ["email", "public_profile"],
+        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
+        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
+        "APP": {
+            "client_id": env.facebook_oauth2_client_id,
+            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+    },
+    "apple": {
+        "APP": {
+            "client_id": env.apple_oauth2_client_id,
+            "secret": {
+                "key": env.apple_oauth2_client_secret.get_secret_value(),
+                "key_id": env.key_id,
+                "team_id": env.team_id,
+            },
+        },
     },
 }
 

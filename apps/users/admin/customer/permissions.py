@@ -19,7 +19,7 @@ class BaseCustomerPermissions:
                 editable=(),
             ),
             CustomerFields.USERNAME: FieldPermissions(
-                visible=(),
+                visible=(context.is_staff),
                 editable=(),
             ),
             CustomerFields.IS_ACTIVE: FieldPermissions(

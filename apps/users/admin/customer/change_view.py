@@ -12,6 +12,7 @@ class CustomerChangeView:
             {
                 "fields": (
                     "full_name",
+                    "username",
                     "phone_number",
                     "email",
                     "image",
