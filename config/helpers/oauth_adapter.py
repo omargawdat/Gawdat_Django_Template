@@ -9,16 +9,23 @@ from apps.users.models.customer import Customer
 class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
     def new_user(self, request, sociallogin: SocialLogin) -> Customer:
         data = sociallogin.account.extra_data or {}
+
         email = data.get("email", "")
-        name = data.get("name", "")
-        username = (
-            email.split("@")[0] if email else super().generate_unique_username([name])
-        )
+        username = data.get("given_name") or data.get("first_name") or "unknown"
+
+        # Get full name from provider data
+        full_name = (
+            data.get("name")
+            or f"{data.get('first_name', '')} {data.get('last_name', '')}"
+        ).strip()
+
         country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
+
         customer = Customer(
             username=username,
+            phone_number=None,
             email=email,
-            full_name=name,
+            full_name=full_name,
             country=country,
         )
         sociallogin.user = customer
@@ -32,3 +39,10 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
         sociallogin.account.user = customer
         sociallogin.account.save()
         return customer
+
+    def populate_user(self, request, sociallogin, data):
+        user = super().populate_user(request, sociallogin, data)
+        if not user.username:
+            email = data.get("email", "unknown@example.com")
+            user.username = email.split("@")[0]
+        return user

@@ -19,8 +19,8 @@ class BaseCustomerPermissions:
                 editable=(),
             ),
             CustomerFields.USERNAME: FieldPermissions(
-                visible=(),
-                editable=(),
+                visible=(context.is_staff),
+                editable=(context.is_staff),
             ),
             CustomerFields.IS_ACTIVE: FieldPermissions(
                 visible=(context.is_staff and context.is_created),
@@ -73,7 +73,7 @@ class CustomerAdminPermissions(BaseCustomerPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return False
+        return True
 
 
 class CustomerInlinePermissions(BaseCustomerPermissions):

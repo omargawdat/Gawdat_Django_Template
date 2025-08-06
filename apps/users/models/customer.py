@@ -16,6 +16,8 @@ class Customer(User):
     history = HistoricalRecords()
     phone_number = PhoneNumberField(
         unique=True,
+        null=True,
+        blank=True,
         help_text="Should start with country code as (+966)",
         verbose_name=_("Phone Number"),
     )
