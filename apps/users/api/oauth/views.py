@@ -1,4 +1,3 @@
-from allauth.socialaccount.providers.apple.views import AppleOAuth2Adapter
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
@@ -9,13 +8,14 @@ from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.domain.services.token import TokenService
 
 
-@extend_schema(
-    tags=["User/OAuth"],
-    description="Login with Google using ID Token",
-)
 class GoogleIDTokenLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
 
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="googleAuthentication",
+        description="Login using Google ID token.",
+    )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
 
@@ -35,13 +35,14 @@ class GoogleIDTokenLogin(SocialLoginView):
         )
 
 
-@extend_schema(
-    tags=["User/OAuth"],
-    description="Login with Facebook using Access Token",
-)
 class FacebookAccessTokenLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
+    @extend_schema(
+        tags=["User/Customer"],
+        operation_id="facebookAuthentication",
+        description="Login with Facebook using Access Token",
+    )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
 
@@ -58,11 +59,3 @@ class FacebookAccessTokenLogin(SocialLoginView):
                 "customer": customer_serializer.data,
             }
         )
-
-
-@extend_schema(
-    tags=["User/OAuth"],
-    description="Login with Apple",
-)
-class AppleLogin(SocialLoginView):
-    adapter_class = AppleOAuth2Adapter
