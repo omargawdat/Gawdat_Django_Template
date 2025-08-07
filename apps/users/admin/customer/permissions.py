@@ -73,7 +73,7 @@ class CustomerAdminPermissions(BaseCustomerPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return False
+        return True
 
 
 class CustomerInlinePermissions(BaseCustomerPermissions):

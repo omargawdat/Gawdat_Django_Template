@@ -7,6 +7,7 @@ from simple_history.models import HistoricalRecords
 
 from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
+from apps.payment.domain.services.wallet import WalletService
 from apps.users.constants import GenderChoices
 
 from .user import User
@@ -78,3 +79,9 @@ class Customer(User):
         CustomerValidator.validate_address_belongs_to_customer(
             address=self.primary_address, customer=self
         )
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            WalletService.create_wallet_for_user(self)
