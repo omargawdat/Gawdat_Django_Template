@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 
 from apps.location.models.country import Country
 from apps.users.models.customer import Customer
+from apps.users.models.user import User
 
 
 class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -46,3 +47,14 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
             email = data.get("email", "unknown@example.com")
             user.username = email.split("@")[0]
         return user
+
+    def pre_social_login(self, request, sociallogin):
+        if sociallogin.is_existing:
+            return
+        email = sociallogin.account.extra_data.get("email")
+        if email:
+            try:
+                existing_user = User.objects.get(email=email)
+                sociallogin.connect(request, existing_user)
+            except User.DoesNotExist:
+                pass
