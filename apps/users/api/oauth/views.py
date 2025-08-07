@@ -5,6 +5,7 @@ from dj_rest_auth.registration.views import SocialLoginView
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 
+from apps.users.api.customer.serializers import CustomerMinimalSerializer
 from apps.users.api.oauth.serialziers import FacebookAccessTokenSerializer
 from apps.users.api.oauth.serialziers import GoogleIDTokenSerializer
 from apps.users.domain.services.token import TokenService
@@ -24,17 +25,15 @@ class GoogleIDTokenLogin(SocialLoginView):
 
         user = self.request.user
         token_data = TokenService.generate_token_for_user(user)
+        customer_serializer = CustomerMinimalSerializer(
+            user, context={"request": request}
+        )
 
         return Response(
             {
                 "access": token_data.access,
                 "refresh": token_data.refresh,
-                "customer": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "full_name": user.full_name,
-                },
+                "customer": customer_serializer.data,
             }
         )
 
@@ -53,17 +52,15 @@ class FacebookAccessTokenLogin(SocialLoginView):
 
         user = self.request.user
         token_data = TokenService.generate_token_for_user(user)
+        customer_serializer = CustomerMinimalSerializer(
+            user, context={"request": request}
+        )
 
         return Response(
             {
                 "access": token_data.access,
                 "refresh": token_data.refresh,
-                "customer": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "full_name": user.full_name,
-                },
+                "customer": customer_serializer.data,
             }
         )
 
