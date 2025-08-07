@@ -27,7 +27,7 @@
     "model": "location.country",
     "pk": "UNSELECTED",
     "fields": {
-      "currency": "",
+      "currency": "SAR",
       "flag": "",
       "is_active": false,
       "phone_code": "",

@@ -49,9 +49,5 @@ djangorestframework-camel-case==1.4.2
 # Oauth
 django-allauth==0.61.1
 dj-rest-auth==7.0.0
-google-auth==2.40.3
 requests-oauthlib==2.0.0
 oauthlib==3.3.1
-python3-openid==3.2.0
-cryptography==45.0.6
-PyJWT==2.10.1
