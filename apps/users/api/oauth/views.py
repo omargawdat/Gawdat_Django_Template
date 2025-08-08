@@ -10,6 +10,8 @@ from apps.users.domain.services.token import TokenService
 
 class GoogleIDTokenLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+    authentication_classes = []
+    permission_classes = []
 
     @extend_schema(
         tags=["User/Customer"],
@@ -37,6 +39,8 @@ class GoogleIDTokenLogin(SocialLoginView):
 
 class FacebookAccessTokenLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
+    authentication_classes = []
+    permission_classes = []
 
     @extend_schema(
         tags=["User/Customer"],
