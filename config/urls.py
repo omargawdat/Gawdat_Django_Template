@@ -50,6 +50,7 @@ urlpatterns = [
     *core_patterns,
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     path("api/", include(api_patterns)),
+    path("", include("common.views.urls"), name="terms_and_policy"),
 ]
 
 # Debug toolbar (only in DEBUG mode)

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy & Terms of Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/terms.css' %}">
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="company-logo">
+            <img src="{% static 'images/logo.png' %}" alt="Eram Group Logo" style="max-width: 150px; height: auto;">
+        </div>
+        <h1>Our Terms and Policy</h1>
+        <p>Learn more about our company, terms of service, and privacy policy. Navigate through the sections using the menu on the left.</p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Table of Contents -->
+        <div class="toc-container">
+            <div class="toc">
+                <button class="toc-toggle">
+                    <i class="fas fa-list"></i> Table of Contents
+                </button>
+                <div class="toc-content">
+                    <h2>Table of Contents</h2>
+                    <ul>
+                        <li><a href="#about-us" class="tab-link active" data-tab="about-us">About Us</a></li>
+                        <li><a href="#terms" class="tab-link" data-tab="terms">Terms of Service</a></li>
+                        <li><a href="#policy" class="tab-link" data-tab="policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy Content -->
+        <div class="content">
+            <!-- About Us Section -->
+            <section id="about-us" class="policy-section tab-content active" style="--order: 1">
+                <div class="section-header">
+                    <div class="section-number">1</div>
+                    <h2 class="section-title">About Us</h2>
+                </div>
+                <div class="section-content">
+                    {% if info.about_us %}
+                        {{ info.about_us|safe }}
+                    {% else %}
+                        <p>About us information will be available soon.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Terms of Service Section -->
+            <section id="terms" class="policy-section tab-content" style="--order: 2">
+                <div class="section-header">
+                    <div class="section-number">2</div>
+                    <h2 class="section-title">Terms of Service</h2>
+                </div>
+                <div class="section-content">
+                    {% if info.terms %}
+                        {{ info.terms|safe }}
+                    {% else %}
+                        <p>Terms of service information will be available soon.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Privacy Policy Section -->
+            <section id="policy" class="policy-section tab-content" style="--order: 3">
+                <div class="section-header">
+                    <div class="section-number">3</div>
+                    <h2 class="section-title">Privacy Policy</h2>
+                </div>
+                <div class="section-content">
+                    {% if info.policy %}
+                        {{ info.policy|safe }}
+                    {% else %}
+                        <p>Privacy policy information will be available soon.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center;">
+            &copy; 2025 COMPANY. All rights reserved.
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Tab switching functionality
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchTab(targetTab) {
+            // Remove active class from all tabs and content
+            tabLinks.forEach(link => link.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Add active class to clicked tab and corresponding content
+            const targetLink = document.querySelector(`[data-tab="${targetTab}"]`);
+            const targetContent = document.getElementById(targetTab);
+
+            if (targetLink && targetContent) {
+                targetLink.classList.add('active');
+                targetContent.classList.add('active');
+            }
+        }
+
+        // Add click event listeners to tab links
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetTab = this.getAttribute('data-tab');
+                switchTab(targetTab);
+
+                // Close TOC on mobile after clicking a tab
+                if (window.innerWidth <= 768) {
+                    const tocContent = document.querySelector('.toc-content');
+                    if (tocContent) {
+                        tocContent.classList.add('collapsed');
+                        const tocToggle = document.querySelector('.toc-toggle');
+                        if (tocToggle) {
+                            const icon = tocToggle.querySelector('i');
+                            if (icon) {
+                                icon.className = 'fas fa-plus';
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // TOC toggle functionality for mobile
+        const tocToggle = document.querySelector('.toc-toggle');
+        const tocContent = document.querySelector('.toc-content');
+
+        if (tocToggle && tocContent) {
+            tocToggle.addEventListener('click', () => {
+                tocContent.classList.toggle('collapsed');
+                const icon = tocToggle.querySelector('i');
+                if (icon) {
+                    if (tocContent.classList.contains('collapsed')) {
+                        icon.className = 'fas fa-plus';
+                    } else {
+                        icon.className = 'fas fa-list';
+                    }
+                }
+            });
+
+            // Initialize TOC as collapsed on mobile
+            if (window.innerWidth <= 768) {
+                tocContent.classList.add('collapsed');
+                const icon = tocToggle.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-plus';
+                }
+            }
+        }
+
+        // Responsive behavior on window resize
+        window.addEventListener('resize', () => {
+            if (tocContent && tocToggle) {
+                if (window.innerWidth > 768) {
+                    tocContent.classList.remove('collapsed');
+                    const icon = tocToggle.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-list';
+                    }
+                } else if (window.innerWidth <= 768 && !tocContent.classList.contains('collapsed')) {
+                    tocContent.classList.add('collapsed');
+                    const icon = tocToggle.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-plus';
+                    }
+                }
+            }
+        });
+
+        // Mobile menu toggle (placeholder for future implementation)
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                // Future implementation for mobile navigation menu
+                console.log('Mobile menu toggle clicked');
+            });
+        }
+
+        // Initialize the first tab as active on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('about-us');
+        });
+    </script>
+</body>
+</html>
