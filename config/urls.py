@@ -8,6 +8,8 @@ from django.urls import path
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 
+from common.web_view import terms_and_policy
+
 # Core URL patterns
 core_patterns = [
     path(settings.ADMIN_URL, admin.site.urls),
@@ -50,6 +52,7 @@ urlpatterns = [
     *core_patterns,
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     path("api/", include(api_patterns)),
+    path("terms/", terms_and_policy, name="terms_and_policy"),
 ]
 
 # Debug toolbar (only in DEBUG mode)
