@@ -81,7 +81,7 @@ class Customer(User):
         )
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None
+        is_new = self._state.adding
         super().save(*args, **kwargs)
         if is_new:
             WalletService.create_wallet_for_user(self)
