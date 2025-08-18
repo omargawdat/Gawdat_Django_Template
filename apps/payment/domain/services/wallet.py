@@ -18,21 +18,20 @@ class WalletService:
         # country = CountrySelector.country_by_phone(user.phone_number)
         currency = country.currency
 
-        if not currency:
-            raise ValueError(f"Country {country.code} has no currency set")
-
-        wallet, created = Wallet.objects.get_or_create(
+        wallet = Wallet.objects.create(
             user=user,
-            defaults={
-                "balance": Money(0, currency),
-                "is_use_wallet_in_payment": False,
-            },
+            balance=Money(0, currency),
+            is_use_wallet_in_payment=False,
         )
         return wallet
 
     @staticmethod
-    def update_wallet_points(*, referral_id: int, request_customer: Customer) -> None:
-        referrer_user = Customer.objects.filter(id=referral_id, is_active=True).first()
+    def add_referral_points(
+        *, referral_customer_id: int, request_customer: Customer
+    ) -> None:
+        referrer_user = Customer.objects.filter(
+            id=referral_customer_id, is_active=True
+        ).first()
 
         if not referrer_user or request_customer.id == referrer_user.id:
             return
@@ -47,5 +46,4 @@ class WalletService:
             wallet=wallet,
             amount=points,
             transaction_type="REFERRAL",
-            transaction_note=f"Referral points added for user {referrer_user.id}",
         )

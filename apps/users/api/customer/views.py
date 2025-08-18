@@ -65,7 +65,7 @@ class CustomerAuthView(APIView):
         phone_number = serializer.validated_data["phone_number"]
         otp = serializer.validated_data["otp"]
         language = serializer.validated_data.get("language")
-        referral_id = serializer.validated_data.get("referral_id", None)
+        referral_customer_id = serializer.validated_data.get("referral_customer_id")
 
         device_dict = serializer.validated_data.get("device", {})
         device_data = DeviceData(**device_dict)
@@ -85,9 +85,9 @@ class CustomerAuthView(APIView):
             phone_number=phone_number, language=language
         )
 
-        if created and referral_id:
-            WalletService.update_wallet_points(
-                referral_id=referral_id, request_customer=customer
+        if created and referral_customer_id:
+            WalletService.add_referral_points(
+                referral_customer_id=referral_customer_id, request_customer=customer
             )
 
         DeviceService.register_device(user=customer, device_data=device_data)
