@@ -7,7 +7,7 @@ class CountryFields:
     PHONE_CODE = "phone_code"
     FLAG = "flag"
     IS_ACTIVE = "is_active"
-    REFERRAL_POINTS = "referral_points"
+    REFERRAL_POINTS_AMOUNT = "referral_points"
     REFERRAL_POINTS_CURRENCY = "referral_points_currency"
 
     @classmethod
