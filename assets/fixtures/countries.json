@@ -28,7 +28,7 @@
     "pk": "UNSELECTED",
     "fields": {
       "currency": "SAR",
-      "flag": "",
+      "flag": "flags/SA.png",
       "is_active": false,
       "phone_code": "",
       "name_ar": "دولة غير محددة",

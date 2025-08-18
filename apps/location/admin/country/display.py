@@ -12,7 +12,7 @@ class CountryDisplayMixin:
             _("Currency: {}").format(country.currency),
             "CO",
             {
-                "path": country.flag.url if country.flag else "",
+                "path": country.flag.url,
                 "squared": False,
                 "borderless": True,
             },
