@@ -310,6 +310,15 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
+# Email Config
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env.email_host
+EMAIL_PORT = env.email_port
+EMAIL_USE_TLS = env.email_use_tls
+EMAIL_HOST_USER = env.email_host_user
+EMAIL_HOST_PASSWORD = env.email_host_password.get_secret_value()
+
+
 # ------------------------------------------------------------------------------
 # THIRD-PARTY INTEGRATIONS
 # ------------------------------------------------------------------------------

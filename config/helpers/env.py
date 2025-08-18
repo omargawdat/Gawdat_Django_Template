@@ -57,6 +57,13 @@ class EnvSettings(BaseSettings):
     sentry_sdk_dsn: str
     google_map_api_key: SecretStr
 
+    # Email Configuration
+    email_host: str = "smtp.gmail.com"
+    email_port: int = 587
+    email_use_tls: bool = True
+    email_host_user: str
+    email_host_password: SecretStr
+
     # Oauth
     google_oauth2_client_id: str
     google_oauth2_client_secret: SecretStr

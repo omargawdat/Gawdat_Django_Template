@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #e4e4e4;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e4e4e4;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            height: auto;
+        }
+        .code-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .verification-code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+            display: inline-block;
+        }
+        .instructions {
+            margin-bottom: 20px;
+        }
+        .expiry {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            border-top: 1px solid #e4e4e4;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- If you have a logo, uncomment this line and update the src -->
+            <!-- <img src="https://yourdomain.com/logo.png" alt="Company Logo" class="logo"> -->
+            <h2>Your Verification Code</h2>
+        </div>
+
+        <div class="instructions">
+            <p>Hello {% if user.get_full_name %}{{ user.get_full_name }}{% else %}there{% endif %},</p>
+            <p>You've requested a verification code to complete your action. Please use the code below:</p>
+        </div>
+
+        <div class="code-container">
+            <div class="verification-code">{{ otp_code }}</div>
+        </div>
+
+        <p>This code will expire in <span class="expiry">{{ expiry_minutes }} minutes</span>.</p>
+
+        <p>If you didn't request this code, please ignore this email or contact our support team if you have concerns about your account security.</p>
+
+        <p>Thank you,<br>The Team</p>
+
+        <div class="footer">
+            <p>This email was sent to {{ email }}. Please do not reply to this automated message.</p>
+            <p>&copy; {% now "Y" %} Your Company. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
