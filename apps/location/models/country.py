@@ -24,6 +24,11 @@ class Country(models.Model):
     flag = models.ImageField(upload_to="flags", verbose_name=_("Flag"))
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
     phone_code = models.CharField(max_length=4, verbose_name=_("Number Code"))
+    referral_points = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("Referral Points"),
+        help_text=_("Points awarded for referring a new user."),
+    )
 
     class Meta:
         verbose_name = _("Country")

@@ -2,7 +2,6 @@ import logging
 
 from djmoney.models.fields import Money
 
-from apps.appInfo.models.system_config import SystemConfig
 from apps.location.models.country import Country
 from apps.payment.domain.services.wallet_transaction import WalletTransactionService
 from apps.payment.models.wallet import Wallet
@@ -39,7 +38,7 @@ class WalletService:
             return
 
         wallet = Wallet.objects.get(user=referrer_user)
-        points_value = SystemConfig.get_solo().referral_points
+        points_value = referrer_user.country.referral_points
 
         # Convert the integer points to a Money object with the wallet's currency
         points = Money(points_value, wallet.balance.currency)

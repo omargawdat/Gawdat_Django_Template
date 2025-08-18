@@ -46,6 +46,10 @@ class BaseCountryPermissions:
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
+            CountryFields.REFERRAL_POINTS: FieldPermissions(
+                visible=(normal_admin),
+                editable=(normal_admin),
+            ),
         }
 
 
