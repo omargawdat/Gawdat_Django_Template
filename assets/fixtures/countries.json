@@ -8,7 +8,9 @@
       "is_active": true,
       "phone_code": "+20",
       "name_ar": "مصر",
-      "name_en": "Egypt"
+      "name_en": "Egypt",
+      "referral_points": "100.00",
+      "referral_points_currency": "EGP"
     }
   },
   {
@@ -20,7 +22,9 @@
       "is_active": true,
       "phone_code": "+966",
       "name_ar": "المملكة العربية السعودية",
-      "name_en": "Saudi Arabia"
+      "name_en": "Saudi Arabia",
+      "referral_points": "50.00",
+      "referral_points_currency": "SAR"
     }
   },
   {
@@ -32,7 +36,9 @@
       "is_active": false,
       "phone_code": "",
       "name_ar": "دولة غير محددة",
-      "name_en": "Unselected Country"
+      "name_en": "Unselected Country",
+      "referral_points": "0.00",
+      "referral_points_currency": "SAR"
     }
   }
 ]
