@@ -12,6 +12,7 @@ class BaseCountryPermissions:
         self, request: HttpRequest, country: Country | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)
+        is_created = AdminContextLogic.is_object_created(country)
 
         return {
             CountryFields.CODE: FieldPermissions(
@@ -50,6 +51,10 @@ class BaseCountryPermissions:
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
+            CountryFields.REFERRAL_POINTS_CURRENCY: FieldPermissions(
+                visible=(normal_admin and not is_created),
+                editable=(),
+            ),
         }
 
 
@@ -61,7 +66,7 @@ class CountryAdminPermissions(BaseCountryPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return False
+        return True
 
 
 class CountryInlinePermissions(BaseCountryPermissions):
