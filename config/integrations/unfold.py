@@ -1,18 +1,20 @@
+from constance import config
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from unfold.contrib.constance.settings import UNFOLD_CONSTANCE_ADDITIONAL_FIELDS
 
 from config.helpers.env import env
 
 UNFOLD = {
-    "SITE_TITLE": "projectname Dashboard",
-    "SITE_HEADER": "projectname",
+    "SITE_TITLE": lambda x: config.SITE_TITLE,
+    "SITE_HEADER": lambda x: config.SITE_HEADER,
     "SHOW_HISTORY": True,
     "SHOW_LANGUAGES": True,
     "SHOW_BACK_BUTTON": True,
-    "SITE_URL": "https://www.google.com/",  # todo: set this to the actual site url
+    "SITE_URL": lambda x: config.SITE_URL,
     "LOGIN": {
-        "image": lambda request: static("images/logo.png"),
+        "image": lambda request: static(config.LOGIN_IMAGE),
     },
     "STYLES": [
         lambda request: static("css/style.css"),
@@ -262,10 +264,48 @@ UNFOLD = {
                             "appInfo.view_appinfo"
                         ),
                     },
+                    {
+                        "title": _("Constances"),
+                        "icon": "settings",
+                        "link": reverse_lazy("admin:constance_config_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "constance.view_constance"
+                        ),
+                    },
                 ],
             },
         ],
     },
+}
+
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+
+CONSTANCE_ADDITIONAL_FIELDS = {
+    **UNFOLD_CONSTANCE_ADDITIONAL_FIELDS,
+    "wysiwyg_field": [
+        "django.forms.CharField",
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+    ],
+    "url_field": [
+        "django.forms.URLField",
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+    ],
+    "image_field": [
+        "django.forms.ImageField",
+        {},
+    ],
+}
+
+CONSTANCE_CONFIG = {
+    "SITE_TITLE": ("projectname Dashboard", "Title of dashboard", "wysiwyg_field"),
+    "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
+    "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
+    "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
+}
+
+CONSTANCE_CONFIG_FIELDSETS = {
+    "Dashboard Settings": ("SITE_TITLE", "SITE_HEADER", "SITE_URL", "LOGIN_IMAGE"),
 }
 
 
