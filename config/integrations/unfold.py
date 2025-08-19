@@ -297,6 +297,13 @@ CONSTANCE_ADDITIONAL_FIELDS = {
             "widget": "unfold.widgets.UnfoldAdminImageFieldWidget",
         },
     ],
+    "integer_field": [
+        "django.forms.IntegerField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
+            "min_value": 0,
+        },
+    ],
 }
 
 CONSTANCE_CONFIG = {
@@ -304,10 +311,21 @@ CONSTANCE_CONFIG = {
     "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
     "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
     "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
+    # OTP configuration
+    "OTP_EXPIRY_SECONDS": (300, "Time in seconds before OTP expires", "integer_field"),
+    "OTP_LENGTH": (5, "Number of digits in the OTP", "integer_field"),
+    "OTP_MAX_ATTEMPTS": (3, "Maximum number of OTP attempts allowed", "integer_field"),
+    "OTP_HOURLY_LIMIT": (5, "Maximum OTP requests per hour", "integer_field"),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Dashboard Settings": ("SITE_TITLE", "SITE_HEADER", "SITE_URL", "LOGIN_IMAGE"),
+    "OTP Settings": (
+        "OTP_EXPIRY_SECONDS",
+        "OTP_LENGTH",
+        "OTP_MAX_ATTEMPTS",
+        "OTP_HOURLY_LIMIT",
+    ),
 }
 
 
