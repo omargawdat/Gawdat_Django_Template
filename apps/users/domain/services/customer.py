@@ -1,5 +1,4 @@
 from apps.location.domain.selector.country import CountrySelector
-from apps.payment.domain.services.wallet import WalletService
 from apps.users.domain.validators.user import UserValidator
 from apps.users.models.customer import Customer
 
@@ -28,6 +27,4 @@ class CustomerService:
         customer.clean()
         customer.save()
 
-        if created:
-            WalletService.create_wallet_for_user(customer)
         return customer, created

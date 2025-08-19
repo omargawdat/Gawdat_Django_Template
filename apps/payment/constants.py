@@ -11,3 +11,4 @@ class WalletTransactionType(models.TextChoices):
     CANCEL_ORDER = "CANCEL_ORDER", _("Cancel Order")
     SHARE = "SHARE", _("Share")
     CASH_RECEIVE = "CASH_RECEIVE", _("Cash Receive")
+    REFERRAL = "REFERRAL", _("Referral")

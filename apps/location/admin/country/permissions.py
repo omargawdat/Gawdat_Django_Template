@@ -46,6 +46,14 @@ class BaseCountryPermissions:
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
+            CountryFields.REFERRAL_POINTS_AMOUNT: FieldPermissions(
+                visible=(normal_admin),
+                editable=(normal_admin),
+            ),
+            CountryFields.REFERRAL_POINTS_CURRENCY: FieldPermissions(
+                visible=(),
+                editable=(),
+            ),
         }
 
 
@@ -57,7 +65,7 @@ class CountryAdminPermissions(BaseCountryPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return False
+        return True
 
 
 class CountryInlinePermissions(BaseCountryPermissions):

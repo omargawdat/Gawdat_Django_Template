@@ -7,6 +7,7 @@ class CountryListView:
         "display_header",
         "code",
         "currency",
+        "referral_points",
         "display_is_active_country",
     )
     list_editable = ()

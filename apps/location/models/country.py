@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
+from djmoney.money import Money
 
 from apps.location.constants import CountryChoices
 from apps.location.constants import CurrencyCode
@@ -25,9 +27,21 @@ class Country(models.Model):
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
     phone_code = models.CharField(max_length=4, verbose_name=_("Number Code"))
 
+    referral_points = MoneyField(
+        max_digits=14,
+        decimal_places=2,
+        verbose_name=_("Referral Points"),
+        help_text=_("Points awarded for referring a new user."),
+    )
+
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
 
     def __str__(self):
         return f"{self.get_code_display()}"
+
+    def save(self, *args, **kwargs):
+        if self.currency:
+            self.referral_points = Money(self.referral_points.amount, self.currency)
+        super().save(*args, **kwargs)
