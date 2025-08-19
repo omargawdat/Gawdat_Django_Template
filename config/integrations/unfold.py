@@ -292,8 +292,10 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
     ],
     "image_field": [
-        "django.forms.ImageField",
-        {},
+        "django.forms.fields.ImageField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminImageFieldWidget",
+        },
     ],
 }
 
