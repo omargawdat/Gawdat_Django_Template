@@ -82,6 +82,7 @@ THIRD_PARTY_APPS = [
     "unfold.contrib.filters",
     "unfold.contrib.forms",
     "unfold.contrib.inlines",
+    "unfold.contrib.constance",
     "fcm_django",
     "rules",
     "imagekit",
@@ -96,6 +97,7 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
     "djmoney",
     "mapwidgets",
+    "constance",
 ]
 
 # Django core applications
