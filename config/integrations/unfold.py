@@ -1,4 +1,5 @@
 from constance import config
+from django.conf import settings
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +15,7 @@ UNFOLD = {
     "SHOW_BACK_BUTTON": True,
     "SITE_URL": lambda x: config.SITE_URL,
     "LOGIN": {
-        "image": lambda request: static(config.LOGIN_IMAGE),
+        "image": lambda request: f"{settings.MEDIA_URL}{config.LOGIN_IMAGE}",
     },
     "STYLES": [
         lambda request: static("css/style.css"),
@@ -24,8 +25,8 @@ UNFOLD = {
     ],
     "SITE_SYMBOL": "anchor",
     "SITE_ICON": {
-        "light": lambda request: get_site_icon(request),
-        "dark": lambda request: get_site_icon(request),
+        "light": lambda request: f"{settings.MEDIA_URL}{config.SIDEBAR_ICON}",
+        "dark": lambda request: f"{settings.MEDIA_URL}{config.SIDEBAR_ICON}",
     },
     "SITE_FAVICONS": [
         {
@@ -312,7 +313,7 @@ CONSTANCE_CONFIG = {
     "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
     "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
     "FEES_PERCENTAGE": (
-        0.0,
+        25.0,
         "Percentage of fees charged on transactions",
         "float_field",
     ),
@@ -321,10 +322,17 @@ CONSTANCE_CONFIG = {
     "OTP_LENGTH": (5, "Number of digits in the OTP", "integer_field"),
     "OTP_MAX_ATTEMPTS": (3, "Maximum number of OTP attempts allowed", "integer_field"),
     "OTP_HOURLY_LIMIT": (5, "Maximum OTP requests per hour", "integer_field"),
+    "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
-    "Dashboard Settings": ("SITE_TITLE", "SITE_HEADER", "SITE_URL", "LOGIN_IMAGE"),
+    "Dashboard Settings": (
+        "SITE_TITLE",
+        "SITE_HEADER",
+        "SITE_URL",
+        "LOGIN_IMAGE",
+        "SIDEBAR_ICON",
+    ),
     "System Fees": ("FEES_PERCENTAGE",),
     "OTP Settings": (
         "OTP_EXPIRY_SECONDS",
