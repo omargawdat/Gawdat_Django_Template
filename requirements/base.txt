@@ -36,6 +36,8 @@ django-soft-delete==1.0.19
 django-guardian==3.0.3
 django-location-field==2.7.3
 django-map-widgets==0.5.1
+django-constance==4.3.2
+
 
 # Django REST Framework and Extensions
 djangorestframework==3.16.1

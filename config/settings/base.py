@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import dj_database_url
+from constance import config
 from django.utils.translation import gettext_lazy as _
 
 from config.helpers.env import env
@@ -34,10 +35,10 @@ BASE_MODEL_ADMIN_PATH = "common.base.admin"
 # CORE SETTINGS
 SECRET_KEY = env.django_secret_key.get_secret_value()
 # OTP Settings
-OTP_EXPIRY_SECONDS = 300
-OTP_LENGTH = 5
-OTP_MAX_ATTEMPTS = 3
-OTP_HOURLY_LIMIT = 5
+OTP_EXPIRY_SECONDS = lambda x: config.OTP_EXPIRY_SECONDS  # noqa
+OTP_LENGTH = lambda x: config.OTP_LENGTH  # noqa
+OTP_MAX_ATTEMPTS = lambda x: config.OTP_MAX_ATTEMPTS  # noqa
+OTP_HOURLY_LIMIT = lambda x: config.OTP_HOURLY_LIMIT  # noqa
 # INTERNATIONALIZATION SETTINGS
 TIME_ZONE = "Asia/Riyadh"
 LANGUAGE_CODE = "en-us"
@@ -82,6 +83,7 @@ THIRD_PARTY_APPS = [
     "unfold.contrib.filters",
     "unfold.contrib.forms",
     "unfold.contrib.inlines",
+    "unfold.contrib.constance",
     "fcm_django",
     "rules",
     "imagekit",
@@ -96,6 +98,7 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
     "djmoney",
     "mapwidgets",
+    "constance",
 ]
 
 # Django core applications

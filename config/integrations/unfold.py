@@ -1,18 +1,21 @@
+from constance import config
+from django.conf import settings
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from unfold.contrib.constance.settings import UNFOLD_CONSTANCE_ADDITIONAL_FIELDS
 
 from config.helpers.env import env
 
 UNFOLD = {
-    "SITE_TITLE": "projectname Dashboard",
-    "SITE_HEADER": "projectname",
+    "SITE_TITLE": lambda x: config.SITE_TITLE,
+    "SITE_HEADER": lambda x: config.SITE_HEADER,
     "SHOW_HISTORY": True,
     "SHOW_LANGUAGES": True,
     "SHOW_BACK_BUTTON": True,
-    "SITE_URL": "https://www.google.com/",  # todo: set this to the actual site url
+    "SITE_URL": lambda x: config.SITE_URL,
     "LOGIN": {
-        "image": lambda request: static("images/logo.png"),
+        "image": lambda request: f"{settings.MEDIA_URL}{config.LOGIN_IMAGE}",
     },
     "STYLES": [
         lambda request: static("css/style.css"),
@@ -22,8 +25,8 @@ UNFOLD = {
     ],
     "SITE_SYMBOL": "anchor",
     "SITE_ICON": {
-        "light": lambda request: get_site_icon(request),
-        "dark": lambda request: get_site_icon(request),
+        "light": lambda request: f"{settings.MEDIA_URL}{config.SIDEBAR_ICON}",
+        "dark": lambda request: f"{settings.MEDIA_URL}{config.SIDEBAR_ICON}",
     },
     "SITE_FAVICONS": [
         {
@@ -231,14 +234,6 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("System Configuration"),
-                        "icon": "settings",
-                        "link": reverse_lazy("admin:appInfo_systemconfig_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_systemconfig"
-                        ),
-                    },
-                    {
                         "title": _("Social Accounts"),
                         "icon": "group",
                         "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
@@ -262,10 +257,89 @@ UNFOLD = {
                             "appInfo.view_appinfo"
                         ),
                     },
+                    {
+                        "title": _("System Configurations"),
+                        "icon": "settings",
+                        "link": reverse_lazy("admin:constance_config_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "constance.view_constance"
+                        ),
+                    },
                 ],
             },
         ],
     },
+}
+
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+
+CONSTANCE_ADDITIONAL_FIELDS = {
+    **UNFOLD_CONSTANCE_ADDITIONAL_FIELDS,
+    "wysiwyg_field": [
+        "django.forms.CharField",
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+    ],
+    "url_field": [
+        "django.forms.URLField",
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+    ],
+    "image_field": [
+        "django.forms.fields.ImageField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminImageFieldWidget",
+        },
+    ],
+    "integer_field": [
+        "django.forms.IntegerField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
+            "min_value": 0,
+        },
+    ],
+    "float_field": [
+        "django.forms.FloatField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
+            "min_value": 0.0,
+            "max_value": 100.0,
+        },
+    ],
+}
+
+CONSTANCE_CONFIG = {
+    "SITE_TITLE": ("projectname Dashboard", "Title of dashboard", "wysiwyg_field"),
+    "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
+    "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
+    "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
+    "FEES_PERCENTAGE": (
+        25.0,
+        "Percentage of fees charged on transactions",
+        "float_field",
+    ),
+    # OTP configuration
+    "OTP_EXPIRY_SECONDS": (300, "Time in seconds before OTP expires", "integer_field"),
+    "OTP_LENGTH": (5, "Number of digits in the OTP", "integer_field"),
+    "OTP_MAX_ATTEMPTS": (3, "Maximum number of OTP attempts allowed", "integer_field"),
+    "OTP_HOURLY_LIMIT": (5, "Maximum OTP requests per hour", "integer_field"),
+    "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
+}
+
+CONSTANCE_CONFIG_FIELDSETS = {
+    "Dashboard Settings": (
+        "SITE_TITLE",
+        "SITE_HEADER",
+        "SITE_URL",
+        "LOGIN_IMAGE",
+        "SIDEBAR_ICON",
+    ),
+    "System Fees": ("FEES_PERCENTAGE",),
+    "OTP Settings": (
+        "OTP_EXPIRY_SECONDS",
+        "OTP_LENGTH",
+        "OTP_MAX_ATTEMPTS",
+        "OTP_HOURLY_LIMIT",
+    ),
 }
 
 

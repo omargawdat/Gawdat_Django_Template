@@ -1,9 +1,0 @@
-[
-  {
-    "model": "appInfo.SystemConfig",
-    "pk": 1,
-    "fields": {
-      "cancellation_fees": "25.00"
-    }
-  }
-]
