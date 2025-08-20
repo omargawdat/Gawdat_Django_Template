@@ -304,6 +304,14 @@ CONSTANCE_ADDITIONAL_FIELDS = {
             "min_value": 0,
         },
     ],
+    "float_field": [
+        "django.forms.FloatField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
+            "min_value": 0.0,
+            "max_value": 100.0,
+        },
+    ],
 }
 
 CONSTANCE_CONFIG = {
@@ -311,6 +319,11 @@ CONSTANCE_CONFIG = {
     "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
     "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
     "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
+    "FEES_PERCENTAGE": (
+        0.0,
+        "Percentage of fees charged on transactions",
+        "float_field",
+    ),
     # OTP configuration
     "OTP_EXPIRY_SECONDS": (300, "Time in seconds before OTP expires", "integer_field"),
     "OTP_LENGTH": (5, "Number of digits in the OTP", "integer_field"),
@@ -320,6 +333,7 @@ CONSTANCE_CONFIG = {
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Dashboard Settings": ("SITE_TITLE", "SITE_HEADER", "SITE_URL", "LOGIN_IMAGE"),
+    "System Fees": ("FEES_PERCENTAGE",),
     "OTP Settings": (
         "OTP_EXPIRY_SECONDS",
         "OTP_LENGTH",
