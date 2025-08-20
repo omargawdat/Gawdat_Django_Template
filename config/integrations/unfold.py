@@ -233,14 +233,6 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("System Configuration"),
-                        "icon": "settings",
-                        "link": reverse_lazy("admin:appInfo_systemconfig_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_systemconfig"
-                        ),
-                    },
-                    {
                         "title": _("Social Accounts"),
                         "icon": "group",
                         "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
@@ -265,7 +257,7 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("Constances"),
+                        "title": _("System Configurations"),
                         "icon": "settings",
                         "link": reverse_lazy("admin:constance_config_changelist"),
                         "permission": lambda request: request.user.has_perm(
