@@ -317,11 +317,6 @@ CONSTANCE_CONFIG = {
         "Percentage of fees charged on transactions",
         "float_field",
     ),
-    # OTP configuration
-    "OTP_EXPIRY_SECONDS": (300, "Time in seconds before OTP expires", "integer_field"),
-    "OTP_LENGTH": (5, "Number of digits in the OTP", "integer_field"),
-    "OTP_MAX_ATTEMPTS": (3, "Maximum number of OTP attempts allowed", "integer_field"),
-    "OTP_HOURLY_LIMIT": (5, "Maximum OTP requests per hour", "integer_field"),
     "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
 }
 
@@ -334,12 +329,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "SIDEBAR_ICON",
     ),
     "System Fees": ("FEES_PERCENTAGE",),
-    "OTP Settings": (
-        "OTP_EXPIRY_SECONDS",
-        "OTP_LENGTH",
-        "OTP_MAX_ATTEMPTS",
-        "OTP_HOURLY_LIMIT",
-    ),
 }
 
 
