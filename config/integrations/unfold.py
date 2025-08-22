@@ -305,6 +305,17 @@ CONSTANCE_ADDITIONAL_FIELDS = {
             "max_value": 100.0,
         },
     ],
+    "email_field": [
+        "django.forms.EmailField",
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+    ],
+    "phone_field": [
+        "django.forms.CharField",
+        {
+            "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
+            "max_length": 15,
+        },
+    ],
 }
 
 CONSTANCE_CONFIG = {
@@ -318,6 +329,21 @@ CONSTANCE_CONFIG = {
         "float_field",
     ),
     "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
+    # Social Media Contact Information
+    "CONTACT_EMAIL": ("info@example.com", "Contact Email Address", "email_field"),
+    "CONTACT_PHONE": (
+        "+20123456789",
+        "Contact Phone Number (e.g. +20/+966 format)",
+        "phone_field",
+    ),
+    "TWITTER_URL": ("https://twitter.com/example", "Twitter Account URL", "url_field"),
+    "INSTAGRAM_URL": (
+        "https://instagram.com/example",
+        "Instagram Account URL",
+        "url_field",
+    ),
+    "TIKTOK_URL": ("https://tiktok.com/@example", "TikTok Account URL", "url_field"),
+    "WEBSITE_URL": ("https://www.example.com", "Website URL", "url_field"),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -329,6 +355,14 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "SIDEBAR_ICON",
     ),
     "System Fees": ("FEES_PERCENTAGE",),
+    "Social Media & Contact": (
+        "CONTACT_EMAIL",
+        "CONTACT_PHONE",
+        "TWITTER_URL",
+        "INSTAGRAM_URL",
+        "TIKTOK_URL",
+        "WEBSITE_URL",
+    ),
 }
 
 
