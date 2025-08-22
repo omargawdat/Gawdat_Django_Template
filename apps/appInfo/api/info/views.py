@@ -1,13 +1,12 @@
+from constance import config
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.appInfo.api.info.serializers import AppInfoSerializer
 from apps.appInfo.api.info.serializers import FAQSerializer
-from apps.appInfo.api.info.serializers import SocialAccountsSerializer
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.faq import FAQ
-from apps.appInfo.models.social import SocialAccount
 
 
 class SocialAccountsAPIView(APIView):
@@ -17,12 +16,18 @@ class SocialAccountsAPIView(APIView):
     @extend_schema(
         tags=["AppInfo"],
         operation_id="getSocialAccounts",
-        responses={200: SocialAccountsSerializer},
+        responses={200: "application/json"},
     )
     def get(self, request, *args, **kwargs):
-        social_media = SocialAccount.get_solo()
-        serializer = SocialAccountsSerializer(social_media)
-        return Response(serializer.data)
+        data = {
+            "email": config.CONTACT_EMAIL,
+            "phone_number": config.CONTACT_PHONE,
+            "twitter": config.TWITTER_URL,
+            "instagram": config.INSTAGRAM_URL,
+            "tiktok": config.TIKTOK_URL,
+            "website": config.WEBSITE_URL,
+        }
+        return Response(data)
 
 
 class AppInfoAPIView(APIView):

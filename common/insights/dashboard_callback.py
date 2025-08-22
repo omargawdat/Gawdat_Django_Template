@@ -68,9 +68,16 @@ def get_unread_contacts():
 
 
 def get_social_account():
-    from apps.appInfo.models.social import SocialAccount
+    from constance import config
 
-    return SocialAccount.get_solo()
+    return {
+        "email": config.CONTACT_EMAIL,
+        "phone_number": config.CONTACT_PHONE,
+        "twitter": config.TWITTER_URL,
+        "instagram": config.INSTAGRAM_URL,
+        "tiktok": config.TIKTOK_URL,
+        "website": config.WEBSITE_URL,
+    }
 
 
 def get_kpi(total_orders, total_bookings, total_egp, total_sar):
