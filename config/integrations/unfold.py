@@ -234,14 +234,6 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("Social Accounts"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_socialaccount"
-                        ),
-                    },
-                    {
                         "title": _("FAQs"),
                         "icon": "help",
                         "link": reverse_lazy("admin:appInfo_faq_changelist"),

@@ -2,13 +2,6 @@ from rest_framework import serializers
 
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.faq import FAQ
-from apps.appInfo.models.social import SocialAccount
-
-
-class SocialAccountsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SocialAccount
-        fields = ["email", "phone_number", "instagram", "tiktok", "website"]
 
 
 class AppInfoSerializer(serializers.ModelSerializer):
