@@ -20,6 +20,8 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
             or f"{data.get('first_name', '')} {data.get('last_name', '')}"
         ).strip()
 
+        referral_customer_id = None
+
         country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
 
         customer = Customer(
@@ -28,18 +30,25 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
             email=email,
             full_name=full_name,
             country=country,
+            referral_customer_id=referral_customer_id if referral_customer_id else None,
         )
         sociallogin.user = customer
         return customer
 
     def save_user(self, request, sociallogin: SocialLogin, form=None) -> Customer:
         customer: Customer = sociallogin.user
+
         if not customer.password:
             customer.password = make_password(None)
         customer.save()
         sociallogin.account.user = customer
         sociallogin.account.save()
-        return customer
+
+        # if not sociallogin.is_existing and referral_customer_id:
+        #             WalletService.add_referral_points(
+        #                 referral_customer_id=referral_customer_id, request_customer=customer
+        #             )
+        # return customer
 
     def populate_user(self, request, sociallogin, data):
         user = super().populate_user(request, sociallogin, data)

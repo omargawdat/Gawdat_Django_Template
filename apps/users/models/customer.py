@@ -53,6 +53,12 @@ class Customer(User):
         related_name="+",  # [important]: for solving the conflict of bidirectional relationship
         verbose_name=_("Primary Address"),
     )
+    referral_customer_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("Referral Customer ID"),
+        help_text="ID of the customer who referred this customer.",
+    )
 
     def __str__(self):
         return str(self.phone_number)
