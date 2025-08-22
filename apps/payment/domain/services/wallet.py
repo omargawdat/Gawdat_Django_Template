@@ -30,6 +30,9 @@ class WalletService:
     def add_referral_points(
         *, referral_customer_id: int, request_customer: Customer
     ) -> None:
+        if not referral_customer_id:
+            return
+
         referrer_user = Customer.objects.filter(
             id=referral_customer_id, is_active=True
         ).first()
@@ -37,7 +40,7 @@ class WalletService:
         if not referrer_user or request_customer.id == referrer_user.id:
             return
 
-        wallet = Wallet.objects.get(user=referrer_user)
+        wallet = Wallet.objects.filter(user=referrer_user).first()
         referral_points = referrer_user.country.referral_points
         points = Money(referral_points.amount, wallet.balance.currency)
 
