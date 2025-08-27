@@ -5,11 +5,14 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
+from apps.users.api.oauth.serializers import CustomSocialLoginSerializer
 from apps.users.domain.services.token import TokenService
 
 
 class GoogleIDTokenLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
+    serializer_class = CustomSocialLoginSerializer
+
     authentication_classes = []
     permission_classes = []
 
@@ -35,6 +38,11 @@ class GoogleIDTokenLogin(SocialLoginView):
                 "customer": customer_serializer.data,
             }
         )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request  # ensure DRF request is passed through
+        return context
 
 
 class FacebookAccessTokenLogin(SocialLoginView):
