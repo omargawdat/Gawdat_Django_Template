@@ -41,7 +41,7 @@ class GoogleIDTokenLogin(SocialLoginView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["request"] = self.request  # ensure DRF request is passed through
+        context["request"] = self.request
         return context
 
 

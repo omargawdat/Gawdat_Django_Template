@@ -86,8 +86,11 @@ class CustomerAuthView(APIView):
         )
 
         if created and referral_customer_id:
+            customer.referral_customer_id = referral_customer_id
+            customer.save(update_fields=["referral_customer_id"])
             WalletService.add_referral_points(
-                referral_customer_id=referral_customer_id, request_customer=customer
+                referral_customer_id=referral_customer_id,
+                request_customer=customer,
             )
 
         DeviceService.register_device(user=customer, device_data=device_data)
