@@ -17,6 +17,7 @@ class CustomerFields:
     BIRTH_DATE = "birth_date"
     COUNTRY = "country"
     PRIMARY_ADDRESS = "primary_address"
+    REFERRAL_CUSTOMER_ID = "referral_customer_id"
 
     @classmethod
     def get_field_name(cls, model, field):

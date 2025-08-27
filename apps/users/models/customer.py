@@ -54,6 +54,10 @@ class Customer(User):
         verbose_name=_("Primary Address"),
     )
 
+    referral_customer_id = models.PositiveIntegerField(
+        null=True, blank=True, db_index=True, verbose_name=_("Referral Customer ID")
+    )
+
     def __str__(self):
         return str(self.phone_number)
 

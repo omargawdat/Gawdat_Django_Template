@@ -27,6 +27,7 @@ class CustomerChangeView:
             _("Advanced Settings🔧"),
             {
                 "fields": (
+                    "referral_customer_id",
                     "date_joined",
                     "is_active",
                 ),

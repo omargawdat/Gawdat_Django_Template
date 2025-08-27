@@ -62,18 +62,21 @@ class BaseCustomerPermissions:
                 visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
+            CustomerFields.REFERRAL_CUSTOMER_ID: FieldPermissions(
+                visible=(context.is_staff and context.is_created), editable=()
+            ),
         }
 
 
 class CustomerAdminPermissions(BaseCustomerPermissions):
     def can_add(self, request, obj=None):
-        return False  # todo: can't add user as is should call the create action from services
+        return True  # todo: can't add user as is should call the create action from services
 
     def can_change(self, request, obj=None):
         return True
 
     def can_delete(self, request, obj=None):
-        return False
+        return True
 
 
 class CustomerInlinePermissions(BaseCustomerPermissions):

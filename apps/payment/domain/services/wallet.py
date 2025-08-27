@@ -34,7 +34,9 @@ class WalletService:
             id=referral_customer_id, is_active=True
         ).first()
 
-        if not referrer_user or request_customer.id == referrer_user.id:
+        if (
+            not referrer_user or request_customer.id == referrer_user.id
+        ):  # todo move this to the model itself
             return
 
         wallet = Wallet.objects.get(user=referrer_user)
