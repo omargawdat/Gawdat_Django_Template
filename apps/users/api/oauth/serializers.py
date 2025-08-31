@@ -12,15 +12,15 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         return login
 
     def post_signup(self, login, attrs):
+        # This method is only called when a new user is created
         referral_id = login.state.get("referral_customer_id")
         if referral_id:
-            customer = login.account.user  # newly created Customer
-            customer.referral_customer_id = referral_id
-            customer.save(update_fields=["referral_customer_id"])
-
-            # Now award referral points
+            # call your wallet service using the new user
+            customer = login.account.user
             WalletService.add_referral_points(
                 referral_customer_id=referral_id,
                 request_customer=customer,
             )
+            customer.referral_customer_id = referral_id
+            customer.save(update_fields=["referral_customer_id"])
         return super().post_signup(login, attrs)

@@ -12,11 +12,12 @@ class CustomerService:
 
     @staticmethod
     def update_or_create_customer(
-        *, phone_number: str, language: str
+        *, phone_number: str, language: str, referral_customer_id: int
     ) -> tuple[Customer, bool]:
         defaults = {
             "username": str(phone_number),
             "language": language,
+            "referral_customer_id": referral_customer_id,
             "country": CountrySelector.country_by_phone(phone_number),
         }
 
