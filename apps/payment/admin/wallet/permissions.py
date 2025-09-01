@@ -45,7 +45,7 @@ class WalletAdminPermissions(BaseWalletPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return True
+        return False
 
 
 class WalletInlinePermissions(BaseWalletPermissions):
