@@ -2148,8 +2148,8 @@ paths:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
   /api/devices/{registration_id}/:
-    get:
-      operationId: devices_retrieve
+    delete:
+      operationId: devices_destroy
       parameters:
       - in: path
         name: registrationId
@@ -2166,7 +2166,160 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesRetrieveErrorResponse400'
+                $ref: '#/components/schemas/DevicesDestroyErrorResponse400'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse401'
+              examples:
+                AuthenticationFailed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: authentication_failed
+                      detail: Incorrect authentication credentials.
+                      attr: null
+                NotAuthenticated:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_authenticated
+                      detail: Authentication credentials were not provided.
+                      attr: null
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse403'
+              examples:
+                PermissionDenied:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: permission_denied
+                      detail: You do not have permission to perform this action.
+                      attr: null
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse404'
+              examples:
+                NotFound:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_found
+                      detail: Not found.
+                      attr: null
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '204':
+          description: No response body
+    put:
+      operationId: devices_update
+      parameters:
+      - in: path
+        name: registrationId
+        schema:
+          type: string
+          title: Registration token
+        required: true
+      tags:
+      - FCM/Devices
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FCMDeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FCMDeviceRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FCMDeviceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevicesUpdateErrorResponse400'
           description: ''
         '401':
           content:
@@ -2293,8 +2446,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-    put:
-      operationId: devices_update
+    get:
+      operationId: devices_retrieve
       parameters:
       - in: path
         name: registrationId
@@ -2304,18 +2457,6 @@ paths:
         required: true
       tags:
       - FCM/Devices
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
-        required: true
       security:
       - jwtAuth: []
       responses:
@@ -2323,7 +2464,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesUpdateErrorResponse400'
+                $ref: '#/components/schemas/DevicesRetrieveErrorResponse400'
           description: ''
         '401':
           content:
@@ -2606,147 +2747,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-    delete:
-      operationId: devices_destroy
-      parameters:
-      - in: path
-        name: registrationId
-        schema:
-          type: string
-          title: Registration token
-        required: true
-      tags:
-      - FCM/Devices
-      security:
-      - jwtAuth: []
-      responses:
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DevicesDestroyErrorResponse400'
-          description: ''
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse401'
-              examples:
-                AuthenticationFailed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: authentication_failed
-                      detail: Incorrect authentication credentials.
-                      attr: null
-                NotAuthenticated:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_authenticated
-                      detail: Authentication credentials were not provided.
-                      attr: null
-          description: ''
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse403'
-              examples:
-                PermissionDenied:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: permission_denied
-                      detail: You do not have permission to perform this action.
-                      attr: null
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse404'
-              examples:
-                NotFound:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_found
-                      detail: Not found.
-                      attr: null
-          description: ''
-        '405':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse405'
-              examples:
-                MethodNotAllowed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: method_not_allowed
-                      detail: Method "get" not allowed.
-                      attr: null
-          description: ''
-        '406':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse406'
-              examples:
-                NotAcceptable:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_acceptable
-                      detail: Could not satisfy the request Accept header.
-                      attr: null
-          description: ''
-        '415':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse415'
-              examples:
-                UnsupportedMediaType:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: unsupported_media_type
-                      detail: Unsupported media type "application/json" in request.
-                      attr: null
-          description: ''
-        '429':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse429'
-              examples:
-                Throttled:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: throttled
-                      detail: Request was throttled.
-                      attr: null
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse500'
-              examples:
-                APIException:
-                  value:
-                    type: server_error
-                    errors:
-                    - code: error
-                      detail: A server error occurred.
-                      attr: null
-          description: ''
-        '204':
-          description: No response body
   /api/notifications/:
     get:
       operationId: listNotifications
@@ -3490,6 +3490,123 @@ paths:
                 items:
                   $ref: '#/components/schemas/FAQ'
           description: ''
+  /api/contact-us/:
+    post:
+      operationId: ContactUs
+      tags:
+      - AppInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactUsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactUsErrorResponse400'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse401'
+              examples:
+                AuthenticationFailed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: authentication_failed
+                      detail: Incorrect authentication credentials.
+                      attr: null
+                NotAuthenticated:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_authenticated
+                      detail: Authentication credentials were not provided.
+                      attr: null
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactUs'
+          description: ''
 components:
   schemas:
     AddressCreateRequest:
@@ -3625,6 +3742,50 @@ components:
         * `QA` - Qatar
         * `OM` - Oman
         * `BH` - Bahrain
+    ContactTypeEnum:
+      enum:
+      - GENERAL
+      - SUPPORT
+      - FEEDBACK
+      - OTHER
+      - COMPLAINT
+      type: string
+      description: |-
+        * `GENERAL` - General
+        * `SUPPORT` - Support
+        * `FEEDBACK` - Feedback
+        * `OTHER` - Other
+        * `COMPLAINT` - Complaint
+    ContactUs:
+      type: object
+      properties:
+        contactType:
+          $ref: '#/components/schemas/ContactTypeEnum'
+        description:
+          type: string
+          description: Please provide a detailed description of your issue or inquiry.
+      required:
+      - contactType
+      - description
+    ContactUsErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
+    ContactUsRequest:
+      type: object
+      properties:
+        contactType:
+          $ref: '#/components/schemas/ContactTypeEnum'
+        description:
+          type: string
+          minLength: 1
+          description: Please provide a detailed description of your issue or inquiry.
+      required:
+      - contactType
+      - description
     Country:
       type: object
       properties:
@@ -3696,7 +3857,7 @@ components:
           $ref: '#/components/schemas/FCMDeviceCreateRequest'
         language:
           $ref: '#/components/schemas/LanguageEnum'
-        referralId:
+        referralCustomerId:
           type: integer
       required:
       - device
@@ -5658,6 +5819,7 @@ components:
       - CANCEL_ORDER
       - SHARE
       - CASH_RECEIVE
+      - REFERRAL
       type: string
       description: |-
         * `REFUND` - Refund
@@ -5668,6 +5830,7 @@ components:
         * `CANCEL_ORDER` - Cancel Order
         * `SHARE` - Share
         * `CASH_RECEIVE` - Cash Receive
+        * `REFERRAL` - Referral
     UpdateAddressErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
