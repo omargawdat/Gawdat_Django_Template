@@ -54,6 +54,10 @@ class Customer(User):
         verbose_name=_("Primary Address"),
     )
 
+    referral_customer_id = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name=_("Referral Customer ID")
+    )
+
     def __str__(self):
         return str(self.phone_number)
 
@@ -86,3 +90,8 @@ class Customer(User):
         super().save(*args, **kwargs)
         if is_new:
             WalletService.create_wallet_for_user(self)
+            if self.referral_customer_id:
+                WalletService.add_referral_points(
+                    referral_customer_id=self.referral_customer_id,
+                    request_customer=self,
+                )

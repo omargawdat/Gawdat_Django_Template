@@ -17,7 +17,6 @@ from apps.channel.constants import OTPType
 from apps.channel.domain.services.device import DeviceData
 from apps.channel.domain.services.device import DeviceService
 from apps.channel.domain.services.otp import OTPUtils
-from apps.payment.domain.services.wallet import WalletService
 from apps.users.api.customer.serializers import CustomerCreateSerializer
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.customer.serializers import CustomerUpdateSerializer
@@ -82,13 +81,10 @@ class CustomerAuthView(APIView):
             phone_number=phone_number, code=otp, otp_type=OTPType.CUSTOMER_AUTH
         )
         customer, created = CustomerService.update_or_create_customer(
-            phone_number=phone_number, language=language
+            phone_number=phone_number,
+            language=language,
+            referral_customer_id=referral_customer_id,
         )
-
-        if created and referral_customer_id:
-            WalletService.add_referral_points(
-                referral_customer_id=referral_customer_id, request_customer=customer
-            )
 
         DeviceService.register_device(user=customer, device_data=device_data)
         token_data = TokenService.generate_token_for_user(customer)
