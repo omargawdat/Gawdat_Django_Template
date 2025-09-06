@@ -27,6 +27,7 @@ api_doc_patterns = [
 
 api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.users.api.user.urls")),
+    path("", include("apps.users.api.email.urls")),
     path("", include("apps.users.api.customer.urls")),
     path("", include("apps.users.api.oauth.urls")),
     path("", include("apps.location.api.country.urls")),

@@ -291,6 +291,139 @@ paths:
           description: Successfully logged out from the device
         '401':
           description: Authentication credentials were not provided or are invalid
+  /api/users/check-email/:
+    post:
+      operationId: checkEmail
+      description: Check if an email is registered, verified, and has a password set.
+      tags:
+      - User/Email
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CheckEmailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CheckEmailRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckEmailRequest'
+        required: true
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckEmailErrorResponse400'
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  is_registered:
+                    type: boolean
+                    example: true
+                  is_verified:
+                    type: boolean
+                    example: true
+                  has_password:
+                    type: boolean
+                    example: true
+          description: Email is registered
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  is_registered:
+                    type: boolean
+                    example: false
+                  is_verified:
+                    type: boolean
+                    example: false
+                  has_password:
+                    type: boolean
+                    example: false
+              examples:
+                NotFound:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_found
+                      detail: Not found.
+                      attr: null
+          description: Email is not registered
   /api/customers/authenticate/:
     post:
       operationId: AuthenticateCustomer
@@ -2148,8 +2281,8 @@ paths:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
   /api/devices/{registration_id}/:
-    delete:
-      operationId: devices_destroy
+    patch:
+      operationId: devices_partial_update
       parameters:
       - in: path
         name: registrationId
@@ -2159,6 +2292,17 @@ paths:
         required: true
       tags:
       - FCM/Devices
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
       security:
       - jwtAuth: []
       responses:
@@ -2166,7 +2310,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesDestroyErrorResponse400'
+                $ref: '#/components/schemas/DevicesPartialUpdateErrorResponse400'
           description: ''
         '401':
           content:
@@ -2287,8 +2431,12 @@ paths:
                       detail: A server error occurred.
                       attr: null
           description: ''
-        '204':
-          description: No response body
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FCMDevice'
+          description: ''
     put:
       operationId: devices_update
       parameters:
@@ -2591,8 +2739,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-    patch:
-      operationId: devices_partial_update
+    delete:
+      operationId: devices_destroy
       parameters:
       - in: path
         name: registrationId
@@ -2602,17 +2750,6 @@ paths:
         required: true
       tags:
       - FCM/Devices
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
       security:
       - jwtAuth: []
       responses:
@@ -2620,7 +2757,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesPartialUpdateErrorResponse400'
+                $ref: '#/components/schemas/DevicesDestroyErrorResponse400'
           description: ''
         '401':
           content:
@@ -2741,12 +2878,8 @@ paths:
                       detail: A server error occurred.
                       attr: null
           description: ''
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FCMDevice'
-          description: ''
+        '204':
+          description: No response body
   /api/notifications/:
     get:
       operationId: listNotifications
@@ -3719,6 +3852,97 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
+    CheckEmailEmailErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - email
+          type: string
+          description: '* `email` - email'
+        code:
+          enum:
+          - blank
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - required
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `blank` - blank
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `required` - required
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    CheckEmailError:
+      oneOf:
+      - $ref: '#/components/schemas/CheckEmailNonFieldErrorsErrorComponent'
+      - $ref: '#/components/schemas/CheckEmailEmailErrorComponent'
+      discriminator:
+        propertyName: attr
+        mapping:
+          non_field_errors: '#/components/schemas/CheckEmailNonFieldErrorsErrorComponent'
+          email: '#/components/schemas/CheckEmailEmailErrorComponent'
+    CheckEmailErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/CheckEmailValidationError'
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          validation_error: '#/components/schemas/CheckEmailValidationError'
+          client_error: '#/components/schemas/ParseErrorResponse'
+    CheckEmailNonFieldErrorsErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - non_field_errors
+          type: string
+          description: '* `non_field_errors` - non_field_errors'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    CheckEmailRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+    CheckEmailValidationError:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ValidationErrorEnum'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckEmailError'
+      required:
+      - errors
+      - type
     ClientErrorEnum:
       enum:
       - client_error
