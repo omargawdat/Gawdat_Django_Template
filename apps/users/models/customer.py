@@ -53,6 +53,7 @@ class Customer(User):
         related_name="+",  # [important]: for solving the conflict of bidirectional relationship
         verbose_name=_("Primary Address"),
     )
+    is_verified = models.BooleanField(default=False, verbose_name=_("Is Verified"))
 
     def __str__(self):
         return str(self.phone_number)
