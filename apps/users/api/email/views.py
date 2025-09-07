@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from django.core.cache import cache
+from django.utils import timezone
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -9,8 +13,11 @@ from apps.users.api.email.serializers import CheckEmailSerializer
 from apps.users.api.email.serializers import RegisterSerializer
 from apps.users.domain.selectors.customer import CustomerSelector
 from apps.users.domain.services.customer import CustomerService
+from apps.users.domain.services.email import EmailService
 from apps.users.domain.services.token import TokenService
+from apps.users.domain.utilities.otp import OTPUtility
 from apps.users.models.customer import Customer
+from config.settings.base import OTP_EMAIL_SECONDS
 
 
 class CheckEmailView(APIView):
@@ -113,8 +120,7 @@ class RegisterView(APIView):
         phone_number = serializer.validated_data["phone_number"]
         password = serializer.validated_data["password"]
 
-        is_email_exists = CustomerSelector.is_email_exists(email=email)
-        if is_email_exists:
+        if CustomerSelector.is_email_exists(email=email):
             return Response(
                 {"detail": "Email is already registered."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -130,12 +136,31 @@ class RegisterView(APIView):
 
         # Generate OTP then Send Email
 
+        otp = OTPUtility.generate_otp()
+        expires_at = timezone.now() + timedelta(seconds=OTP_EMAIL_SECONDS)
+
+        cache.set(
+            f"otp_{email}",
+            {"otp": otp, "attempts": 0, "expires_at": expires_at.isoformat()},
+            timeout=OTP_EMAIL_SECONDS,
+        )
+
+        email_send = EmailService()
+        email_send.send_email(
+            subject="Verify your account - 1K Coffee",
+            message=f"Your OTP is {otp}",
+            recipient_list=[email],
+            template_name="emails/verify_email.html",
+            context={"user": email, "otp_code": otp, "expires_at": expires_at},
+        )
+
         tokens_data = TokenService.generate_token_for_user(customer)
         customer_detail = CustomerDetailedSerializer(
             customer, context={"request": request}
         )
         return Response(
             {
+                "is_verified": customer.is_verified,
                 "access": tokens_data.access,
                 "refresh": tokens_data.refresh,
                 "customer": customer_detail.data,

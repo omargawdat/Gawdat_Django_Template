@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>1K Coffee – Verify Your Account</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f8ff; font-family:Arial, sans-serif;">
+
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f8ff; padding:30px 0;">
+    <tr>
+      <td align="center">
+        <!-- Main card -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px; background:#ffffff; border-radius:12px; border:1px solid #e0e7ff; overflow:hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background:#1d4ed8; padding:20px;">
+              <h1 style="margin:0; font-size:24px; color:#ffffff; font-weight:700;">
+                1K Coffee
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding:30px 20px 10px 20px; text-align:center;">
+              <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:600;">
+                Hey {{ user.email|default:"there" }} 👋
+              </h2>
+              <p style="margin:12px 0 0; font-size:15px; color:#334155;">
+                Thanks for choosing <b>1K Coffee</b>. To keep your account safe, please verify with the code below.
+              </p>
+            </td>
+          </tr>
+
+          <!-- OTP Code -->
+          <tr>
+            <td align="center" style="padding:25px 20px;">
+              <div style="display:inline-block; background:#eff6ff; border:2px dashed #3b82f6; border-radius:12px;
+                          padding:18px 26px; font-size:28px; font-weight:700; letter-spacing:8px; color:#1d4ed8;">
+                {{ otp_code }}
+              </div>
+              <p style="margin:16px 0 0; font-size:14px; color:#475569;">
+                This code expires at <b>{{ expires_at }}</b>.
+              </p>
+            </td>
+          </tr>
+
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px; text-align:center; background:#f8fafc; border-top:1px solid #e2e8f0;">
+              <p style="margin:0; font-size:12px; color:#64748b;">
+                If you didn’t request this, no worries — just ignore this email.
+              </p>
+              <p style="margin:4px 0 0; font-size:11px; color:#94a3b8;">
+                © {{ year|default:2025 }} 1K Coffee. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
