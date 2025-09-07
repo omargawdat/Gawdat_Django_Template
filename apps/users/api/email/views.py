@@ -373,12 +373,17 @@ class LoginView(APIView):
                 subject="Verify your account - 1K Coffee",
                 message=f"Your OTP is {otp}",
                 recipient_list=[customer.email],
-                template_name="emails/verify_otp.html",
+                template_name="emails/verify_email.html",
                 context={
                     "user": customer.email,
                     "otp_code": otp,
                     "minutes": OTP_EMAIL_SECONDS // 60,
                 },
+            )
+            return Response(
+                {
+                    "message": "Email is not verified. An OTP has been sent to your email.",
+                }
             )
 
         customer_data = CustomerDetailedSerializer(
