@@ -160,7 +160,12 @@ class RegisterView(APIView):
             message=f"Your OTP is {otp}",
             recipient_list=[email],
             template_name="emails/verify_email.html",
-            context={"user": email, "otp_code": otp, "expires_at": expires_at},
+            context={
+                "user": email,
+                "otp_code": otp,
+                "expires_at": expires_at,
+                "plain_text": f"Your OTP is {otp}\nThis code expires at {expires_at}.",
+            },
         )
 
         tokens_data = TokenService.generate_token_for_user(customer)
