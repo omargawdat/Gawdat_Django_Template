@@ -24,3 +24,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class VerifyCustomerEmailSerializer(serializers.Serializer):
     otp = serializers.CharField(required=True, max_length=5)
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
