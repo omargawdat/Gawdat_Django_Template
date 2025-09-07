@@ -35,7 +35,7 @@ class CheckEmailView(APIView):
     serializer_class = CheckEmailSerializer
 
     @extend_schema(
-        tags=["User/Email"],
+        tags=["User/Customer/Auhthentication/Mail"],
         operation_id="checkEmail",
         description="Check if an email is registered, verified, and has a password set.",
         request=CheckEmailSerializer,
@@ -91,7 +91,7 @@ class RegisterView(APIView):
     serializer_class = RegisterSerializer
 
     @extend_schema(
-        tags=["User/Email"],
+        tags=["User/Customer/Auhthentication/Mail"],
         operation_id="registerUser",
         description="Register a new user with email, phone number, and password.",
         request=RegisterSerializer,
@@ -184,7 +184,7 @@ class VerifyCustomerEmailView(APIView):
     serializer_class = VerifyCustomerEmailSerializer
 
     @extend_schema(
-        tags=["User/Email"],
+        tags=["User/Customer/Auhthentication/Mail"],
         operation_id="verifyCustomerEmail",
         description="Verify a customer's email using an OTP code.",
         request=VerifyCustomerEmailSerializer,
@@ -295,7 +295,7 @@ class LoginView(APIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        tags=["User/Email"],
+        tags=["User/Customer/Auhthentication/Mail"],
         operation_id="loginUser",
         description="Authenticate a user and return JWT tokens.",
         request=LoginSerializer,
