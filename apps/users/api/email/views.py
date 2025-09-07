@@ -1,16 +1,22 @@
 from datetime import timedelta
 
 from django.core.cache import cache
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.email.serializers import CheckEmailSerializer
 from apps.users.api.email.serializers import RegisterSerializer
+from apps.users.api.email.serializers import VerifyCustomerEmailSerializer
 from apps.users.domain.selectors.customer import CustomerSelector
 from apps.users.domain.services.customer import CustomerService
 from apps.users.domain.services.email import EmailService
@@ -166,4 +172,115 @@ class RegisterView(APIView):
                 "customer": customer_detail.data,
             },
             status=status.HTTP_201_CREATED,
+        )
+
+
+class VerifyCustomerEmailView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = VerifyCustomerEmailSerializer
+
+    @extend_schema(
+        tags=["User/Email"],
+        operation_id="verifyCustomerEmail",
+        description="Verify a customer's email using an OTP code.",
+        request=VerifyCustomerEmailSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Email verified successfully",
+                response={
+                    "properties": {
+                        "is_verified": {"type": "boolean", "example": True},
+                        "access": {
+                            "type": "string",
+                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                        },
+                        "refresh": {
+                            "type": "string",
+                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                        },
+                        "customer": {
+                            "type": "object",
+                            "properties": {
+                                "id": {"type": "integer", "example": 1},
+                                "email": {
+                                    "type": "string",
+                                    "example": "user@example.com",
+                                },
+                                "username": {"type": "string", "example": "user"},
+                                "phone_number": {
+                                    "type": "string",
+                                    "example": "1234567890",
+                                },
+                                "is_verified": {"type": "boolean", "example": True},
+                            },
+                        },
+                    }
+                },
+            ),
+            400: OpenApiResponse(
+                description="Invalid OTP",
+                response={
+                    "properties": {
+                        "error": {
+                            "type": "string",
+                            "example": "Invalid OTP or OTP has expired",
+                        }
+                    }
+                },
+            ),
+            401: OpenApiResponse(
+                description="Invalid token",
+                response={
+                    "properties": {
+                        "detail": {
+                            "type": "string",
+                            "example": "Invalid or expired token.",
+                        }
+                    }
+                },
+            ),
+        },
+    )
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        otp_code = serializer.validated_data["otp"]
+        access_token = request.headers.get("Authorization").split(" ")[1]
+
+        try:
+            token = AccessToken(access_token)
+            user_id = token.get("user_id")
+            customer = Customer.objects.get(id=user_id)
+        except (TokenError, Customer.DoesNotExist, AttributeError, IndexError):
+            return Response(
+                {"detail": "Invalid or expired token."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        customer = get_object_or_404(Customer, id=user_id)
+
+        try:
+            OTPUtility.verify_or_bust(customer.email, otp_code)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not customer.is_verified:
+            customer.is_verified = True
+            customer.save(update_fields=["is_verified"])
+
+        tokens_data = TokenService.generate_token_for_user(customer)
+
+        customer_serializer = CustomerDetailedSerializer(
+            customer, context={"request": request}
+        )
+        return Response(
+            {
+                "is_verified": True,
+                "access": tokens_data.access,
+                "refresh": tokens_data.refresh,
+                "customer": customer_serializer.data,
+            },
+            status=status.HTTP_200_OK,
         )
