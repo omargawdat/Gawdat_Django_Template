@@ -38,6 +38,7 @@ OTP_EXPIRY_SECONDS = 300
 OTP_LENGTH = 5
 OTP_MAX_ATTEMPTS = 3
 OTP_HOURLY_LIMIT = 5
+OTP_EMAIL_SECONDS = 600
 # INTERNATIONALIZATION SETTINGS
 TIME_ZONE = "Asia/Riyadh"
 LANGUAGE_CODE = "en-us"
@@ -311,6 +312,14 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
+
+# Email settings
+# Email settings
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env.email_host_user
+EMAIL_HOST_PASSWORD = env.email_host_password.get_secret_value()
 
 # ------------------------------------------------------------------------------
 # THIRD-PARTY INTEGRATIONS

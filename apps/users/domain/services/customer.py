@@ -1,4 +1,5 @@
 from apps.location.domain.selector.country import CountrySelector
+from apps.location.models.country import Country
 from apps.users.domain.validators.user import UserValidator
 from apps.users.models.customer import Customer
 
@@ -28,3 +29,23 @@ class CustomerService:
         customer.save()
 
         return customer, created
+
+    @staticmethod
+    def create_customer(
+        *, email: str, phone_number: str, username: str, password: str | None = None
+    ) -> Customer:
+        # The Default country
+        country = Country.objects.get(code="SA")
+
+        customer = Customer(
+            email=email,
+            phone_number=phone_number,
+            username=username,
+            country=country,
+        )
+        if password:
+            customer.set_password(password)
+        customer.full_clean()
+        customer.is_verified = False
+        customer.save()
+        return customer

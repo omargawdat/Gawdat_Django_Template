@@ -69,5 +69,8 @@ class EnvSettings(BaseSettings):
     key_id: str
     team_id: str
 
+    email_host_user: str
+    email_host_password: SecretStr
+
 
 env = EnvSettings()

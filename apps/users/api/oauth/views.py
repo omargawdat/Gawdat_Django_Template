@@ -14,7 +14,7 @@ class GoogleIDTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/Oauth"],
         operation_id="googleAuthentication",
         description="Login using Google ID token.",
     )
@@ -43,7 +43,7 @@ class FacebookAccessTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/Oauth"],
         operation_id="facebookAuthentication",
         description="Login with Facebook using Access Token",
     )

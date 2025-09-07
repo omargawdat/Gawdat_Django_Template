@@ -13,3 +13,16 @@ class CustomerValidator:
     ) -> None:
         if address and not AddressSelector.is_customer_address(address, customer):
             raise ValidationError(_("The address must belong to the customer."))
+
+    @staticmethod
+    def authenticate(email: str, password: str) -> Customer:
+        email = email.strip().lower()
+        customer = Customer.objects.filter(email__iexact=email).first()
+
+        if not customer or not customer.check_password(password):
+            raise ValueError("Invalid email or password.")
+
+        if not customer.is_active:
+            raise ValueError("Account is disabled.")
+
+        return customer

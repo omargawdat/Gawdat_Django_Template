@@ -32,7 +32,7 @@ class CustomerAuthView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="AuthenticateCustomer",
         description="Authenticate a customer using phone number and OTP. Creates a new customer if one doesn't exist.",
         request={
@@ -111,7 +111,7 @@ class CustomerUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="UpdateCustomer",
         description="Update the authenticated customer's profile information.",
         request={
@@ -153,7 +153,7 @@ class CustomerDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="GetCustomerDetails",
         responses={
             200: CustomerDetailedSerializer,
@@ -170,7 +170,7 @@ class CustomerDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="DeleteCustomer",
         parameters=[
             OpenApiParameter(
