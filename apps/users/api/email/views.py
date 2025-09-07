@@ -377,7 +377,7 @@ class LoginView(APIView):
                 context={
                     "user": customer.email,
                     "otp_code": otp,
-                    "minutes": OTP_EMAIL_SECONDS // 60,
+                    "expires_at": expires_at,
                 },
             )
             return Response(
