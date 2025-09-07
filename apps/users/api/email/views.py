@@ -4,7 +4,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.email.serializers import CheckEmailSerializer
+from apps.users.api.email.serializers import RegisterSerializer
+from apps.users.domain.selectors.customer import CustomerSelector
+from apps.users.domain.services.customer import CustomerService
+from apps.users.domain.services.token import TokenService
 from apps.users.models.customer import Customer
 
 
@@ -62,3 +67,78 @@ class CheckEmailView(APIView):
                 {"is_registered": False, "is_verified": False, "has_password": False},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class RegisterView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = RegisterSerializer
+
+    @extend_schema(
+        tags=["User/Email"],
+        operation_id="registerUser",
+        description="Register a new user with email, phone number, and password.",
+        request=RegisterSerializer,
+        responses={
+            201: OpenApiResponse(
+                description="User registered successfully",
+                response={
+                    "properties": {
+                        "detail": {
+                            "type": "string",
+                            "example": "User registered successfully.",
+                        }
+                    }
+                },
+            ),
+            400: OpenApiResponse(
+                description="Email is already registered",
+                response={
+                    "properties": {
+                        "detail": {
+                            "type": "string",
+                            "example": "Email is already registered.",
+                        }
+                    }
+                },
+            ),
+        },
+    )
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        username = email.split("@")[0]
+        phone_number = serializer.validated_data["phone_number"]
+        password = serializer.validated_data["password"]
+
+        is_email_exists = CustomerSelector.is_email_exists(email=email)
+        if is_email_exists:
+            return Response(
+                {"detail": "Email is already registered."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create customer service
+        customer = CustomerService.create_customer(
+            email=email,
+            username=username,
+            phone_number=phone_number,
+            password=password,
+        )
+
+        # Generate OTP then Send Email
+
+        tokens_data = TokenService.generate_token_for_user(customer)
+        customer_detail = CustomerDetailedSerializer(
+            customer, context={"request": request}
+        )
+        return Response(
+            {
+                "access": tokens_data.access,
+                "refresh": tokens_data.refresh,
+                "customer": customer_detail.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
