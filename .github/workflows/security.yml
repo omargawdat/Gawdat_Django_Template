@@ -17,9 +17,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      # For both push and PR events, scan the full branch history.
+      # base: "" tells the action NOT to limit by a base ref.
+      # head: uses the right ref for each event type.
       - name: Run TruffleHog (full branch scan)
         uses: trufflesecurity/trufflehog@main
         with:
           base: ""  # important: scan entire branch history
           head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
-          extra_args: --results=verified,unknown
+          extra_args: --results=verified,unknown --fail
