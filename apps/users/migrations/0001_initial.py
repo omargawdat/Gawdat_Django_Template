@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
         ('location', '0001_initial'),
     ]
 
+    
     operations = [
         migrations.CreateModel(
             name='User',
