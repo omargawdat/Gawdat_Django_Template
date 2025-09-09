@@ -108,5 +108,5 @@ class Migration(migrations.Migration):
                 'base_manager_name': 'objects',
             },
             bases=('users.user',),
-        ),
+        )
     ]
