@@ -1,0 +1,28 @@
+name: Guard Files
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  block-migration-edits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Detect modified/deleted migrations
+        id: changes
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          list-files: none
+          filters: |
+            migrations:
+              - modified|deleted: '**/migrations/*.py'
+
+      - name: Fail if migrations edited/removed
+        if: steps.changes.outputs.migrations == 'true'
+        run: |
+          echo "❌ Migration files were edited or removed in this PR."
+          exit 1
