@@ -4,6 +4,12 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
 
 jobs:
   trufflehog:
