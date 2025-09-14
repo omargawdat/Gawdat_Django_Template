@@ -38,7 +38,9 @@ class CheckEmailView(APIView):
         tags=["User/Customer/Auhthentication/Mail"],
         operation_id="checkEmail",
         description="Check if an email is registered, verified, and has a password set.",
-        request=CheckEmailSerializer,
+        request={
+            "application/json": CheckEmailSerializer,
+        },
         responses={
             200: OpenApiResponse(
                 description="Email is registered",
@@ -94,7 +96,9 @@ class RegisterView(APIView):
         tags=["User/Customer/Auhthentication/Mail"],
         operation_id="registerUser",
         description="Register a new user with email, phone number, and password.",
-        request=RegisterSerializer,
+        request={
+            "application/json": RegisterSerializer,
+        },
         responses={
             201: OpenApiResponse(
                 description="User registered successfully",
@@ -192,7 +196,9 @@ class VerifyCustomerEmailView(APIView):
         tags=["User/Customer/Auhthentication/Mail"],
         operation_id="verifyCustomerEmail",
         description="Verify a customer's email using an OTP code.",
-        request=VerifyCustomerEmailSerializer,
+        request={
+            "application/json": VerifyCustomerEmailSerializer,
+        },
         responses={
             200: OpenApiResponse(
                 description="Email verified successfully",
@@ -303,7 +309,9 @@ class LoginView(APIView):
         tags=["User/Customer/Auhthentication/Mail"],
         operation_id="loginUser",
         description="Authenticate a user and return JWT tokens.",
-        request=LoginSerializer,
+        request={
+            "application/json": LoginSerializer,
+        },
         responses={
             200: OpenApiResponse(
                 description="Login successful",
