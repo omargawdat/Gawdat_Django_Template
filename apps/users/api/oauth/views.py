@@ -1,7 +1,10 @@
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
+from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import inline_serializer
+from rest_framework import serializers
 from rest_framework.response import Response
 
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
@@ -24,6 +27,18 @@ class GoogleIDTokenLogin(SocialLoginView):
                 },
                 "required": ["access_token"],
             }
+        },
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="GoogleOAuthLoginResponse",
+                    fields={
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),
+                    },
+                )
+            )
         },
         description="Login using Google ID token.",
     )
@@ -65,6 +80,18 @@ class FacebookAccessTokenLogin(SocialLoginView):
                 },
                 "required": ["access_token"],
             }
+        },
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="FacebookOAuthLoginResponse",
+                    fields={
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),  # instance, not class
+                    },
+                )
+            )
         },
         description="Login with Facebook using Access Token",
     )
