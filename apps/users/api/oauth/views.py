@@ -16,6 +16,15 @@ class GoogleIDTokenLogin(SocialLoginView):
     @extend_schema(
         tags=["User/Customer/Auhthentication/Oauth"],
         operation_id="googleAuthentication",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "access_token": {"type": "string", "description": "Google ID token"}
+                },
+                "required": ["access_token"],
+            }
+        },
         description="Login using Google ID token.",
     )
     def post(self, request, *args, **kwargs):
@@ -45,6 +54,18 @@ class FacebookAccessTokenLogin(SocialLoginView):
     @extend_schema(
         tags=["User/Customer/Auhthentication/Oauth"],
         operation_id="facebookAuthentication",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "description": "Facebook ID token",
+                    }
+                },
+                "required": ["access_token"],
+            }
+        },
         description="Login with Facebook using Access Token",
     )
     def post(self, request, *args, **kwargs):
