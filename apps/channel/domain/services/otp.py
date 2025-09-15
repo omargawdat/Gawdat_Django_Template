@@ -35,7 +35,7 @@ class OTPUtils:
 
         return (
             str(phone_number) in testing_numbers
-            or not env.is_sending_sms
+            or not env.is_testing_sms
         )
 
     @staticmethod
