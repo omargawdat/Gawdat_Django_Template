@@ -34,7 +34,6 @@ class OTPUtils:
         testing_numbers = [num.strip() for num in testing_numbers if num.strip()]
 
         return str(phone_number) in testing_numbers or env.is_testing_sms
-        return str(phone_number) in testing_numbers or env.is_testing_sms
 
     @staticmethod
     def send_otp(
