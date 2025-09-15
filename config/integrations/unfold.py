@@ -271,7 +271,6 @@ UNFOLD = {
     },
 }
 
-
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 
 CONSTANCE_ADDITIONAL_FIELDS = {
@@ -334,7 +333,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
 
 def environment_callback(request):
     if env.environment == "production":
-        return ["DEVELOPMENT", "danger"]
+        return ["PRODUCTION", "danger"]
     elif env.environment == "staging":
         return ["STAGING", "warning"]
     elif env.environment == "development":
