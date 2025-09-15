@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -35,32 +36,60 @@ class CheckEmailView(APIView):
     serializer_class = CheckEmailSerializer
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Mail"],
+        tags=["User/Customer/Authentication/Mail"],
         operation_id="checkEmail",
         description="Check if an email is registered, verified, and has a password set.",
         request={
             "application/json": CheckEmailSerializer,
         },
+        examples=[
+            OpenApiExample(
+                name="Registered user",
+                description="An email that exists in the system",
+                value={"email": "user@example.com"},
+                request_only=True,
+                media_type="application/json",
+            ),
+            OpenApiExample(
+                name="Unregistered user",
+                description="An email that does not exist",
+                value={"email": "nobody@example.com"},
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             200: OpenApiResponse(
                 description="Email is registered",
-                response={
-                    "properties": {
-                        "is_registered": {"type": "boolean", "example": True},
-                        "is_verified": {"type": "boolean", "example": True},
-                        "has_password": {"type": "boolean", "example": True},
-                    }
-                },
-            ),
-            404: OpenApiResponse(
-                description="Email is not registered",
-                response={
-                    "properties": {
-                        "is_registered": {"type": "boolean", "example": False},
-                        "is_verified": {"type": "boolean", "example": False},
-                        "has_password": {"type": "boolean", "example": False},
-                    }
-                },
+                examples=[
+                    OpenApiExample(
+                        name="Registered & verified with password",
+                        value={
+                            "is_registered": True,
+                            "is_verified": True,
+                            "has_password": True,
+                        },
+                        response_only=True,
+                    ),
+                    OpenApiExample(
+                        name="Registered, not verified yet",
+                        value={
+                            "is_registered": True,
+                            "is_verified": False,
+                            "has_password": True,
+                        },
+                        response_only=True,
+                    ),
+                    OpenApiExample(
+                        name="Registered via social (no password)",
+                        value={
+                            "is_registered": True,
+                            "is_verified": True,
+                            "has_password": False,
+                        },
+                        response_only=True,
+                    ),
+                ],
             ),
         },
     )
@@ -93,34 +122,59 @@ class RegisterView(APIView):
     serializer_class = RegisterSerializer
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Mail"],
+        tags=["User/Customer/Authentication/Mail"],
         operation_id="registerUser",
-        description="Register a new user with email, phone number, and password.",
-        request={
-            "application/json": RegisterSerializer,
-        },
+        description="Register a new user with email, phone number, and password. Returns auth tokens and the customer profile.",
+        request={"application/json": RegisterSerializer},
+        examples=[
+            OpenApiExample(
+                name="Minimal registration",
+                value={
+                    "email": "user@example.com",
+                    "phone_number": "+966511111133",
+                    "password": "Str0ngP@ssw0rd!",  # pragma: allowlist secret
+                },
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             201: OpenApiResponse(
                 description="User registered successfully",
-                response={
-                    "properties": {
-                        "detail": {
-                            "type": "string",
-                            "example": "User registered successfully.",
-                        }
-                    }
-                },
-            ),
-            400: OpenApiResponse(
-                description="Email is already registered",
-                response={
-                    "properties": {
-                        "detail": {
-                            "type": "string",
-                            "example": "Email is already registered.",
-                        }
-                    }
-                },
+                examples=[
+                    OpenApiExample(
+                        name="Registered (unverified yet)",
+                        value={
+                            "is_verified": False,
+                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
+                            "refresh": "eyJhbGciOi...refresh.token...",  # pragma: allowlist secret
+                            "customer": {
+                                "id": 1003,
+                                "phoneNumber": "+966511111133",
+                                "fullName": "",
+                                "email": "user@example.com",
+                                "image": None,
+                                "gender": "NS",
+                                "birthDate": None,
+                                "primaryAddress": None,
+                                "isProfileCompleted": False,
+                                "language": "en",
+                                "country": {
+                                    "code": "SA",
+                                    "flag": "http://localhost:8000/media/flags/SA.png",
+                                    "phoneCode": "+966",
+                                    "name": "Saudi Arabia",
+                                },
+                                "wallet": {
+                                    "balance": "0.00",
+                                    "balanceCurrency": "SAR",
+                                    "isUseWalletInPayment": False,
+                                },
+                            },
+                        },
+                        response_only=True,
+                    ),
+                ],
             ),
         },
     )
@@ -193,66 +247,55 @@ class VerifyCustomerEmailView(APIView):
     serializer_class = VerifyCustomerEmailSerializer
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Mail"],
+        tags=["User/Customer/Authentication/Mail"],
         operation_id="verifyCustomerEmail",
-        description="Verify a customer's email using an OTP code.",
-        request={
-            "application/json": VerifyCustomerEmailSerializer,
-        },
+        description="Verify a customer's email using an OTP code. Requires a valid Bearer access token.",
+        request={"application/json": VerifyCustomerEmailSerializer},
+        examples=[
+            OpenApiExample(
+                name="Valid OTP",
+                value={"otp": "123456"},
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             200: OpenApiResponse(
                 description="Email verified successfully",
-                response={
-                    "properties": {
-                        "is_verified": {"type": "boolean", "example": True},
-                        "access": {
-                            "type": "string",
-                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-                        },
-                        "refresh": {
-                            "type": "string",
-                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-                        },
-                        "customer": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer", "example": 1},
-                                "email": {
-                                    "type": "string",
-                                    "example": "user@example.com",
+                examples=[
+                    OpenApiExample(
+                        name="Success",
+                        value={
+                            "is_verified": True,
+                            "access": "eyJhbGciOi...access.token...",
+                            "refresh": "eyJhbGciOi...refresh.token...",
+                            "customer": {
+                                "id": 1003,
+                                "phoneNumber": "+966511111133",
+                                "fullName": "",
+                                "email": "user@example.com",
+                                "image": None,
+                                "gender": "NS",
+                                "birthDate": None,
+                                "primaryAddress": None,
+                                "isProfileCompleted": False,
+                                "language": "en",
+                                "country": {
+                                    "code": "SA",
+                                    "flag": "http://localhost:8000/media/flags/SA.png",
+                                    "phoneCode": "+966",
+                                    "name": "Saudi Arabia",
                                 },
-                                "username": {"type": "string", "example": "user"},
-                                "phone_number": {
-                                    "type": "string",
-                                    "example": "1234567890",
+                                "wallet": {
+                                    "balance": "0.00",
+                                    "balanceCurrency": "SAR",
+                                    "isUseWalletInPayment": False,
                                 },
-                                "is_verified": {"type": "boolean", "example": True},
                             },
                         },
-                    }
-                },
-            ),
-            400: OpenApiResponse(
-                description="Invalid OTP",
-                response={
-                    "properties": {
-                        "error": {
-                            "type": "string",
-                            "example": "Invalid OTP or OTP has expired",
-                        }
-                    }
-                },
-            ),
-            401: OpenApiResponse(
-                description="Invalid token",
-                response={
-                    "properties": {
-                        "detail": {
-                            "type": "string",
-                            "example": "Invalid or expired token.",
-                        }
-                    }
-                },
+                        response_only=True,
+                    )
+                ],
             ),
         },
     )
@@ -306,55 +349,70 @@ class LoginView(APIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Mail"],
+        tags=["User/Customer/Authentication/Mail"],
         operation_id="loginUser",
-        description="Authenticate a user and return JWT tokens.",
-        request={
-            "application/json": LoginSerializer,
-        },
+        description="Authenticate a user and return JWT tokens. If the email is not verified, an OTP is sent.",
+        request={"application/json": LoginSerializer},
+        examples=[
+            OpenApiExample(
+                name="Valid credentials",
+                value={
+                    "email": "user@example.com",
+                    "password": "Str0ngP@ssw0rd!",  # pragma: allowlist secret
+                },
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             200: OpenApiResponse(
                 description="Login successful",
-                response={
-                    "properties": {
-                        "is_verified": {"type": "boolean", "example": True},
-                        "access": {
-                            "type": "string",
-                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-                        },
-                        "refresh": {
-                            "type": "string",
-                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-                        },
-                        "customer": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer", "example": 1},
-                                "email": {
-                                    "type": "string",
-                                    "example": "user@example.com",
+                examples=[
+                    OpenApiExample(
+                        name="Success",
+                        value={
+                            "is_verified": True,
+                            "access": "eyJhbGciOi...access.token...",
+                            "refresh": "eyJhbGciOi...refresh.token...",
+                            "customer": {
+                                "id": 1003,
+                                "phoneNumber": "+966511111133",
+                                "fullName": "",
+                                "email": "user@example.com",
+                                "image": None,
+                                "gender": "NS",
+                                "birthDate": None,
+                                "primaryAddress": None,
+                                "isProfileCompleted": False,
+                                "language": "en",
+                                "country": {
+                                    "code": "SA",
+                                    "flag": "http://localhost:8000/media/flags/SA.png",
+                                    "phoneCode": "+966",
+                                    "name": "Saudi Arabia",
                                 },
-                                "username": {"type": "string", "example": "user"},
-                                "phone_number": {
-                                    "type": "string",
-                                    "example": "1234567890",
+                                "wallet": {
+                                    "balance": "0.00",
+                                    "balanceCurrency": "SAR",
+                                    "isUseWalletInPayment": False,
                                 },
-                                "is_verified": {"type": "boolean", "example": True},
                             },
                         },
-                    },
-                },
+                        response_only=True,
+                    )
+                ],
             ),
-            401: OpenApiResponse(
-                description="Authentication failed",
-                response={
-                    "properties": {
-                        "detail": {
-                            "type": "string",
-                            "example": "Invalid credentials",
-                        }
-                    }
-                },
+            202: OpenApiResponse(
+                description="Email not verified — OTP sent",
+                examples=[
+                    OpenApiExample(
+                        name="Unverified",
+                        value={
+                            "message": "Email is not verified. An OTP has been sent to your email."
+                        },
+                        response_only=True,
+                    )
+                ],
             ),
         },
     )
