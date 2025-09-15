@@ -29,6 +29,7 @@ class CustomerChangeView:
                 "fields": (
                     "date_joined",
                     "is_active",
+                    "is_verified",
                 ),
                 "classes": ("collapse",),
             },

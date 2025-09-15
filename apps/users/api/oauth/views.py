@@ -14,9 +14,9 @@ class GoogleIDTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Authentication/OAuth"],
         operation_id="googleAuthentication",
-        description="Login using Google ID token.",
+        description="Login using a Google ID token. Returns JWT access/refresh tokens and the customer profile.",
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
@@ -43,9 +43,9 @@ class FacebookAccessTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Authentication/OAuth"],
         operation_id="facebookAuthentication",
-        description="Login with Facebook using Access Token",
+        description="Login with Facebook using an access token. Returns JWT access/refresh tokens and the customer profile.",
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)

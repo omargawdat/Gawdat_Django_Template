@@ -32,15 +32,47 @@ class CustomerAuthView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="AuthenticateCustomer",
-        description="Authenticate a customer using phone number and OTP. Creates a new customer if one doesn't exist.",
-        request={
-            "application/json": CustomerCreateSerializer,
-        },
+        parameters=[
+            OpenApiParameter(
+                name="Accept-Language",
+                type=OpenApiTypes.STR,
+                location="header",
+                required=False,
+                description="Language preference for the response",
+                examples=[
+                    OpenApiExample(
+                        name="English (US)",
+                        value="en",
+                        description="English with US locale preference",
+                    ),
+                ],
+            ),
+        ],
+        request={"application/json": CustomerCreateSerializer},
+        examples=[
+            OpenApiExample(
+                name="Authenticate Customer",
+                description="Update all profile fields including image",
+                value={
+                    "phone_number": "+966511111133",
+                    "otp": "00000",
+                    "device": {
+                        "registrationId": "2",
+                        "deviceId": "94",
+                        "type": "android",
+                    },
+                    "referralCustomerId": "1",
+                    "language": "en",
+                },
+                request_only=True,
+                media_type="application/json",
+            )
+        ],
         responses={
             200: inline_serializer(
-                name="CustomerAuthResponse",
+                name="CustomerResponse",
                 fields={
                     "access": serializers.CharField(),
                     "refresh": serializers.CharField(),
@@ -111,15 +143,12 @@ class CustomerUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="UpdateCustomer",
         description="Update the authenticated customer's profile information.",
-        request={
-            "multipart/form-data": CustomerUpdateSerializer,
-        },
         parameters=[
             OpenApiParameter(
-                name="Accept-Language",  # todo: it should be for all endpoints
+                name="Accept-Language",
                 type=OpenApiTypes.STR,
                 location="header",
                 required=False,
@@ -133,8 +162,42 @@ class CustomerUpdateView(APIView):
                 ],
             ),
         ],
+        request={
+            "multipart/form-data": CustomerUpdateSerializer,
+        },
+        examples=[
+            OpenApiExample(
+                name="Complete Profile Update",
+                description="Update all profile fields including image",
+                value={
+                    "fullName": "Mezo Doe",
+                    "email": "john.doe@example.com",
+                    "birthDate": "2011-01-02",
+                    "primaryAddress": "1",
+                    "gender": "M",
+                    "language": "en",
+                    "image": "default_image.png",
+                },
+                request_only=True,
+                media_type="multipart/form-data",
+            )
+        ],
         responses={
             200: CustomerDetailedSerializer,
+            400: OpenApiResponse(
+                description="Validation Error",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="Validation Error",
+                        value={
+                            "field_name": ["Error message for this field"],
+                            "image": ["File size should not exceed 5MB"],
+                        },
+                        response_only=True,
+                    )
+                ],
+            ),
         },
     )
     def patch(self, request):
@@ -153,7 +216,7 @@ class CustomerDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="GetCustomerDetails",
         responses={
             200: CustomerDetailedSerializer,
@@ -170,7 +233,7 @@ class CustomerDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Customer"],
+        tags=["User/Customer/Auhthentication/PhoneNumber"],
         operation_id="DeleteCustomer",
         parameters=[
             OpenApiParameter(

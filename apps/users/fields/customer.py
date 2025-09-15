@@ -17,6 +17,7 @@ class CustomerFields:
     BIRTH_DATE = "birth_date"
     COUNTRY = "country"
     PRIMARY_ADDRESS = "primary_address"
+    IS_VERIFIED = "is_verified"
 
     @classmethod
     def get_field_name(cls, model, field):

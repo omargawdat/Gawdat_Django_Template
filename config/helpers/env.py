@@ -72,6 +72,9 @@ class EnvSettings(BaseSettings):
     key_id: str
     team_id: str
 
+    email_host_user: str
+    email_host_password: SecretStr
+
     @model_validator(mode="before")
     @classmethod
     def decode_base64_fields(cls, values: dict[str, Any]) -> dict[str, Any]:

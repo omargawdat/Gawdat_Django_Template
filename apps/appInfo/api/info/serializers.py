@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.appInfo.models.app_info import AppInfo
+from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
 from apps.appInfo.models.social import SocialAccount
 
@@ -21,3 +22,9 @@ class FAQSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQ
         fields = ["question", "answer"]
+
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
+        fields = ["contact_type", "description"]
