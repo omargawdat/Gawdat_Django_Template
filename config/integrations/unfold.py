@@ -278,7 +278,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
     **UNFOLD_CONSTANCE_ADDITIONAL_FIELDS,
     "wysiwyg_field": [
         "django.forms.CharField",
-        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget", "max_length": 50},
     ],
     "url_field": [
         "django.forms.URLField",
@@ -308,17 +308,20 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 }
 
 CONSTANCE_CONFIG = {
-    "SITE_TITLE": ("projectname Dashboard", "Title of dashboard", "wysiwyg_field"),
-    "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
-    "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
-    "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
-    "FEES_PERCENTAGE": (
-        25.0,
-        "Percentage of fees charged on transactions",
-        "float_field",
+    "SITE_TITLE": ("projectname Dashboard", "Title of dashboard", str),
+    "SITE_HEADER": ("projectname", "Sidebar Header", str),
+    "SITE_URL": ("https://www.google.com/", "WebSite URL ", str),
+    "LOGIN_IMAGE": ("images/logo.png", "Login page background image", str),
+    "FEES_PERCENTAGE": (25.0, "Percentage of fees charged on transactions", float),
+    "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", str),
+    "OTP_TEST_CODE": ("00000", "Default OTP code", str),
+    "TESTING_PHONE_NUMBERS": (
+        "+966511111111\n+966511111112",
+        "Testing phone numbers",
+        str,
     ),
-    "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
 }
+
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Dashboard Settings": (
@@ -329,6 +332,10 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "SIDEBAR_ICON",
     ),
     "System Fees": ("FEES_PERCENTAGE",),
+    "OTP Settings": (
+        "OTP_TEST_CODE",
+        "TESTING_PHONE_NUMBERS",
+    ),
 }
 
 
