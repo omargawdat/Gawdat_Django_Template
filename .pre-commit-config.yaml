@@ -102,6 +102,20 @@ repos:
   # Local hooks
   - repo: local
     hooks:
+      - id: check-branch-up-to-date
+        name: Check branch is up to date with origin/main
+        entry: bash -c 'git fetch origin main && git merge-base --is-ancestor origin/main HEAD || (echo "Branch is behind origin/main. Please rebase or merge first." && exit 1)'
+        language: system
+        pass_filenames: false
+        stages: [ pre-push ]
+      - id: django-makemigrations-check
+        name: Check Django migrations
+        entry: docker compose -f docker-compose.local.yml run --rm -T django python manage.py makemigrations --dry-run --check
+        language: system
+        pass_filenames: false
+        files: ^.+\.(py)$
+        stages: [ pre-push ]
+
       - id: auto-update-hooks
         name: Auto-update pre-commit hooks
         entry: pre-commit autoupdate

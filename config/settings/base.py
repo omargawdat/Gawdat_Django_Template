@@ -236,7 +236,6 @@ LOGGING = {
     "root": {"level": "INFO", "handlers": ["console"]},
 }
 
-
 # Google Map Widget
 GOOGLE_MAP_API_KEY = env.google_map_api_key.get_secret_value()
 
@@ -263,7 +262,6 @@ MAP_WIDGETS = {
     },
 }
 
-
 # Oauth Configure
 REST_USE_JWT = True
 ACCOUNT_LOGOUT_ON_GET = True
@@ -274,7 +272,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
 SOCIALACCOUNT_AUTO_SIGNUP = False
 SOCIALACCOUNT_ADAPTER = "config.helpers.oauth_adapter.CustomerSocialAccountAdapter"
-
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -312,6 +309,20 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
+# ------------------------------------------------------------------------------
+# CACHING CONFIGURATION: Can't use local memory in AWS App Runner
+# ------------------------------------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "cache_table",  # Name of the database table
+        "TIMEOUT": 300,  # Cache timeout in seconds (5 minutes)
+        "OPTIONS": {
+            "MAX_ENTRIES": 10000,  # Maximum number of cache entries
+            "CULL_FREQUENCY": 3,  # Fraction of entries to cull when MAX_ENTRIES is reached
+        },
+    }
+}
 
 # Email settings
 # Email settings
