@@ -45,11 +45,11 @@ repos:
   #      - id: semgrep
   #        args: [ --config=auto ]
 
-  # - repo: https://github.com/gitleaks/gitleaks
-  #   rev: v8.25.1
-  #   hooks:
-  #     - id: gitleaks
-  #       exclude: README.md
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.25.1
+    hooks:
+      - id: gitleaks
+        exclude: README.md
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.8.3

@@ -2,7 +2,6 @@ from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
 from drf_spectacular.utils import OpenApiExample
-from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
 from rest_framework import serializers
@@ -16,7 +15,7 @@ GoogleIdTokenRequest = inline_serializer(
     fields={
         "access_token": serializers.CharField(
             help_text="Google ID token (JWT) from Google Sign-In"
-        )
+        )  # pragma: allowlist secret
     },
 )
 
@@ -41,44 +40,6 @@ class GoogleIDTokenLogin(SocialLoginView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            200: OpenApiResponse(
-                description="Login successful",
-                examples=[
-                    OpenApiExample(
-                        name="Success",
-                        value={
-                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
-                            "refresh": "eyJhbGciOi...refresh.token...",
-                            "customer": {
-                                "id": 1003,
-                                "phoneNumber": "+966511111133",
-                                "fullName": "",
-                                "email": "user@example.com",
-                                "image": None,
-                                "gender": "NS",
-                                "birthDate": None,
-                                "primaryAddress": None,
-                                "isProfileCompleted": False,
-                                "language": "en",
-                                "country": {
-                                    "code": "SA",
-                                    "flag": "http://localhost:8000/media/flags/SA.png",
-                                    "phoneCode": "+966",
-                                    "name": "Saudi Arabia",
-                                },
-                                "wallet": {
-                                    "balance": "0.00",
-                                    "balanceCurrency": "SAR",
-                                    "isUseWalletInPayment": False,
-                                },
-                            },
-                        },
-                        response_only=True,
-                    )
-                ],
-            ),
-        },
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
@@ -104,7 +65,7 @@ FacebookAccessTokenRequest = inline_serializer(
     fields={
         "access_token": serializers.CharField(
             help_text="Facebook access token obtained from the Facebook SDK / Graph API login flow"
-        )
+        )  # pragma: allowlist secret
     },
 )
 
@@ -129,44 +90,6 @@ class FacebookAccessTokenLogin(SocialLoginView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            200: OpenApiResponse(
-                description="Login successful",
-                examples=[
-                    OpenApiExample(
-                        name="Success",
-                        value={
-                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
-                            "refresh": "eyJhbGciOi...refresh.token...",
-                            "customer": {
-                                "id": 1003,
-                                "phoneNumber": "+966511111133",
-                                "fullName": "",
-                                "email": "user@example.com",
-                                "image": None,
-                                "gender": "NS",
-                                "birthDate": None,
-                                "primaryAddress": None,
-                                "isProfileCompleted": False,
-                                "language": "en",
-                                "country": {
-                                    "code": "SA",
-                                    "flag": "http://localhost:8000/media/flags/SA.png",
-                                    "phoneCode": "+966",
-                                    "name": "Saudi Arabia",
-                                },
-                                "wallet": {
-                                    "balance": "0.00",
-                                    "balanceCurrency": "SAR",
-                                    "isUseWalletInPayment": False,
-                                },
-                            },
-                        },
-                        response_only=True,
-                    )
-                ],
-            ),
-        },
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)

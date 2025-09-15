@@ -4,7 +4,6 @@ from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiExample
-from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
@@ -58,40 +57,6 @@ class CheckEmailView(APIView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            200: OpenApiResponse(
-                description="Email is registered",
-                examples=[
-                    OpenApiExample(
-                        name="Registered & verified with password",
-                        value={
-                            "is_registered": True,
-                            "is_verified": True,
-                            "has_password": True,
-                        },
-                        response_only=True,
-                    ),
-                    OpenApiExample(
-                        name="Registered, not verified yet",
-                        value={
-                            "is_registered": True,
-                            "is_verified": False,
-                            "has_password": True,
-                        },
-                        response_only=True,
-                    ),
-                    OpenApiExample(
-                        name="Registered via social (no password)",
-                        value={
-                            "is_registered": True,
-                            "is_verified": True,
-                            "has_password": False,
-                        },
-                        response_only=True,
-                    ),
-                ],
-            ),
-        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -138,45 +103,6 @@ class RegisterView(APIView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            201: OpenApiResponse(
-                description="User registered successfully",
-                examples=[
-                    OpenApiExample(
-                        name="Registered (unverified yet)",
-                        value={
-                            "is_verified": False,
-                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
-                            "refresh": "eyJhbGciOi...refresh.token...",  # pragma: allowlist secret
-                            "customer": {
-                                "id": 1003,
-                                "phoneNumber": "+966511111133",
-                                "fullName": "",
-                                "email": "user@example.com",
-                                "image": None,
-                                "gender": "NS",
-                                "birthDate": None,
-                                "primaryAddress": None,
-                                "isProfileCompleted": False,
-                                "language": "en",
-                                "country": {
-                                    "code": "SA",
-                                    "flag": "http://localhost:8000/media/flags/SA.png",
-                                    "phoneCode": "+966",
-                                    "name": "Saudi Arabia",
-                                },
-                                "wallet": {
-                                    "balance": "0.00",
-                                    "balanceCurrency": "SAR",
-                                    "isUseWalletInPayment": False,
-                                },
-                            },
-                        },
-                        response_only=True,
-                    ),
-                ],
-            ),
-        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -259,45 +185,6 @@ class VerifyCustomerEmailView(APIView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            200: OpenApiResponse(
-                description="Email verified successfully",
-                examples=[
-                    OpenApiExample(
-                        name="Success",
-                        value={
-                            "is_verified": True,
-                            "access": "eyJhbGciOi...access.token...",
-                            "refresh": "eyJhbGciOi...refresh.token...",
-                            "customer": {
-                                "id": 1003,
-                                "phoneNumber": "+966511111133",
-                                "fullName": "",
-                                "email": "user@example.com",
-                                "image": None,
-                                "gender": "NS",
-                                "birthDate": None,
-                                "primaryAddress": None,
-                                "isProfileCompleted": False,
-                                "language": "en",
-                                "country": {
-                                    "code": "SA",
-                                    "flag": "http://localhost:8000/media/flags/SA.png",
-                                    "phoneCode": "+966",
-                                    "name": "Saudi Arabia",
-                                },
-                                "wallet": {
-                                    "balance": "0.00",
-                                    "balanceCurrency": "SAR",
-                                    "isUseWalletInPayment": False,
-                                },
-                            },
-                        },
-                        response_only=True,
-                    )
-                ],
-            ),
-        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -364,57 +251,6 @@ class LoginView(APIView):
                 media_type="application/json",
             ),
         ],
-        responses={
-            200: OpenApiResponse(
-                description="Login successful",
-                examples=[
-                    OpenApiExample(
-                        name="Success",
-                        value={
-                            "is_verified": True,
-                            "access": "eyJhbGciOi...access.token...",
-                            "refresh": "eyJhbGciOi...refresh.token...",
-                            "customer": {
-                                "id": 1003,
-                                "phoneNumber": "+966511111133",
-                                "fullName": "",
-                                "email": "user@example.com",
-                                "image": None,
-                                "gender": "NS",
-                                "birthDate": None,
-                                "primaryAddress": None,
-                                "isProfileCompleted": False,
-                                "language": "en",
-                                "country": {
-                                    "code": "SA",
-                                    "flag": "http://localhost:8000/media/flags/SA.png",
-                                    "phoneCode": "+966",
-                                    "name": "Saudi Arabia",
-                                },
-                                "wallet": {
-                                    "balance": "0.00",
-                                    "balanceCurrency": "SAR",
-                                    "isUseWalletInPayment": False,
-                                },
-                            },
-                        },
-                        response_only=True,
-                    )
-                ],
-            ),
-            202: OpenApiResponse(
-                description="Email not verified — OTP sent",
-                examples=[
-                    OpenApiExample(
-                        name="Unverified",
-                        value={
-                            "message": "Email is not verified. An OTP has been sent to your email."
-                        },
-                        response_only=True,
-                    )
-                ],
-            ),
-        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
