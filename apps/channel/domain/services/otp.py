@@ -35,7 +35,6 @@ class OTPUtils:
 
         return (
             str(phone_number) in testing_numbers
-            or env.is_development
             or not env.is_sending_sms
         )
 
