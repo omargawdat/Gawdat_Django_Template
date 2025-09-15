@@ -33,10 +33,8 @@ class OTPUtils:
         testing_numbers = config.TESTING_PHONE_NUMBERS.strip().split("\n")
         testing_numbers = [num.strip() for num in testing_numbers if num.strip()]
 
-        return (
-            str(phone_number) in testing_numbers
-            or not env.is_testing_sms
-        )
+        return str(phone_number) in testing_numbers or env.is_testing_sms
+        return str(phone_number) in testing_numbers or env.is_testing_sms
 
     @staticmethod
     def send_otp(
@@ -90,9 +88,6 @@ class OTPUtils:
     def validate_correct_otp(
         *, phone_number: PhoneNumber, code: str, otp_type: OTPType
     ) -> bool:
-        if env.is_testing_sms and code == "0" * OTP_LENGTH:
-            return True
-
         cache_key = OTPUtils._get_cache_key(phone_number, otp_type)
         otp_data = cache.get(cache_key)
 
