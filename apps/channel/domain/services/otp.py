@@ -110,6 +110,5 @@ class OTPUtils:
                 OTPError.INVALID_CODE.message,
                 code=OTPError.INVALID_CODE.code,
             )
-
         cache.delete(cache_key)
         return True
