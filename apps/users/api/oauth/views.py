@@ -1,6 +1,7 @@
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from dj_rest_auth.registration.views import SocialLoginView
+from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
@@ -10,6 +11,15 @@ from rest_framework.response import Response
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.domain.services.token import TokenService
 
+GoogleIdTokenRequest = inline_serializer(
+    name="GoogleIdTokenRequest",
+    fields={
+        "access_token": serializers.CharField(
+            help_text="Google ID token (JWT) from Google Sign-In"
+        )
+    },
+)
+
 
 class GoogleIDTokenLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
@@ -17,30 +27,58 @@ class GoogleIDTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Oauth"],
+        tags=["User/Customer/Authentication/OAuth"],
         operation_id="googleAuthentication",
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "access_token": {"type": "string", "description": "Google ID token"}
-                },
-                "required": ["access_token"],
-            }
-        },
+        description="Login using a Google ID token. Returns JWT access/refresh tokens and the customer profile.",
+        request={"application/json": GoogleIdTokenRequest},
+        examples=[
+            OpenApiExample(
+                name="Valid Google ID token",
+                value={
+                    "access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6..."
+                },  # pragma: allowlist secret
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             200: OpenApiResponse(
-                response=inline_serializer(
-                    name="GoogleOAuthLoginResponse",
-                    fields={
-                        "access": serializers.CharField(),
-                        "refresh": serializers.CharField(),
-                        "customer": CustomerDetailedSerializer(),
-                    },
-                )
-            )
+                description="Login successful",
+                examples=[
+                    OpenApiExample(
+                        name="Success",
+                        value={
+                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
+                            "refresh": "eyJhbGciOi...refresh.token...",
+                            "customer": {
+                                "id": 1003,
+                                "phoneNumber": "+966511111133",
+                                "fullName": "",
+                                "email": "user@example.com",
+                                "image": None,
+                                "gender": "NS",
+                                "birthDate": None,
+                                "primaryAddress": None,
+                                "isProfileCompleted": False,
+                                "language": "en",
+                                "country": {
+                                    "code": "SA",
+                                    "flag": "http://localhost:8000/media/flags/SA.png",
+                                    "phoneCode": "+966",
+                                    "name": "Saudi Arabia",
+                                },
+                                "wallet": {
+                                    "balance": "0.00",
+                                    "balanceCurrency": "SAR",
+                                    "isUseWalletInPayment": False,
+                                },
+                            },
+                        },
+                        response_only=True,
+                    )
+                ],
+            ),
         },
-        description="Login using Google ID token.",
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
@@ -61,39 +99,74 @@ class GoogleIDTokenLogin(SocialLoginView):
         )
 
 
+FacebookAccessTokenRequest = inline_serializer(
+    name="FacebookAccessTokenRequest",
+    fields={
+        "access_token": serializers.CharField(
+            help_text="Facebook access token obtained from the Facebook SDK / Graph API login flow"
+        )
+    },
+)
+
+
 class FacebookAccessTokenLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
     authentication_classes = []
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer/Auhthentication/Oauth"],
+        tags=["User/Customer/Authentication/OAuth"],
         operation_id="facebookAuthentication",
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "access_token": {
-                        "type": "string",
-                        "description": "Facebook ID token",
-                    }
-                },
-                "required": ["access_token"],
-            }
-        },
+        description="Login with Facebook using an access token. Returns JWT access/refresh tokens and the customer profile.",
+        request={"application/json": FacebookAccessTokenRequest},
+        examples=[
+            OpenApiExample(
+                name="Valid Facebook access token",
+                value={
+                    "access_token": "EAAGm0PX4ZCpsBAKZC..."
+                },  # pragma: allowlist secret
+                request_only=True,
+                media_type="application/json",
+            ),
+        ],
         responses={
             200: OpenApiResponse(
-                response=inline_serializer(
-                    name="FacebookOAuthLoginResponse",
-                    fields={
-                        "access": serializers.CharField(),
-                        "refresh": serializers.CharField(),
-                        "customer": CustomerDetailedSerializer(),  # instance, not class
-                    },
-                )
-            )
+                description="Login successful",
+                examples=[
+                    OpenApiExample(
+                        name="Success",
+                        value={
+                            "access": "eyJhbGciOi...access.token...",  # pragma: allowlist secret
+                            "refresh": "eyJhbGciOi...refresh.token...",
+                            "customer": {
+                                "id": 1003,
+                                "phoneNumber": "+966511111133",
+                                "fullName": "",
+                                "email": "user@example.com",
+                                "image": None,
+                                "gender": "NS",
+                                "birthDate": None,
+                                "primaryAddress": None,
+                                "isProfileCompleted": False,
+                                "language": "en",
+                                "country": {
+                                    "code": "SA",
+                                    "flag": "http://localhost:8000/media/flags/SA.png",
+                                    "phoneCode": "+966",
+                                    "name": "Saudi Arabia",
+                                },
+                                "wallet": {
+                                    "balance": "0.00",
+                                    "balanceCurrency": "SAR",
+                                    "isUseWalletInPayment": False,
+                                },
+                            },
+                        },
+                        response_only=True,
+                    )
+                ],
+            ),
         },
-        description="Login with Facebook using Access Token",
     )
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
