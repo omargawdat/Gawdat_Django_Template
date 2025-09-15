@@ -296,12 +296,23 @@ paths:
       operationId: checkEmail
       description: Check if an email is registered, verified, and has a password set.
       tags:
-      - User/Customer/Auhthentication/Mail
+      - User/Customer/Authentication/Mail
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CheckEmailRequest'
+            examples:
+              RegisteredUser:
+                value:
+                  email: user@example.com
+                summary: Registered user
+                description: An email that exists in the system
+              UnregisteredUser:
+                value:
+                  email: nobody@example.com
+                summary: Unregistered user
+                description: An email that does not exist
         required: true
       responses:
         '400':
@@ -384,156 +395,35 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  is_registered:
-                    type: boolean
-                    example: true
-                  is_verified:
-                    type: boolean
-                    example: true
-                  has_password:
-                    type: boolean
-                    example: true
-          description: Email is registered
-        '404':
-          content:
-            application/json:
-              schema:
-                properties:
-                  is_registered:
-                    type: boolean
-                    example: false
-                  is_verified:
-                    type: boolean
-                    example: false
-                  has_password:
-                    type: boolean
-                    example: false
-              examples:
-                NotFound:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_found
-                      detail: Not found.
-                      attr: null
-          description: Email is not registered
+                $ref: '#/components/schemas/CheckEmail'
+          description: ''
   /api/users/register/:
     post:
       operationId: registerUser
-      description: Register a new user with email, phone number, and password.
+      description: Register a new user with email, phone number, and password. Returns
+        auth tokens and the customer profile.
       tags:
-      - User/Customer/Auhthentication/Mail
+      - User/Customer/Authentication/Mail
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              MinimalRegistration:
+                value:
+                  email: user@example.com
+                  phone_number: '+966511111133'
+                  password:
+                summary: Minimal registration
         required: true
       responses:
-        '405':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse405'
-              examples:
-                MethodNotAllowed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: method_not_allowed
-                      detail: Method "get" not allowed.
-                      attr: null
-          description: ''
-        '406':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse406'
-              examples:
-                NotAcceptable:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_acceptable
-                      detail: Could not satisfy the request Accept header.
-                      attr: null
-          description: ''
-        '415':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse415'
-              examples:
-                UnsupportedMediaType:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: unsupported_media_type
-                      detail: Unsupported media type "application/json" in request.
-                      attr: null
-          description: ''
-        '429':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse429'
-              examples:
-                Throttled:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: throttled
-                      detail: Request was throttled.
-                      attr: null
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse500'
-              examples:
-                APIException:
-                  value:
-                    type: server_error
-                    errors:
-                    - code: error
-                      detail: A server error occurred.
-                      attr: null
-          description: ''
-        '201':
-          content:
-            application/json:
-              schema:
-                properties:
-                  detail:
-                    type: string
-                    example: User registered successfully.
-          description: User registered successfully
         '400':
           content:
             application/json:
               schema:
-                properties:
-                  detail:
-                    type: string
-                    example: Email is already registered.
-          description: Email is already registered
-  /api/users/verify-email/:
-    post:
-      operationId: verifyCustomerEmail
-      description: Verify a customer's email using an OTP code.
-      tags:
-      - User/Customer/Auhthentication/Mail
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VerifyCustomerEmailRequest'
-        required: true
-      security:
-      - jwtAuth: []
-      responses:
+                $ref: '#/components/schemas/RegisterUserErrorResponse400'
+          description: ''
         '405':
           content:
             application/json:
@@ -608,52 +498,40 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  is_verified:
-                    type: boolean
-                    example: true
-                  access:
-                    type: string
-                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-                  refresh:
-                    type: string
-                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-                  customer:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      email:
-                        type: string
-                        example: user@example.com
-                      username:
-                        type: string
-                        example: user
-                      phone_number:
-                        type: string
-                        example: '1234567890'
-                      is_verified:
-                        type: boolean
-                        example: true
-          description: Email verified successfully
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/users/verify-email/:
+    post:
+      operationId: verifyCustomerEmail
+      description: Verify a customer's email using an OTP code. Requires a valid Bearer
+        access token.
+      tags:
+      - User/Customer/Authentication/Mail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyCustomerEmailRequest'
+            examples:
+              ValidOTP:
+                value:
+                  otp: '123456'
+                summary: Valid OTP
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
         '400':
           content:
             application/json:
               schema:
-                properties:
-                  error:
-                    type: string
-                    example: Invalid OTP or OTP has expired
-          description: Invalid OTP
+                $ref: '#/components/schemas/VerifyCustomerEmailErrorResponse400'
+          description: ''
         '401':
           content:
             application/json:
               schema:
-                properties:
-                  detail:
-                    type: string
-                    example: Invalid or expired token.
+                $ref: '#/components/schemas/ErrorResponse401'
               examples:
                 AuthenticationFailed:
                   value:
@@ -669,18 +547,101 @@ paths:
                     - code: not_authenticated
                       detail: Authentication credentials were not provided.
                       attr: null
-          description: Invalid token
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyCustomerEmail'
+          description: ''
   /api/users/login/:
     post:
       operationId: loginUser
-      description: Authenticate a user and return JWT tokens.
+      description: Authenticate a user and return JWT tokens. If the email is not
+        verified, an OTP is sent.
       tags:
-      - User/Customer/Auhthentication/Mail
+      - User/Customer/Authentication/Mail
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
+            examples:
+              ValidCredentials:
+                value:
+                  email: user@example.com
+                  password: ${MY_PASSWORD}
+                summary: Valid credentials
         required: true
       responses:
         '400':
@@ -763,64 +724,22 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  is_verified:
-                    type: boolean
-                    example: true
-                  access:
-                    type: string
-                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-                  refresh:
-                    type: string
-                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-                  customer:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      email:
-                        type: string
-                        example: user@example.com
-                      username:
-                        type: string
-                        example: user
-                      phone_number:
-                        type: string
-                        example: '1234567890'
-                      is_verified:
-                        type: boolean
-                        example: true
-          description: Login successful
-        '401':
-          content:
-            application/json:
-              schema:
-                properties:
-                  detail:
-                    type: string
-                    example: Invalid credentials
-              examples:
-                AuthenticationFailed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: authentication_failed
-                      detail: Incorrect authentication credentials.
-                      attr: null
-                NotAuthenticated:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_authenticated
-                      detail: Authentication credentials were not provided.
-                      attr: null
-          description: Authentication failed
+                $ref: '#/components/schemas/Login'
+          description: ''
   /api/customers/authenticate/:
     post:
       operationId: AuthenticateCustomer
-      description: Authenticate a customer using phone number and OTP. Creates a new
-        customer if one doesn't exist.
+      parameters:
+      - in: header
+        name: Accept-Language
+        schema:
+          type: string
+        description: Language preference for the response
+        examples:
+          English(US):
+            value: en
+            summary: English (US)
+            description: English with US locale preference
       tags:
       - User/Customer/Auhthentication/PhoneNumber
       requestBody:
@@ -829,16 +748,18 @@ paths:
             schema:
               $ref: '#/components/schemas/CustomerCreateRequest'
             examples:
-              CustomerAuthenticationExample:
+              AuthenticateCustomer:
                 value:
-                  phone_number: '+966111111111'
+                  phone_number: '+966511111133'
                   otp: '00000'
                   device:
-                    registration_id: your_registration_id
-                    device_id: your_device_id
+                    registrationId: '2'
+                    deviceId: '94'
                     type: android
+                  referralCustomerId: '1'
                   language: en
-                summary: Customer Authentication Example
+                summary: Authenticate Customer
+                description: Update all profile fields including image
         required: true
       responses:
         '400':
@@ -921,7 +842,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomerAuthResponse'
+                $ref: '#/components/schemas/CustomerResponse'
           description: ''
         '201':
           content:
@@ -1062,15 +983,21 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedCustomerUpdateRequest'
+            examples:
+              CompleteProfileUpdate:
+                value:
+                  fullName: Mezo Doe
+                  email: john.doe@example.com
+                  birthDate: '2011-01-02'
+                  primaryAddress: '1'
+                  gender: M
+                  language: en
+                  image: default_image.png
+                summary: Complete Profile Update
+                description: Update all profile fields including image
       security:
       - jwtAuth: []
       responses:
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateCustomerErrorResponse400'
-          description: ''
         '401':
           content:
             application/json:
@@ -1168,6 +1095,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomerDetailed'
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+              examples:
+                ValidationError:
+                  value:
+                    field_name:
+                    - Error message for this field
+                    image:
+                    - File size should not exceed 5MB
+                  summary: Validation Error
+          description: Validation Error
   /api/customers/me/delete/:
     delete:
       operationId: DeleteCustomer
@@ -1289,20 +1231,21 @@ paths:
   /api/oauth/facebook/:
     post:
       operationId: facebookAuthentication
-      description: Login with Facebook using Access Token
+      description: Login with Facebook using an access token. Returns JWT access/refresh
+        tokens and the customer profile.
       tags:
-      - User/Customer/Auhthentication/Oauth
+      - User/Customer/Authentication/OAuth
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                access_token:
-                  type: string
-                  description: Facebook ID token
-              required:
-              - access_token
+              $ref: '#/components/schemas/FacebookAccessTokenRequestRequest'
+            examples:
+              ValidFacebookAccessToken:
+                value:
+                  access_token: ${MY_SERVICE_TOKEN}
+                summary: Valid Facebook access token
+        required: true
       responses:
         '400':
           content:
@@ -1384,25 +1327,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FacebookOAuthLoginResponse'
+                $ref: '#/components/schemas/SocialLogin'
           description: ''
   /api/oauth/google/:
     post:
       operationId: googleAuthentication
-      description: Login using Google ID token.
+      description: Login using a Google ID token. Returns JWT access/refresh tokens
+        and the customer profile.
       tags:
-      - User/Customer/Auhthentication/Oauth
+      - User/Customer/Authentication/OAuth
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                access_token:
-                  type: string
-                  description: Google ID token
-              required:
-              - access_token
+              $ref: '#/components/schemas/GoogleIdTokenRequestRequest'
+            examples:
+              ValidGoogleIDToken:
+                value:
+                  access_token: ${MY_SERVICE_TOKEN}
+                summary: Valid Google ID token
+        required: true
       responses:
         '400':
           content:
@@ -1484,7 +1428,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GoogleOAuthLoginResponse'
+                $ref: '#/components/schemas/SocialLogin'
           description: ''
   /api/countries/:
     get:
@@ -1810,15 +1754,6 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AddressCreateRequest'
-            examples:
-              CreateAddressExample:
-                value:
-                  point: '{"type": "Point", "coordinates": [31.235712, 30.044420]}'
-                  description: My home address
-                  map_description: Near the main square
-                  location_type: home
-                  map_image: select a file
-                summary: Create Address Example
         required: true
       security:
       - jwtAuth: []
@@ -1934,6 +1869,7 @@ paths:
         name: addressId
         schema:
           type: integer
+        description: ID of the address to update
         required: true
       tags:
       - Location/Address
@@ -2070,6 +2006,7 @@ paths:
         name: addressId
         schema:
           type: integer
+        description: ID of the address to delete
         required: true
       tags:
       - Location/Address
@@ -4244,6 +4181,14 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
+    CheckEmail:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
     CheckEmailErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -4372,19 +4317,6 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    CustomerAuthResponse:
-      type: object
-      properties:
-        access:
-          type: string
-        refresh:
-          type: string
-        customer:
-          $ref: '#/components/schemas/CustomerDetailed'
-      required:
-      - access
-      - customer
-      - refresh
     CustomerCreateRequest:
       type: object
       properties:
@@ -4471,6 +4403,19 @@ components:
       - id
       - isProfileCompleted
       - wallet
+    CustomerResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerDetailed'
+      required:
+      - access
+      - customer
+      - refresh
     DeleteAddressErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -5470,6 +5415,16 @@ components:
         * `ios` - ios
         * `android` - android
         * `web` - web
+    FacebookAccessTokenRequestRequest:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          minLength: 1
+          description: Facebook access token obtained from the Facebook SDK / Graph
+            API login flow
+      required:
+      - accessToken
     FacebookAuthenticationErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -5477,19 +5432,6 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    FacebookOAuthLoginResponse:
-      type: object
-      properties:
-        access:
-          type: string
-        refresh:
-          type: string
-        customer:
-          $ref: '#/components/schemas/CustomerDetailed'
-      required:
-      - access
-      - customer
-      - refresh
     GenderEnum:
       enum:
       - male
@@ -5535,19 +5477,15 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    GoogleOAuthLoginResponse:
+    GoogleIdTokenRequestRequest:
       type: object
       properties:
-        access:
+        accessToken:
           type: string
-        refresh:
-          type: string
-        customer:
-          $ref: '#/components/schemas/CustomerDetailed'
+          minLength: 1
+          description: Google ID token (JWT) from Google Sign-In
       required:
-      - access
-      - customer
-      - refresh
+      - accessToken
     LanguageEnum:
       enum:
       - en
@@ -5599,6 +5537,13 @@ components:
       description: |-
         * `HOME` - Home
         * `WORK` - Work
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+      - email
     LoginRequest:
       type: object
       properties:
@@ -6066,6 +6011,17 @@ components:
       - code
       - country
       - name
+    Register:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+      required:
+      - email
+      - phoneNumber
     RegisterRequest:
       type: object
       properties:
@@ -6084,6 +6040,13 @@ components:
       - email
       - password
       - phoneNumber
+    RegisterUserErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
     SendOTPErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6123,6 +6086,15 @@ components:
           type: string
           format: uri
           maxLength: 200
+    SocialLogin:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        code:
+          type: string
+        idToken:
+          type: string
     TokenRefresh:
       type: object
       properties:
@@ -6171,13 +6143,6 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    UpdateCustomerErrorResponse400:
-      oneOf:
-      - $ref: '#/components/schemas/ParseErrorResponse'
-      discriminator:
-        propertyName: type
-        mapping:
-          client_error: '#/components/schemas/ParseErrorResponse'
     UpdateWalletErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6190,6 +6155,21 @@ components:
       - validation_error
       type: string
       description: '* `validation_error` - Validation Error'
+    VerifyCustomerEmail:
+      type: object
+      properties:
+        otp:
+          type: string
+          maxLength: 5
+      required:
+      - otp
+    VerifyCustomerEmailErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
     VerifyCustomerEmailRequest:
       type: object
       properties:
