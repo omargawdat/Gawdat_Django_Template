@@ -1,4 +1,4 @@
-## 🚀 Getting Started
+## 🚀 Getting Started.
 
 ### 1. One-Time Project Setup
 
