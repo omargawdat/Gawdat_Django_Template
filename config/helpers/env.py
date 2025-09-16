@@ -1,8 +1,11 @@
+import base64
 from typing import Annotated
+from typing import Any
 from typing import Literal
 
 from pydantic import Field
 from pydantic import SecretStr
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
 
@@ -71,6 +74,31 @@ class EnvSettings(BaseSettings):
 
     email_host_user: str
     email_host_password: SecretStr
+
+    @model_validator(mode="before")
+    @classmethod
+    def decode_base64_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
+        """Automatically decode any base64-encoded string values in the settings."""
+        if not isinstance(values, dict):
+            return values
+
+        decoded_values = {}
+        for key, value in values.items():
+            if isinstance(value, str) and value:
+                try:
+                    decoded = base64.b64decode(value, validate=True).decode("utf-8")
+                    if (
+                        base64.b64encode(decoded.encode("utf-8")).decode("utf-8")
+                        == value
+                    ):
+                        decoded_values[key] = decoded
+                    else:
+                        decoded_values[key] = value
+                except Exception:
+                    decoded_values[key] = value
+            else:
+                decoded_values[key] = value
+        return decoded_values
 
 
 env = EnvSettings()

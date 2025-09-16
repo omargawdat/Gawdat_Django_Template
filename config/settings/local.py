@@ -7,16 +7,6 @@ from .base import *  # noqa
 print("loading local settings")  # noqa: T201
 
 # ------------------------------------------------------------------------------
-# CACHING CONFIGURATION
-# ------------------------------------------------------------------------------
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "",
-    },
-}
-
-# ------------------------------------------------------------------------------
 # DEBUG TOOLBAR CONFIGURATION
 # ------------------------------------------------------------------------------
 DEBUG = True

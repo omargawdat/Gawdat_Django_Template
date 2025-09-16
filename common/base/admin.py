@@ -123,7 +123,8 @@ class BaseModelAdmin(
     empty_value_display = "-"
     compressed_fields = True
     warn_unsaved_form = True
-    show_facets = ShowFacets.ALWAYS
+    change_form_show_cancel_button = True
+    show_facets = ShowFacets.ALWAYSa
 
     def get_inlines(self, request, obj=None):
         if obj is None:
