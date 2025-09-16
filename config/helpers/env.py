@@ -75,6 +75,9 @@ class EnvSettings(BaseSettings):
     email_host_user: str
     email_host_password: SecretStr
 
+    # Firebase
+    firebase_credentials_b64: SecretStr
+
     @model_validator(mode="before")
     @classmethod
     def decode_base64_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
