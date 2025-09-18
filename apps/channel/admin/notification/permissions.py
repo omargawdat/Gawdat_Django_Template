@@ -12,7 +12,7 @@ class BaseNotificationPermissions:
         self, request: HttpRequest, notification: Notification | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)
-        created = AdminContextLogic.is_object_created(notification)
+        is_created = AdminContextLogic.is_object_created(notification)
 
         return {
             NotificationFields.NOTIFICATION_TYPE: FieldPermissions(
@@ -60,7 +60,7 @@ class BaseNotificationPermissions:
                 editable=(normal_admin),
             ),
             NotificationFields.IS_READ: FieldPermissions(
-                visible=(normal_admin and not created),
+                visible=(normal_admin and not is_created),
                 editable=(),
             ),
         }
