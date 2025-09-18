@@ -20,7 +20,7 @@ class BaseCountryPermissions:
             ),
             CountryFields.NAME: FieldPermissions(
                 visible=(normal_admin),
-                editable=(normal_admin),
+                editable=(),
             ),
             CountryFields.NAME_AR: FieldPermissions(
                 visible=(normal_admin),
@@ -44,7 +44,7 @@ class BaseCountryPermissions:
             ),
             CountryFields.PHONE_CODE: FieldPermissions(
                 visible=(normal_admin),
-                editable=(normal_admin),
+                editable=(),
             ),
             CountryFields.APP_INSTALL_MONEY_INVITEE: FieldPermissions(
                 visible=(normal_admin),
