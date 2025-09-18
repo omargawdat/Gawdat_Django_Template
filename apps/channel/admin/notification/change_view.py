@@ -18,7 +18,7 @@ class NotificationChangeView:
         (
             _("Users 👥"),
             {
-                "fields": ("users", "send_sms", "send_fcm", "is_read"),
+                "fields": ("users", "send_sms", "send_fcm"),
             },
         ),
     )
