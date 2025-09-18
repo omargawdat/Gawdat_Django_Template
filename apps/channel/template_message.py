@@ -12,4 +12,20 @@ notification_templates = {
             "New order #{order_id} for {product} is awaiting your confirmation."
         ),
     },
+    NotificationType.REFERRAL_APP_INSTALL: {
+        UserType.CUSTOMER: _(
+            "Congratulations! You've earned {amount} for successfully referring a friend to our app. The money has been added to your wallet."
+        ),
+        UserType.PROVIDER: _(
+            "A new customer has joined through your referral! You've earned {amount} which has been added to your wallet."
+        ),
+    },
+    NotificationType.REFERRAL_FIRST_ORDER: {
+        UserType.CUSTOMER: _(
+            "Great news! Your referred friend has placed their first order. You've earned {amount} as a referral bonus!"
+        ),
+        UserType.PROVIDER: _(
+            "Your referred customer has completed their first order! You've been rewarded {amount} for the successful referral."
+        ),
+    },
 }
