@@ -11,6 +11,7 @@ class NotificationMinimalSerializer(serializers.ModelSerializer):
             "notification_type",
             "title",
             "message_body",
+            "is_read",
             "created_at",
         ]
 
