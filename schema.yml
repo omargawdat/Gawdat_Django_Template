@@ -414,7 +414,7 @@ paths:
                 value:
                   email: user@example.com
                   phone_number: '+966511111133'
-                  password:
+                  password: Str0ngP@ssw0rd! # pragma: allowlist secret
                 summary: Minimal registration
         required: true
       responses:
@@ -640,7 +640,7 @@ paths:
               ValidCredentials:
                 value:
                   email: user@example.com
-                  password: ${MY_PASSWORD}
+                  password: Str0ngP@ssw0rd! # pragma: allowlist secret
                 summary: Valid credentials
         required: true
       responses:
@@ -1237,15 +1237,15 @@ paths:
       - User/Customer/Authentication/OAuth
       requestBody:
         content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialLoginRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/FacebookAccessTokenRequestRequest'
-            examples:
-              ValidFacebookAccessToken:
-                value:
-                  access_token: ${MY_SERVICE_TOKEN}
-                summary: Valid Facebook access token
-        required: true
+              $ref: '#/components/schemas/SocialLoginRequest'
       responses:
         '400':
           content:
@@ -1338,15 +1338,15 @@ paths:
       - User/Customer/Authentication/OAuth
       requestBody:
         content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialLoginRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/GoogleIdTokenRequestRequest'
-            examples:
-              ValidGoogleIDToken:
-                value:
-                  access_token: ${MY_SERVICE_TOKEN}
-                summary: Valid Google ID token
-        required: true
+              $ref: '#/components/schemas/SocialLoginRequest'
       responses:
         '400':
           content:
@@ -2755,8 +2755,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-    put:
-      operationId: devices_update
+    patch:
+      operationId: devices_partial_update
       parameters:
       - in: path
         name: registrationId
@@ -2770,14 +2770,13 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/FCMDeviceRequest'
-        required: true
+              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
       security:
       - jwtAuth: []
       responses:
@@ -2785,7 +2784,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesUpdateErrorResponse400'
+                $ref: '#/components/schemas/DevicesPartialUpdateErrorResponse400'
           description: ''
         '401':
           content:
@@ -2912,8 +2911,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-    patch:
-      operationId: devices_partial_update
+    put:
+      operationId: devices_update
       parameters:
       - in: path
         name: registrationId
@@ -2927,13 +2926,14 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
+              $ref: '#/components/schemas/FCMDeviceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
+              $ref: '#/components/schemas/FCMDeviceRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedFCMDeviceRequest'
+              $ref: '#/components/schemas/FCMDeviceRequest'
+        required: true
       security:
       - jwtAuth: []
       responses:
@@ -2941,7 +2941,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesPartialUpdateErrorResponse400'
+                $ref: '#/components/schemas/DevicesUpdateErrorResponse400'
           description: ''
         '401':
           content:
@@ -3581,6 +3581,113 @@ paths:
           description: ''
         '204':
           description: No response body
+  /api/notifications/mark-as-read/:
+    post:
+      operationId: markNotificationAsRead
+      tags:
+      - FCM/Notification
+      security:
+      - jwtAuth: []
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarkNotificationAsReadErrorResponse400'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse401'
+              examples:
+                AuthenticationFailed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: authentication_failed
+                      detail: Incorrect authentication credentials.
+                      attr: null
+                NotAuthenticated:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_authenticated
+                      detail: Authentication credentials were not provided.
+                      attr: null
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '200':
+          description: All notifications marked as read
   /api/sms/send-auth-otp/:
     post:
       operationId: sendOTP
@@ -3688,7 +3795,7 @@ paths:
           description: ''
   /api/social-accounts/:
     get:
-      operationId: getSocialAccounts
+      operationId: ContactUs_2
       tags:
       - AppInfo
       responses:
@@ -3696,7 +3803,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSocialAccountsErrorResponse400'
+                $ref: '#/components/schemas/ContactUsErrorResponse400'
           description: ''
         '405':
           content:
@@ -3768,11 +3875,11 @@ paths:
                       detail: A server error occurred.
                       attr: null
           description: ''
-        '200':
+        '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SocialAccounts'
+                $ref: '#/components/schemas/ContactUs'
           description: ''
   /api/info/:
     get:
@@ -5415,23 +5522,140 @@ components:
         * `ios` - ios
         * `android` - android
         * `web` - web
-    FacebookAccessTokenRequestRequest:
+    FacebookAuthenticationAccessTokenErrorComponent:
       type: object
       properties:
-        accessToken:
+        attr:
+          enum:
+          - access_token
           type: string
-          minLength: 1
-          description: Facebook access token obtained from the Facebook SDK / Graph
-            API login flow
+          description: '* `access_token` - access_token'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
       required:
-      - accessToken
+      - attr
+      - code
+      - detail
+    FacebookAuthenticationCodeErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - code
+          type: string
+          description: '* `code` - code'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    FacebookAuthenticationError:
+      oneOf:
+      - $ref: '#/components/schemas/FacebookAuthenticationNonFieldErrorsErrorComponent'
+      - $ref: '#/components/schemas/FacebookAuthenticationAccessTokenErrorComponent'
+      - $ref: '#/components/schemas/FacebookAuthenticationCodeErrorComponent'
+      - $ref: '#/components/schemas/FacebookAuthenticationIdTokenErrorComponent'
+      discriminator:
+        propertyName: attr
+        mapping:
+          non_field_errors: '#/components/schemas/FacebookAuthenticationNonFieldErrorsErrorComponent'
+          access_token: '#/components/schemas/FacebookAuthenticationAccessTokenErrorComponent'
+          code: '#/components/schemas/FacebookAuthenticationCodeErrorComponent'
+          id_token: '#/components/schemas/FacebookAuthenticationIdTokenErrorComponent'
     FacebookAuthenticationErrorResponse400:
       oneOf:
+      - $ref: '#/components/schemas/FacebookAuthenticationValidationError'
       - $ref: '#/components/schemas/ParseErrorResponse'
       discriminator:
         propertyName: type
         mapping:
+          validation_error: '#/components/schemas/FacebookAuthenticationValidationError'
           client_error: '#/components/schemas/ParseErrorResponse'
+    FacebookAuthenticationIdTokenErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - id_token
+          type: string
+          description: '* `id_token` - id_token'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    FacebookAuthenticationNonFieldErrorsErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - non_field_errors
+          type: string
+          description: '* `non_field_errors` - non_field_errors'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    FacebookAuthenticationValidationError:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ValidationErrorEnum'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacebookAuthenticationError'
+      required:
+      - errors
+      - type
     GenderEnum:
       enum:
       - male
@@ -5463,29 +5687,140 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    GetSocialAccountsErrorResponse400:
-      oneOf:
-      - $ref: '#/components/schemas/ParseErrorResponse'
-      discriminator:
-        propertyName: type
-        mapping:
-          client_error: '#/components/schemas/ParseErrorResponse'
-    GoogleAuthenticationErrorResponse400:
-      oneOf:
-      - $ref: '#/components/schemas/ParseErrorResponse'
-      discriminator:
-        propertyName: type
-        mapping:
-          client_error: '#/components/schemas/ParseErrorResponse'
-    GoogleIdTokenRequestRequest:
+    GoogleAuthenticationAccessTokenErrorComponent:
       type: object
       properties:
-        accessToken:
+        attr:
+          enum:
+          - access_token
           type: string
-          minLength: 1
-          description: Google ID token (JWT) from Google Sign-In
+          description: '* `access_token` - access_token'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
       required:
-      - accessToken
+      - attr
+      - code
+      - detail
+    GoogleAuthenticationCodeErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - code
+          type: string
+          description: '* `code` - code'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    GoogleAuthenticationError:
+      oneOf:
+      - $ref: '#/components/schemas/GoogleAuthenticationNonFieldErrorsErrorComponent'
+      - $ref: '#/components/schemas/GoogleAuthenticationAccessTokenErrorComponent'
+      - $ref: '#/components/schemas/GoogleAuthenticationCodeErrorComponent'
+      - $ref: '#/components/schemas/GoogleAuthenticationIdTokenErrorComponent'
+      discriminator:
+        propertyName: attr
+        mapping:
+          non_field_errors: '#/components/schemas/GoogleAuthenticationNonFieldErrorsErrorComponent'
+          access_token: '#/components/schemas/GoogleAuthenticationAccessTokenErrorComponent'
+          code: '#/components/schemas/GoogleAuthenticationCodeErrorComponent'
+          id_token: '#/components/schemas/GoogleAuthenticationIdTokenErrorComponent'
+    GoogleAuthenticationErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/GoogleAuthenticationValidationError'
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          validation_error: '#/components/schemas/GoogleAuthenticationValidationError'
+          client_error: '#/components/schemas/ParseErrorResponse'
+    GoogleAuthenticationIdTokenErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - id_token
+          type: string
+          description: '* `id_token` - id_token'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          - null_characters_not_allowed
+          - surrogate_characters_not_allowed
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+            * `null_characters_not_allowed` - null_characters_not_allowed
+            * `surrogate_characters_not_allowed` - surrogate_characters_not_allowed
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    GoogleAuthenticationNonFieldErrorsErrorComponent:
+      type: object
+      properties:
+        attr:
+          enum:
+          - non_field_errors
+          type: string
+          description: '* `non_field_errors` - non_field_errors'
+        code:
+          enum:
+          - invalid
+          - 'null'
+          type: string
+          description: |-
+            * `invalid` - invalid
+            * `null` - null
+        detail:
+          type: string
+      required:
+      - attr
+      - code
+      - detail
+    GoogleAuthenticationValidationError:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ValidationErrorEnum'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoogleAuthenticationError'
+      required:
+      - errors
+      - type
     LanguageEnum:
       enum:
       - en
@@ -5685,6 +6020,13 @@ components:
       required:
       - errors
       - type
+    MarkNotificationAsReadErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
     NotificationDetailed:
       type: object
       properties:
@@ -6059,34 +6401,16 @@ components:
       - server_error
       type: string
       description: '* `server_error` - Server Error'
-    SocialAccounts:
+    SocialLogin:
       type: object
       properties:
-        email:
+        accessToken:
           type: string
-          format: email
-          maxLength: 254
-        phoneNumber:
-          type:
-          - string
-          - 'null'
-          description: 'Phones start with: ''+20''/''+966'''
-          maxLength: 15
-        instagram:
+        code:
           type: string
-          format: uri
-          title: Instagram Account
-          maxLength: 200
-        tiktok:
+        idToken:
           type: string
-          format: uri
-          title: Tiktok Account
-          maxLength: 200
-        website:
-          type: string
-          format: uri
-          maxLength: 200
-    SocialLogin:
+    SocialLoginRequest:
       type: object
       properties:
         accessToken:
