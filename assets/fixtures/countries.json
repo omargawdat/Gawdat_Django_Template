@@ -9,8 +9,8 @@
       "phone_code": "+20",
       "name_ar": "مصر",
       "name_en": "Egypt",
-      "referral_points": "100.00",
-      "referral_points_currency": "EGP"
+      "app_install_money_inviter": "10.00", "app_install_money_invitee": "9.00", "order_money_inviter": "8.00", "order_money_invitee": "7.00"
+
     }
   },
   {
@@ -23,8 +23,8 @@
       "phone_code": "+966",
       "name_ar": "المملكة العربية السعودية",
       "name_en": "Saudi Arabia",
-      "referral_points": "50.00",
-      "referral_points_currency": "SAR"
+      "app_install_money_inviter": "10.00", "app_install_money_invitee": "9.00", "order_money_inviter": "8.00", "order_money_invitee": "7.00"
+
     }
   },
   {
@@ -37,8 +37,8 @@
       "phone_code": "",
       "name_ar": "دولة غير محددة",
       "name_en": "Unselected Country",
-      "referral_points": "0.00",
-      "referral_points_currency": "SAR"
+      "app_install_money_inviter": "10.00", "app_install_money_invitee": "9.00", "order_money_inviter": "8.00", "order_money_invitee": "7.00"
+
     }
   }
 ]
