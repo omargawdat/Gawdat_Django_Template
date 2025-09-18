@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.channel.api.notification import views
 from apps.channel.api.notification.views import CustomFCMDeviceViewSet
+from apps.channel.api.notification.views import NotificationMarkAsReadView
 
 router = DefaultRouter()
 router.register("devices", CustomFCMDeviceViewSet, basename="fcmdevice")
@@ -24,5 +25,10 @@ urlpatterns = [
         "notifications/bulk-delete/",
         views.NotificationBulkDeleteView.as_view(),
         name="notifications-bulk-delete",
+    ),
+    path(
+        "notifications/mark-as-read/",
+        NotificationMarkAsReadView.as_view(),
+        name="notifications-mark-as-read",
     ),
 ]

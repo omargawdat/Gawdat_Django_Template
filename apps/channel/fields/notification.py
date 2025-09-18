@@ -10,6 +10,7 @@ class NotificationFields:
     USERS = "users"
     SEND_SMS = "send_sms"
     SEND_FCM = "send_fcm"
+    IS_READ = "is_read"
 
     @classmethod
     def get_field_name(cls, model, field):

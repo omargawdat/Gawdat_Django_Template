@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework import status
@@ -73,3 +74,24 @@ class NotificationBulkDeleteView(APIView):
         for notification in notifications:
             notification.users.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NotificationMarkAsReadView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["FCM/Notification"],
+        operation_id="markNotificationAsRead",
+        request=None,
+        responses={
+            200: OpenApiResponse(description="All notifications marked as read")
+        },
+    )
+    def post(self, request):
+        Notification.objects.filter(users=request.user, is_read=False).update(
+            is_read=True
+        )
+        return Response(
+            {"message": "All notifications marked as read"}, status=status.HTTP_200_OK
+        )

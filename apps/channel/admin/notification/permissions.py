@@ -58,6 +58,10 @@ class BaseNotificationPermissions:
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
+            NotificationFields.IS_READ: FieldPermissions(
+                visible=(),
+                editable=(),
+            ),
         }
 
 

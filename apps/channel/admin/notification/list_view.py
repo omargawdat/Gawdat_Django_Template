@@ -9,6 +9,7 @@ class NotificationListView:
         "title",
         "message_body",
         "display_created_time",
+        "display_is_read",
     )
     list_editable = ()
     list_filter = (

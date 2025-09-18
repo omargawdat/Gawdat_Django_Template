@@ -36,3 +36,7 @@ class NotificationDisplayMixin:
     @display(description=_("Created ago"), ordering="created_at", label=_("info"))
     def display_created_time(self, notification: Notification):
         return f"{timesince(notification.created_at, timezone.now())}"
+
+    @display(description=_("Is Read"), label={True: "success", False: "warning"})
+    def display_is_read(self, notification: Notification):
+        return notification.is_read
