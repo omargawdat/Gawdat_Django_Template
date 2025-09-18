@@ -7,6 +7,7 @@ from simple_history.models import HistoricalRecords
 
 from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
+from apps.payment.constants import ReferralType
 from apps.users.constants import GenderChoices
 
 from .user import User
@@ -54,6 +55,9 @@ class Customer(User):
         verbose_name=_("Primary Address"),
     )
     is_verified = models.BooleanField(default=False, verbose_name=_("Is Verified"))
+    inviter = models.PositiveIntegerField(
+        null=True, blank=True, db_index=True, verbose_name=_("Referral Customer ID")
+    )
 
     def __str__(self):
         return str(self.phone_number)
@@ -86,4 +90,14 @@ class Customer(User):
         is_new = self.pk is None
         super().save(*args, **kwargs)
         if is_new:
-            WalletService.create_wallet_for_user(self)
+            WalletService.create_wallet_for_customer(self)
+            if self.inviter:
+                inviter_customer = Customer.objects.filter(
+                    id=self.inviter, is_active=True
+                ).first()
+                if inviter_customer:
+                    WalletService.add_referral_points(
+                        inviter_customer=inviter_customer,
+                        invitee_customer=self,
+                        referral_type=ReferralType.APP_INSTALL,
+                    )

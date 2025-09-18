@@ -2,19 +2,20 @@ import logging
 
 from djmoney.models.fields import Money
 
+from apps.channel.constants import NotificationType
 from apps.location.models.country import Country
+from apps.payment.constants import ReferralType
 from apps.payment.constants import WalletTransactionType
 from apps.payment.domain.services.wallet_transaction import WalletTransactionService
 from apps.payment.models.wallet import Wallet
 from apps.users.models.customer import Customer
-from apps.users.models.user import User
 
 logger = logging.getLogger(__name__)
 
 
 class WalletService:
     @staticmethod
-    def create_wallet_for_user(user: User) -> Wallet:
+    def create_wallet_for_customer(user: Customer) -> Wallet:
         country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
         # country = CountrySelector.country_by_phone(user.phone_number)
         currency = country.currency
@@ -28,21 +29,54 @@ class WalletService:
 
     @staticmethod
     def add_referral_points(
-        *, referral_customer_id: int, request_customer: Customer
+        *,
+        inviter_customer: Customer,
+        invitee_customer: Customer,
+        referral_type: ReferralType,
     ) -> None:
-        referrer_user = Customer.objects.filter(
-            id=referral_customer_id, is_active=True
-        ).first()
-
-        if not referrer_user or request_customer.id == referrer_user.id:
+        if not inviter_customer or not inviter_customer:
             return
 
-        wallet = Wallet.objects.get(user=referrer_user)
-        referral_points = referrer_user.country.referral_points
-        points = Money(referral_points.amount, wallet.balance.currency)
+        if invitee_customer.id == inviter_customer.id:
+            return
 
-        WalletTransactionService.create_transaction(
-            wallet=wallet,
-            amount=points,
-            transaction_type=WalletTransactionType.REFERRAL,
-        )
+        referrer_wallet = Wallet.objects.get(user=inviter_customer)
+        invitee_wallet = Wallet.objects.get(user=invitee_customer)
+
+        country = inviter_customer.country
+
+        if referral_type == ReferralType.APP_INSTALL:
+            inviter_amount = country.app_install_money_inviter
+            invitee_amount = country.app_install_money_invitee
+            inviter_transaction_type = (
+                WalletTransactionType.REFERRAL_APP_INSTALL_INVITER
+            )
+            invitee_transaction_type = (
+                WalletTransactionType.REFERRAL_APP_INSTALL_INVITEE
+            )
+            notification_type = NotificationType.REFERRAL_APP_INSTALL
+        elif referral_type == ReferralType.FIRST_ORDER:
+            inviter_amount = country.order_money_inviter
+            invitee_amount = country.order_money_invitee
+            inviter_transaction_type = WalletTransactionType.REFERRAL_ORDER_INVITER
+            invitee_transaction_type = WalletTransactionType.REFERRAL_ORDER_INVITEE
+            notification_type = NotificationType.REFERRAL_FIRST_ORDER
+        else:
+            logger.error(f"Unknown referral type: {referral_type}")
+            return
+
+        if invitee_amount.amount > 0:
+            WalletTransactionService.create_transaction(
+                wallet=referrer_wallet,
+                amount=invitee_amount,
+                transaction_type=inviter_transaction_type,
+                notification_type=notification_type,
+            )
+
+        if inviter_amount.amount > 0:
+            WalletTransactionService.create_transaction(
+                wallet=invitee_wallet,
+                amount=inviter_amount,
+                transaction_type=invitee_transaction_type,
+                notification_type=notification_type,
+            )

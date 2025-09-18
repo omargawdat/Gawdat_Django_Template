@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 class CountryChangeView:
     filter_horizontal = ()
-    compressed_fields = True
+    compressed_fields = False
     autocomplete_fields = ()
     fieldsets = (
         (
@@ -20,7 +20,14 @@ class CountryChangeView:
             },
         ),
         (
-            _("Referral Points"),
-            {"fields": ("referral_points",)},
+            _("Referral Program"),
+            {
+                "fields": (
+                    "app_install_money_inviter",
+                    "app_install_money_invitee",
+                    "order_money_inviter",
+                    "order_money_invitee",
+                )
+            },
         ),
     )

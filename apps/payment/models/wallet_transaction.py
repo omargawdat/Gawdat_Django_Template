@@ -14,7 +14,7 @@ class WalletTransaction(models.Model):
         Wallet, related_name="transactions", on_delete=models.PROTECT
     )
     transaction_type = models.CharField(
-        max_length=20, choices=WalletTransactionType.choices
+        max_length=30, choices=WalletTransactionType.choices
     )
     amount = MoneyField(max_digits=14, decimal_places=2)
     action_by = models.ForeignKey(AdminUser, on_delete=models.PROTECT, null=True)

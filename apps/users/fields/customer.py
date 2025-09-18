@@ -18,6 +18,7 @@ class CustomerFields:
     COUNTRY = "country"
     PRIMARY_ADDRESS = "primary_address"
     IS_VERIFIED = "is_verified"
+    INVITER = "inviter"
 
     @classmethod
     def get_field_name(cls, model, field):

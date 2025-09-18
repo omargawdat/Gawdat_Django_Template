@@ -20,6 +20,7 @@ class CustomerChangeView:
                     "birth_date",
                     "primary_address",
                     "country",
+                    "in",
                 )
             },
         ),
@@ -27,6 +28,7 @@ class CustomerChangeView:
             _("Advanced Settings🔧"),
             {
                 "fields": (
+                    "inviter",
                     "date_joined",
                     "is_active",
                     "is_verified",

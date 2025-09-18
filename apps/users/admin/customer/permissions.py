@@ -66,6 +66,10 @@ class BaseCustomerPermissions:
                 visible=(context.is_staff),
                 editable=(),
             ),
+            CustomerFields.INVITER: FieldPermissions(
+                visible=(context.is_staff and context.is_created),
+                editable=(),
+            ),
         }
 
 
