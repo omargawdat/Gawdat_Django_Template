@@ -65,7 +65,7 @@ class WalletService:
             logger.error(f"Unknown referral type: {referral_type}")
             return
 
-        if invitee_amount > 0:
+        if invitee_amount.amount > 0:
             WalletTransactionService.create_transaction(
                 wallet=referrer_wallet,
                 amount=invitee_amount,
@@ -73,7 +73,7 @@ class WalletService:
                 notification_type=notification_type,
             )
 
-        if inviter_amount > 0:
+        if inviter_amount.amount > 0:
             WalletTransactionService.create_transaction(
                 wallet=invitee_wallet,
                 amount=inviter_amount,

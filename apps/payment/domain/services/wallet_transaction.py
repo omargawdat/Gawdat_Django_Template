@@ -33,7 +33,7 @@ class WalletTransactionService:
             attachment=attachment,
         )
 
-        if amount > 0 and not notification_type:
+        if amount.amount > 0 and not notification_type:
             notification_type = NotificationType.MONEY_ADDED
 
         if notification_type:
@@ -43,6 +43,6 @@ class WalletTransactionService:
                 send_fcm=True,
                 send_sms=False,
                 amount=str(amount),
-                new_balance=str(wallet.points_count),
+                new_balance=str(wallet.balance),
             )
         return transaction
