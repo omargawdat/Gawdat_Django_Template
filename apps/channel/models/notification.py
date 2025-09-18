@@ -17,6 +17,7 @@ class Notification(models.Model):
     send_sms = models.BooleanField(_("Send SMS"))
     send_fcm = models.BooleanField(_("Send FCM"))
     object_id = models.PositiveIntegerField(_("Object ID"), null=True, blank=True)
+    is_read = models.BooleanField(_("Is Read"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
 
     class Meta:
