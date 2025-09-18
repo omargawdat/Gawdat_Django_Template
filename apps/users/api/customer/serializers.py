@@ -62,7 +62,7 @@ class CustomerCreateSerializer(serializers.Serializer):
     otp = serializers.CharField()
     device = FCMDeviceCreateSerializer()
     language = serializers.ChoiceField(choices=Language.choices)
-    referral_customer_id = serializers.IntegerField(required=False)
+    referral_customer_id = serializers.IntegerField(required=False, allow_null=True)
 
 
 @extend_schema_serializer(

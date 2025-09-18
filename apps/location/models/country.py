@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
 from djmoney.money import Money
 
 from apps.location.constants import CountryChoices
@@ -26,25 +27,25 @@ class Country(models.Model):
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
     phone_code = models.CharField(max_length=4, verbose_name=_("Number Code"))
 
-    app_install_money_inviter = models.DecimalField(
+    app_install_money_inviter = MoneyField(
         max_digits=14,
         decimal_places=2,
         verbose_name=_("App Install Money - Inviter"),
         help_text=_("Money awarded to inviter when invitee installs the app."),
     )
-    app_install_money_invitee = models.DecimalField(
+    app_install_money_invitee = MoneyField(
         max_digits=14,
         decimal_places=2,
         verbose_name=_("App Install Money - Invitee"),
         help_text=_("Money awarded to invitee when they install the app."),
     )
-    order_money_inviter = models.DecimalField(
+    order_money_inviter = MoneyField(
         max_digits=14,
         decimal_places=2,
         verbose_name=_("Order Money - Inviter"),
         help_text=_("Money awarded to inviter when invitee places first order."),
     )
-    order_money_invitee = models.DecimalField(
+    order_money_invitee = MoneyField(
         max_digits=14,
         decimal_places=2,
         verbose_name=_("Order Money - Invitee"),
@@ -54,6 +55,40 @@ class Country(models.Model):
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    app_install_money_inviter_currency=models.F("currency")
+                ),
+                name="app_install_money_inviter_currency_consistency",
+                violation_error_message=_(
+                    "App install money inviter currency must match country currency."
+                ),
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    app_install_money_invitee_currency=models.F("currency")
+                ),
+                name="app_install_money_invitee_currency_consistency",
+                violation_error_message=_(
+                    "App install money invitee currency must match country currency."
+                ),
+            ),
+            models.CheckConstraint(
+                condition=models.Q(order_money_inviter_currency=models.F("currency")),
+                name="order_money_inviter_currency_consistency",
+                violation_error_message=_(
+                    "Order money inviter currency must match country currency."
+                ),
+            ),
+            models.CheckConstraint(
+                condition=models.Q(order_money_invitee_currency=models.F("currency")),
+                name="order_money_invitee_currency_consistency",
+                violation_error_message=_(
+                    "Order money invitee currency must match country currency."
+                ),
+            ),
+        ]
 
     def __str__(self):
         return f"{self.get_code_display()}"

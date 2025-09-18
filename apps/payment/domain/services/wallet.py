@@ -9,14 +9,13 @@ from apps.payment.constants import WalletTransactionType
 from apps.payment.domain.services.wallet_transaction import WalletTransactionService
 from apps.payment.models.wallet import Wallet
 from apps.users.models.customer import Customer
-from apps.users.models.user import User
 
 logger = logging.getLogger(__name__)
 
 
 class WalletService:
     @staticmethod
-    def create_wallet_for_user(user: User) -> Wallet:
+    def create_wallet_for_customer(user: Customer) -> Wallet:
         country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
         # country = CountrySelector.country_by_phone(user.phone_number)
         currency = country.currency
@@ -46,7 +45,6 @@ class WalletService:
 
         country = inviter_customer.country
 
-        # Determine the amounts and transaction types based on referral type
         if referral_type == ReferralType.APP_INSTALL:
             inviter_amount = country.app_install_money_inviter
             invitee_amount = country.app_install_money_invitee
@@ -57,32 +55,28 @@ class WalletService:
                 WalletTransactionType.REFERRAL_APP_INSTALL_INVITEE
             )
             notification_type = NotificationType.REFERRAL_APP_INSTALL
-
         elif referral_type == ReferralType.FIRST_ORDER:
             inviter_amount = country.order_money_inviter
             invitee_amount = country.order_money_invitee
             inviter_transaction_type = WalletTransactionType.REFERRAL_ORDER_INVITER
             invitee_transaction_type = WalletTransactionType.REFERRAL_ORDER_INVITEE
             notification_type = NotificationType.REFERRAL_FIRST_ORDER
-
         else:
             logger.error(f"Unknown referral type: {referral_type}")
             return
 
-        # Award points to inviter
-        if inviter_amount > 0:
+        if invitee_amount > 0:
             WalletTransactionService.create_transaction(
                 wallet=referrer_wallet,
-                amount=inviter_amount,
+                amount=invitee_amount,
                 transaction_type=inviter_transaction_type,
                 notification_type=notification_type,
             )
 
-        # Award points to invitee
-        if invitee_amount > 0:
+        if inviter_amount > 0:
             WalletTransactionService.create_transaction(
                 wallet=invitee_wallet,
-                amount=invitee_amount,
+                amount=inviter_amount,
                 transaction_type=invitee_transaction_type,
                 notification_type=notification_type,
             )

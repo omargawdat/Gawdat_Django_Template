@@ -13,12 +13,13 @@ class CustomerService:
 
     @staticmethod
     def update_or_create_customer(
-        *, phone_number: str, language: str
+        *, phone_number: str, language: str, inviter: int | None = None
     ) -> tuple[Customer, bool]:
         defaults = {
             "username": str(phone_number),
             "language": language,
             "country": CountrySelector.country_by_phone(phone_number),
+            "inviter": inviter,
         }
 
         customer, created = Customer.objects.update_or_create(
