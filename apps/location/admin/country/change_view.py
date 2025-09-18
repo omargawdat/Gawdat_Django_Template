@@ -19,4 +19,15 @@ class CountryChangeView:
                 )
             },
         ),
+        (
+            _("Referral Program"),
+            {
+                "fields": (
+                    "app_install_money_inviter",
+                    "app_install_money_invitee",
+                    "order_money_inviter",
+                    "order_money_invitee",
+                )
+            },
+        ),
     )
