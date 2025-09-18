@@ -19,8 +19,4 @@ class CountryChangeView:
                 )
             },
         ),
-        (
-            _("Referral Points"),
-            {"fields": ("referral_points",)},
-        ),
     )
