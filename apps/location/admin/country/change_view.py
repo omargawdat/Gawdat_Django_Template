@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 class CountryChangeView:
     filter_horizontal = ()
-    compressed_fields = True
+    compressed_fields = False
     autocomplete_fields = ()
     fieldsets = (
         (
