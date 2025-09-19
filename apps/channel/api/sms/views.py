@@ -18,14 +18,15 @@ class OTPSendView(APIView):
         request={
             "application/json": OTPSendSerializer,
         },
+        responses={200: {"application/json": {"message": str}}},
     )
     def post(self, request, *args, **kwargs):
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        OTPUtils.send_otp(
+        message = OTPUtils.send_otp(
             phone_number=serializer.validated_data["phone_number"],
             otp_type=serializer.validated_data["otp_type"],
         )
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({"message": message}, status=status.HTTP_200_OK)

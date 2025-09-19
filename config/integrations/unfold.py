@@ -277,7 +277,7 @@ CONSTANCE_ADDITIONAL_FIELDS = {
     **UNFOLD_CONSTANCE_ADDITIONAL_FIELDS,
     "wysiwyg_field": [
         "django.forms.CharField",
-        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget"},
+        {"widget": "unfold.widgets.UnfoldAdminTextInputWidget", "max_length": 50},
     ],
     "url_field": [
         "django.forms.URLField",
@@ -294,6 +294,13 @@ CONSTANCE_ADDITIONAL_FIELDS = {
         {
             "widget": "unfold.widgets.UnfoldAdminTextInputWidget",
             "min_value": 0,
+        },
+    ],
+    "textarea_field": [
+        "django.forms.CharField",
+        {
+            "widget": "django.forms.Textarea",
+            "max_length": 100,
         },
     ],
     "float_field": [
@@ -317,6 +324,16 @@ CONSTANCE_CONFIG = {
         "float_field",
     ),
     "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
+    "OTP_TEST_CODE": (
+        "00000",
+        "Default OTP code",
+        "wysiwyg_field",
+    ),
+    "TESTING_PHONE_NUMBERS": (
+        "+966511111111\n+966511111112",
+        "Testing phone numbers",
+        "textarea_field",
+    ),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -328,6 +345,10 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "SIDEBAR_ICON",
     ),
     "System Fees": ("FEES_PERCENTAGE",),
+    "OTP Settings": (
+        "OTP_TEST_CODE",
+        "TESTING_PHONE_NUMBERS",
+    ),
 }
 
 
