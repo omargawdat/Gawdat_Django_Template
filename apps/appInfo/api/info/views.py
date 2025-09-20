@@ -82,7 +82,7 @@ class ContactUsCreateView(CreateAPIView):
 
     @extend_schema(
         tags=["AppInfo"],
-        operation_id="ContactUs",
+        operation_id="CreateContactUs",
         request={
             "application/json": ContactUsSerializer,
         },

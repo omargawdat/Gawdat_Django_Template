@@ -1,4 +1,7 @@
+from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import inline_serializer
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,11 +16,30 @@ class OTPSendView(APIView):
     serializer_class = OTPSendSerializer
 
     @extend_schema(
-        tags=["User/Common"],
+        tags=["Authentication"],
         operation_id="sendOTP",
-        request={
-            "application/json": OTPSendSerializer,
+        request={"application/json": OTPSendSerializer},
+        responses={
+            200: inline_serializer(
+                name="OTPSendResponse",
+                fields={
+                    "message": serializers.CharField(),
+                },
+            )
         },
+        examples=[
+            OpenApiExample(
+                name="Send OTP (Customer Auth)",
+                description="Request an OTP for customer authentication.",
+                value={
+                    "phone_number": "+966111111111",
+                    "otp_type": "customer_auth",
+                    "otp_auto_complete_token": "abc123xyz",
+                },
+                request_only=True,
+            )
+        ],
+        description="Send an OTP to the provided phone number (or return a test message in non-SMS environments).",
     )
     def post(self, request, *args, **kwargs):
         serializer = OTPSendSerializer(data=request.data)
