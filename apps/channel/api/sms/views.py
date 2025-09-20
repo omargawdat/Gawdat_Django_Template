@@ -50,4 +50,6 @@ class OTPSendView(APIView):
             otp_type=serializer.validated_data["otp_type"],
         )
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(
+            {"message": "OTP sent successfully."}, status=status.HTTP_200_OK
+        )
