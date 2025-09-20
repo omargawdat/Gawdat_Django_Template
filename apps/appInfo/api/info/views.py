@@ -1,4 +1,3 @@
-from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -22,21 +21,11 @@ class SocialAccountsAPIView(APIView):
 
     @extend_schema(
         tags=["AppInfo"],
-        operation_id="ContactUs",
-        request={
-            "application/json": ContactUsSerializer,
+        operation_id="GetSocialMedia",
+        responses={
+            200: SocialAccountsSerializer,
         },
-        examples=[
-            OpenApiExample(
-                name="Contact Us Example",
-                value={
-                    "contactType": "GENERAL",
-                    "description": "I love using your app!",
-                },
-                request_only=True,
-            )
-        ],
-        responses={201: ContactUsSerializer},
+        description="Retrieve social media and contact information.",
     )
     def get(self, request, *args, **kwargs):
         social_media = SocialAccount.get_solo()
