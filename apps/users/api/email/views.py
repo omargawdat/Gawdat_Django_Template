@@ -14,6 +14,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 
+from apps.appInfo.models.social import SocialAccount
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.email.serializers import CheckEmailSerializer
 from apps.users.api.email.serializers import LoginSerializer
@@ -26,6 +27,7 @@ from apps.users.domain.services.token import TokenService
 from apps.users.domain.utilities.otp import OTPUtility
 from apps.users.domain.validators.customer import CustomerValidator
 from apps.users.models.customer import Customer
+from config.helpers.env import env
 from config.settings.base import OTP_EMAIL_SECONDS
 
 
@@ -96,7 +98,6 @@ class RegisterView(APIView):
                 name="Minimal registration",
                 value={
                     "email": "user@example.com",
-                    "phone_number": "+966511111133",
                     "password": "Str0ngP@ssw0rd!",  # pragma: allowlist secret
                 },
                 request_only=True,
@@ -110,7 +111,6 @@ class RegisterView(APIView):
 
         email = serializer.validated_data["email"]
         username = email.split("@")[0]
-        phone_number = serializer.validated_data["phone_number"]
         password = serializer.validated_data["password"]
 
         if CustomerSelector.is_email_exists(email=email):
@@ -123,7 +123,6 @@ class RegisterView(APIView):
         customer = CustomerService.create_customer(
             email=email,
             username=username,
-            phone_number=phone_number,
             password=password,
         )
 
@@ -140,15 +139,16 @@ class RegisterView(APIView):
 
         email_send = EmailService()
         email_send.send_email(
-            subject="Verify your account - 1K Coffee",
+            subject="Verify your account - Dars App",
             message=f"Your OTP is {otp}",
             recipient_list=[email],
             template_name="emails/verify_email.html",
             context={
-                "user": email,
+                "user": username,
                 "otp_code": otp,
                 "expires_at": expires_at,
-                "plain_text": f"Your OTP is {otp}\nThis code expires at {expires_at}.",
+                "app_name": env.domain_name,
+                "social_links": SocialAccount.get_solo(),
             },
         )
 
@@ -156,6 +156,7 @@ class RegisterView(APIView):
         customer_detail = CustomerDetailedSerializer(
             customer, context={"request": request}
         )
+
         return Response(
             {
                 "is_verified": customer.is_verified,
@@ -277,7 +278,7 @@ class LoginView(APIView):
             )
 
             EmailService().send_email(
-                subject="Verify your account - 1K Coffee",
+                subject="Verify your account - E-Learning Platform",
                 message=f"Your OTP is {otp}",
                 recipient_list=[customer.email],
                 template_name="emails/verify_email.html",
