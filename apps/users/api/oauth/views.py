@@ -14,7 +14,7 @@ class GoogleIDTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer/Authentication/OAuth"],
+        tags=["User/Authentication/OAuth"],
         operation_id="googleAuthentication",
         description="Login using a Google ID token. Returns JWT access/refresh tokens and the customer profile.",
     )
@@ -43,7 +43,7 @@ class FacebookAccessTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Customer/Authentication/OAuth"],
+        tags=["User/Authentication/OAuth"],
         operation_id="facebookAuthentication",
         description="Login with Facebook using an access token. Returns JWT access/refresh tokens and the customer profile.",
     )

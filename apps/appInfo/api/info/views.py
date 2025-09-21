@@ -70,7 +70,7 @@ class ContactUsCreateView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["Communications/ContactUs"],
         operation_id="CreateContactUs",
         request={
             "application/json": ContactUsSerializer,
