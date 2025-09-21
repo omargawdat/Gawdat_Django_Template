@@ -20,7 +20,7 @@ class SocialAccountsAPIView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["AppInfo/SocialMedia"],
         operation_id="GetSocialMedia",
         responses={
             200: SocialAccountsSerializer,
@@ -38,7 +38,7 @@ class AppInfoAPIView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["AppInfo/Info"],
         operation_id="getAppInfo",
         responses={200: AppInfoSerializer},
     )
@@ -53,7 +53,7 @@ class FAQListView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["AppInfo/FAQ"],
         operation_id="listFaqs",
         responses={200: FAQSerializer(many=True)},
     )
