@@ -24,7 +24,7 @@ class AddressListView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Address"],
+        tags=["Account/Address"],
         operation_id="ListAddresses",
         responses={200: AddressDetailedSerializer(many=True)},
     )
@@ -39,7 +39,7 @@ class AddressCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Address"],
+        tags=["Account/Address"],
         operation_id="CreateAddress",
         request={"multipart/form-data": AddressCreateSerializer},
         examples=[
@@ -81,7 +81,7 @@ class AddressUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Address"],
+        tags=["Account/Address"],
         operation_id="UpdateAddress",
         parameters=[
             OpenApiParameter(
@@ -135,7 +135,7 @@ class AddressDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Address"],
+        tags=["Account/Address"],
         operation_id="DeleteAddress",
         parameters=[
             OpenApiParameter(

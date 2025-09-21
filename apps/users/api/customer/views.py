@@ -137,7 +137,7 @@ class CustomerUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Account"],
+        tags=["Account/Profile"],
         operation_id="UpdateCustomer",
         description="Update the authenticated customer's profile information.",
         parameters=[
@@ -210,7 +210,7 @@ class CustomerDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Account"],
+        tags=["Account/Profile"],
         operation_id="GetCustomerDetails",
         responses={
             200: CustomerDetailedSerializer,
@@ -227,7 +227,7 @@ class CustomerDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Account"],
+        tags=["Account/Profile"],
         operation_id="DeleteCustomer",
         parameters=[
             OpenApiParameter(
