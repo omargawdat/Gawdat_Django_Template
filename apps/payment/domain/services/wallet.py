@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class WalletService:
     @staticmethod
     def create_wallet_for_customer(user: Customer) -> Wallet:
-        country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
+        country = Country.objects.get(pk="UN")  # TODO remove it
         # country = CountrySelector.country_by_phone(user.phone_number)
         currency = country.currency
 
