@@ -45,14 +45,14 @@ class CheckEmailView(APIView):
             OpenApiExample(
                 name="Registered user",
                 description="An email that exists in the system",
-                value={"email": "user@example.com"},
+                value={"email": "user@gmail.com"},
                 request_only=True,
                 media_type="application/json",
             ),
             OpenApiExample(
                 name="Unregistered user",
                 description="An email that does not exist",
-                value={"email": "nobody@example.com"},
+                value={"email": "nobody@gmail.com"},
                 request_only=True,
                 media_type="application/json",
             ),
