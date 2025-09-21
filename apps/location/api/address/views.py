@@ -44,8 +44,7 @@ class AddressCreateView(APIView):
         request={"multipart/form-data": AddressCreateSerializer},
         examples=[
             OpenApiExample(
-                "Create Address Example",
-                summary="Create Address Example",
+                name="Create Address Example",
                 description="An example of creating a new address.",
                 value={
                     "point": {"type": "Point", "coordinates": [45.0792, 23.8859]},
@@ -55,6 +54,7 @@ class AddressCreateView(APIView):
                     "mapImage": "map_image.png",
                 },
                 request_only=True,
+                media_type="multipart/form-data",
             )
         ],
         responses={201: AddressDetailedSerializer},

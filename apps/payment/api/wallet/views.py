@@ -24,7 +24,7 @@ class WalletDetailAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Wallet"],
+        tags=["User/Wallet"],
         operation_id="listWalletDetails",
         responses={
             200: OpenApiResponse(
@@ -80,7 +80,7 @@ class WalletUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Wallet"],
+        tags=["User/Wallet"],
         operation_id="updateWallet",
         request={
             "application/json": WalletUpdateSerializer,
