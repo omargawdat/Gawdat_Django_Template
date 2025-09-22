@@ -10,6 +10,8 @@ from unfold.admin import ModelAdmin as UnfoldModelAdmin
 from unfold.admin import StackedInline
 from unfold.admin import TabularInline
 
+from config.helpers.env import env
+
 
 @dataclass
 class FieldPermissions:
@@ -222,3 +224,7 @@ class AdminContextLogic:
     @staticmethod
     def is_object_created(obj) -> bool:
         return obj is not None
+
+    @staticmethod
+    def is_non_production_env() -> bool:
+        return env.environment in ["development", "local"]
