@@ -45,11 +45,9 @@ class OTPSendView(APIView):
         serializer = OTPSendSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        OTPUtils.send_otp(
+        message = OTPUtils.send_otp(
             phone_number=serializer.validated_data["phone_number"],
             otp_type=serializer.validated_data["otp_type"],
         )
 
-        return Response(
-            {"message": "OTP sent successfully."}, status=status.HTTP_200_OK
-        )
+        return Response({"message": message}, status=status.HTTP_200_OK)
