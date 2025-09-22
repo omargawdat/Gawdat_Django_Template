@@ -1,65 +1,145 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>1K Coffee – Verify Your Account</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>Dars – Verify your email</title>
+  <style>
+    @media screen and (max-width:600px){
+      .w-100{width:100%!important}
+      .px-24{padding-left:24px!important;padding-right:24px!important}
+      .py-20{padding-top:20px!important;padding-bottom:20px!important}
+      .center{text-align:center!important}
+      .stack{display:block!important;width:100%!important}
+      .otp{font-size:28px!important;letter-spacing:6px!important}
+    }
+    a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important}
+  </style>
 </head>
-<body style="margin:0; padding:0; background-color:#f4f8ff; font-family:Arial, sans-serif;">
+<body style="margin:0; padding:0; background:#f1f5ff; font-family:Arial,Helvetica,sans-serif;">
 
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f8ff; padding:30px 0;">
+  <!-- Preheader -->
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; mso-hide:all;">
+    Your verification code for Dars is inside.
+  </div>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f1f5ff;">
     <tr>
-      <td align="center">
-        <!-- Main card -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px; background:#ffffff; border-radius:12px; border:1px solid #e0e7ff; overflow:hidden;">
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="w-100 card" style="max-width:640px; background:#ffffff; border:1px solid #dbeafe; border-radius:16px; overflow:hidden; box-shadow:0 6px 20px rgba(37, 99, 235, 0.1);">
 
           <!-- Header -->
           <tr>
-            <td align="center" style="background:#1d4ed8; padding:20px;">
-              <h1 style="margin:0; font-size:24px; color:#ffffff; font-weight:700;">
-                1K Coffee
-              </h1>
+            <td style="padding:0; background:linear-gradient(135deg,#3b82f6,#60a5fa); border-bottom:1px solid #dbeafe;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="px-24" style="padding:28px 40px 16px;">
+                    <table role="presentation" width="100%">
+                      <tr>
+                        <td class="stack" style="vertical-align:middle;">
+                          <table role="presentation">
+                            <tr>
+                              <!-- E-learning icon -->
+                              <td style="padding-right:12px;">
+                                <span style="font-size:28px; margin-right:8px;">🎓</span>
+
+                              </td>
+                              <td style="vertical-align:middle;">
+                                <div style="font-size:20px; font-weight:700; color:#ffffff;">
+                                  {{ app_name|default:"Dars" }}
+                                </div>
+                                <div style="font-size:12px; color:#e0f2fe;">
+                                  Learn • Grow • Achieve
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="px-24" style="padding:6px 40px 28px;">
+                    <div style="font-size:22px; line-height:1.3; font-weight:800; color:#ffffff;">
+                      Confirm your email to start learning
+                    </div>
+                    <div style="font-size:14px; line-height:1.6; color:#f0f9ff; margin-top:8px;">
+                      Hi
+                      <span style="color:#ffd700; font-weight:700;">
+                        {{ user }}
+                      </span>,
+                      we’re excited to have you at <b>{{ app_name|default:"Dars" }}</b>.
+                      Please use the code below to verify your email and begin your journey.
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
-          <!-- Greeting -->
+          <!-- OTP section -->
           <tr>
-            <td style="padding:30px 20px 10px 20px; text-align:center;">
-              <h2 style="margin:0; font-size:20px; color:#0f172a; font-weight:600;">
-                Hey {{ user|default:"there" }} 👋
-              </h2>
-              <p style="margin:12px 0 0; font-size:15px; color:#334155;">
-                Thanks for choosing <b>1K Coffee</b>. To keep your account safe, please verify with the code below.
-              </p>
-            </td>
-          </tr>
-
-          <!-- OTP Code -->
-          <tr>
-            <td align="center" style="padding:25px 20px;">
-              <div style="display:inline-block; background:#eff6ff; border:2px dashed #3b82f6; border-radius:12px;
-                          padding:18px 26px; font-size:28px; font-weight:700; letter-spacing:8px; color:#1d4ed8;">
-                {{ otp_code }}
+            <td class="px-24 py-20" style="padding:28px 40px; background:#eff6ff; text-align:center;">
+              <div style="font-size:12px; color:#2563eb; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px;">
+                Verification Code
               </div>
-              <p style="margin:16px 0 0; font-size:14px; color:#475569;">
-                  {{ plain_text|linebreaksbr }}
-              </p>
+              <div style="display:inline-block; background:#ffffff; border:2px solid #3b82f6; border-radius:14px; padding:18px 26px;">
+                <div class="otp" style="font-weight:800; font-size:32px; letter-spacing:10px; color:#1e3a8a;">
+                  {{ otp_code }}
+                </div>
+              </div>
             </td>
           </tr>
-
 
           <!-- Footer -->
           <tr>
-            <td style="padding:20px; text-align:center; background:#f8fafc; border-top:1px solid #e2e8f0;">
-              <p style="margin:0; font-size:12px; color:#64748b;">
-                If you didn’t request this, no worries — just ignore this email.
-              </p>
-              <p style="margin:4px 0 0; font-size:11px; color:#94a3b8;">
-                  © {% now "Y" %} 1K Coffee. All rights reserved.
-              </p>
+            <td style="background:#f9fafb; padding:24px 40px;">
+              <table role="presentation" width="100%">
+                <tr>
+                  <td style="vertical-align:top;">
+                    <div style="font-size:13px; color:#1e3a8a; font-weight:700;">
+                      {{ app_name|default:"Dars" }}
+                    </div>
+                    <div style="font-size:12px; color:#64748b; margin-top:6px;">
+                      Didn’t request this? You can safely ignore this email.
+                    </div>
+                  </td>
+                  <td align="right" style="vertical-align:top;">
+                    <div style="font-size:12px; color:#1e3a8a; font-weight:700; margin-bottom:6px;">
+                      Support
+                    </div>
+                    <!-- Social icons -->
+                    {% if social_links.twitter %}
+                    <a href="{{ social_links.twitter }}" style="margin-right:8px; text-decoration:none;">
+                      <img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter" width="20" height="20" />
+                    </a>
+                    {% endif %}
+                    {% if social_links.instagram %}
+                    <a href="{{ social_links.instagram }}" style="margin-right:8px; text-decoration:none;">
+                      <img src="https://cdn-icons-png.flaticon.com/24/2111/2111463.png" alt="Instagram" width="20" height="20" />
+                    </a>
+                    {% endif %}
+                    {% if social_links.tiktok %}
+                    <a href="{{ social_links.tiktok }}" style="margin-right:8px; text-decoration:none;">
+                      <img src="https://cdn-icons-png.flaticon.com/24/3046/3046121.png" alt="Tiktok" width="20" height="20" />
+                    </a>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding-top:12px;">
+                    <div style="font-size:11px; color:#94a3b8;">
+                      © {% now "Y" %} Dars. All rights reserved.
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
+
         </table>
       </td>
     </tr>

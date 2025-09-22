@@ -10,8 +10,8 @@ class CustomerDisplayMixin:
     @display(description=_("Customer"), header=True)
     def display_customer_info(self, customer: Customer):
         return [
-            customer.full_name,
-            _("Phone: %s") % customer.phone_number,
+            customer.username,
+            _("Email: %s") % customer.email,
             "CO",
             {
                 "path": customer.image.url if customer.image else None,

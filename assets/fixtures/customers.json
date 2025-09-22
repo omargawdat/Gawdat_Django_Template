@@ -3,7 +3,8 @@
     "model": "users.user",
     "pk": 1000,
     "fields": {
-      "username": "+201001690789",
+      "username": "mezo",
+      "email": "mezo@gmail.com",
       "is_active": true,
       "is_staff": false,
       "date_joined": "2025-07-09T00:00:00Z",
@@ -41,7 +42,8 @@
     "model": "users.user",
     "pk": 1001,
     "fields": {
-      "username": "+9668001280006",
+      "username": "omar1",
+      "email": "omar@gmail.com",
       "is_active": true,
       "is_staff": false,
       "date_joined": "2023-01-01T00:00:00Z",
@@ -58,7 +60,7 @@
     "fields": {
       "phone_number": "+9668001280006",
       "image": "flags/SA.png",
-      "full_name": "mezo mezo mezo",
+      "full_name": "omar omar",
       "gender": "M",
       "birth_date": "2005-03-21",
       "country": "SA"

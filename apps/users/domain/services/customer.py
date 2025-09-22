@@ -33,7 +33,11 @@ class CustomerService:
 
     @staticmethod
     def create_customer(
-        *, email: str, phone_number: str, username: str, password: str | None = None
+        *,
+        email: str,
+        phone_number: str | None = None,
+        username: str,
+        password: str | None = None,
     ) -> Customer:
         # The Default country
         country = Country.objects.get(code="SA")
