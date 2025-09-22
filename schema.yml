@@ -11,7 +11,7 @@ paths:
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
       tags:
-      - User/Common
+      - User/Token
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -113,7 +113,7 @@ paths:
       description: Log out the current user from all devices by invalidating their
         refresh tokens.
       tags:
-      - User/Common
+      - User/Token
       security:
       - jwtAuth: []
       responses:
@@ -201,7 +201,7 @@ paths:
     post:
       operationId: logoutDevice
       tags:
-      - User/Common
+      - User/Token
       requestBody:
         content:
           application/json:
@@ -296,7 +296,7 @@ paths:
       operationId: checkEmail
       description: Check if an email is registered, verified, and has a password set.
       tags:
-      - User/Customer/Authentication/Mail
+      - User/Authentication/Mail
       requestBody:
         content:
           application/json:
@@ -395,7 +395,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CheckEmail'
+                $ref: '#/components/schemas/CheckEmailResponse'
           description: ''
   /api/users/register/:
     post:
@@ -403,7 +403,7 @@ paths:
       description: Register a new user with email, phone number, and password. Returns
         auth tokens and the customer profile.
       tags:
-      - User/Customer/Authentication/Mail
+      - User/Authentication/Mail
       requestBody:
         content:
           application/json:
@@ -498,7 +498,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Register'
+                $ref: '#/components/schemas/RegisterResponse200'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse201'
           description: ''
   /api/users/verify-email/:
     post:
@@ -506,7 +512,7 @@ paths:
       description: Verify a customer's email using an OTP code. Requires a valid Bearer
         access token.
       tags:
-      - User/Customer/Authentication/Mail
+      - User/Authentication/Mail
       requestBody:
         content:
           application/json:
@@ -622,7 +628,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyCustomerEmail'
+                $ref: '#/components/schemas/VerifyCustomerEmailResponse'
           description: ''
   /api/users/login/:
     post:
@@ -630,18 +636,12 @@ paths:
       description: Authenticate a user and return JWT tokens. If the email is not
         verified, an OTP is sent.
       tags:
-      - User/Customer/Authentication/Mail
+      - User/Authentication/Mail
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-            examples:
-              ValidCredentials:
-                value:
-                  email: user@example.com
-                  password: Str0ngP@ssw0rd! # pragma: allowlist secret
-                summary: Valid credentials
         required: true
       responses:
         '400':
@@ -724,7 +724,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Login'
+                $ref: '#/components/schemas/LoginResponse'
           description: ''
   /api/customers/authenticate/:
     post:
@@ -741,7 +741,7 @@ paths:
             summary: English (US)
             description: English with US locale preference
       tags:
-      - User/Customer/Auhthentication/PhoneNumber
+      - User/Auhthentication/PhoneNumber
       requestBody:
         content:
           application/json:
@@ -854,7 +854,7 @@ paths:
     get:
       operationId: GetCustomerDetails
       tags:
-      - User/Customer/Auhthentication/PhoneNumber
+      - Account/Profile
       security:
       - jwtAuth: []
       responses:
@@ -977,7 +977,7 @@ paths:
             summary: English (US)
             description: English with US locale preference
       tags:
-      - User/Customer/Auhthentication/PhoneNumber
+      - Account/Profile
       requestBody:
         content:
           multipart/form-data:
@@ -1125,7 +1125,7 @@ paths:
             summary: English (US)
             description: English with US locale preference
       tags:
-      - User/Customer/Auhthentication/PhoneNumber
+      - Account/Profile
       security:
       - jwtAuth: []
       responses:
@@ -1234,7 +1234,7 @@ paths:
       description: Login with Facebook using an access token. Returns JWT access/refresh
         tokens and the customer profile.
       tags:
-      - User/Customer/Authentication/OAuth
+      - User/Authentication/OAuth
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -1335,7 +1335,7 @@ paths:
       description: Login using a Google ID token. Returns JWT access/refresh tokens
         and the customer profile.
       tags:
-      - User/Customer/Authentication/OAuth
+      - User/Authentication/OAuth
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -1635,7 +1635,7 @@ paths:
     get:
       operationId: ListAddresses
       tags:
-      - Location/Address
+      - Account/Address
       security:
       - jwtAuth: []
       responses:
@@ -1748,12 +1748,26 @@ paths:
     post:
       operationId: CreateAddress
       tags:
-      - Location/Address
+      - Account/Address
       requestBody:
         content:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AddressCreateRequest'
+            examples:
+              CreateAddressExample:
+                value:
+                  point:
+                    type: Point
+                    coordinates:
+                    - 45.0792
+                    - 23.8859
+                  description: 123 Main St, Springfield, USA
+                  mapDescription: Near the big park
+                  locationType: HOME
+                  mapImage: map_image.png
+                summary: Create Address Example
+                description: An example of creating a new address.
         required: true
       security:
       - jwtAuth: []
@@ -1872,7 +1886,7 @@ paths:
         description: ID of the address to update
         required: true
       tags:
-      - Location/Address
+      - Account/Address
       requestBody:
         content:
           multipart/form-data:
@@ -2009,7 +2023,7 @@ paths:
         description: ID of the address to delete
         required: true
       tags:
-      - Location/Address
+      - Account/Address
       security:
       - jwtAuth: []
       responses:
@@ -2118,7 +2132,7 @@ paths:
     get:
       operationId: listWalletDetails
       tags:
-      - Wallet
+      - Account/Wallet
       security:
       - jwtAuth: []
       responses:
@@ -2229,7 +2243,7 @@ paths:
     patch:
       operationId: updateWallet
       tags:
-      - Wallet
+      - Account/Wallet
       requestBody:
         content:
           application/json:
@@ -2347,136 +2361,10 @@ paths:
                 $ref: '#/components/schemas/WalletDetailed'
           description: ''
   /api/devices/:
-    get:
-      operationId: devices_list
-      tags:
-      - FCM/Devices
-      security:
-      - jwtAuth: []
-      responses:
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DevicesListErrorResponse400'
-          description: ''
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse401'
-              examples:
-                AuthenticationFailed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: authentication_failed
-                      detail: Incorrect authentication credentials.
-                      attr: null
-                NotAuthenticated:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_authenticated
-                      detail: Authentication credentials were not provided.
-                      attr: null
-          description: ''
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse403'
-              examples:
-                PermissionDenied:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: permission_denied
-                      detail: You do not have permission to perform this action.
-                      attr: null
-          description: ''
-        '405':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse405'
-              examples:
-                MethodNotAllowed:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: method_not_allowed
-                      detail: Method "get" not allowed.
-                      attr: null
-          description: ''
-        '406':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse406'
-              examples:
-                NotAcceptable:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_acceptable
-                      detail: Could not satisfy the request Accept header.
-                      attr: null
-          description: ''
-        '415':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse415'
-              examples:
-                UnsupportedMediaType:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: unsupported_media_type
-                      detail: Unsupported media type "application/json" in request.
-                      attr: null
-          description: ''
-        '429':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse429'
-              examples:
-                Throttled:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: throttled
-                      detail: Request was throttled.
-                      attr: null
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse500'
-              examples:
-                APIException:
-                  value:
-                    type: server_error
-                    errors:
-                    - code: error
-                      detail: A server error occurred.
-                      attr: null
-          description: ''
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FCMDevice'
-          description: ''
     post:
       operationId: devices_create
       tags:
-      - FCM/Devices
+      - Communications/Devices
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -2609,18 +2497,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
-  /api/devices/{registration_id}/:
     get:
-      operationId: devices_retrieve
-      parameters:
-      - in: path
-        name: registrationId
-        schema:
-          type: string
-          title: Registration token
-        required: true
+      operationId: devices_list
       tags:
-      - FCM/Devices
+      - Communications/Devices
       security:
       - jwtAuth: []
       responses:
@@ -2628,7 +2508,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DevicesRetrieveErrorResponse400'
+                $ref: '#/components/schemas/DevicesListErrorResponse400'
           description: ''
         '401':
           content:
@@ -2663,20 +2543,6 @@ paths:
                     errors:
                     - code: permission_denied
                       detail: You do not have permission to perform this action.
-                      attr: null
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse404'
-              examples:
-                NotFound:
-                  value:
-                    type: client_error
-                    errors:
-                    - code: not_found
-                      detail: Not found.
                       attr: null
           description: ''
         '405':
@@ -2753,8 +2619,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FCMDevice'
+                type: array
+                items:
+                  $ref: '#/components/schemas/FCMDevice'
           description: ''
+  /api/devices/{registration_id}/:
     patch:
       operationId: devices_partial_update
       parameters:
@@ -2765,7 +2634,7 @@ paths:
           title: Registration token
         required: true
       tags:
-      - FCM/Devices
+      - Communications/Devices
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -2911,6 +2780,151 @@ paths:
               schema:
                 $ref: '#/components/schemas/FCMDevice'
           description: ''
+    get:
+      operationId: devices_retrieve
+      parameters:
+      - in: path
+        name: registrationId
+        schema:
+          type: string
+          title: Registration token
+        required: true
+      tags:
+      - Communications/Devices
+      security:
+      - jwtAuth: []
+      responses:
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevicesRetrieveErrorResponse400'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse401'
+              examples:
+                AuthenticationFailed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: authentication_failed
+                      detail: Incorrect authentication credentials.
+                      attr: null
+                NotAuthenticated:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_authenticated
+                      detail: Authentication credentials were not provided.
+                      attr: null
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse403'
+              examples:
+                PermissionDenied:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: permission_denied
+                      detail: You do not have permission to perform this action.
+                      attr: null
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse404'
+              examples:
+                NotFound:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_found
+                      detail: Not found.
+                      attr: null
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse405'
+              examples:
+                MethodNotAllowed:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: method_not_allowed
+                      detail: Method "get" not allowed.
+                      attr: null
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse406'
+              examples:
+                NotAcceptable:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: not_acceptable
+                      detail: Could not satisfy the request Accept header.
+                      attr: null
+          description: ''
+        '415':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse415'
+              examples:
+                UnsupportedMediaType:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: unsupported_media_type
+                      detail: Unsupported media type "application/json" in request.
+                      attr: null
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse429'
+              examples:
+                Throttled:
+                  value:
+                    type: client_error
+                    errors:
+                    - code: throttled
+                      detail: Request was throttled.
+                      attr: null
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse500'
+              examples:
+                APIException:
+                  value:
+                    type: server_error
+                    errors:
+                    - code: error
+                      detail: A server error occurred.
+                      attr: null
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FCMDevice'
+          description: ''
     put:
       operationId: devices_update
       parameters:
@@ -2921,7 +2935,7 @@ paths:
           title: Registration token
         required: true
       tags:
-      - FCM/Devices
+      - Communications/Devices
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -3078,7 +3092,7 @@ paths:
           title: Registration token
         required: true
       tags:
-      - FCM/Devices
+      - Communications/Devices
       security:
       - jwtAuth: []
       responses:
@@ -3226,7 +3240,7 @@ paths:
         schema:
           type: integer
       tags:
-      - FCM/Notification
+      - Communications/Notification
       security:
       - jwtAuth: []
       responses:
@@ -3357,7 +3371,7 @@ paths:
           type: integer
         required: true
       tags:
-      - FCM/Notification
+      - Communications/Notification
       security:
       - jwtAuth: []
       responses:
@@ -3478,7 +3492,7 @@ paths:
     delete:
       operationId: bulkDeleteNotifications
       tags:
-      - FCM/Notification
+      - Communications/Notification
       security:
       - jwtAuth: []
       responses:
@@ -3585,7 +3599,7 @@ paths:
     post:
       operationId: markNotificationAsRead
       tags:
-      - FCM/Notification
+      - Communications/Notification
       security:
       - jwtAuth: []
       responses:
@@ -3691,24 +3705,23 @@ paths:
   /api/sms/send-auth-otp/:
     post:
       operationId: sendOTP
+      description: Send an OTP to the provided phone number (or return a test message
+        in non-SMS environments).
       tags:
-      - User/Common
+      - User/Authentication/PhoneNumber
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/OTPSendRequest'
             examples:
-              SendOTPCustomer:
+              SendOTP(CustomerAuth):
                 value:
-                  phone_number: '+201234567890'
+                  phone_number: '+966111111111'
                   otp_type: customer_auth
-                summary: Send OTP Customer
-              SendOTPProvider:
-                value:
-                  phone_number: '+201234567890'
-                  otp_type: provider_auth
-                summary: Send OTP Provider
+                  otp_auto_complete_token: abc123xyz
+                summary: Send OTP (Customer Auth)
+                description: Request an OTP for customer authentication.
         required: true
       responses:
         '400':
@@ -3791,19 +3804,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OTPSend'
+                $ref: '#/components/schemas/OTPSendResponse'
           description: ''
   /api/social-accounts/:
     get:
-      operationId: ContactUs_2
+      operationId: GetSocialMedia
+      description: Retrieve social media and contact information.
       tags:
-      - AppInfo
+      - AppInfo/SocialMedia
       responses:
         '400':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactUsErrorResponse400'
+                $ref: '#/components/schemas/GetSocialMediaErrorResponse400'
           description: ''
         '405':
           content:
@@ -3875,17 +3889,17 @@ paths:
                       detail: A server error occurred.
                       attr: null
           description: ''
-        '201':
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactUs'
+                $ref: '#/components/schemas/SocialAccounts'
           description: ''
   /api/info/:
     get:
       operationId: getAppInfo
       tags:
-      - AppInfo
+      - AppInfo/Info
       responses:
         '400':
           content:
@@ -3973,7 +3987,7 @@ paths:
     get:
       operationId: listFaqs
       tags:
-      - AppInfo
+      - AppInfo/FAQ
       responses:
         '400':
           content:
@@ -4061,9 +4075,9 @@ paths:
           description: ''
   /api/contact-us/:
     post:
-      operationId: ContactUs
+      operationId: CreateContactUs
       tags:
-      - AppInfo
+      - Communications/ContactUs
       requestBody:
         content:
           application/json:
@@ -4077,7 +4091,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactUsErrorResponse400'
+                $ref: '#/components/schemas/CreateContactUsErrorResponse400'
           description: ''
         '401':
           content:
@@ -4288,14 +4302,6 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
-    CheckEmail:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-      required:
-      - email
     CheckEmailErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -4312,12 +4318,25 @@ components:
           minLength: 1
       required:
       - email
+    CheckEmailResponse:
+      type: object
+      properties:
+        isRegistered:
+          type: boolean
+        isVerified:
+          type: boolean
+        hasPassword:
+          type: boolean
+      required:
+      - hasPassword
+      - isRegistered
+      - isVerified
     ClientErrorEnum:
       enum:
       - client_error
       type: string
       description: '* `client_error` - Client Error'
-    Code796Enum:
+    CodeC0bEnum:
       enum:
       - EG
       - SA
@@ -4326,6 +4345,7 @@ components:
       - QA
       - OM
       - BH
+      - UN
       type: string
       description: |-
         * `EG` - Egypt
@@ -4335,6 +4355,7 @@ components:
         * `QA` - Qatar
         * `OM` - Oman
         * `BH` - Bahrain
+        * `UN` - Unselected
     ContactTypeEnum:
       enum:
       - GENERAL
@@ -4360,13 +4381,6 @@ components:
       required:
       - contactType
       - description
-    ContactUsErrorResponse400:
-      oneOf:
-      - $ref: '#/components/schemas/ParseErrorResponse'
-      discriminator:
-        propertyName: type
-        mapping:
-          client_error: '#/components/schemas/ParseErrorResponse'
     ContactUsRequest:
       type: object
       properties:
@@ -4383,7 +4397,7 @@ components:
       type: object
       properties:
         code:
-          $ref: '#/components/schemas/Code796Enum'
+          $ref: '#/components/schemas/CodeC0bEnum'
         flag:
           type: string
           format: uri
@@ -4408,6 +4422,7 @@ components:
       - QA
       - OM
       - BH
+      - UN
       type: string
       description: |-
         * `EG` - Egypt
@@ -4417,7 +4432,15 @@ components:
         * `QA` - Qatar
         * `OM` - Oman
         * `BH` - Bahrain
+        * `UN` - Unselected
     CreateAddressErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
+    CreateContactUsErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
       discriminator:
@@ -4438,7 +4461,9 @@ components:
         language:
           $ref: '#/components/schemas/LanguageEnum'
         referralCustomerId:
-          type: integer
+          type:
+          - integer
+          - 'null'
       required:
       - device
       - language
@@ -5687,6 +5712,13 @@ components:
         propertyName: type
         mapping:
           client_error: '#/components/schemas/ParseErrorResponse'
+    GetSocialMediaErrorResponse400:
+      oneOf:
+      - $ref: '#/components/schemas/ParseErrorResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          client_error: '#/components/schemas/ParseErrorResponse'
     GoogleAuthenticationAccessTokenErrorComponent:
       type: object
       properties:
@@ -5872,13 +5904,6 @@ components:
       description: |-
         * `HOME` - Home
         * `WORK` - Work
-    Login:
-      type: object
-      properties:
-        email:
-          type: string
-      required:
-      - email
     LoginRequest:
       type: object
       properties:
@@ -5892,6 +5917,22 @@ components:
       required:
       - email
       - password
+    LoginResponse:
+      type: object
+      properties:
+        isVerified:
+          type: boolean
+        access:
+          type: string
+        refresh:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerDetailed'
+      required:
+      - access
+      - customer
+      - isVerified
+      - refresh
     LoginUserErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6040,6 +6081,8 @@ components:
           maxLength: 255
         messageBody:
           type: string
+        isRead:
+          type: boolean
         createdAt:
           type: string
           format: date-time
@@ -6053,20 +6096,16 @@ components:
       enum:
       - product_ordered
       - other
+      - referral_app_install
+      - referral_first_order
+      - money_added
       type: string
       description: |-
         * `product_ordered` - Product Ordered
         * `other` - Other
-    OTPSend:
-      type: object
-      properties:
-        phoneNumber:
-          type: string
-        otpType:
-          $ref: '#/components/schemas/OtpTypeEnum'
-      required:
-      - otpType
-      - phoneNumber
+        * `referral_app_install` - Referral App Install
+        * `referral_first_order` - Referral First Order
+        * `money_added` - Money Added
     OTPSendRequest:
       type: object
       properties:
@@ -6078,6 +6117,13 @@ components:
       required:
       - otpType
       - phoneNumber
+    OTPSendResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
     OtpTypeEnum:
       enum:
       - customer_auth
@@ -6353,17 +6399,6 @@ components:
       - code
       - country
       - name
-    Register:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        phoneNumber:
-          type: string
-      required:
-      - email
-      - phoneNumber
     RegisterRequest:
       type: object
       properties:
@@ -6382,6 +6417,38 @@ components:
       - email
       - password
       - phoneNumber
+    RegisterResponse200:
+      type: object
+      properties:
+        isVerified:
+          type: boolean
+        access:
+          type: string
+        refresh:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerDetailed'
+      required:
+      - access
+      - customer
+      - isVerified
+      - refresh
+    RegisterResponse201:
+      type: object
+      properties:
+        isVerified:
+          type: boolean
+        access:
+          type: string
+        refresh:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerDetailed'
+      required:
+      - access
+      - customer
+      - isVerified
+      - refresh
     RegisterUserErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6401,6 +6468,33 @@ components:
       - server_error
       type: string
       description: '* `server_error` - Server Error'
+    SocialAccounts:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phoneNumber:
+          type:
+          - string
+          - 'null'
+          description: 'Phones start with: ''+20''/''+966'''
+          maxLength: 15
+        instagram:
+          type: string
+          format: uri
+          title: Instagram Account
+          maxLength: 200
+        tiktok:
+          type: string
+          format: uri
+          title: Tiktok Account
+          maxLength: 200
+        website:
+          type: string
+          format: uri
+          maxLength: 200
     SocialLogin:
       type: object
       properties:
@@ -6449,6 +6543,10 @@ components:
       - SHARE
       - CASH_RECEIVE
       - REFERRAL
+      - REFERRAL_APP_INSTALL_INVITER
+      - REFERRAL_APP_INSTALL_INVITEE
+      - REFERRAL_ORDER_INVITER
+      - REFERRAL_ORDER_INVITEE
       type: string
       description: |-
         * `REFUND` - Refund
@@ -6460,6 +6558,10 @@ components:
         * `SHARE` - Share
         * `CASH_RECEIVE` - Cash Receive
         * `REFERRAL` - Referral
+        * `REFERRAL_APP_INSTALL_INVITER` - Referral - App Install (Inviter)
+        * `REFERRAL_APP_INSTALL_INVITEE` - Referral - App Install (Invitee)
+        * `REFERRAL_ORDER_INVITER` - Referral - First Order (Inviter)
+        * `REFERRAL_ORDER_INVITEE` - Referral - First Order (Invitee)
     UpdateAddressErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6479,14 +6581,6 @@ components:
       - validation_error
       type: string
       description: '* `validation_error` - Validation Error'
-    VerifyCustomerEmail:
-      type: object
-      properties:
-        otp:
-          type: string
-          maxLength: 5
-      required:
-      - otp
     VerifyCustomerEmailErrorResponse400:
       oneOf:
       - $ref: '#/components/schemas/ParseErrorResponse'
@@ -6503,6 +6597,22 @@ components:
           maxLength: 5
       required:
       - otp
+    VerifyCustomerEmailResponse:
+      type: object
+      properties:
+        isVerified:
+          type: boolean
+        access:
+          type: string
+        refresh:
+          type: string
+        customer:
+          $ref: '#/components/schemas/CustomerDetailed'
+      required:
+      - access
+      - customer
+      - isVerified
+      - refresh
     WalletDetailed:
       type: object
       properties:

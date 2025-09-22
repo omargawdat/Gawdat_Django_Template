@@ -15,7 +15,7 @@ class CountrySelector:
 
     @staticmethod
     def country_by_phone(phone_number: PhoneNumber) -> Country:
-        return Country.objects.get(pk="UNSELECTED")  # TODO remove it
+        return Country.objects.get(pk="UN")  # TODO remove it
 
         # parsed_number = parse(str(phone_number))
         # country_code = region_code_for_number(parsed_number)

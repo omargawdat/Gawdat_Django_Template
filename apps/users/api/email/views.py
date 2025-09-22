@@ -4,7 +4,10 @@ from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiExample
+from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import inline_serializer
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
@@ -35,11 +38,19 @@ class CheckEmailView(APIView):
     serializer_class = CheckEmailSerializer
 
     @extend_schema(
-        tags=["User/Customer/Authentication/Mail"],
+        tags=["User/Authentication/Mail"],
         operation_id="checkEmail",
         description="Check if an email is registered, verified, and has a password set.",
-        request={
-            "application/json": CheckEmailSerializer,
+        request={"application/json": CheckEmailSerializer},
+        responses={
+            200: inline_serializer(
+                name="CheckEmailResponse",
+                fields={
+                    "is_registered": serializers.BooleanField(),
+                    "is_verified": serializers.BooleanField(),
+                    "has_password": serializers.BooleanField(),
+                },
+            )
         },
         examples=[
             OpenApiExample(
@@ -87,7 +98,7 @@ class RegisterView(APIView):
     serializer_class = RegisterSerializer
 
     @extend_schema(
-        tags=["User/Customer/Authentication/Mail"],
+        tags=["User/Authentication/Mail"],
         operation_id="registerUser",
         description="Register a new user with email, phone number, and password. Returns auth tokens and the customer profile.",
         request={"application/json": RegisterSerializer},
@@ -103,6 +114,30 @@ class RegisterView(APIView):
                 media_type="application/json",
             ),
         ],
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="RegisterResponse200",
+                    fields={
+                        "is_verified": serializers.BooleanField(),
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),
+                    },
+                )
+            ),
+            201: OpenApiResponse(
+                response=inline_serializer(
+                    name="RegisterResponse201",
+                    fields={
+                        "is_verified": serializers.BooleanField(),
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),
+                    },
+                )
+            ),
+        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -163,7 +198,7 @@ class RegisterView(APIView):
                 "refresh": tokens_data.refresh,
                 "customer": customer_detail.data,
             },
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_200_OK,
         )
 
 
@@ -173,7 +208,7 @@ class VerifyCustomerEmailView(APIView):
     serializer_class = VerifyCustomerEmailSerializer
 
     @extend_schema(
-        tags=["User/Customer/Authentication/Mail"],
+        tags=["User/Authentication/Mail"],
         operation_id="verifyCustomerEmail",
         description="Verify a customer's email using an OTP code. Requires a valid Bearer access token.",
         request={"application/json": VerifyCustomerEmailSerializer},
@@ -185,6 +220,19 @@ class VerifyCustomerEmailView(APIView):
                 media_type="application/json",
             ),
         ],
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="VerifyCustomerEmailResponse",
+                    fields={
+                        "isVerified": serializers.BooleanField(),
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),
+                    },
+                )
+            )
+        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -236,21 +284,23 @@ class LoginView(APIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        tags=["User/Customer/Authentication/Mail"],
+        tags=["User/Authentication/Mail"],
         operation_id="loginUser",
         description="Authenticate a user and return JWT tokens. If the email is not verified, an OTP is sent.",
         request={"application/json": LoginSerializer},
-        examples=[
-            OpenApiExample(
-                name="Valid credentials",
-                value={
-                    "email": "user@example.com",
-                    "password": "Str0ngP@ssw0rd!",  # pragma: allowlist secret
-                },
-                request_only=True,
-                media_type="application/json",
-            ),
-        ],
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    name="LoginResponse",
+                    fields={
+                        "isVerified": serializers.BooleanField(),
+                        "access": serializers.CharField(),
+                        "refresh": serializers.CharField(),
+                        "customer": CustomerDetailedSerializer(),
+                    },
+                )
+            )
+        },
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)

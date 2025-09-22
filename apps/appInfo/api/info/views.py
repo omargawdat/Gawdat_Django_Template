@@ -1,4 +1,3 @@
-from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -21,22 +20,12 @@ class SocialAccountsAPIView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
-        operation_id="ContactUs",
-        request={
-            "application/json": ContactUsSerializer,
+        tags=["AppInfo/SocialMedia"],
+        operation_id="GetSocialMedia",
+        responses={
+            200: SocialAccountsSerializer,
         },
-        examples=[
-            OpenApiExample(
-                name="Contact Us Example",
-                value={
-                    "contactType": "GENERAL",
-                    "description": "I love using your app!",
-                },
-                request_only=True,
-            )
-        ],
-        responses={201: ContactUsSerializer},
+        description="Retrieve social media and contact information.",
     )
     def get(self, request, *args, **kwargs):
         social_media = SocialAccount.get_solo()
@@ -49,7 +38,7 @@ class AppInfoAPIView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["AppInfo/Info"],
         operation_id="getAppInfo",
         responses={200: AppInfoSerializer},
     )
@@ -64,7 +53,7 @@ class FAQListView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["AppInfo"],
+        tags=["AppInfo/FAQ"],
         operation_id="listFaqs",
         responses={200: FAQSerializer(many=True)},
     )
@@ -81,8 +70,8 @@ class ContactUsCreateView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
 
     @extend_schema(
-        tags=["AppInfo"],
-        operation_id="ContactUs",
+        tags=["Communications/ContactUs"],
+        operation_id="CreateContactUs",
         request={
             "application/json": ContactUsSerializer,
         },

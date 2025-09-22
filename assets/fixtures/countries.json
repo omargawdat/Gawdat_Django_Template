@@ -7,6 +7,7 @@
       "flag": "flags/EG.png",
       "is_active": true,
       "phone_code": "+20",
+      "code": "EG",
       "name_ar": "مصر",
       "name_en": "Egypt",
       "app_install_money_inviter": "10.00",
@@ -26,6 +27,7 @@
       "currency": "SAR",
       "flag": "flags/SA.png",
       "is_active": true,
+      "code": "SA",
       "phone_code": "+966",
       "name_ar": "المملكة العربية السعودية",
       "name_en": "Saudi Arabia",
@@ -40,23 +42,26 @@
     }
   },
   {
-    "model": "location.country",
-    "pk": "UNSELECTED",
-    "fields": {
-      "currency": "SAR",
-      "flag": "flags/SA.png",
-      "is_active": false,
-      "phone_code": "",
-      "name_ar": "دولة غير محددة",
-      "name_en": "Unselected Country",
-"app_install_money_inviter": "10.00",
-      "app_install_money_inviter_currency": "SAR",
-      "app_install_money_invitee": "9.00",
-      "app_install_money_invitee_currency": "SAR",
-      "order_money_inviter": "8.00",
-      "order_money_inviter_currency": "SAR",
-      "order_money_invitee": "7.00",
-      "order_money_invitee_currency": "SAR"
-    }
+  "model": "location.country",
+  "pk": "UN",
+  "fields": {
+    "currency": "SAR",
+    "flag": "flags/SA.png",
+    "is_active": false,
+    "phone_code": "",
+    "code": "UN",
+    "name": "Unselected Country",
+    "name_ar": "دولة غير محددة",
+    "name_en": "Unselected Country",
+    "app_install_money_inviter": "10.00",
+    "app_install_money_inviter_currency": "SAR",
+    "app_install_money_invitee": "9.00",
+    "app_install_money_invitee_currency": "SAR",
+    "order_money_inviter": "8.00",
+    "order_money_inviter_currency": "SAR",
+    "order_money_invitee": "7.00",
+    "order_money_invitee_currency": "SAR"
   }
+}
+
 ]

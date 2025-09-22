@@ -16,7 +16,7 @@ from .pagination import NotificationCursorPagination
 
 
 @extend_schema(
-    tags=["FCM/Devices"],
+    tags=["Communications/Devices"],
 )
 class CustomFCMDeviceViewSet(FCMDeviceAuthorizedViewSet):
     pass
@@ -28,7 +28,7 @@ class NotificationListView(APIView):
     pagination_class = NotificationCursorPagination
 
     @extend_schema(
-        tags=["FCM/Notification"],
+        tags=["Communications/Notification"],
         operation_id="listNotifications",
         responses={200: NotificationDetailedSerializer(many=True)},
     )
@@ -48,7 +48,7 @@ class NotificationDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["FCM/Notification"],
+        tags=["Communications/Notification"],
         operation_id="deleteNotification",
         responses={204: None},
     )
@@ -65,7 +65,7 @@ class NotificationBulkDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["FCM/Notification"],
+        tags=["Communications/Notification"],
         operation_id="bulkDeleteNotifications",
         responses={204: None},
     )
@@ -81,7 +81,7 @@ class NotificationMarkAsReadView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["FCM/Notification"],
+        tags=["Communications/Notification"],
         operation_id="markNotificationAsRead",
         request=None,
         responses={

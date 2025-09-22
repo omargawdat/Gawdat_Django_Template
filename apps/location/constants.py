@@ -10,6 +10,7 @@ class CountryChoices(models.TextChoices):
     QATAR = "QA", _("Qatar")
     OMAN = "OM", _("Oman")
     BAHRAIN = "BH", _("Bahrain")
+    UNSELECTED = "UN", _("Unselected")
 
 
 #  todo: move into payment app
