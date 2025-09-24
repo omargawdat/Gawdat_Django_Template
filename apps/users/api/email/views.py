@@ -19,6 +19,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.appInfo.models.social import SocialAccount
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
+from apps.users.api.email.serializers import ChangePasswordSerializer
 from apps.users.api.email.serializers import CheckEmailSerializer
 from apps.users.api.email.serializers import LoginSerializer
 from apps.users.api.email.serializers import RegisterSerializer
@@ -356,3 +357,36 @@ class LoginView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class ChangePasswordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+
+    @extend_schema(
+        tags=["User/Authentication/Mail"],
+        operation_id="changePassword",
+        description="Change the password of an authenticated user. Requires a valid Bearer access token.",
+        request={"application/json": ChangePasswordSerializer},
+        responses={204: OpenApiResponse(description="Password changed successfully.")},
+    )
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        old_password = serializer.validated_data["old_password"]
+        new_password = serializer.validated_data["new_password"]
+
+        customer = request.user
+
+        if not customer.check_password(old_password):
+            return Response(
+                {"detail": "Old password is incorrect."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        customer.set_password(new_password)
+        customer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
