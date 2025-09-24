@@ -374,13 +374,13 @@ class ChangePasswordView(APIView):
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        user = request.user
 
         old_password = serializer.validated_data["old_password"]
         new_password = serializer.validated_data["new_password"]
-        access_token = request.headers.get("Authorization").split(" ")[1]
 
         CustomerService.change_password(
-            token=access_token, old_password=old_password, new_password=new_password
+            customer=user, old_password=old_password, new_password=new_password
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

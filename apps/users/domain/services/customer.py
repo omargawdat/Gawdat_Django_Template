@@ -1,6 +1,4 @@
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
@@ -60,16 +58,9 @@ class CustomerService:
         return customer
 
     @staticmethod
-    def change_password(*, token: str, old_password: str, new_password: str) -> None:
-        try:
-            access_token = AccessToken(token)
-            user_id = access_token.get("user_id")
-
-            customer = Customer.objects.get(id=user_id)
-
-        except (TokenError, Customer.DoesNotExist, AttributeError, IndexError) as err:
-            raise AuthenticationFailed("Invalid or expired token") from err
-
+    def change_password(
+        *, customer: Customer, old_password: str, new_password: str
+    ) -> None:
         if not customer.check_password(old_password):
             raise AuthenticationFailed("Old password is incorrect")
 
