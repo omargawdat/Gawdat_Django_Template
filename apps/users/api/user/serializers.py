@@ -6,5 +6,5 @@ class DeviceLogoutSerializer(serializers.Serializer):
         required=True, help_text="JWT refresh token to invalidate"
     )
     registration_id = serializers.CharField(
-        required=True, help_text="FCM registration ID of the device"
+        required=False, help_text="FCM registration ID of the device"
     )

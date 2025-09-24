@@ -66,7 +66,7 @@ class LogoutDeviceView(APIView):
         UserServices.user_logout_specific_device(
             user=request.user,
             refresh_token=serializer.validated_data["refresh_token"],
-            registration_id=serializer.validated_data["registration_id"],
+            registration_id=serializer.validated_data.get("registration_id"),
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

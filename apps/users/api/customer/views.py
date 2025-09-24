@@ -98,8 +98,8 @@ class CustomerAuthView(APIView):
         language = serializer.validated_data.get("language")
         inviter = serializer.validated_data.get("referral_customer_id")
 
-        device_dict = serializer.validated_data.get("device", {})
-        device_data = DeviceData(**device_dict)
+        device_dict = serializer.validated_data.get("device")
+        device_data = DeviceData(**device_dict) if device_dict else None
 
         customer = CustomerSelector.get_customer_by_phone(phone_number=phone_number)
 
@@ -116,7 +116,8 @@ class CustomerAuthView(APIView):
             phone_number=phone_number, language=language, inviter=inviter
         )
 
-        DeviceService.register_device(user=customer, device_data=device_data)
+        if device_data:
+            DeviceService.register_device(user=customer, device_data=device_data)
         token_data = TokenService.generate_token_for_user(customer)
         customer_serializer = CustomerDetailedSerializer(
             customer, context={"request": request}

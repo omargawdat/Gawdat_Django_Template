@@ -60,7 +60,7 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
 class CustomerCreateSerializer(serializers.Serializer):
     phone_number = ValidCountryPhoneNumberField()
     otp = serializers.CharField()
-    device = FCMDeviceCreateSerializer()
+    device = FCMDeviceCreateSerializer(required=False, allow_null=True)
     language = serializers.ChoiceField(choices=Language.choices)
     referral_customer_id = serializers.IntegerField(required=False, allow_null=True)
 
