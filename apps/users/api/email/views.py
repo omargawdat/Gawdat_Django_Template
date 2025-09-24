@@ -176,12 +176,7 @@ class RegisterView(APIView):
         email_send = EmailService()
 
         otp_template = EmailTemplate.otp(
-            otp_data={
-                "user": username,
-                "otp_code": otp,
-                "expires_at": expires_at,
-                "app_name": env.domain_name,
-            }
+            username=username, otp_code=otp, expires_at=expires_at
         )
 
         email_send.send_email(
@@ -337,13 +332,7 @@ class LoginView(APIView):
                 timeout=OTP_EMAIL_SECONDS,
             )
 
-            otp_template = EmailTemplate.otp(
-                otp_data={
-                    "otp_code": otp,
-                    "expires_at": expires_at,
-                    "app_name": env.domain_name,
-                }
-            )
+            otp_template = EmailTemplate.otp(otp_code=otp, expires_at=expires_at)
 
             EmailService().send_email(
                 subject=f"Verify your account - {env.domain_name}",
