@@ -31,7 +31,6 @@ from apps.users.domain.services.token import TokenService
 from apps.users.domain.utilities.otp import OTPUtility
 from apps.users.domain.validators.customer import CustomerValidator
 from apps.users.models.customer import Customer
-from config.helpers.env import env
 from config.settings.base import OTP_EMAIL_SECONDS
 
 
@@ -180,14 +179,13 @@ class RegisterView(APIView):
         )
 
         email_send.send_email(
-            subject=f"Verify your account - {env.domain_name}",
+            subject="Verify your account - projectname",
             recipient_list=[email],
             template_name="emails/mail.html",
             context={
                 "user": username,
                 "header": " Confirm your email to start learning",
                 "message": otp_template,
-                "app_name": env.domain_name,
                 "social_links": SocialAccount.get_solo(),
             },
         )
@@ -335,13 +333,12 @@ class LoginView(APIView):
             otp_template = EmailTemplate.otp(otp_code=otp, expires_at=expires_at)
 
             EmailService().send_email(
-                subject=f"Verify your account - {env.domain_name}",
+                subject="Verify your account - projectname",
                 recipient_list=[email],
                 template_name="emails/mail.html",
                 context={
                     "header": " Confirm your email to start learning",
                     "message": otp_template,
-                    "app_name": env.domain_name,
                     "social_links": SocialAccount.get_solo(),
                 },
             )
