@@ -18,6 +18,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.appInfo.models.social import SocialAccount
+from apps.channel.email_templates import EmailTemplate
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.email.serializers import ChangePasswordSerializer
 from apps.users.api.email.serializers import CheckEmailSerializer
@@ -31,7 +32,6 @@ from apps.users.domain.services.token import TokenService
 from apps.users.domain.utilities.otp import OTPUtility
 from apps.users.domain.validators.customer import CustomerValidator
 from apps.users.models.customer import Customer
-from config.helpers.env import env
 from config.settings.base import OTP_EMAIL_SECONDS
 
 
@@ -174,16 +174,19 @@ class RegisterView(APIView):
         )
 
         email_send = EmailService()
+
+        otp_template = EmailTemplate.otp(
+            username=username, otp_code=otp, expires_at=expires_at
+        )
+
         email_send.send_email(
-            subject="Verify your account - Dars App",
-            message=f"Your OTP is {otp}",
+            subject="Verify your account - projectname",
             recipient_list=[email],
-            template_name="emails/verify_email.html",
+            template_name="emails/mail.html",
             context={
                 "user": username,
-                "otp_code": otp,
-                "expires_at": expires_at,
-                "app_name": env.domain_name,
+                "header": " Confirm your email to start learning",
+                "message": otp_template,
                 "social_links": SocialAccount.get_solo(),
             },
         )
@@ -328,15 +331,16 @@ class LoginView(APIView):
                 timeout=OTP_EMAIL_SECONDS,
             )
 
+            otp_template = EmailTemplate.otp(otp_code=otp, expires_at=expires_at)
+
             EmailService().send_email(
-                subject="Verify your account - E-Learning Platform",
-                message=f"Your OTP is {otp}",
-                recipient_list=[customer.email],
-                template_name="emails/verify_email.html",
+                subject="Verify your account - projectname",
+                recipient_list=[email],
+                template_name="emails/mail.html",
                 context={
-                    "user": customer.email,
-                    "otp_code": otp,
-                    "expires_at": expires_at,
+                    "header": " Confirm your email to start learning",
+                    "message": otp_template,
+                    "social_links": SocialAccount.get_solo(),
                 },
             )
             return Response(

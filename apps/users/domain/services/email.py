@@ -11,11 +11,11 @@ class EmailService:
     def send_email(
         self,
         subject,
-        message,
         recipient_list,
         template_name=None,
         context=None,
         attachments=None,
+        message="",
     ):
         email = EmailMultiAlternatives(
             subject=subject, body=message, from_email=self.from_email, to=recipient_list
