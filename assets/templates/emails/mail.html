@@ -64,35 +64,21 @@
                 <tr>
                   <td class="px-24" style="padding:6px 40px 28px;">
                     <div style="font-size:22px; line-height:1.3; font-weight:800; color:#ffffff;">
-                      Confirm your email to start learning
+                     {{ header }}
                     </div>
-                    <div style="font-size:14px; line-height:1.6; color:#f0f9ff; margin-top:8px;">
-                      Hi
-                      <span style="color:#ffd700; font-weight:700;">
-                        {{ user }}
-                      </span>,
-                      we’re excited to have you at <b>{{ app_name|default:"Dars" }}</b>.
-                      Please use the code below to verify your email and begin your journey.
-                    </div>
+                    <!-- Body slot -->
+                    {% if message %}
+                      {{ message|safe }}
+                    {% endif %}
+
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
 
-          <!-- OTP section -->
-          <tr>
-            <td class="px-24 py-20" style="padding:28px 40px; background:#eff6ff; text-align:center;">
-              <div style="font-size:12px; color:#2563eb; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px;">
-                Verification Code
-              </div>
-              <div style="display:inline-block; background:#ffffff; border:2px solid #3b82f6; border-radius:14px; padding:18px 26px;">
-                <div class="otp" style="font-weight:800; font-size:32px; letter-spacing:10px; color:#1e3a8a;">
-                  {{ otp_code }}
-                </div>
-              </div>
-            </td>
-          </tr>
+
+
 
           <!-- Footer -->
           <tr>
