@@ -1,3 +1,5 @@
+from rest_framework.exceptions import AuthenticationFailed
+
 from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
 from apps.users.domain.validators.user import UserValidator
@@ -54,3 +56,18 @@ class CustomerService:
         customer.is_verified = False
         customer.save()
         return customer
+
+    @staticmethod
+    def change_password(
+        *, customer: Customer, old_password: str, new_password: str
+    ) -> None:
+        if not customer.check_password(old_password):
+            raise AuthenticationFailed("Old password is incorrect")
+
+        if old_password == new_password:
+            raise AuthenticationFailed(
+                "New password must be different from the old password"
+            )
+
+        customer.set_password(new_password)
+        customer.save()
