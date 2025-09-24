@@ -378,7 +378,19 @@ class ChangePasswordView(APIView):
         old_password = serializer.validated_data["old_password"]
         new_password = serializer.validated_data["new_password"]
 
-        customer = request.user
+        access_token = request.headers.get("Authorization").split(" ")[1]
+
+        try:
+            token = AccessToken(access_token)
+            user_id = token.get("user_id")
+            customer = Customer.objects.get(id=user_id)
+        except (TokenError, Customer.DoesNotExist, AttributeError, IndexError):
+            return Response(
+                {"detail": "Invalid or expired token."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        customer = get_object_or_404(Customer, id=user_id)
 
         if not customer.check_password(old_password):
             return Response(
