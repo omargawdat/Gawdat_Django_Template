@@ -314,8 +314,8 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 }
 
 CONSTANCE_CONFIG = {
-    "SITE_TITLE": ("projectname Dashboard", "Title of dashboard", "wysiwyg_field"),
-    "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
+    "SITE_TITLE": ("dars Dashboard", "Title of dashboard", "wysiwyg_field"),
+    "SITE_HEADER": ("dars", "Sidebar Header", "wysiwyg_field"),
     "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
     "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
     # "FEES_PERCENTAGE": (

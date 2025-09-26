@@ -180,7 +180,7 @@ class RegisterView(APIView):
         )
 
         email_send.send_email(
-            subject="Verify your account - projectname",
+            subject="Verify your account - dars",
             recipient_list=[email],
             template_name="emails/mail.html",
             context={
@@ -334,7 +334,7 @@ class LoginView(APIView):
             otp_template = EmailTemplate.otp(otp_code=otp, expires_at=expires_at)
 
             EmailService().send_email(
-                subject="Verify your account - projectname",
+                subject="Verify your account - dars",
                 recipient_list=[email],
                 template_name="emails/mail.html",
                 context={

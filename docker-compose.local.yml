@@ -1,5 +1,5 @@
 volumes:
-  projectname_local_postgres_data: { }
+  dars_local_postgres_data: { }
 
 services:
   django:
@@ -8,7 +8,7 @@ services:
       dockerfile: ./Dockerfile
       args:
         is_local: 'true'
-    container_name: projectname_django
+    container_name: dars_django
     depends_on:
       - postgres
     volumes:
@@ -26,9 +26,9 @@ services:
 
   postgres:
     image: imresamu/postgis:17-3.5.0-alpine3.20
-    container_name: projectname_postgres
+    container_name: dars_postgres
     volumes:
-      - projectname_local_postgres_data:/var/lib/postgresql/data
+      - dars_local_postgres_data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
     environment:

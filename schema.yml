@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: projectname API
+  title: dars API
   version: 1.0.0
-  description: Documentation of API endpoints of projectname App
+  description: Documentation of API endpoints of dars App
 paths:
   /api/refresh-token/:
     post:

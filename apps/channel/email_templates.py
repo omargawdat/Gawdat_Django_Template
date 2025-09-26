@@ -4,7 +4,7 @@ from datetime import date
 class EmailTemplate:
     @staticmethod
     def otp(otp_code: int, expires_at: date, username: str = "there!"):
-        app_name = "projectname"
+        app_name = "dars"
         exp_str = expires_at.strftime("%b %d, %Y %H:%M")
 
         html = f"""

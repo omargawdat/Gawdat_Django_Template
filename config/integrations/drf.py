@@ -37,8 +37,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "OAS_VERSION": "3.1.0",
-    "TITLE": "projectname API",
-    "DESCRIPTION": "Documentation of API endpoints of projectname App",
+    "TITLE": "dars API",
+    "DESCRIPTION": "Documentation of API endpoints of dars App",
     "SCHEMA_PATH_PREFIX": "/api/",
     "SORT_OPERATIONS": False,
     "SORT_OPERATION_PARAMETERS": True,
