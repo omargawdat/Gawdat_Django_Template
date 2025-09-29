@@ -101,7 +101,7 @@ jobs:
           echo "This is a warning, not a failure. Proceed with caution."
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # STAGE 3: Build and Test (Only if all checks pass)
+  # STAGE 3: Build and Test (Only if all checks pass).
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   build:
     name: 🔨 Build Docker Image
@@ -114,7 +114,7 @@ jobs:
       enable_sbom: false
 
   test:
-    name: 🧪 Run Tests
+    name: 🧪 Run Testss
     needs: [build]
     uses: ./.github/workflows/_reusable-django-tests.yml
     with:
