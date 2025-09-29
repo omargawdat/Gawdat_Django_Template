@@ -101,32 +101,24 @@ jobs:
           echo "This is a warning, not a failure. Proceed with caution."
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # STAGE 3: Build and Test (Only if all checks pass).
+  # STAGE 3: Build and Test (Combined - No Artifacts)
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  build:
-    name: 🔨 Build Docker Image
+  build_and_test:
+    name: 🔨 Build & Test
     needs: [quality_gates, security_scan, policy_checks]
-    uses: ./.github/workflows/_reusable-docker-build.yml
+    uses: ./.github/workflows/_reusable-build-and-test.yml
     with:
       is_local: true
       compose_file: 'docker-compose.local.yml'
-      cache_key_prefix: 'pr-${{ github.event.pull_request.number }}'
-      enable_sbom: false
-
-  test:
-    name: 🧪 Run Testss
-    needs: [build]
-    uses: ./.github/workflows/_reusable-django-tests.yml
-    with:
-      compose_file: 'docker-compose.local.yml'
-      cache_key_prefix: 'pr-${{ github.event.pull_request.number }}'
+      cache_scope: 'pr-${{ github.event.pull_request.number }}'
+      run_tests: true
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # STAGE 4: PR Summary
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   pr_summary:
     name: 📊 PR Summary
-    needs: [test]
+    needs: [build_and_test]
     runs-on: ubuntu-latest
     if: always()
 
@@ -139,11 +131,10 @@ jobs:
           echo "- **Quality Gates**: ${{ needs.quality_gates.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Security Scan**: ${{ needs.security_scan.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Policy Checks**: ${{ needs.policy_checks.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Build**: ${{ needs.build.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Tests**: ${{ needs.test.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build & Test**: ${{ needs.build_and_test.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Coverage" >> $GITHUB_STEP_SUMMARY
-          echo "- **Coverage**: ${{ needs.test.outputs.coverage_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${{ needs.build_and_test.outputs.coverage_percentage }}%" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*PR #${{ github.event.pull_request.number }} by @${{ github.event.pull_request.user.login }}*" >> $GITHUB_STEP_SUMMARY
