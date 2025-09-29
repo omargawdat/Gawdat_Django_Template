@@ -1,0 +1,133 @@
+name: Main Branch CI/CD
+
+on:
+  push:
+    branches: ['main']
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+
+concurrency:
+  group: main-${{ github.sha }}
+  cancel-in-progress: false  # Don't cancel main branch builds
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 1: Security First (BLOCKING)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  security_scan:
+    name: 🔒 Security Scan
+    uses: ./.github/workflows/_reusable-security-scan.yml
+    with:
+      scan_type: 'full'  # Full branch history scan on main
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 2: Verify Tests (Sanity Check - Combined Build & Test)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  verify_tests:
+    name: 🧪 Verify Tests
+    needs: [security_scan]
+    uses: ./.github/workflows/_reusable-build-and-test.yml
+    with:
+      is_local: true
+      compose_file: 'docker-compose.local.yml'
+      cache_scope: 'main-verify'
+      run_tests: true
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 3: Build & Push Production Image (with Trivy scan)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  build_and_push_production:
+    name: 🚀 Build & Push Production
+    needs: [verify_tests]
+    uses: ./.github/workflows/_reusable-build-production.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+      ECR_REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
+    with:
+      image_tag: ${{ github.sha }}
+      additional_tags: 'latest,main-${{ github.run_number }}'
+      run_trivy_scan: true
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 4: Create Deployment Record
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  create_deployment:
+    name: 📝 Create Deployment
+    needs: [build_and_push_production]
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+      contents: read
+
+    steps:
+      - name: Create GitHub deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production-ready',
+              auto_merge: false,
+              required_contexts: [],
+              description: 'Production image built and pushed to ECR',
+              production_environment: false
+            });
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: 'success',
+              description: 'Image ready for deployment',
+              environment_url: 'https://console.aws.amazon.com/ecr'
+            });
+
+      - name: Generate deployment summary
+        run: |
+          echo "# 🎉 Main Branch CI/CD Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`main\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number**: #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Image Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **ECR URI**: \`${{ needs.build_and_push_production.outputs.image_uri }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags**: \`${{ github.sha }}\`, \`latest\`, \`main-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${{ needs.verify_tests.outputs.coverage_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Ready for deployment via workflow_dispatch**" >> $GITHUB_STEP_SUMMARY
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 5: Notifications (Optional)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  notify_on_failure:
+    name: 🚨 Notify on Failure
+    needs: [security_scan, verify_tests, build_and_push_production]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "### ❌ Main Branch CI/CD Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The main branch build failed. Please investigate immediately." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Author**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+          # TODO: Add Slack/Discord webhook notification here
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"Main branch build failed!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

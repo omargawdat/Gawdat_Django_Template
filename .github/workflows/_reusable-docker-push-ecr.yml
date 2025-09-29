@@ -1,0 +1,122 @@
+name: Push to ECR
+
+on:
+  workflow_call:
+    inputs:
+      cache_key_prefix:
+        description: 'Prefix matching the Docker build cache key'
+        type: string
+        required: true
+      image_tag:
+        description: 'Primary image tag (e.g., commit SHA)'
+        type: string
+        required: true
+      additional_tags:
+        description: 'Additional tags (comma-separated, e.g., latest,stable)'
+        type: string
+        default: 'latest'
+        required: false
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION_NAME:
+        required: true
+      ECR_REPOSITORY_NAME:
+        required: true
+    outputs:
+      image_uri:
+        description: 'Full ECR image URI'
+        value: ${{ jobs.push.outputs.image_uri }}
+      ecr_registry:
+        description: 'ECR registry URL'
+        value: ${{ jobs.push.outputs.ecr_registry }}
+
+jobs:
+  push:
+    name: Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image_uri: ${{ steps.push.outputs.uri }}
+      ecr_registry: ${{ steps.ecr-login.outputs.registry }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: django-image-${{ inputs.cache_key_prefix }}
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load < /tmp/django-app.tar.gz
+          docker images django-app
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Tag and push image to ECR
+        id: push
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          ADDITIONAL_TAGS: ${{ inputs.additional_tags }}
+        run: |
+          BASE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}"
+
+          # Tag with primary tag (SHA)
+          docker tag django-app:latest ${BASE_URI}:${IMAGE_TAG}
+          docker push ${BASE_URI}:${IMAGE_TAG}
+          echo "✅ Pushed primary tag: ${IMAGE_TAG}"
+
+          # Tag with additional tags
+          IFS=',' read -ra TAGS <<< "$ADDITIONAL_TAGS"
+          for TAG in "${TAGS[@]}"; do
+            TAG=$(echo "$TAG" | xargs)  # Trim whitespace
+            if [ -n "$TAG" ]; then
+              docker tag ${BASE_URI}:${IMAGE_TAG} ${BASE_URI}:${TAG}
+              docker push ${BASE_URI}:${TAG}
+              echo "✅ Pushed additional tag: ${TAG}"
+            fi
+          done
+
+          # Set output
+          echo "uri=${BASE_URI}:${IMAGE_TAG}" >> $GITHUB_OUTPUT
+
+          # Summary
+          echo "### 🚀 Docker Image Pushed to ECR" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: ${ECR_REPOSITORY}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Primary Tag**: \`${IMAGE_TAG}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Additional Tags**: \`${ADDITIONAL_TAGS}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Full URI**: \`${BASE_URI}:${IMAGE_TAG}\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Verify image in ECR
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          echo "🔍 Verifying image in ECR..."
+          aws ecr describe-images \
+            --repository-name ${ECR_REPOSITORY} \
+            --image-ids imageTag=${IMAGE_TAG} \
+            --region ${{ secrets.AWS_REGION_NAME }} \
+            --output json | jq -r '.imageDetails[0] | "Size: \(.imageSizeInBytes / 1024 / 1024 | floor)MB, Pushed: \(.imagePushedAt)"'

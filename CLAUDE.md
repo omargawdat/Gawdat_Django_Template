@@ -18,7 +18,7 @@ cp dummy.env .env
 # Start development environment with Docker Compose
 docker-compose -f docker-compose.local.yml up --build -d
 
-# Run Django management commands
+# Run Django management commandsl
 docker compose -f docker-compose.local.yml run --rm django python manage.py [command]
 
 # Examples:

@@ -1,0 +1,129 @@
+name: Django Tests
+
+on:
+  workflow_call:
+    inputs:
+      compose_file:
+        description: 'Docker Compose file to use for testing'
+        type: string
+        default: 'docker-compose.local.yml'
+        required: false
+      cache_key_prefix:
+        description: 'Prefix matching the Docker build cache key'
+        type: string
+        required: true
+    outputs:
+      coverage_percentage:
+        description: 'Test coverage percentage'
+        value: ${{ jobs.test.outputs.coverage }}
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  test:
+    name: Run Django Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      coverage: ${{ steps.coverage.outputs.percentage }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: django-image-${{ inputs.cache_key_prefix }}
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load < /tmp/django-app.tar.gz
+          docker images django-app
+
+      - name: Setup environment file
+        run: |
+          cp dummy.env .env
+          echo "✅ Environment file configured"
+
+      - name: Start services
+        run: |
+          docker compose -f ${{ inputs.compose_file }} up -d postgres
+          echo "⏳ Waiting for PostgreSQL to be ready..."
+          sleep 5
+
+      - name: Check for missing migrations
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py makemigrations --check --dry-run
+
+      - name: Apply database migrations
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py migrate --noinput
+
+      - name: Run Django system checks
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py check --fail-level WARNING
+
+      - name: Run tests with coverage
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            pytest --cov --cov-report=xml --cov-report=term-missing --cov-report=html
+
+      - name: Copy coverage reports from container
+        if: always()
+        run: |
+          docker compose -f ${{ inputs.compose_file }} cp django:/app/coverage.xml ./coverage.xml || true
+          docker compose -f ${{ inputs.compose_file }} cp django:/app/htmlcov ./htmlcov || true
+
+      - name: Extract coverage percentage
+        id: coverage
+        if: always()
+        run: |
+          if [ -f coverage.xml ]; then
+            COVERAGE=$(grep -oP 'line-rate="\K[^"]+' coverage.xml | head -1 | awk '{print int($1*100)}')
+            echo "percentage=${COVERAGE}" >> $GITHUB_OUTPUT
+            echo "📊 Code Coverage: ${COVERAGE}%"
+          else
+            echo "percentage=0" >> $GITHUB_OUTPUT
+            echo "⚠️ Coverage report not found"
+          fi
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ inputs.cache_key_prefix }}
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 30
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Display test summary
+        if: always()
+        run: |
+          echo "### 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${{ steps.coverage.outputs.percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- **Compose File**: ${{ inputs.compose_file }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Tear down stack
+        if: always()
+        run: |
+          docker compose -f ${{ inputs.compose_file }} down -v
+          echo "✅ Stack cleaned up"

@@ -318,11 +318,11 @@ CONSTANCE_CONFIG = {
     "SITE_HEADER": ("projectname", "Sidebar Header", "wysiwyg_field"),
     "SITE_URL": ("https://www.google.com/", "WebSite URL ", "url_field"),
     "LOGIN_IMAGE": ("images/logo.png", "Login page background image", "image_field"),
-    # "FEES_PERCENTAGE": (
-    #     25.0,
-    #     "Percentage of fees charged on transactions",
-    #     "float_field",
-    # ),
+    "FEES_PERCENTAGE": (
+        25.0,
+        "Percentage of fees charged on transactions",
+        "float_field",
+    ),
     "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
     "OTP_TEST_CODE": (
         "00000",

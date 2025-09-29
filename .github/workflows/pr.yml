@@ -1,0 +1,140 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches: ['main']
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 1: Fast Fail - Quality Gates (30s)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  quality_gates:
+    name: 🚦 Quality Gates
+    uses: ./.github/workflows/_reusable-quality-gates.yml
+    with:
+      python_version: '3.12'
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 2: Parallel Checks (Security + Policy)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  security_scan:
+    name: 🔒 Security Scan
+    needs: [quality_gates]
+    uses: ./.github/workflows/_reusable-security-scan.yml
+    with:
+      scan_type: 'incremental'
+
+  policy_checks:
+    name: 📋 Policy Checks
+    needs: [quality_gates]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ─────────────────────────────────────────────────────────────────
+      # Check: Branch must be up-to-date with main
+      # ─────────────────────────────────────────────────────────────────
+      - name: Check branch sync with main
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor origin/main HEAD; then
+            echo "❌ Branch is out-of-date with 'main'."
+            echo "Please rebase or merge the latest changes from main."
+            exit 1
+          fi
+          echo "✅ Branch is up-to-date with main"
+
+      # ─────────────────────────────────────────────────────────────────
+      # Check: Migration files cannot be modified/deleted
+      # ─────────────────────────────────────────────────────────────────
+      - name: Detect modified/deleted migrations
+        id: migration_changes
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          list-files: 'shell'
+          filters: |
+            migrations:
+              - modified|deleted: '**/migrations/*.py'
+
+      - name: Block migration edits
+        if: steps.migration_changes.outputs.migrations == 'true'
+        run: |
+          echo "❌ Migration files were edited or deleted in this PR."
+          echo "Migration files should never be modified after they are committed."
+          echo "Please revert changes to migration files or create a new migration."
+          exit 1
+
+      # ─────────────────────────────────────────────────────────────────
+      # Check: Protected files (dummy.env, critical configs)
+      # ─────────────────────────────────────────────────────────────────
+      - name: Check protected files
+        id: protected_changes
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          list-files: 'shell'
+          filters: |
+            protected:
+              - modified: 'dummy.env'
+              - modified: '.github/workflows/_reusable-*.yml'
+
+      - name: Warn on protected file changes
+        if: steps.protected_changes.outputs.protected == 'true'
+        run: |
+          echo "⚠️ WARNING: Protected files were modified."
+          echo "Changes to these files require careful review:"
+          echo "  - dummy.env"
+          echo "  - Reusable workflows"
+          echo ""
+          echo "This is a warning, not a failure. Proceed with caution."
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 3: Build and Test (Combined - No Artifacts)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  build_and_test:
+    name: 🔨 Build & Test
+    needs: [quality_gates, security_scan, policy_checks]
+    uses: ./.github/workflows/_reusable-build-and-test.yml
+    with:
+      is_local: true
+      compose_file: 'docker-compose.local.yml'
+      cache_scope: 'pr-${{ github.event.pull_request.number }}'
+      run_tests: true
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 4: PR Summary
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  pr_summary:
+    name: 📊 PR Summary
+    needs: [build_and_test]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Generate PR summary
+        run: |
+          echo "# 🎉 Pull Request CI Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Quality Gates**: ${{ needs.quality_gates.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Security Scan**: ${{ needs.security_scan.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Policy Checks**: ${{ needs.policy_checks.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build & Test**: ${{ needs.build_and_test.result == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${{ needs.build_and_test.outputs.coverage_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*PR #${{ github.event.pull_request.number }} by @${{ github.event.pull_request.user.login }}*" >> $GITHUB_STEP_SUMMARY
