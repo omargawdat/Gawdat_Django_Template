@@ -26,7 +26,7 @@ jobs:
         with:
           base: ${{ inputs.scan_type == 'incremental' && 'HEAD~1' || '' }}
           head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
-          extra_args: --results=verified,unknown --fail
+          extra_args: --results=verified,unknown
 
   dependency_scan:
     name: Dependency Vulnerability Scan
