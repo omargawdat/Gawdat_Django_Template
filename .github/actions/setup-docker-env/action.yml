@@ -1,0 +1,36 @@
+name: Setup Docker Environment
+description: Configure Docker Buildx and environment variables for Django project
+
+inputs:
+  compose_file:
+    description: 'Docker Compose file to use'
+    required: false
+    default: 'docker-compose.local.yml'
+
+runs:
+  using: composite
+  steps:
+    - name: Set Docker environment variables
+      shell: bash
+      run: |
+        echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+        echo "COMPOSE_DOCKER_CLI_BUILD=1" >> $GITHUB_ENV
+        echo "COMPOSE_FILE=${{ inputs.compose_file }}" >> $GITHUB_ENV
+
+    - name: Setup environment file
+      shell: bash
+      run: |
+        if [ -f dummy.env ]; then
+          cp dummy.env .env
+          echo "✅ Environment file configured from dummy.env"
+        else
+          echo "⚠️ dummy.env not found"
+          exit 1
+        fi
+
+    - name: Display Docker info
+      shell: bash
+      run: |
+        echo "🐳 Docker Environment:"
+        docker version --format '{{.Server.Version}}'
+        docker compose version

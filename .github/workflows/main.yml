@@ -1,0 +1,195 @@
+name: Main Branch CI/CD
+
+on:
+  push:
+    branches: ['main']
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+
+concurrency:
+  group: main-${{ github.sha }}
+  cancel-in-progress: false  # Don't cancel main branch builds
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 1: Security First (BLOCKING)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  security_scan:
+    name: 🔒 Security Scan
+    uses: ./.github/workflows/_reusable-security-scan.yml
+    with:
+      scan_type: 'full'  # Full branch history scan on main
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 2: Verify Tests (Sanity Check)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  verify_build:
+    name: 🔨 Build (Verify)
+    needs: [security_scan]
+    uses: ./.github/workflows/_reusable-docker-build.yml
+    with:
+      is_local: true
+      compose_file: 'docker-compose.local.yml'
+      cache_key_prefix: 'main-verify'
+      enable_sbom: false
+
+  verify_tests:
+    name: 🧪 Test (Verify)
+    needs: [verify_build]
+    uses: ./.github/workflows/_reusable-django-tests.yml
+    with:
+      compose_file: 'docker-compose.local.yml'
+      cache_key_prefix: 'main-verify'
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 3: Build Production Image
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  build_production:
+    name: 🏗️ Build Production Image
+    needs: [verify_tests]
+    uses: ./.github/workflows/_reusable-docker-build.yml
+    with:
+      is_local: false
+      compose_file: 'docker-compose.local.yml'
+      cache_key_prefix: 'main-production'
+      enable_sbom: true
+
+  scan_production_image:
+    name: 🔍 Scan Production Image
+    needs: [build_production]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: django-image-main-production
+          path: /tmp
+
+      - name: Load Docker image
+        run: docker load < /tmp/django-app.tar.gz
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'django-app:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'  # Fail on critical/high vulnerabilities
+
+      - name: Upload Trivy results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Generate vulnerability report
+        if: always()
+        run: |
+          echo "### 🔍 Production Image Security Scan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          docker run --rm aquasec/trivy:latest image --severity CRITICAL,HIGH django-app:latest >> $GITHUB_STEP_SUMMARY || true
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 4: Push to ECR
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  push_to_ecr:
+    name: 🚀 Push to ECR
+    needs: [scan_production_image]
+    uses: ./.github/workflows/_reusable-docker-push-ecr.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+      ECR_REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
+    with:
+      cache_key_prefix: 'main-production'
+      image_tag: ${{ github.sha }}
+      additional_tags: 'latest,main-${{ github.run_number }}'
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 5: Create Deployment Record
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  create_deployment:
+    name: 📝 Create Deployment
+    needs: [push_to_ecr]
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+      contents: read
+
+    steps:
+      - name: Create GitHub deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production-ready',
+              auto_merge: false,
+              required_contexts: [],
+              description: 'Production image built and pushed to ECR',
+              production_environment: false
+            });
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: 'success',
+              description: 'Image ready for deployment',
+              environment_url: 'https://console.aws.amazon.com/ecr'
+            });
+
+      - name: Generate deployment summary
+        run: |
+          echo "# 🎉 Main Branch CI/CD Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`main\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number**: #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Image Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **ECR URI**: \`${{ needs.push_to_ecr.outputs.image_uri }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags**: \`${{ github.sha }}\`, \`latest\`, \`main-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${{ needs.verify_tests.outputs.coverage_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Ready for deployment via workflow_dispatch**" >> $GITHUB_STEP_SUMMARY
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STAGE 6: Notifications (Optional)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  notify_on_failure:
+    name: 🚨 Notify on Failure
+    needs: [security_scan, verify_tests, scan_production_image, push_to_ecr]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "### ❌ Main Branch CI/CD Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The main branch build failed. Please investigate immediately." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Author**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+          # TODO: Add Slack/Discord webhook notification here
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"Main branch build failed!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

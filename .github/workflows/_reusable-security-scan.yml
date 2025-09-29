@@ -1,0 +1,85 @@
+name: Security Scan
+
+on:
+  workflow_call:
+    inputs:
+      scan_type:
+        description: 'Type of scan: full (entire history) or incremental (last commit)'
+        type: string
+        default: 'full'
+        required: false
+
+jobs:
+  secret_scan:
+    name: Secret Detection (TruffleHog)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history required for comprehensive scan
+
+      - name: Run TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@v3.82.13
+        with:
+          base: ${{ inputs.scan_type == 'incremental' && 'HEAD~1' || '' }}
+          head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          extra_args: --results=verified,unknown --fail
+
+  dependency_scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install security scanning tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit safety
+
+      - name: Scan dependencies with pip-audit
+        run: |
+          if [ -f requirements.txt ]; then
+            pip-audit --requirement requirements.txt --format json --output pip-audit-report.json || true
+            pip-audit --requirement requirements.txt
+          else
+            echo "⚠️ No requirements.txt found, skipping pip-audit"
+          fi
+        continue-on-error: false
+
+      - name: Upload pip-audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit-report.json
+          retention-days: 30
+
+      - name: Safety vulnerability check
+        run: |
+          if [ -f requirements.txt ]; then
+            safety check --file requirements.txt --output json --save-json safety-report.json || true
+            safety check --file requirements.txt
+          else
+            echo "⚠️ No requirements.txt found, skipping safety check"
+          fi
+        continue-on-error: false
+
+      - name: Upload safety report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: safety-report
+          path: safety-report.json
+          retention-days: 30

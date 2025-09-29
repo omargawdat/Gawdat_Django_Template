@@ -1,0 +1,97 @@
+name: Docker Build
+
+on:
+  workflow_call:
+    inputs:
+      is_local:
+        description: 'Build for local development (true) or production (false)'
+        type: boolean
+        required: true
+      compose_file:
+        description: 'Docker Compose file to use'
+        type: string
+        default: 'docker-compose.local.yml'
+        required: false
+      cache_key_prefix:
+        description: 'Prefix for cache key (e.g., pr, main-verify, main-prod)'
+        type: string
+        required: true
+      enable_sbom:
+        description: 'Generate Software Bill of Materials'
+        type: boolean
+        default: false
+        required: false
+    outputs:
+      image_tag:
+        description: 'Docker image tag'
+        value: ${{ jobs.build.outputs.image_tag }}
+      image_digest:
+        description: 'Docker image digest'
+        value: ${{ jobs.build.outputs.image_digest }}
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
+
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: django-app
+          tags: |
+            type=sha,prefix=${{ inputs.cache_key_prefix }}-
+            type=raw,value=latest
+
+      - name: Build Docker Image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            is_local=${{ inputs.is_local }}
+          cache-from: type=gha,scope=${{ inputs.cache_key_prefix }}
+          cache-to: type=gha,scope=${{ inputs.cache_key_prefix }},mode=max
+          sbom: ${{ inputs.enable_sbom }}
+          provenance: false
+
+      - name: Inspect built image
+        run: |
+          echo "📦 Built Image Details:"
+          docker images django-app --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+          docker inspect django-app:latest --format='{{.Size}}' | awk '{print "Image size: " $1/1024/1024 " MB"}'
+
+      - name: Export image for downstream jobs
+        run: |
+          docker save django-app:latest | gzip > /tmp/django-app.tar.gz
+          echo "✅ Image exported to artifact"
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: django-image-${{ inputs.cache_key_prefix }}
+          path: /tmp/django-app.tar.gz
+          retention-days: 1
+          compression-level: 0  # Already gzipped

@@ -1,0 +1,44 @@
+name: Quality Gates
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        description: 'Python version to use for linting'
+        type: string
+        default: '3.12'
+        required: false
+
+jobs:
+  linting:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python_version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+          cache: 'pip'
+
+      - name: Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-${{ runner.os }}-
+
+      - name: Run pre-commit hooks
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files
+
+      - name: Validate Python syntax
+        if: success() || failure()
+        run: |
+          python -m py_compile $(find . -name "*.py" -not -path "./.*")
