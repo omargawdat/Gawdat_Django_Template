@@ -1,0 +1,179 @@
+name: Build Production Image
+
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Image tag (e.g., commit SHA)'
+        type: string
+        required: true
+      additional_tags:
+        description: 'Additional tags (comma-separated)'
+        type: string
+        default: 'latest'
+        required: false
+      run_trivy_scan:
+        description: 'Run Trivy security scan'
+        type: boolean
+        default: true
+        required: false
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION_NAME:
+        required: true
+      ECR_REPOSITORY_NAME:
+        required: true
+    outputs:
+      image_uri:
+        description: 'ECR image URI'
+        value: ${{ jobs.build_push.outputs.image_uri }}
+
+env:
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  build_push:
+    name: Build & Push Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      id-token: write
+      contents: read
+      security-events: write
+    outputs:
+      image_uri: ${{ steps.push.outputs.uri }}
+
+    steps:
+      # ────────────────────────────────────────────────────────────
+      # CHECKOUT & AWS SETUP
+      # ────────────────────────────────────────────────────────────
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ────────────────────────────────────────────────────────────
+      # BUILD & PUSH (Single step, cached layers)
+      # ────────────────────────────────────────────────────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push to ECR
+        id: build-push
+        uses: docker/build-push-action@v6
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ inputs.image_tag }}
+            ${{ steps.ecr-login.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          build-args: |
+            is_local=false
+          cache-from: type=gha,scope=production
+          cache-to: type=gha,scope=production,mode=max
+          sbom: true
+          provenance: true
+
+      # ────────────────────────────────────────────────────────────
+      # TAG ADDITIONAL VERSIONS
+      # ────────────────────────────────────────────────────────────
+      - name: Tag additional versions
+        id: push
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          ADDITIONAL_TAGS: ${{ inputs.additional_tags }}
+        run: |
+          BASE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}"
+
+          # Primary tag already pushed by build-push action
+          echo "✅ Pushed primary: ${BASE_URI}:${IMAGE_TAG}"
+
+          # Additional tags (if any beyond 'latest')
+          IFS=',' read -ra TAGS <<< "$ADDITIONAL_TAGS"
+          for TAG in "${TAGS[@]}"; do
+            TAG=$(echo "$TAG" | xargs)
+            if [ -n "$TAG" ] && [ "$TAG" != "latest" ]; then
+              docker buildx imagetools create \
+                --tag ${BASE_URI}:${TAG} \
+                ${BASE_URI}:${IMAGE_TAG}
+              echo "✅ Tagged: ${TAG}"
+            fi
+          done
+
+          echo "uri=${BASE_URI}:${IMAGE_TAG}" >> $GITHUB_OUTPUT
+
+      # ────────────────────────────────────────────────────────────
+      # SECURITY SCAN (Optional)
+      # ────────────────────────────────────────────────────────────
+      - name: Pull image for scanning
+        if: ${{ inputs.run_trivy_scan }}
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          docker pull ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+      - name: Run Trivy security scan
+        if: ${{ inputs.run_trivy_scan }}
+        uses: aquasecurity/trivy-action@0.28.0
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          image-ref: '${{ steps.ecr-login.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:${{ inputs.image_tag }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'  # Don't fail, just report
+
+      - name: Upload Trivy results
+        if: ${{ inputs.run_trivy_scan && always() }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      # ────────────────────────────────────────────────────────────
+      # SUMMARY
+      # ────────────────────────────────────────────────────────────
+      - name: Generate summary
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          echo "### 🚀 Production Image Pushed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: \`${ECR_REPOSITORY}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag**: \`${IMAGE_TAG}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **URI**: \`${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}\`" >> $GITHUB_STEP_SUMMARY
+
+          # Get image details
+          SIZE=$(aws ecr describe-images \
+            --repository-name ${ECR_REPOSITORY} \
+            --image-ids imageTag=${IMAGE_TAG} \
+            --region ${{ secrets.AWS_REGION_NAME }} \
+            --query 'imageDetails[0].imageSizeInBytes' \
+            --output text)
+
+          SIZE_MB=$((SIZE / 1024 / 1024))
+          echo "- **Size**: ${SIZE_MB} MB" >> $GITHUB_STEP_SUMMARY

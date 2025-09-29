@@ -1,0 +1,146 @@
+name: Build and Test
+
+on:
+  workflow_call:
+    inputs:
+      is_local:
+        description: 'Build for local development (true) or production (false)'
+        type: boolean
+        required: true
+      compose_file:
+        description: 'Docker Compose file to use'
+        type: string
+        default: 'docker-compose.local.yml'
+        required: false
+      cache_scope:
+        description: 'Cache scope (e.g., pr-123, main)'
+        type: string
+        required: true
+      run_tests:
+        description: 'Run tests after build'
+        type: boolean
+        default: true
+        required: false
+    outputs:
+      coverage_percentage:
+        description: 'Test coverage percentage'
+        value: ${{ jobs.build_and_test.outputs.coverage }}
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      coverage: ${{ steps.coverage.outputs.percentage }}
+
+    steps:
+      # ────────────────────────────────────────────────────────────
+      # CHECKOUT & SETUP
+      # ────────────────────────────────────────────────────────────
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup environment file
+        run: |
+          cp dummy.env .env
+          echo "✅ Environment configured"
+
+      # ────────────────────────────────────────────────────────────
+      # DOCKER BUILD WITH COMPOSE (Uses native Docker cache)
+      # ────────────────────────────────────────────────────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image with compose
+        run: |
+          echo "🔨 Building Docker image..."
+          docker compose -f ${{ inputs.compose_file }} build \
+            --build-arg is_local=${{ inputs.is_local }}
+
+          echo "✅ Build complete"
+          docker images django-app
+
+      # ────────────────────────────────────────────────────────────
+      # RUN TESTS (if enabled)
+      # ────────────────────────────────────────────────────────────
+      - name: Start PostgreSQL service
+        if: ${{ inputs.run_tests }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} up -d postgres
+          echo "⏳ Waiting for PostgreSQL..."
+          sleep 5
+
+      - name: Check for missing migrations
+        if: ${{ inputs.run_tests }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py makemigrations --check --dry-run
+
+      - name: Apply database migrations
+        if: ${{ inputs.run_tests }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py migrate --noinput
+
+      - name: Run Django system checks
+        if: ${{ inputs.run_tests }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            python manage.py check --fail-level WARNING
+
+      - name: Run tests with coverage
+        if: ${{ inputs.run_tests }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            pytest --cov --cov-report=xml --cov-report=term-missing
+
+      # ────────────────────────────────────────────────────────────
+      # COVERAGE REPORTING
+      # ────────────────────────────────────────────────────────────
+      - name: Copy coverage report from container
+        if: ${{ inputs.run_tests && always() }}
+        run: |
+          docker compose -f ${{ inputs.compose_file }} run --rm django \
+            cat coverage.xml > coverage.xml || true
+
+      - name: Extract coverage percentage
+        id: coverage
+        if: ${{ inputs.run_tests && always() }}
+        run: |
+          if [ -f coverage.xml ]; then
+            COVERAGE=$(grep -oP 'line-rate="\K[^"]+' coverage.xml | head -1 | awk '{print int($1*100)}')
+            echo "percentage=${COVERAGE}" >> $GITHUB_OUTPUT
+            echo "📊 Code Coverage: ${COVERAGE}%"
+          else
+            echo "percentage=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload coverage report
+        if: ${{ inputs.run_tests && always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ inputs.cache_scope }}
+          path: coverage.xml
+          retention-days: 30
+
+      - name: Upload to Codecov
+        if: ${{ inputs.run_tests && always() }}
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+
+      # ────────────────────────────────────────────────────────────
+      # CLEANUP
+      # ────────────────────────────────────────────────────────────
+      - name: Tear down stack
+        if: always()
+        run: |
+          docker compose -f ${{ inputs.compose_file }} down -v
+          echo "✅ Cleanup complete"
