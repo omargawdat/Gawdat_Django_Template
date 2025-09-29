@@ -94,4 +94,4 @@ jobs:
           name: django-image-${{ inputs.cache_key_prefix }}
           path: /tmp/django-app.tar.gz
           retention-days: 1
-          compression-level: 0  # Already gzipped
+          compression-level: 0  # Already gzipped..
