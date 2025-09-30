@@ -7,7 +7,6 @@ env:
 on:
   pull_request:
     branches: [ 'main' ]
-  workflow_dispatch:
 
 jobs:
   docker_compose_test:
@@ -15,6 +14,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+
+      # Create .env file BEFORE building
+      - name: Setup Environment File
+        run: cp dummy.env .env
 
       # Set up Docker Buildx for advanced caching
       - name: Set up Docker Buildx
@@ -29,9 +32,6 @@ jobs:
             --set "*.cache-from=type=gha,scope=main" \
             --set "*.cache-to=type=gha,mode=max,scope=pr-${{ github.event.pull_request.number }}" \
             --load
-
-      - name: Setup Environment File
-        run: cp dummy.env .env
 
       - name: Check Missing Migrations
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
