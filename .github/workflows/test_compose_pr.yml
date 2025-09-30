@@ -8,6 +8,7 @@ on:
   pull_request:
     branches: [ 'main' ]
   workflow_dispatch:
+
 jobs:
   docker_compose_test:
     runs-on: ubuntu-latest
@@ -15,22 +16,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      # Create .env file BEFORE building
       - name: Setup Environment File
         run: cp dummy.env .env
 
-      # Set up Docker Buildx for advanced caching
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Build all services with GitHub Actions cache
+      # Build with proper cache configuration
       - name: Build Stack with Cache
         run: |
+          cat > docker-bake.override.hcl << EOF
+          target "default" {
+            cache-from = [
+              "type=gha,scope=pr-${{ github.event.pull_request.number || 'manual' }}",
+              "type=gha,scope=main"
+            ]
+            cache-to = [
+              "type=gha,mode=max,scope=pr-${{ github.event.pull_request.number || 'manual' }}"
+            ]
+          }
+          EOF
+          
           docker buildx bake \
             -f docker-compose.local.yml \
-            --set "*.cache-from=type=gha,scope=pr-${{ github.event.pull_request.number }}" \
-            --set "*.cache-from=type=gha,scope=main" \
-            --set "*.cache-to=type=gha,mode=max,scope=pr-${{ github.event.pull_request.number }}" \
+            -f docker-bake.override.hcl \
             --load
 
       - name: Check Missing Migrations
