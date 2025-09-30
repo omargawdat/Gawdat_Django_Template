@@ -14,18 +14,36 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+
+      # Set up Docker Buildx for advanced caching
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build all services with GitHub Actions cache
+      - name: Build Stack with Cache
+        run: |
+          docker buildx bake \
+            -f docker-compose.local.yml \
+            --set "*.cache-from=type=gha,scope=pr-${{ github.event.pull_request.number }}" \
+            --set "*.cache-from=type=gha,scope=main" \
+            --set "*.cache-to=type=gha,mode=max,scope=pr-${{ github.event.pull_request.number }}" \
+            --load
+
       - name: Setup Environment File
         run: cp dummy.env .env
-      - name: Build Stack
-        run: docker compose -f docker-compose.local.yml build
+
       - name: Check Missing Migrations
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
+
       - name: Apply DB Migrations
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py migrate --noinput
+
       - name: Django System Checks
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py check
+
       - name: Django Unit Tests
         run: docker compose -f docker-compose.local.yml run --rm django pytest
+
       - name: Tear down Stack
         if: always()
         run: docker compose -f docker-compose.local.yml down -v
