@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from django.utils.translation import gettext_lazy as _
@@ -18,6 +19,7 @@ def dashboard_callback(request, context: dict[str, Any]) -> dict[str, Any]:
                 {"title": _("Analytics"), "link": "#", "active": True},
             ],
             "kpi": ChartHelper.get_kpi_data(),
+            "payments_orders_chart": json.dumps(ChartHelper.format_line_chart_data()),
             "social_accounts": InsightSelector.get_social_accounts(),
             "unread_contacts": unread_contacts,
             "unread_contacts_count": unread_contacts_count,

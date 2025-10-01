@@ -22,12 +22,15 @@
   <link rel="stylesheet" href="{% static 'css/top_cards.css' %}" />
   <link rel="stylesheet" href="{% static 'css/social.css' %}" />
   <link rel="stylesheet" href="{% static 'css/contact_messages.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/line_chart.css' %}" />
+
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <script src="{% static 'js/top_cards.js' %}"></script>
   <script src="{% static 'js/line_chart.js' %}"></script>
   <script src="{% static 'js/top_providers.js' %}"></script>
   <script src="{% static 'js/contact_messages.js' %}"></script>
+
 {% endblock extrahead %}
 {% block content %}
   {% include "unfold/helpers/messages.html" %}
@@ -37,15 +40,12 @@
 
 
 
-    <!-- Top Cards Section -->
     {% include "admin/components/top_cards.html" %}
 
+    {% include "admin/components/line_chart.html" %}
 
-    <!-- Social Media Section -->
     {% include "admin/components/contact_messages.html" %}
 
-
-    <!-- Social Media Section -->
     {% include "admin/components/social.html" %}
 
 
