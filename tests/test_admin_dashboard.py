@@ -1,10 +1,11 @@
 """
-Simple admin test - loops through all admin models and checks if pages load
+Admin tests - separated into individual test functions for better reporting
 """
 
 import pytest
 from django.contrib import admin
 from django.test import Client
+from django.test import RequestFactory
 from django.urls import reverse
 
 HTTP_200_OK = 200
@@ -30,101 +31,156 @@ def admin_user(db):
 @pytest.fixture
 def admin_client(admin_user):
     """Client logged in as admin"""
-    client = Client()
+    client = Client(raise_request_exception=True)
     client.force_login(admin_user)
     return client
 
 
-@pytest.mark.django_db
-def test_all_admin_pages(admin_client, admin_user, customer, banner):  # noqa: C901, PLR0912, PLR0915
-    """Loop through all admin models and test if pages load"""
-
-    passed = 0
-    failed = 0
-
-    # Test admin index
-    response = admin_client.get(reverse("admin:index"))
-    if response.status_code == HTTP_200_OK:
-        passed += 1
-    else:
-        failed += 1
-
-    # Create a mock request for permission checks
-    from django.test import RequestFactory
-
+@pytest.fixture
+def mock_request(admin_user):
+    """Mock request for permission checks"""
     request_factory = RequestFactory()
-    mock_request = request_factory.get("/admin/")
-    mock_request.user = admin_user
+    request = request_factory.get("/admin/")
+    request.user = admin_user
+    return request
 
-    # Loop all admin models
-    for model, model_admin in admin.site._registry.items():
+
+@pytest.mark.django_db
+def test_admin_index(admin_client):
+    """Test admin index page loads"""
+    response = admin_client.get(reverse("admin:index"))
+    assert response.status_code == HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_admin_list_pages(admin_client, customer, banner):
+    """Test all admin changelist pages load"""
+    for model in admin.site._registry:
         app_label = model._meta.app_label
         model_name = model._meta.model_name
 
-        # Test list page
         url = reverse(f"admin:{app_label}_{model_name}_changelist")
         response = admin_client.get(url)
-        if response.status_code in [HTTP_200_OK, HTTP_302_FOUND]:
-            passed += 1
-        else:
-            failed += 1
+        assert response.status_code in [HTTP_200_OK, HTTP_302_FOUND], (
+            f"List page failed for {app_label}.{model_name}"
+        )
 
-        # Test search functionality if search_fields is defined
+
+@pytest.mark.django_db
+def test_admin_search(admin_client, customer, banner):
+    """Test search functionality on admin pages"""
+    for model, model_admin in admin.site._registry.items():
         if hasattr(model_admin, "search_fields") and model_admin.search_fields:
-            response = admin_client.get(url, {"q": "test"})
-            if response.status_code == HTTP_200_OK:
-                passed += 1
-            else:
-                failed += 1
+            app_label = model._meta.app_label
+            model_name = model._meta.model_name
 
-        # Test add page (only if user has add permission)
+            url = reverse(f"admin:{app_label}_{model_name}_changelist")
+            response = admin_client.get(url, {"q": "test"})
+            assert response.status_code == HTTP_200_OK, (
+                f"Search failed for {app_label}.{model_name}"
+            )
+
+
+@pytest.mark.django_db
+def test_admin_add_pages(admin_client, mock_request, customer, banner):
+    """Test add pages (only if user has permission)"""
+    for model, model_admin in admin.site._registry.items():
         if model_admin.has_add_permission(mock_request):
+            app_label = model._meta.app_label
+            model_name = model._meta.model_name
+
             url = reverse(f"admin:{app_label}_{model_name}_add")
             response = admin_client.get(url)
-            if response.status_code in [
+            assert response.status_code in [
                 HTTP_200_OK,
                 HTTP_302_FOUND,
                 HTTP_403_FORBIDDEN,
-            ]:
-                passed += 1
-            else:
-                failed += 1
+            ], f"Add page failed for {app_label}.{model_name}"
 
-        # Test change/edit page if record exists
+
+@pytest.mark.django_db
+def test_admin_change_pages(admin_client, customer, banner):
+    """Test change/edit pages for existing objects"""
+    for model in admin.site._registry:
         if hasattr(model, "objects"):
             first = model.objects.first()
             if first:
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
                 url = reverse(f"admin:{app_label}_{model_name}_change", args=[first.pk])
                 response = admin_client.get(url)
-                if response.status_code in [HTTP_200_OK, HTTP_302_FOUND]:
-                    passed += 1
-                else:
-                    failed += 1
+                assert response.status_code in [HTTP_200_OK, HTTP_302_FOUND], (
+                    f"Change page failed for {app_label}.{model_name}"
+                )
 
-                # Test save/update (POST to change page, only if user has change permission)
-                if (
-                    response.status_code == HTTP_200_OK
-                    and model_admin.has_change_permission(mock_request, first)
-                ):
-                    save_response = admin_client.post(
-                        url, data={"_continue": "Save and continue editing"}
-                    )
-                    if save_response.status_code in [HTTP_200_OK, HTTP_302_FOUND]:
-                        passed += 1
-                    else:
-                        failed += 1
 
-                # Test delete page (only if user has delete permission)
-                if model_admin.has_delete_permission(mock_request, first):
+@pytest.mark.django_db
+def test_admin_save_operations(admin_client, mock_request, customer, banner):
+    """Test save/update operations (only if user has permission)"""
+    for model, model_admin in admin.site._registry.items():
+        if hasattr(model, "objects"):
+            first = model.objects.first()
+            if first and model_admin.has_change_permission(mock_request, first):
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                url = reverse(f"admin:{app_label}_{model_name}_change", args=[first.pk])
+                # First check if the page loads
+                response = admin_client.get(url)
+                if response.status_code == HTTP_200_OK:
+                    try:
+                        save_response = admin_client.post(
+                            url, data={"_continue": "Save and continue editing"}
+                        )
+                        assert save_response.status_code in [
+                            HTTP_200_OK,
+                            HTTP_302_FOUND,
+                        ], f"Save failed for {app_label}.{model_name}"
+                    except Exception as e:
+                        pytest.fail(
+                            f"Save operation raised exception for {app_label}.{model_name}: {e}"
+                        )
+
+
+@pytest.mark.django_db
+def test_admin_delete_pages(admin_client, mock_request, customer, banner):
+    """Test delete pages (only if user has permission)"""
+    for model, model_admin in admin.site._registry.items():
+        if hasattr(model, "objects"):
+            first = model.objects.first()
+            if first and model_admin.has_delete_permission(mock_request, first):
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                url = reverse(f"admin:{app_label}_{model_name}_delete", args=[first.pk])
+                response = admin_client.get(url)
+                assert response.status_code in [
+                    HTTP_200_OK,
+                    HTTP_302_FOUND,
+                    HTTP_403_FORBIDDEN,
+                ], f"Delete page failed for {app_label}.{model_name}"
+
+
+@pytest.mark.django_db
+def test_admin_history_pages(admin_client, customer, banner):
+    """Test history pages for existing objects"""
+    for model in admin.site._registry:
+        if hasattr(model, "objects"):
+            first = model.objects.first()
+            if first:
+                app_label = model._meta.app_label
+                model_name = model._meta.model_name
+
+                try:
                     url = reverse(
-                        f"admin:{app_label}_{model_name}_delete", args=[first.pk]
+                        f"admin:{app_label}_{model_name}_history", args=[first.pk]
                     )
                     response = admin_client.get(url)
-                    if response.status_code in [
-                        HTTP_200_OK,
-                        HTTP_302_FOUND,
-                        HTTP_403_FORBIDDEN,
-                    ]:
-                        passed += 1
-
-    assert failed == 0
+                    assert response.status_code in [HTTP_200_OK, HTTP_302_FOUND], (
+                        f"History page failed for {app_label}.{model_name}"
+                    )
+                except Exception as e:
+                    pytest.fail(
+                        f"History page raised exception for {app_label}.{model_name}: {e}"
+                    )
