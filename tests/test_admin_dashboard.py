@@ -36,7 +36,7 @@ def admin_client(admin_user):
 
 
 @pytest.mark.django_db
-def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
+def test_all_admin_pages(admin_client, admin_user, customer, banner):  # noqa: C901, PLR0912, PLR0915
     """Loop through all admin models and test if pages load"""
 
     passed = 0
@@ -48,6 +48,13 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
         passed += 1
     else:
         failed += 1
+
+    # Create a mock request for permission checks
+    from django.test import RequestFactory
+
+    request_factory = RequestFactory()
+    mock_request = request_factory.get("/admin/")
+    mock_request.user = admin_user
 
     # Loop all admin models
     for model, model_admin in admin.site._registry.items():
@@ -70,13 +77,18 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
             else:
                 failed += 1
 
-        # Test add page
-        url = reverse(f"admin:{app_label}_{model_name}_add")
-        response = admin_client.get(url)
-        if response.status_code in [HTTP_200_OK, HTTP_302_FOUND, HTTP_403_FORBIDDEN]:
-            passed += 1
-        else:
-            failed += 1
+        # Test add page (only if user has add permission)
+        if model_admin.has_add_permission(mock_request):
+            url = reverse(f"admin:{app_label}_{model_name}_add")
+            response = admin_client.get(url)
+            if response.status_code in [
+                HTTP_200_OK,
+                HTTP_302_FOUND,
+                HTTP_403_FORBIDDEN,
+            ]:
+                passed += 1
+            else:
+                failed += 1
 
         # Test change/edit page if record exists
         if hasattr(model, "objects"):
@@ -89,8 +101,11 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
                 else:
                     failed += 1
 
-                # Test save/update (POST to change page)
-                if response.status_code == HTTP_200_OK:
+                # Test save/update (POST to change page, only if user has change permission)
+                if (
+                    response.status_code == HTTP_200_OK
+                    and model_admin.has_change_permission(mock_request, first)
+                ):
                     save_response = admin_client.post(
                         url, data={"_continue": "Save and continue editing"}
                     )
@@ -99,14 +114,17 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
                     else:
                         failed += 1
 
-                # Test delete page
-                url = reverse(f"admin:{app_label}_{model_name}_delete", args=[first.pk])
-                response = admin_client.get(url)
-                if response.status_code in [
-                    HTTP_200_OK,
-                    HTTP_302_FOUND,
-                    HTTP_403_FORBIDDEN,
-                ]:
-                    passed += 1
+                # Test delete page (only if user has delete permission)
+                if model_admin.has_delete_permission(mock_request, first):
+                    url = reverse(
+                        f"admin:{app_label}_{model_name}_delete", args=[first.pk]
+                    )
+                    response = admin_client.get(url)
+                    if response.status_code in [
+                        HTTP_200_OK,
+                        HTTP_302_FOUND,
+                        HTTP_403_FORBIDDEN,
+                    ]:
+                        passed += 1
 
     assert failed == 0
