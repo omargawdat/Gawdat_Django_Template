@@ -1,3 +1,4 @@
+from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.social import SocialAccount
 from apps.users.models.customer import Customer
 
@@ -16,5 +17,9 @@ class InsightSelector:
         return {"value": 200, "currency": "SAR", "display": "200 SAR"}
 
     @staticmethod
-    def get_social_accounts():
+    def get_unchecked_contacts(limit: int = 10) -> list[ContactUs]:
+        return ContactUs.objects.filter(has_checked=False)
+
+    @staticmethod
+    def get_social_accounts() -> SocialAccount:
         return SocialAccount.get_solo()

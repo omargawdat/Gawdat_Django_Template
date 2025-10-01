@@ -1,0 +1,502 @@
+{% load i18n %}
+<!-- Contact Messages Component - Dark Theme -->
+<div class="contact-messages-widget">
+  <div class="contact-header">
+    <div class="contact-title">
+      <div class="contact-icon">
+        <i class="fas fa-envelope"></i>
+      </div>
+      <div class="title-content">
+        <h3>💬 {% trans "Contact Messages" %}</h3>
+        {% if unread_contacts_count %}
+          <span class="contact-badge" style="background-color: #e74c3c; color: #fff;">{{ unread_contacts_count }} {% trans "UnChecked" %}</span>
+        {% endif %}
+      </div>
+    </div>
+    <a href="{% url 'admin:appInfo_contactus_changelist' %}?has_checked__exact=0" class="view-all-btn">
+      {% trans "View All" %} <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="contact-table-container">
+    <table class="contact-table">
+      <thead>
+        <tr>
+          <th>{% trans "Customer" %}</th>
+          <th>{% trans "Type & Message" %}</th>
+          <th>{% trans "Date" %}</th>
+          <th style="text-align: right;">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for contact in unread_contacts %}
+        <tr>
+          <td>
+            <div class="customer-info">
+              <div class="customer-avatar">
+                {% if contact.customer and contact.customer.image %}
+                  <img src="{{ contact.customer.image.url }}" alt="Customer">
+                {% else %}
+                  <i class="fas fa-user-circle"></i>
+                {% endif %}
+              </div>
+              <div class="customer-details">
+                <div class="customer-name">
+                  {% if contact.customer %}
+                    {{ contact.customer.full_name|default:contact.customer.username|default:"Unknown Customer" }}
+                  {% else %}
+                    {% trans "Anonymous Contact" %}
+                  {% endif %}
+                </div>
+                <div class="customer-phone">
+                  <i class="fas fa-phone"></i>
+                  {% if contact.customer and contact.customer.phone_number %}
+                    {{ contact.customer.phone_number }}
+                  {% else %}
+                    {% trans "No phone provided" %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="contact-type-badge contact-type-{{ contact.contact_type|lower }}">
+              {{ contact.get_contact_type_display }}
+            </div>
+            <div class="message-preview" title="{{ contact.description }}">
+              {{ contact.description|truncatechars:80 }}
+            </div>
+          </td>
+          <td>
+            <div class="message-time">
+              <i class="far fa-clock"></i>
+              {{ contact.created_at|timesince }} {% trans "ago" %}
+            </div>
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'admin:appInfo_contactus_change' contact.id %}" class="view-contact-btn">
+              <i class="fas fa-eye"></i> {% trans "View" %}
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">
+            <div class="empty-contacts">
+              <i class="far fa-check-circle"></i>
+              <p>{% trans "All messages have been read" %}</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if unread_contacts %}
+  <div class="contact-stats">
+    <i class="fas fa-chart-bar"></i>
+    {% blocktrans with count=unread_contacts|length total=unread_contacts_count %}Showing {{ count }} of {{ total }} unread messages{% endblocktrans %}
+  </div>
+  {% endif %}
+</div>
+
+<style>
+/* Contact Messages Widget - Dark Theme */
+.contact-messages-widget {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-messages-widget::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 4px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #b45309);
+  background-size: 200% 100%;
+  border-radius: 16px 16px 0 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: gradientShift 3s ease infinite;
+}
+
+.contact-messages-widget:hover::after {
+  opacity: 1;
+}
+
+.contact-messages-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+/* Header */
+.contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.contact-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+.title-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contact-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.view-all-btn:hover {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+/* Table Container */
+.contact-table-container {
+  overflow-x: auto;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.contact-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.contact-table thead th {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+  color: #a78bfa;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.contact-table tbody tr {
+  border-bottom: 1px solid rgba(100, 116, 139, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contact-table tbody tr:hover {
+  background: rgba(30, 41, 59, 0.4);
+  transform: scale(1.01);
+}
+
+.contact-table tbody td {
+  padding: 1rem;
+  vertical-align: top;
+}
+
+/* Customer Info */
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.customer-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.customer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.customer-details {
+  min-width: 0;
+}
+
+.customer-name {
+  font-weight: 600;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.customer-phone {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.customer-phone i {
+  color: #a78bfa;
+}
+
+/* Contact Type Badge */
+.contact-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  background: #374151;
+  color: #d1d5db;
+}
+
+.contact-type-complaint {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.contact-type-suggestion {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.contact-type-question {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.contact-type-support {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.message-preview {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Message Time */
+.message-time {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.message-time i {
+  color: #a78bfa;
+}
+
+/* View Contact Button */
+.view-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #a78bfa;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.view-contact-btn:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+/* Empty State */
+.empty-contacts {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #94a3b8;
+}
+
+.empty-contacts i {
+  font-size: 3rem;
+  color: #10b981;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.empty-contacts p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Contact Stats */
+.contact-stats {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(100, 116, 139, 0.1);
+}
+
+.contact-stats i {
+  color: #a78bfa;
+}
+
+/* Animations */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contact-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-title {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .view-all-btn {
+    align-self: center;
+  }
+
+  .contact-table-container {
+    overflow-x: scroll;
+  }
+
+  .contact-table {
+    min-width: 600px;
+  }
+
+  .customer-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .customer-details {
+    text-align: center;
+  }
+
+  .message-time {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-messages-widget {
+    padding: 1.5rem;
+  }
+
+  .contact-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .title-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .view-all-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+  }
+}
+</style>

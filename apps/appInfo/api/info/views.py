@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -66,7 +66,8 @@ class FAQListView(APIView):
 class ContactUsCreateView(CreateAPIView):
     serializer_class = ContactUsSerializer
     queryset = ContactUs.objects.all()
-    permission_classes = [IsAuthenticated]
+
+    permission_classes = [AllowAny]
     authentication_classes = [JWTAuthentication]
 
     @extend_schema(
@@ -81,4 +82,7 @@ class ContactUsCreateView(CreateAPIView):
         return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(customer=self.request.user)
+        else:
+            serializer.save(customer=None)
