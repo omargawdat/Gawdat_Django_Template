@@ -2,21 +2,21 @@
 Management command to seed database with factory data
 
 Auto-discovers all factories and creates random amounts of data.
+Flushes existing data by default.
 
 Usage:
-    python manage.py seed_db                    # Random amounts (5-20 per model)
-    python manage.py seed_db --count 50         # Fixed amount for all models
-    python manage.py seed_db --min 10 --max 30 # Random between min-max
-    python manage.py seed_db --flush            # Clear data first
+    python manage.py seed_db                    # Flush + Random amounts (5-20 per model)
+    python manage.py seed_db --count 50         # Flush + Fixed amount for all models
+    python manage.py seed_db --no-flush         # Don't flush, just add data
 """
 
-import inspect
 import random
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-import factories as factories_module
+from factories.loader import create_factory_data
+from factories.loader import discover_factories
 
 
 class Command(BaseCommand):
@@ -41,34 +41,20 @@ class Command(BaseCommand):
             help="Maximum number of instances per factory (default: 20)",
         )
         parser.add_argument(
-            "--flush",
-            action="store_true",
-            help="Flush existing data before seeding",
+            "--no-flush",
+            action="store_false",
+            dest="flush",
+            default=True,
+            help="Skip flushing data (flush is enabled by default)",
         )
 
-    def _discover_factories(self):
-        """Auto-discover all factories from factories module (same as tests/conftest.py)"""
-        discovered_factories = []
-
-        for name, obj in inspect.getmembers(factories_module):
-            if (
-                inspect.isclass(obj)
-                and name.endswith("Factory")
-                and hasattr(obj, "_meta")
-                and hasattr(obj._meta, "model")
-            ):
-                discovered_factories.append((name, obj))
-
-        return discovered_factories
-
-    @transaction.atomic
     def handle(self, *args, **options):
         if options["flush"]:
             self.stdout.write(self.style.WARNING("Flushing existing data..."))
             self._flush_data()
 
         # Auto-discover all factories
-        factories = self._discover_factories()
+        factories = discover_factories()
 
         if not factories:
             self.stdout.write(self.style.ERROR("No factories found!"))
@@ -83,7 +69,7 @@ class Command(BaseCommand):
         total_created = 0
         created_summary = []
 
-        # Create data for each factory
+        # Create data for each factory in separate transactions
         for _, factory_class in factories:
             # Determine count for this factory
             if options["count"]:
@@ -93,14 +79,30 @@ class Command(BaseCommand):
 
             model_name = factory_class._meta.model.__name__
 
+            # Handle singleton models
+            if hasattr(factory_class._meta.model, "singleton_instance_id"):
+                count = 1
+
             try:
                 self.stdout.write(f"  Creating {count} {model_name}(s)...")
-                factory_class.create_batch(count)
-                total_created += count
-                created_summary.append(f"  - {count} {model_name}(s)")
-                self.stdout.write(
-                    self.style.SUCCESS(f"    ✓ Created {count} {model_name}(s)")
-                )
+                # Each factory creation in its own transaction
+                with transaction.atomic():
+                    success = create_factory_data(
+                        factory_class, count, skip_if_exists=True
+                    )
+
+                    if success:
+                        total_created += count
+                        created_summary.append(f"  - {count} {model_name}(s)")
+                        self.stdout.write(
+                            self.style.SUCCESS(f"    ✓ Created {count} {model_name}(s)")
+                        )
+                    else:
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"    ⚠ Skipped {model_name}: singleton already exists"
+                            )
+                        )
             except Exception as e:
                 self.stdout.write(
                     self.style.WARNING(f"    ⚠ Skipped {model_name}: {e!s}")
@@ -119,7 +121,7 @@ class Command(BaseCommand):
         """Flush existing factory-created data by auto-discovering models"""
         from django.db.models.deletion import ProtectedError
 
-        factories = self._discover_factories()
+        factories = discover_factories()
 
         # Collect all models from factories
         models_to_flush = []

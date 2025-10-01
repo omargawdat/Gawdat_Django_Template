@@ -1,5 +1,8 @@
 """
-Register factories as pytest fixtures
+Pytest fixtures for automatic test data setup
+
+Auto-discovers all factories and creates test data before each test.
+Data is automatically cleaned up via Django's transaction rollback.
 """
 
 import inspect
@@ -9,9 +12,9 @@ from djmoney.money import Money
 from pytest_factoryboy import register
 
 import factories as factories_module
+from factories.loader import load_all_factories
 
-# Automatically register all factories from factories module
-REGISTERED_FACTORIES = []
+# Auto-register all factories as pytest fixtures
 for name, obj in inspect.getmembers(factories_module):
     if (
         inspect.isclass(obj)
@@ -20,56 +23,40 @@ for name, obj in inspect.getmembers(factories_module):
         and hasattr(obj._meta, "model")
     ):
         register(obj)
-        # Store the fixture name (pytest_factoryboy converts FooFactory -> foo_factory)
-        fixture_name = name.replace("Factory", "").lower() + "_factory"
-        REGISTERED_FACTORIES.append(fixture_name)
 
 
 @pytest.fixture(autouse=True)
-def setup_test_data(request):
-    """Automatically create test data for all registered factories"""
-    for factory_name in REGISTERED_FACTORIES:
-        try:
-            factory = request.getfixturevalue(factory_name)
-            if hasattr(factory, "create_batch"):
-                factory.create_batch(2)
-        except Exception:  # noqa: S110
-            # Skip if factory is not available or fails
-            # This is expected for some factories that may have dependencies
-            pass
+def setup_test_data(db, django_db_reset_sequences):
+    """Create test data for all factories before each test"""
+    load_all_factories(count=2, use_transaction=False)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def create_un_country(django_db_setup, django_db_blocker):
+@pytest.fixture(autouse=True)
+def create_un_country(db):
     """Create UN country required by WalletService"""
-    with django_db_blocker.unblock():
-        from io import BytesIO
+    from io import BytesIO
 
-        from django.core.files.uploadedfile import SimpleUploadedFile
-        from PIL import Image
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from PIL import Image
 
-        from apps.location.models.country import Country
+    from apps.location.models.country import Country
 
-        # Create a dummy flag image
-        image = Image.new("RGB", (100, 100), color="gray")
-        buffer = BytesIO()
-        image.save(buffer, "PNG")
-        buffer.seek(0)
-        flag_file = SimpleUploadedFile(
-            "un_flag.png", buffer.read(), content_type="image/png"
-        )
+    image = Image.new("RGB", (100, 100), color="gray")
+    buffer = BytesIO()
+    image.save(buffer, "PNG")
+    buffer.seek(0)
 
-        Country.objects.get_or_create(
-            code="UN",
-            defaults={
-                "name": "Unselected",
-                "currency": "USD",
-                "flag": flag_file,
-                "is_active": True,
-                "phone_code": "000",
-                "app_install_money_inviter": Money(0, "USD"),
-                "app_install_money_invitee": Money(0, "USD"),
-                "order_money_inviter": Money(0, "USD"),
-                "order_money_invitee": Money(0, "USD"),
-            },
-        )
+    Country.objects.get_or_create(
+        code="UN",
+        defaults={
+            "name": "Unselected",
+            "currency": "USD",
+            "flag": SimpleUploadedFile("un.png", buffer.read(), "image/png"),
+            "is_active": True,
+            "phone_code": "000",
+            "app_install_money_inviter": Money(0, "USD"),
+            "app_install_money_invitee": Money(0, "USD"),
+            "order_money_inviter": Money(0, "USD"),
+            "order_money_invitee": Money(0, "USD"),
+        },
+    )
