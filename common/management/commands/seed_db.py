@@ -49,9 +49,27 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        from config.helpers.env import env
+
+        # Safety check: only allow in local/development environments
+        if env.environment not in ("local", "development"):
+            self.stdout.write(
+                self.style.ERROR(
+                    f"❌ seed_db command is not allowed in '{env.environment}' environment.\n"
+                    f"This command can only be run in 'local' or 'development' environments."
+                )
+            )
+            return
+
         if options["flush"]:
             self.stdout.write(self.style.WARNING("Flushing existing data..."))
             self._flush_data()
+
+            # Recreate superuser after flushing
+            self.stdout.write(self.style.WARNING("\nRecreating superuser..."))
+            from django.core.management import call_command
+
+            call_command("createsu")
 
         # Auto-discover all factories
         factories = discover_factories()
