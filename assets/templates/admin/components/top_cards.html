@@ -1,38 +1,74 @@
-<div class="top-cards-container">
-  <div class="top-card customers-card">
-    <div class="card-icon">
-      <i class="fas fa-users"></i>
+{% load i18n %}
+
+
+<div class="kpi-cards-container">
+  {% for card in kpi %}
+  <div class="kpi-card">
+    <div class="kpi-card-icon">
+      {% if forloop.counter == 1 %}
+      👥
+      {% elif forloop.counter == 2 %}
+      💰
+      {% elif forloop.counter == 3 %}
+      📦
+      {% endif %}
     </div>
-    <div class="card-content">
-      <h3 class="card-title">Total Customers</h3>
-      <p class="card-number" data-target="1247">0</p>
-      <span class="card-change positive">
-        <i class="fas fa-arrow-up"></i> +12.5%
-      </span>
+
+    <div class="kpi-card-title">
+      {{ card.title }}
+    </div>
+
+    <div class="kpi-card-subtitle">
+      {% if forloop.counter == 1 %}
+      Active & Verified Users
+      {% elif forloop.counter == 2 %}
+      Total Revenue Generated
+      {% elif forloop.counter == 3 %}
+      Successfully Paid Orders
+      {% endif %}
+    </div>
+
+    <div class="kpi-card-value">
+      {{ card.display }}
+    </div>
+
+    <div class="kpi-card-description">
+      {% if forloop.counter == 1 %}
+      Users who have completed verification and are actively using the platform
+      {% elif forloop.counter == 2 %}
+      Total monetary value from all completed transactions and payments
+      {% elif forloop.counter == 3 %}
+      Orders that have been successfully processed and payment confirmed
+      {% endif %}
+    </div>
+
+    <div class="kpi-card-metric">
+      <div class="kpi-card-change kpi-card-change-positive">
+        <span>↗</span>
+        <span>
+          {% if forloop.counter == 1 %}
+          +12% this month
+          {% elif forloop.counter == 2 %}
+          +8.5% this month
+          {% elif forloop.counter == 3 %}
+          +15% this month
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="kpi-card-trend">
+        <span>📈</span>
+        <span>
+          {% if forloop.counter == 1 %}
+          Growing
+          {% elif forloop.counter == 2 %}
+          Strong
+          {% elif forloop.counter == 3 %}
+          Excellent
+          {% endif %}
+        </span>
+      </div>
     </div>
   </div>
-  <div class="top-card payments-card">
-    <div class="card-icon">
-      <i class="fas fa-credit-card"></i>
-    </div>
-    <div class="card-content">
-      <h3 class="card-title">Total Payments</h3>
-      <p class="card-number" data-target="98750">$0</p>
-      <span class="card-change positive">
-        <i class="fas fa-arrow-up"></i> +8.3%
-      </span>
-    </div>
-  </div>
-  <div class="top-card orders-card">
-    <div class="card-icon">
-      <i class="fas fa-shopping-cart"></i>
-    </div>
-    <div class="card-content">
-      <h3 class="card-title">Total Orders</h3>
-      <p class="card-number" data-target="456">0</p>
-      <span class="card-change positive">
-        <i class="fas fa-arrow-up"></i> +15.7%
-      </span>
-    </div>
-  </div>
+  {% endfor %}
 </div>

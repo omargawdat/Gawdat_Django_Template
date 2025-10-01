@@ -19,7 +19,7 @@
             data-domain="{{ plausible_domain }}"
             src="https://plausible.io/js/script.js"></script>
   {% endif %}
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/top_cards.css' %}" />
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <script src="{% static 'js/top_cards.js' %}"></script>
@@ -38,17 +38,7 @@
     <!-- Top Cards Section -->
     {% include "admin/components/top_cards.html" %}
 
-    <!-- Revenue Line Chart Section -->
-    {% include "admin/components/line_chart.html" %}
 
-
-
-
-    <!-- Contact Messages Section -->
-    {% include "admin/components/contact_messages.html" %}
-
-    <!-- Social Accounts Section -->
-    {% include "admin/components/social.html" %}
 
   </div>
 {% endcomponent %}
