@@ -59,16 +59,26 @@ class CountryFactory(factory.django.DjangoModelFactory):
 class CustomerFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: f"user_{n}")  # Unique usernames
     email = factory.Sequence(lambda n: f"user{n}@example.com")  # Unique emails
-    phone_number = factory.Faker("phone_number")
+    phone_number = factory.Sequence(lambda n: f"+966{n:09d}")  # Saudi phone numbers
     full_name = factory.Faker("name")
     image = factory.django.ImageField(color="green", width=800, height=800)
     gender = fuzzy.FuzzyChoice([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
-    country = factory.SubFactory(CountryFactory)
+    country = factory.LazyAttribute(
+        lambda obj: Country.objects.filter(code="SA").first()
+        or CountryFactory(code="SA")
+    )
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
 
     class Meta:
         model = Customer
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        """Override create to skip validation"""
+        obj = model_class(*args, **kwargs)
+        obj.save(skip_validation=True)
+        return obj
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
@@ -167,11 +177,10 @@ class AddressFactory(factory.django.DjangoModelFactory):
 class FAQFactory(factory.django.DjangoModelFactory):
     question = factory.Faker("sentence", nb_words=8)
     answer = factory.Faker("text", max_nb_chars=300)
-    order = factory.Sequence(lambda n: n + 1000)  # Start from 1000 to avoid conflicts
+    order = factory.Sequence(lambda n: n)
 
     class Meta:
         model = FAQ
-        django_get_or_create = ("order",)
 
 
 class PopUpBannerFactory(factory.django.DjangoModelFactory):
@@ -228,7 +237,7 @@ class AppInfoFactory(factory.django.DjangoModelFactory):
 
 class WalletFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(CustomerFactory)
-    balance = factory.LazyFunction(lambda: Money(100, "USD"))
+    balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
     is_use_wallet_in_payment = True
 
     class Meta:
@@ -238,12 +247,14 @@ class WalletFactory(factory.django.DjangoModelFactory):
 
 class WalletTransactionFactory(factory.django.DjangoModelFactory):
     wallet = factory.LazyAttribute(
-        lambda obj: WalletFactory()
-    )  # Always create new wallet (with new user)
+        lambda obj: Wallet.objects.first() or WalletFactory()
+    )  # Use existing wallet or create new one
     transaction_type = fuzzy.FuzzyChoice(
         [choice[0] for choice in WalletTransactionType.choices]
     )
-    amount = factory.LazyFunction(lambda: Money(50, "USD"))
+    amount = factory.LazyAttribute(
+        lambda obj: Money(50, obj.wallet.user.country.currency)
+    )
     action_by = factory.SubFactory(AdminUserFactory)
     transaction_note = factory.Faker("sentence")
 
