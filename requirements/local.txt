@@ -12,6 +12,7 @@ pytest==8.4.1
 pytest-sugar==1.1.0
 djangorestframework-stubs[compatible-mypy]==3.16.2
 pytest-django==4.11.1
+pytest-factoryboy==2.8.1
 
 # Code Quality
 ruff==0.12.9
