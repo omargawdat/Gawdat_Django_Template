@@ -1,0 +1,3 @@
+"""
+Helpers for insights dashboard.
+"""

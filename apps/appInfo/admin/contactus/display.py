@@ -18,8 +18,8 @@ class ContactUsDisplayMixin:
         """Display header with image if available."""
         customer: Customer = contact_us.customer
         return [
-            f"{customer.full_name}",
-            f"{customer.phone_number}",
+            f"{customer.username if customer else 'Anonymous'}",
+            f"{customer.phone_number if customer else ''}",
             f"#{contact_us.pk}",
             "",
         ]

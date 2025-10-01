@@ -8,7 +8,8 @@ from apps.users.models.customer import Customer
 class ContactUs(models.Model):
     customer = models.ForeignKey(
         Customer,
-        on_delete=models.CASCADE,
+        null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_("Customer"),
         help_text=_("Select the customer who is making this contact."),
     )
