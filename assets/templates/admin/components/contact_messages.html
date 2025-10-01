@@ -46,7 +46,7 @@
                                     {% if contact.customer %}
                                     {{ contact.customer.full_name|default:contact.customer.username|default:"Unknown Customer" }}
                                     {% else %}
-                                    {% trans "Anonymous Contact" %}
+                                    {% trans "Anonymous" %}
                                     {% endif %}
                                 </div>
                                 <div class="customer-phone">
