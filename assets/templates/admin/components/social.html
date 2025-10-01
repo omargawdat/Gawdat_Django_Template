@@ -1,0 +1,670 @@
+{% load i18n %}
+
+<!-- Social Media Section -->
+<br>
+<div class="social-section-wrapper">
+  <div class="social-card">
+    <div class="social-header">
+      <div class="social-title-section">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">
+          {% trans "Social Media Links" %}
+        </h2>
+        <p class="text-gray-600 mb-6">{% trans "Follow us on social media and stay connected" %}</p>
+      </div>
+      <div class="social-actions">
+        <a href="/admin/appInfo/socialaccount/" class="edit-social-btn" title="{% trans 'Edit Social Media' %}">
+          <i class="fas fa-edit"></i>
+          <span>{% trans "Edit" %}</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    {% if social_accounts.email or social_accounts.phone_number %}
+    <div class="contact-info-section">
+      <h3 class="contact-section-title">
+        <i class="fas fa-address-book mr-2"></i>
+        {% trans "Contact Information" %}
+      </h3>
+      <div class="contact-info-grid">
+        {% if social_accounts.email %}
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="contact-details">
+            <div class="contact-label">{% trans "Email" %}</div>
+            <div class="contact-value">
+              <a href="mailto:{{ social_accounts.email }}" class="contact-link">
+                {{ social_accounts.email }}
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if social_accounts.phone_number %}
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="contact-details">
+            <div class="contact-label">{% trans "Phone" %}</div>
+            <div class="contact-value">
+              <a href="tel:{{ social_accounts.phone_number }}" class="contact-link">
+                {{ social_accounts.phone_number }}
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Social Media Links -->
+    {% if social_accounts.twitter or social_accounts.instagram or social_accounts.tiktok or social_accounts.website %}
+    <div class="social-links-section">
+      <h3 class="social-section-title">
+        <i class="fas fa-share-alt mr-2"></i>
+        {% trans "Follow Us On Social Media" %}
+      </h3>
+      <div class="social-links-grid">
+        {% if social_accounts.twitter %}
+        <div class="social-link-card" data-platform="twitter">
+          <a href="{{ social_accounts.twitter }}" target="_blank" rel="noopener noreferrer" class="social-link">
+            <div class="social-icon-container"
+              style="background-color: #1DA1F215; border-color: #1DA1F230;">
+              <i class="fab fa-twitter" style="color: #1DA1F2;"></i>
+            </div>
+            <div class="social-info">
+              <div class="social-platform">Twitter</div>
+              <div class="social-handle">{{ social_accounts.twitter|truncatechars:30 }}</div>
+            </div>
+            <div class="social-arrow">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </a>
+        </div>
+        {% endif %}
+
+        {% if social_accounts.instagram %}
+        <div class="social-link-card" data-platform="instagram">
+          <a href="{{ social_accounts.instagram }}" target="_blank" rel="noopener noreferrer" class="social-link">
+            <div class="social-icon-container"
+              style="background-color: #E4405F15; border-color: #E4405F30;">
+              <i class="fab fa-instagram" style="color: #E4405F;"></i>
+            </div>
+            <div class="social-info">
+              <div class="social-platform">Instagram</div>
+              <div class="social-handle">{{ social_accounts.instagram|truncatechars:30 }}</div>
+            </div>
+            <div class="social-arrow">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </a>
+        </div>
+        {% endif %}
+
+        {% if social_accounts.tiktok %}
+        <div class="social-link-card" data-platform="tiktok">
+          <a href="{{ social_accounts.tiktok }}" target="_blank" rel="noopener noreferrer" class="social-link">
+            <div class="social-icon-container"
+              style="background-color: #00000015; border-color: #00000030;">
+              <i class="fab fa-tiktok" style="color: #000000;"></i>
+            </div>
+            <div class="social-info">
+              <div class="social-platform">TikTok</div>
+              <div class="social-handle">{{ social_accounts.tiktok|truncatechars:30 }}</div>
+            </div>
+            <div class="social-arrow">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </a>
+        </div>
+        {% endif %}
+
+        {% if social_accounts.website %}
+        <div class="social-link-card" data-platform="website">
+          <a href="{{ social_accounts.website }}" target="_blank" rel="noopener noreferrer" class="social-link">
+            <div class="social-icon-container"
+              style="background-color: #7c3aed15; border-color: #7c3aed30;">
+              <i class="fas fa-globe" style="color: #7c3aed;"></i>
+            </div>
+            <div class="social-info">
+              <div class="social-platform">Website</div>
+              <div class="social-handle">{{ social_accounts.website|truncatechars:30 }}</div>
+            </div>
+            <div class="social-arrow">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="no-social-message">
+      <div class="no-social-icon">
+        <i class="fas fa-share-alt"></i>
+      </div>
+      <div class="no-social-title">{% trans "Social Media Coming Soon" %}</div>
+      <div class="no-social-text">{% trans "We're setting up our social media presence. Stay tuned!" %}</div>
+    </div>
+    {% endif %}
+
+    <!-- Decorative Elements -->
+    <div class="social-decoration-1"></div>
+    <div class="social-decoration-2"></div>
+  </div>
+</div>
+
+<style>
+/* Social Section - Dark Elegant Theme */
+.social-section-wrapper {
+  margin-bottom: 0 !important;
+  position: relative !important;
+  width: 100%;
+}
+
+.social-section-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #334155 70%, #475569 100%);
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.social-section-wrapper:hover::before {
+  opacity: 0.9;
+}
+
+.social-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%) !important;
+  border: 2px solid rgba(100, 116, 139, 0.2) !important;
+  padding: 2rem !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+  position: relative !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  width: 100%;
+  max-width: none;
+  margin: 0 !important;
+}
+
+.social-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+  z-index: 1;
+}
+
+.social-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.social-card:hover {
+  transform: translateY(-6px) scale(1.01) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 15px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Social Header */
+.social-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.social-title-section h2 {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.social-title-section p {
+  color: #94a3b8;
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+/* Social Actions */
+.social-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.edit-social-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.edit-social-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.edit-social-btn:hover {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+.edit-social-btn:hover::before {
+  left: 100%;
+}
+
+.edit-social-btn:active {
+  transform: translateY(0) scale(1.02);
+}
+
+.edit-social-btn i {
+  font-size: 1rem;
+}
+
+.edit-social-btn span {
+  font-weight: 600;
+}
+
+/* Contact Information Section */
+.contact-info-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.contact-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.contact-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(100, 116, 139, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+  background: rgba(30, 41, 59, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.contact-details {
+  flex: 1;
+}
+
+.contact-label {
+  font-size: 0.875rem;
+  color: #a78bfa;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.contact-value {
+  font-size: 1rem;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.contact-link {
+  color: #a78bfa;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #8b5cf6;
+  text-decoration: underline;
+}
+
+/* Social Links Section */
+.social-links-section {
+  margin-bottom: 1rem;
+}
+
+.social-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.social-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
+
+.social-link-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+  border-radius: 16px;
+  border: 2px solid rgba(100, 116, 139, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  height: 100%;
+  display: flex;
+  min-height: 140px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.social-link-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25);
+  border-color: rgba(100, 116, 139, 0.4);
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  gap: 1.25rem;
+  width: 100%;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  text-decoration: none;
+}
+
+.social-icon-container {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid;
+  font-size: 1.75rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.social-link:hover .social-icon-container {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.social-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.social-platform {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #a78bfa;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.social-handle {
+  font-size: 1rem;
+  color: #94a3b8;
+  opacity: 0.85;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.social-arrow {
+  color: #8b5cf6;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.social-link:hover .social-arrow {
+  opacity: 1;
+  transform: translateX(8px) scale(1.2);
+  color: #7c3aed;
+}
+
+/* Platform-specific hover effects */
+.social-link-card[data-platform="twitter"]:hover {
+  border-color: #1DA1F2;
+  box-shadow: 0 12px 24px rgba(29, 161, 242, 0.25);
+}
+
+.social-link-card[data-platform="instagram"]:hover {
+  border-color: #E4405F;
+  box-shadow: 0 12px 24px rgba(228, 64, 95, 0.25);
+}
+
+.social-link-card[data-platform="tiktok"]:hover {
+  border-color: #000000;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+.social-link-card[data-platform="website"]:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.25);
+}
+
+/* No Social Media Message */
+.no-social-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #a78bfa;
+}
+
+.no-social-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+  color: #7c3aed;
+}
+
+.no-social-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #8b5cf6;
+}
+
+.no-social-text {
+  font-size: 1rem;
+  opacity: 0.7;
+  color: #94a3b8;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Decorative Elements */
+.social-decoration-1 {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-radius: 50%;
+  z-index: 1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.social-decoration-2 {
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border-radius: 50%;
+  z-index: 1;
+  animation: float 4s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .social-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .social-actions {
+    margin-top: 1rem;
+    justify-content: flex-end;
+  }
+
+  .edit-social-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .contact-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-links-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+
+  .social-card {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .social-link {
+    padding: 1rem;
+  }
+
+  .social-icon-container {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .social-links-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  .social-card {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Tablet screens */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .social-links-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2rem;
+  }
+
+  .social-card {
+    padding: 2rem 3rem !important;
+  }
+}
+
+/* Desktop screens */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .social-links-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2.5rem;
+  }
+
+  .social-card {
+    padding: 2.5rem 4rem !important;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+  .social-card {
+    padding: 3rem 5rem !important;
+  }
+
+  .social-links-grid {
+    gap: 3rem;
+  }
+}
+</style>
