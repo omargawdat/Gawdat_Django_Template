@@ -17,6 +17,15 @@ register(BannerGroupFactory)
 register(BannerFactory)
 
 
+@pytest.fixture(autouse=True)
+def setup_test_data(country_factory, customer_factory, banner_factory):
+    """Automatically create test data for all tests"""
+    # Create test objects that admin tests will use
+    country_factory.create_batch(2)
+    customer_factory.create_batch(3)
+    banner_factory.create_batch(2)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def create_un_country(django_db_setup, django_db_blocker):
     """Create UN country required by WalletService"""

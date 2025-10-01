@@ -53,7 +53,7 @@ def test_admin_index(admin_client):
 
 
 @pytest.mark.django_db
-def test_admin_list_pages(admin_client, customer, banner):
+def test_admin_list_pages(admin_client):
     """Test all admin changelist pages load"""
     for model in admin.site._registry:
         app_label = model._meta.app_label
@@ -67,7 +67,7 @@ def test_admin_list_pages(admin_client, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_search(admin_client, customer, banner):
+def test_admin_search(admin_client):
     """Test search functionality on admin pages"""
     for model, model_admin in admin.site._registry.items():
         if hasattr(model_admin, "search_fields") and model_admin.search_fields:
@@ -82,7 +82,7 @@ def test_admin_search(admin_client, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_add_pages(admin_client, mock_request, customer, banner):
+def test_admin_add_pages(admin_client, mock_request):
     """Test add pages (only if user has permission)"""
     for model, model_admin in admin.site._registry.items():
         if model_admin.has_add_permission(mock_request):
@@ -99,7 +99,7 @@ def test_admin_add_pages(admin_client, mock_request, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_change_pages(admin_client, customer, banner):
+def test_admin_change_pages(admin_client):
     """Test change/edit pages for existing objects"""
     for model in admin.site._registry:
         if hasattr(model, "objects"):
@@ -116,7 +116,7 @@ def test_admin_change_pages(admin_client, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_save_operations(admin_client, mock_request, customer, banner):
+def test_admin_save_operations(admin_client, mock_request):
     """Test save/update operations (only if user has permission)"""
     for model, model_admin in admin.site._registry.items():
         if hasattr(model, "objects"):
@@ -144,7 +144,7 @@ def test_admin_save_operations(admin_client, mock_request, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_delete_pages(admin_client, mock_request, customer, banner):
+def test_admin_delete_pages(admin_client, mock_request):
     """Test delete pages (only if user has permission)"""
     for model, model_admin in admin.site._registry.items():
         if hasattr(model, "objects"):
@@ -163,7 +163,7 @@ def test_admin_delete_pages(admin_client, mock_request, customer, banner):
 
 
 @pytest.mark.django_db
-def test_admin_history_pages(admin_client, customer, banner):
+def test_admin_history_pages(admin_client):
     """Test history pages for existing objects"""
     for model in admin.site._registry:
         if hasattr(model, "objects"):
