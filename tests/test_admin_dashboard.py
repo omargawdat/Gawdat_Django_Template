@@ -50,7 +50,7 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
         failed += 1
 
     # Loop all admin models
-    for model in admin.site._registry:
+    for model, model_admin in admin.site._registry.items():
         app_label = model._meta.app_label
         model_name = model._meta.model_name
 
@@ -61,6 +61,14 @@ def test_all_admin_pages(admin_client, customer, banner):  # noqa: C901, PLR0912
             passed += 1
         else:
             failed += 1
+
+        # Test search functionality if search_fields is defined
+        if hasattr(model_admin, "search_fields") and model_admin.search_fields:
+            response = admin_client.get(url, {"q": "test"})
+            if response.status_code == HTTP_200_OK:
+                passed += 1
+            else:
+                failed += 1
 
         # Test add page
         url = reverse(f"admin:{app_label}_{model_name}_add")
