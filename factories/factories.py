@@ -125,22 +125,6 @@ class NotificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Notification
-        skip_postgeneration_save = True
-
-    @factory.post_generation
-    def users(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for user in extracted:
-                self.users.add(user)
-        else:
-            # Add 1-3 random customers
-            from apps.users.models.customer import Customer
-
-            customers = Customer.objects.all()[:3]
-            if customers:
-                self.users.add(*customers)
 
 
 # Location

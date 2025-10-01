@@ -24,7 +24,8 @@ for name, obj in inspect.getmembers(factories_module):
         register(obj)
 
 
-@pytest.fixture(autouse=True)
-def setup_test_data(db, django_db_reset_sequences):
-    """Create test data for all factories before each test"""
-    load_all_factories(count=2, use_transaction=False)
+@pytest.fixture(scope="session")
+def django_db_setup(django_db_setup, django_db_blocker):
+    """Create test data once per test session"""
+    with django_db_blocker.unblock():
+        load_all_factories(count=2, use_transaction=False)
