@@ -165,7 +165,8 @@ def get_performance(labels_daily, revenue_egp_daily, revenue_sar_daily):
             "title": _("Last Month Revenue in Egypt"),
             "metric": Money(sum(revenue_egp_daily), "EGP"),
             "footer": format_html(
-                '<strong class="text-green-600 font-medium">+3.14%</strong> vs last week'
+                '{}<strong class="text-green-600 font-medium">+3.14%</strong> vs last week',
+                "",
             ),
             "chart": json.dumps(
                 {
@@ -183,7 +184,8 @@ def get_performance(labels_daily, revenue_egp_daily, revenue_sar_daily):
             "title": _("Last Month Revenue in Saudi Arabia"),
             "metric": Money(sum(revenue_sar_daily), "SAR"),
             "footer": format_html(
-                '<strong class="text-green-600 font-medium">+3.14%</strong> vs last week'
+                '{}<strong class="text-green-600 font-medium">+3.14%</strong> vs last week',
+                "",
             ),
             "chart": json.dumps(
                 {
