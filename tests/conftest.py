@@ -8,11 +8,11 @@ import pytest
 from djmoney.money import Money
 from pytest_factoryboy import register
 
-from tests import factories
+import factories as factories_module
 
 # Automatically register all factories from factories module
 REGISTERED_FACTORIES = []
-for name, obj in inspect.getmembers(factories):
+for name, obj in inspect.getmembers(factories_module):
     if (
         inspect.isclass(obj)
         and name.endswith("Factory")
