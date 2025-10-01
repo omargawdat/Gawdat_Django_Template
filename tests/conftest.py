@@ -8,7 +8,6 @@ Data is automatically cleaned up via Django's transaction rollback.
 import inspect
 
 import pytest
-from djmoney.money import Money
 from pytest_factoryboy import register
 
 import factories as factories_module
@@ -29,34 +28,3 @@ for name, obj in inspect.getmembers(factories_module):
 def setup_test_data(db, django_db_reset_sequences):
     """Create test data for all factories before each test"""
     load_all_factories(count=2, use_transaction=False)
-
-
-@pytest.fixture(autouse=True)
-def create_un_country(db):
-    """Create UN country required by WalletService"""
-    from io import BytesIO
-
-    from django.core.files.uploadedfile import SimpleUploadedFile
-    from PIL import Image
-
-    from apps.location.models.country import Country
-
-    image = Image.new("RGB", (100, 100), color="gray")
-    buffer = BytesIO()
-    image.save(buffer, "PNG")
-    buffer.seek(0)
-
-    Country.objects.get_or_create(
-        code="UN",
-        defaults={
-            "name": "Unselected",
-            "currency": "USD",
-            "flag": SimpleUploadedFile("un.png", buffer.read(), "image/png"),
-            "is_active": True,
-            "phone_code": "000",
-            "app_install_money_inviter": Money(0, "USD"),
-            "app_install_money_invitee": Money(0, "USD"),
-            "order_money_inviter": Money(0, "USD"),
-            "order_money_invitee": Money(0, "USD"),
-        },
-    )

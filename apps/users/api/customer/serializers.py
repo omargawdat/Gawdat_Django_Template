@@ -52,6 +52,7 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
                     "type": "android",
                 },
                 "language": "en",
+                "country": "SA",
             },
             request_only=True,
         ),
@@ -63,6 +64,16 @@ class CustomerCreateSerializer(serializers.Serializer):
     device = FCMDeviceCreateSerializer(required=False, allow_null=True)
     language = serializers.ChoiceField(choices=Language.choices)
     referral_customer_id = serializers.IntegerField(required=False, allow_null=True)
+    country = serializers.PrimaryKeyRelatedField(
+        queryset=None,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from apps.location.models.country import Country
+
+        self.fields["country"].queryset = Country.objects.filter(is_active=True)
 
 
 @extend_schema_serializer(

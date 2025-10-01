@@ -3,7 +3,6 @@ import logging
 from djmoney.models.fields import Money
 
 from apps.channel.constants import NotificationType
-from apps.location.models.country import Country
 from apps.payment.constants import ReferralType
 from apps.payment.constants import WalletTransactionType
 from apps.payment.domain.services.wallet_transaction import WalletTransactionService
@@ -15,11 +14,7 @@ logger = logging.getLogger(__name__)
 
 class WalletService:
     @staticmethod
-    def create_wallet_for_customer(user: Customer) -> Wallet:
-        country = Country.objects.get(pk="UN")  # TODO remove it
-        # country = CountrySelector.country_by_phone(user.phone_number)
-        currency = country.currency
-
+    def create_wallet_for_customer(user: Customer, currency: str) -> Wallet:
         wallet = Wallet.objects.create(
             user=user,
             balance=Money(0, currency),

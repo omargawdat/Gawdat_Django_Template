@@ -10,7 +10,6 @@ from apps.users.fields.customer import CustomerFields
 class CountryValidator:
     @staticmethod
     def validate_match_country_phone(*, phone_number: PhoneNumber, country: Country):
-        return  # todo: pass this validation until finsihging the country code
         phone_country = CountrySelector.country_by_phone(phone_number)
         if phone_country != country:
             raise ValidationError(

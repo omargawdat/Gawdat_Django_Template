@@ -97,6 +97,7 @@ class CustomerAuthView(APIView):
         otp = serializer.validated_data["otp"]
         language = serializer.validated_data.get("language")
         inviter = serializer.validated_data.get("referral_customer_id")
+        country = serializer.validated_data["country"]
 
         device_dict = serializer.validated_data.get("device")
         device_data = DeviceData(**device_dict) if device_dict else None
@@ -113,7 +114,10 @@ class CustomerAuthView(APIView):
             phone_number=phone_number, code=otp, otp_type=OTPType.CUSTOMER_AUTH
         )
         customer, created = CustomerService.update_or_create_customer(
-            phone_number=phone_number, language=language, inviter=inviter
+            phone_number=phone_number,
+            language=language,
+            inviter=inviter,
+            country=country,
         )
 
         if device_data:
