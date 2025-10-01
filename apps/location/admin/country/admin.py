@@ -1,7 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ExportActionModelAdmin
 from import_export.formats.base_formats import CSV
-from simple_history.admin import SimpleHistoryAdmin
 from unfold.contrib.import_export.forms import ExportForm
 
 from apps.location.models.country import Country
@@ -16,7 +15,6 @@ from .resource import CountryResource
 
 @admin.register(Country)
 class CountryAdmin(
-    SimpleHistoryAdmin,
     CountryDisplayMixin,
     CountryListView,
     CountryChangeView,

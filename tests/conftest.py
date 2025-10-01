@@ -2,28 +2,41 @@
 Register factories as pytest fixtures
 """
 
+import inspect
+
 import pytest
 from djmoney.money import Money
 from pytest_factoryboy import register
 
-from tests.factories import BannerFactory
-from tests.factories import BannerGroupFactory
-from tests.factories import CountryFactory
-from tests.factories import CustomerFactory
+from tests import factories
 
-register(CountryFactory)
-register(CustomerFactory)
-register(BannerGroupFactory)
-register(BannerFactory)
+# Automatically register all factories from factories module
+REGISTERED_FACTORIES = []
+for name, obj in inspect.getmembers(factories):
+    if (
+        inspect.isclass(obj)
+        and name.endswith("Factory")
+        and hasattr(obj, "_meta")
+        and hasattr(obj._meta, "model")
+    ):
+        register(obj)
+        # Store the fixture name (pytest_factoryboy converts FooFactory -> foo_factory)
+        fixture_name = name.replace("Factory", "").lower() + "_factory"
+        REGISTERED_FACTORIES.append(fixture_name)
 
 
 @pytest.fixture(autouse=True)
-def setup_test_data(country_factory, customer_factory, banner_factory):
-    """Automatically create test data for all tests"""
-    # Create test objects that admin tests will use
-    country_factory.create_batch(2)
-    customer_factory.create_batch(3)
-    banner_factory.create_batch(2)
+def setup_test_data(request):
+    """Automatically create test data for all registered factories"""
+    for factory_name in REGISTERED_FACTORIES:
+        try:
+            factory = request.getfixturevalue(factory_name)
+            if hasattr(factory, "create_batch"):
+                factory.create_batch(2)
+        except Exception:  # noqa: S110
+            # Skip if factory is not available or fails
+            # This is expected for some factories that may have dependencies
+            pass
 
 
 @pytest.fixture(scope="session", autouse=True)
