@@ -19,7 +19,6 @@ from apps.appInfo.other.constants import ContactCategory
 from apps.channel.constants import NotificationType
 from apps.channel.models.notification import Notification
 from apps.location.constants import CountryChoices
-from apps.location.constants import CurrencyCode
 from apps.location.constants import LocationNameChoices
 from apps.location.models.address import Address
 from apps.location.models.country import Country
@@ -31,16 +30,25 @@ from apps.users.constants import GenderChoices
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
 
+# Mapping of country codes to their currency and phone prefix
+COUNTRY_DATA = {
+    "EG": {"currency": "EGP", "phone_code": "20"},
+    "SA": {"currency": "SAR", "phone_code": "966"},
+    "AE": {"currency": "AED", "phone_code": "971"},
+    "KW": {"currency": "KWD", "phone_code": "965"},
+    "QA": {"currency": "QAR", "phone_code": "974"},
+    "OM": {"currency": "OMR", "phone_code": "968"},
+    "BH": {"currency": "BHD", "phone_code": "973"},
+}
+
 
 class CountryFactory(factory.django.DjangoModelFactory):
-    code = fuzzy.FuzzyChoice(
-        [choice[0] for choice in CountryChoices.choices if choice[0] != "UN"]
-    )
+    code = fuzzy.FuzzyChoice(list(COUNTRY_DATA.keys()))
     name = factory.LazyAttribute(lambda obj: dict(CountryChoices.choices)[obj.code])
-    currency = fuzzy.FuzzyChoice([choice[0] for choice in CurrencyCode.choices])
+    currency = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["currency"])
+    phone_code = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["phone_code"])
     flag = factory.django.ImageField(color="blue", width=100, height=100)
     is_active = True
-    phone_code = factory.Faker("numerify", text="###")
 
     app_install_money_inviter = factory.LazyAttribute(
         lambda obj: Money(10, obj.currency)
@@ -57,28 +65,49 @@ class CountryFactory(factory.django.DjangoModelFactory):
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
-    username = factory.Sequence(lambda n: f"user_{n}")  # Unique usernames
-    email = factory.Sequence(lambda n: f"user{n}@example.com")  # Unique emails
-    phone_number = factory.Sequence(lambda n: f"+966{n:09d}")  # Saudi phone numbers
+    username = factory.Sequence(lambda n: f"user_{n}")
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
     full_name = factory.Faker("name")
     image = factory.django.ImageField(color="green", width=800, height=800)
     gender = fuzzy.FuzzyChoice([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
-    country = factory.LazyAttribute(
-        lambda obj: Country.objects.filter(code="SA").first()
-        or CountryFactory(code="SA")
-    )
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
+
+    # Use random country from COUNTRY_DATA
+    country = factory.SubFactory(CountryFactory)
 
     class Meta:
         model = Customer
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
-        """Override create to skip validation"""
-        obj = model_class(*args, **kwargs)
-        obj.save(skip_validation=True)
-        return obj
+        """Ensure phone number matches country and set password before creation"""
+        from faker import Faker
+        from faker_e164.providers import E164Provider
+
+        # Ensure a country
+        country = kwargs.get("country")
+        if not country:
+            country = Country.objects.filter(code="SA").first() or CountryFactory(
+                code="SA"
+            )
+            kwargs["country"] = country
+
+        # Ensure a phone number compatible with the country
+        if "phone_number" not in kwargs:
+            fake = Faker()
+            fake.add_provider(E164Provider)
+            # Generate valid E.164 phone number for the country
+            kwargs["phone_number"] = fake.e164(
+                region_code=country.code, valid=True, possible=True
+            )
+
+        # Set a password if not provided (will be hashed by User.save)
+        if "password" not in kwargs:
+            kwargs["password"] = "testpass123"  # pragma: allowlist secret  # noqa: S105
+
+        # Create normally - validation will pass now
+        return super()._create(model_class, *args, **kwargs)
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):

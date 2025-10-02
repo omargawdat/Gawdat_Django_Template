@@ -84,6 +84,5 @@ class Customer(User):
         )
 
     def save(self, *args, **kwargs):
-        if not kwargs.pop("skip_validation", False):
-            self.full_clean()
+        self.full_clean()
         super().save(*args, **kwargs)

@@ -104,5 +104,8 @@ def load_all_factories(count=2, skip_factories=None, use_transaction=False):
 
         except Exception:
             results["failed"].append(factory_name)
+            import logging
+
+            logging.exception(f"Failed to create {factory_name}")
 
     return results
