@@ -2,39 +2,39 @@
 python-slugify==8.0.4
 Pillow==11.3.0
 argon2-cffi==25.1.0
-pydantic==2.11.7
-pydantic-settings==2.10.1
-boto3==1.40.4
+pydantic==2.11.9
+pydantic-settings==2.11.0
+boto3==1.40.43
 
 # Redis
-redis==5.3.1
+redis==6.4.0
 hiredis==3.2.1
-psycopg[pool]==3.2.9
+psycopg[pool]==3.2.10
 
 # Django and Extensions
 django==5.2.5
 django-model-utils==5.0.0
-django-redis==5.4.0
-django-import-export==4.3.9
+django-redis==6.0.0
+django-import-export==4.3.10
 openpyxl==3.1.5
 django-phonenumber-field[phonenumbers]==8.1.0
 faker-e164==0.1.0
 django-polymorphic==4.1.0
-django-unfold==0.64.2
+django-unfold==0.67.0
 fcm-django==2.3.1
 django-solo==2.4.0
 rules==3.5
 django-imagekit==5.0.0
 django-filter==25.1
 django-money==3.5.4
-django-cors-headers==4.7.0
-dj-database-url==2.3.0
+django-cors-headers==4.9.0
+dj-database-url==3.0.1
 django_model_suite==0.2.1
 django-simple-history==3.10.1
-django-modeltranslation==0.19.16
+django-modeltranslation==0.19.17
 django-tasks==0.8.1
-django-soft-delete==1.0.19
-django-guardian==3.0.3
+django-soft-delete==1.0.21
+django-guardian==3.2.0
 django-location-field==2.7.3
 django-map-widgets==0.5.1
 django-constance==4.3.2
@@ -50,4 +50,4 @@ drf-standardized-errors[openapi]==0.15.0
 djangorestframework-camel-case==1.4.2
 
 # Oauth
-dj-rest-auth[with_social]==7.0.0 # [IMPORTANT]: 7.0.1 isn't working correctly.
+dj-rest-auth[with_social]==7.0.1 # [IMPORTANT]: 7.0.1 isn't working correctly.
