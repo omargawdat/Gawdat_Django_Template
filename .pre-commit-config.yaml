@@ -115,6 +115,12 @@ repos:
         pass_filenames: false
         files: ^.+\.(py)$
         stages: [ pre-push ]
+      - id: pytest
+        name: Run pytest tests
+        entry: docker compose -f docker-compose.local.yml run --rm -T django pytest
+        language: system
+        pass_filenames: false
+        stages: [ pre-push ]
 
       - id: auto-update-hooks
         name: Auto-update pre-commit hooks

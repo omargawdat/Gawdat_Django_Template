@@ -12,7 +12,6 @@ class BaseCustomerPermissions:
         self, request: HttpRequest, customer: Customer | None = None
     ) -> dict:
         context = CustomerContextLogic(request, customer)
-
         return {
             CustomerFields.IS_SUPERUSER: FieldPermissions(
                 visible=(context.is_staff),

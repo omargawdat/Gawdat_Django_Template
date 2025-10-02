@@ -1,6 +1,5 @@
 from rest_framework.exceptions import AuthenticationFailed
 
-from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
 from apps.users.domain.validators.user import UserValidator
 from apps.users.models.customer import Customer
@@ -15,12 +14,19 @@ class CustomerService:
 
     @staticmethod
     def update_or_create_customer(
-        *, phone_number: str, language: str, inviter: int | None = None
+        *,
+        phone_number: str,
+        language: str,
+        country: Country,
+        inviter: int | None = None,
     ) -> tuple[Customer, bool]:
+        from apps.payment.constants import ReferralType
+        from apps.payment.domain.services.wallet import WalletService
+
         defaults = {
             "username": str(phone_number),
             "language": language,
-            "country": CountrySelector.country_by_phone(phone_number),
+            "country": country,
             "inviter": inviter,
         }
 
@@ -30,6 +36,22 @@ class CustomerService:
 
         customer.clean()
         customer.save()
+
+        # Handle wallet creation for new customers
+        if created:
+            WalletService.create_wallet_for_customer(customer, country.currency)
+
+            # Handle referral rewards for new customers
+            if inviter:
+                inviter_customer = Customer.objects.filter(
+                    id=inviter, is_active=True
+                ).first()
+                if inviter_customer:
+                    WalletService.add_referral_points(
+                        inviter_customer=inviter_customer,
+                        invitee_customer=customer,
+                        referral_type=ReferralType.APP_INSTALL,
+                    )
 
         return customer, created
 
@@ -41,6 +63,8 @@ class CustomerService:
         username: str,
         password: str | None = None,
     ) -> Customer:
+        from apps.payment.domain.services.wallet import WalletService
+
         # The Default country
         country = Country.objects.get(code="SA")
 
@@ -55,6 +79,10 @@ class CustomerService:
         customer.full_clean()
         customer.is_verified = False
         customer.save()
+
+        # Create wallet for new customer
+        WalletService.create_wallet_for_customer(customer, country.currency)
+
         return customer
 
     @staticmethod

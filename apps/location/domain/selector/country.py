@@ -1,7 +1,11 @@
 import logging
 
+from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from django.utils.translation import gettext_lazy as _
 from phonenumbers import PhoneNumber
+from phonenumbers import parse
+from phonenumbers import region_code_for_number
 
 from apps.location.models.country import Country
 
@@ -15,17 +19,14 @@ class CountrySelector:
 
     @staticmethod
     def country_by_phone(phone_number: PhoneNumber) -> Country:
-        return Country.objects.get(pk="UN")  # TODO remove it
-
-        # parsed_number = parse(str(phone_number))
-        # country_code = region_code_for_number(parsed_number)
-        # country = CountrySelector.country_by_code(country_code)
-        # if not country:
-        #     if not country:
-        #         raise ValidationError(
-        #             {"phone_number": _("Country code not found for phone")}
-        #         )
-        # return country
+        parsed_number = parse(str(phone_number))
+        country_code = region_code_for_number(parsed_number)
+        country = CountrySelector.country_by_code(country_code)
+        if not country:
+            raise ValidationError(
+                {"phone_number": _("Country code not found for phone")}
+            )
+        return country
 
     @staticmethod
     def country_by_code(code: str) -> Country:

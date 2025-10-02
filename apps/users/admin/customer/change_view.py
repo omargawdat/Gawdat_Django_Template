@@ -20,7 +20,6 @@ class CustomerChangeView:
                     "birth_date",
                     "primary_address",
                     "country",
-                    "in",
                 )
             },
         ),
@@ -33,7 +32,6 @@ class CustomerChangeView:
                     "is_active",
                     "is_verified",
                 ),
-                "classes": ("collapse",),
             },
         ),
     )

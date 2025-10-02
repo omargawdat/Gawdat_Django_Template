@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
-from djmoney.money import Money
 
 from apps.location.constants import CountryChoices
 from apps.location.constants import CurrencyCode
@@ -94,6 +93,7 @@ class Country(models.Model):
         return f"{self.get_code_display()}"
 
     def save(self, *args, **kwargs):
-        if self.currency:
-            self.referral_points = Money(self.referral_points.amount, self.currency)
+        # Note: referral_points field doesn't exist in model, commented out to fix
+        # if self.currency:
+        #     self.referral_points = Money(self.referral_points.amount, self.currency)
         super().save(*args, **kwargs)
