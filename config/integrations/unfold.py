@@ -223,7 +223,7 @@ UNFOLD = {
             {
                 "title": _("Configuration ⓘ"),
                 "separator": True,
-                "collapsible": True,
+                "collapsible": False,
                 "items": [
                     {
                         "title": _("Contact Us"),
