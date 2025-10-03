@@ -5,7 +5,8 @@ Simple factories using factory_boy + Faker
 import factory
 from django.contrib.gis.geos import Point
 from djmoney.money import Money
-from factory import fuzzy
+from faker import Faker
+from faker_e164.providers import E164Provider
 
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.banner import Banner
@@ -41,9 +42,13 @@ COUNTRY_DATA = {
     "BH": {"currency": "BHD", "phone_code": "973"},
 }
 
+# Initialize Faker with E164 provider for valid phone numbers
+fake = Faker()
+fake.add_provider(E164Provider)
+
 
 class CountryFactory(factory.django.DjangoModelFactory):
-    code = fuzzy.FuzzyChoice(list(COUNTRY_DATA.keys()))
+    code = factory.Iterator(list(COUNTRY_DATA.keys()))
     name = factory.LazyAttribute(lambda obj: dict(CountryChoices.choices)[obj.code])
     currency = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["currency"])
     phone_code = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["phone_code"])
@@ -69,50 +74,41 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     full_name = factory.Faker("name")
     image = factory.django.ImageField(color="green", width=800, height=800)
-    gender = fuzzy.FuzzyChoice([choice[0] for choice in GenderChoices.choices])
+    gender = factory.Iterator([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
-
-    # Use random country from COUNTRY_DATA
     country = factory.SubFactory(CountryFactory)
+    password = "testpass123"  # pragma: allowlist secret  # noqa: S105
+
+    # ✅ Generate valid E.164 phone number for the country
+    phone_number = factory.LazyAttribute(
+        lambda obj: fake.e164(region_code=obj.country.code, valid=True, possible=True)
+    )
 
     class Meta:
         model = Customer
 
-    @classmethod
-    def _create(cls, model_class, *args, **kwargs):
-        """Ensure phone number matches country and set password before creation"""
-        from faker import Faker
-        from faker_e164.providers import E164Provider
+    class Params:
+        verified = factory.Trait(is_verified=True)
+        unverified = factory.Trait(is_verified=False)
 
-        # Ensure a country
-        country = kwargs.get("country")
-        if not country:
-            country = Country.objects.filter(code="SA").first() or CountryFactory(
-                code="SA"
-            )
-            kwargs["country"] = country
+    @factory.post_generation
+    def hash_password(self, create, extracted, **kwargs):
+        """Hash the password after creation"""
+        if not create:
+            return
+        password = extracted if extracted else self.password
+        self.set_password(password)
+        self.save()
 
-        # Ensure a phone number compatible with the country
-        if "phone_number" not in kwargs:
-            fake = Faker()
-            fake.add_provider(E164Provider)
-            # Generate valid E.164 phone number for the country
-            kwargs["phone_number"] = fake.e164(
-                region_code=country.code, valid=True, possible=True
-            )
-
-        # Set a password if not provided (will be hashed by User.save)
-        if "password" not in kwargs:
-            kwargs["password"] = "testpass123"  # pragma: allowlist secret  # noqa: S105
-
-        # Create customer
-        customer = super()._create(model_class, *args, **kwargs)
-
-        # Automatically create wallet for the customer
-        WalletFactory(user=customer)
-
-        return customer
+    @factory.post_generation
+    def wallet(self, create, extracted, **kwargs):
+        """Automatically create wallet for customer"""
+        if not create:
+            return
+        if extracted is False:
+            return
+        WalletFactory(user=self)
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
@@ -133,27 +129,35 @@ class BannerFactory(factory.django.DjangoModelFactory):
         model = Banner
 
 
-# Users
 class AdminUserFactory(factory.django.DjangoModelFactory):
-    username = factory.Sequence(lambda n: f"admin_{n}")  # Unique usernames
-    email = factory.Sequence(lambda n: f"admin{n}@example.com")  # Unique emails
+    username = factory.Sequence(lambda n: f"admin_{n}")
+    email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.django.ImageField(color="purple", width=800, height=800)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
     is_staff = True
+    password = "adminpass123"  # pragma: allowlist secret  # noqa: S105
 
     class Meta:
         model = AdminUser
 
+    @factory.post_generation
+    def hash_password(self, create, extracted, **kwargs):
+        """Hash the password after creation"""
+        if not create:
+            return
+        password = extracted if extracted else self.password
+        self.set_password(password)
+        self.save()
 
-# Channel
+
 class NotificationFactory(factory.django.DjangoModelFactory):
     title = factory.Faker("sentence", nb_words=5)
     message_body = factory.Faker("text", max_nb_chars=200)
-    notification_type = fuzzy.FuzzyChoice(
+    notification_type = factory.Iterator(
         [choice[0] for choice in NotificationType.choices]
     )
-    send_sms = factory.Faker("boolean", chance_of_getting_true=50)
-    send_fcm = factory.Faker("boolean", chance_of_getting_true=80)
+    send_sms = False
+    send_fcm = False
     object_id = factory.Faker("random_int", min=1, max=1000)
     is_read = factory.Faker("boolean", chance_of_getting_true=30)
 
@@ -161,14 +165,11 @@ class NotificationFactory(factory.django.DjangoModelFactory):
         model = Notification
 
 
-# Location
 class RegionFactory(factory.django.DjangoModelFactory):
     country = factory.SubFactory(CountryFactory)
-    code = factory.Sequence(lambda n: f"REG{n:05d}")  # More unique codes
+    code = factory.Sequence(lambda n: f"REG{n:05d}")
     name = factory.Faker("city")
-    geometry = factory.LazyAttribute(
-        lambda obj: Point(-74.0, 40.7)
-    )  # Simple default point
+    geometry = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
 
     class Meta:
         model = Region
@@ -177,12 +178,10 @@ class RegionFactory(factory.django.DjangoModelFactory):
 
 class AddressFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomerFactory)
-    point = factory.LazyAttribute(
-        lambda obj: Point(-74.0, 40.7)
-    )  # Simple default point
+    point = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
     description = factory.Faker("address")
     map_description = factory.Faker("sentence")
-    location_type = fuzzy.FuzzyChoice(
+    location_type = factory.Iterator(
         [choice[0] for choice in LocationNameChoices.choices]
     )
     map_image = factory.django.ImageField(color="orange", width=600, height=400)
@@ -191,7 +190,6 @@ class AddressFactory(factory.django.DjangoModelFactory):
         model = Address
 
 
-# AppInfo
 class FAQFactory(factory.django.DjangoModelFactory):
     question = factory.Faker("sentence", nb_words=8)
     answer = factory.Faker("text", max_nb_chars=300)
@@ -212,7 +210,7 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
 class SocialAccountFactory(factory.django.DjangoModelFactory):
     email = factory.Faker("email")
-    phone_number = factory.Faker("numerify", text="+###########")  # Max 15 chars
+    phone_number = factory.Faker("numerify", text="+###########")
     twitter = factory.Faker("url")
     instagram = factory.Faker("url")
     tiktok = factory.Faker("url")
@@ -224,7 +222,7 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 
 class ContactUsFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomerFactory)
-    contact_type = fuzzy.FuzzyChoice([choice[0] for choice in ContactCategory.choices])
+    contact_type = factory.Iterator([choice[0] for choice in ContactCategory.choices])
     description = factory.Faker("text", max_nb_chars=500)
     has_checked = factory.Faker("boolean", chance_of_getting_true=40)
 
@@ -254,20 +252,18 @@ class AppInfoFactory(factory.django.DjangoModelFactory):
 
 
 class WalletFactory(factory.django.DjangoModelFactory):
-    user = factory.SubFactory(CustomerFactory)
+    user = factory.SubFactory(CustomerFactory, wallet=False)
     balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
     is_use_wallet_in_payment = True
 
     class Meta:
         model = Wallet
-        django_get_or_create = ("user",)  # Get or create based on user
+        django_get_or_create = ("user",)
 
 
 class WalletTransactionFactory(factory.django.DjangoModelFactory):
-    wallet = factory.LazyAttribute(
-        lambda obj: Wallet.objects.first() or WalletFactory()
-    )  # Use existing wallet or create new one
-    transaction_type = fuzzy.FuzzyChoice(
+    wallet = factory.SubFactory(WalletFactory)
+    transaction_type = factory.Iterator(
         [choice[0] for choice in WalletTransactionType.choices]
     )
     amount = factory.LazyAttribute(
