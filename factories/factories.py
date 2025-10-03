@@ -106,8 +106,13 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         if "password" not in kwargs:
             kwargs["password"] = "testpass123"  # pragma: allowlist secret  # noqa: S105
 
-        # Create normally - validation will pass now
-        return super()._create(model_class, *args, **kwargs)
+        # Create customer
+        customer = super()._create(model_class, *args, **kwargs)
+
+        # Automatically create wallet for the customer
+        WalletFactory(user=customer)
+
+        return customer
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
