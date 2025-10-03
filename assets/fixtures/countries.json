@@ -40,28 +40,5 @@
       "order_money_invitee": "7.00",
       "order_money_invitee_currency": "SAR"
     }
-  },
-  {
-  "model": "location.country",
-  "pk": "UN",
-  "fields": {
-    "currency": "SAR",
-    "flag": "flags/SA.png",
-    "is_active": false,
-    "phone_code": "",
-    "code": "UN",
-    "name": "Unselected Country",
-    "name_ar": "دولة غير محددة",
-    "name_en": "Unselected Country",
-    "app_install_money_inviter": "10.00",
-    "app_install_money_inviter_currency": "SAR",
-    "app_install_money_invitee": "9.00",
-    "app_install_money_invitee_currency": "SAR",
-    "order_money_inviter": "8.00",
-    "order_money_inviter_currency": "SAR",
-    "order_money_invitee": "7.00",
-    "order_money_invitee_currency": "SAR"
   }
-}
-
 ]
