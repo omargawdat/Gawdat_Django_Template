@@ -1,4 +1,5 @@
 # management/commands/seed_db.py
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -23,7 +24,7 @@ from factories import WalletTransactionFactory
 # Order matters: dependencies must come after their dependents
 FACTORY_REGISTRY = [
     # Independent models (no foreign keys)
-    {"factory": CountryFactory, "count": 7},
+    {"factory": CountryFactory, "count": len(settings.SUPPORTED_COUNTRY_CODES)},
     {"factory": AppInfoFactory, "count": 1},
     {"factory": SocialAccountFactory, "count": 1},
     # User models

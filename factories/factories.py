@@ -4,6 +4,7 @@ All factories reuse existing related instances instead of creating new ones
 """
 
 import factory
+from django.conf import settings
 from django.contrib.gis.geos import Point
 from djmoney.money import Money
 from faker import Faker
@@ -21,6 +22,7 @@ from apps.appInfo.other.constants import ContactCategory
 from apps.channel.constants import NotificationType
 from apps.channel.models.notification import Notification
 from apps.location.constants import LocationNameChoices
+from apps.location.domain.utils import CountryInfoUtil
 from apps.location.models.address import Address
 from apps.location.models.country import Country
 from apps.location.models.region import Region
@@ -30,9 +32,6 @@ from apps.payment.models.wallet_transaction import WalletTransaction
 from apps.users.constants import GenderChoices
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
-
-# List of country codes to create in factories
-COUNTRY_CODES = ["EG", "SA", "AE", "KW", "QA", "OM", "BH"]
 
 # Initialize Faker with E164 provider for valid phone numbers
 fake = Faker()
@@ -45,7 +44,7 @@ fake.add_provider(E164Provider)
 
 
 class CountryFactory(factory.django.DjangoModelFactory):
-    code = factory.Iterator(COUNTRY_CODES)
+    code = factory.Iterator(settings.SUPPORTED_COUNTRY_CODES)
     flag = factory.django.ImageField(color="blue", width=100, height=100)
     is_active = True
 
@@ -53,13 +52,17 @@ class CountryFactory(factory.django.DjangoModelFactory):
     # They are automatically derived from the country code using pycountry/phonenumbers
 
     app_install_money_inviter = factory.LazyAttribute(
-        lambda obj: Money(10, obj.currency)
+        lambda obj: Money(10, CountryInfoUtil.get_currency_code(obj.code))
     )
     app_install_money_invitee = factory.LazyAttribute(
-        lambda obj: Money(10, obj.currency)
+        lambda obj: Money(10, CountryInfoUtil.get_currency_code(obj.code))
     )
-    order_money_inviter = factory.LazyAttribute(lambda obj: Money(20, obj.currency))
-    order_money_invitee = factory.LazyAttribute(lambda obj: Money(20, obj.currency))
+    order_money_inviter = factory.LazyAttribute(
+        lambda obj: Money(20, CountryInfoUtil.get_currency_code(obj.code))
+    )
+    order_money_invitee = factory.LazyAttribute(
+        lambda obj: Money(20, CountryInfoUtil.get_currency_code(obj.code))
+    )
 
     class Meta:
         model = Country
