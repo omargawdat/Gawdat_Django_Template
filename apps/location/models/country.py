@@ -87,11 +87,13 @@ class Country(models.Model):
         national_number = str(example_number.national_number)
         return len(national_number)
 
-    @cached_property
+    @property
     def name(self) -> str:
-        """Get country name from pycountry"""
+        """Get country name from pycountry with translation"""
         country = pycountry.countries.get(alpha_2=self.code)
-        return country.name if country else self.code
+        country_name = country.name if country else self.code
+        # Use Django's translation system to translate the country name
+        return _(country_name)
 
     @cached_property
     def alpha_3(self) -> str:
