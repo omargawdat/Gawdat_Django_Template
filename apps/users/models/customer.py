@@ -84,5 +84,5 @@ class Customer(User):
         )
 
     def save(self, *args, **kwargs):
-        self.full_clean()
+        self.clean()
         super().save(*args, **kwargs)
