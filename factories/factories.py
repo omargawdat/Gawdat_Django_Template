@@ -31,16 +31,8 @@ from apps.users.constants import GenderChoices
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
 
-# Mapping of country codes to their currency, phone prefix, and name
-COUNTRY_DATA = {
-    "EG": {"currency": "EGP", "phone_code": "20", "name": "Egypt"},
-    "SA": {"currency": "SAR", "phone_code": "966", "name": "Saudi Arabia"},
-    "AE": {"currency": "AED", "phone_code": "971", "name": "United Arab Emirates"},
-    "KW": {"currency": "KWD", "phone_code": "965", "name": "Kuwait"},
-    "QA": {"currency": "QAR", "phone_code": "974", "name": "Qatar"},
-    "OM": {"currency": "OMR", "phone_code": "968", "name": "Oman"},
-    "BH": {"currency": "BHD", "phone_code": "973", "name": "Bahrain"},
-}
+# List of country codes to create in factories
+COUNTRY_CODES = ["EG", "SA", "AE", "KW", "QA", "OM", "BH"]
 
 # Initialize Faker with E164 provider for valid phone numbers
 fake = Faker()
@@ -53,12 +45,12 @@ fake.add_provider(E164Provider)
 
 
 class CountryFactory(factory.django.DjangoModelFactory):
-    code = factory.Iterator(list(COUNTRY_DATA.keys()))
-    name = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["name"])
-    currency = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["currency"])
-    phone_code = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["phone_code"])
+    code = factory.Iterator(COUNTRY_CODES)
     flag = factory.django.ImageField(color="blue", width=100, height=100)
     is_active = True
+
+    # Note: name, currency, and phone_code are now properties on the Country model
+    # They are automatically derived from the country code using pycountry/phonenumbers
 
     app_install_money_inviter = factory.LazyAttribute(
         lambda obj: Money(10, obj.currency)
