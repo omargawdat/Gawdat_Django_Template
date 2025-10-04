@@ -210,7 +210,11 @@ class CustomerFactory(factory.django.DjangoModelFactory):
 
 class WalletFactory(factory.django.DjangoModelFactory):
     # User should be passed explicitly when called from CustomerFactory
-    # Don't set a default - will cause issues with django_get_or_create
+    # If no user provided, this factory shouldn't be called directly - wallets are created via CustomerFactory
+    user = factory.LazyAttribute(
+        lambda obj: Customer.objects.order_by("?").first()
+        or CustomerFactory(wallet=False)
+    )
     balance = factory.LazyAttribute(
         lambda obj: Money(100, obj.user.country.currency)
         if hasattr(obj, "user") and obj.user
@@ -220,13 +224,19 @@ class WalletFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Wallet
+        django_get_or_create = ("user",)
 
 
 class AddressFactory(factory.django.DjangoModelFactory):
-    # Reuse existing customer randomly
-    customer = factory.LazyAttribute(lambda obj: Customer.objects.order_by("?").first())
-    # Reuse existing country randomly
-    country = factory.LazyAttribute(lambda obj: Country.objects.order_by("?").first())
+    # Reuse existing customer randomly, create one if none exist
+    customer = factory.LazyAttribute(
+        lambda obj: Customer.objects.order_by("?").first()
+        or CustomerFactory(wallet=False)
+    )
+    # Reuse existing country randomly, create one if none exist
+    country = factory.LazyAttribute(
+        lambda obj: Country.objects.order_by("?").first() or CountryFactory()
+    )
     point = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
     description = factory.Faker("address")
     map_description = factory.Faker("sentence")
@@ -240,8 +250,11 @@ class AddressFactory(factory.django.DjangoModelFactory):
 
 
 class ContactUsFactory(factory.django.DjangoModelFactory):
-    # Reuse existing customer randomly
-    customer = factory.LazyAttribute(lambda obj: Customer.objects.order_by("?").first())
+    # Reuse existing customer randomly, create one if none exist
+    customer = factory.LazyAttribute(
+        lambda obj: Customer.objects.order_by("?").first()
+        or CustomerFactory(wallet=False)
+    )
     contact_type = factory.Iterator([choice[0] for choice in ContactCategory.choices])
     description = factory.Faker("text", max_nb_chars=500)
     has_checked = factory.Faker("boolean", chance_of_getting_true=40)
@@ -251,8 +264,10 @@ class ContactUsFactory(factory.django.DjangoModelFactory):
 
 
 class RegionFactory(factory.django.DjangoModelFactory):
-    # Reuse existing country randomly
-    country = factory.LazyAttribute(lambda obj: Country.objects.order_by("?").first())
+    # Reuse existing country randomly, create one if none exist
+    country = factory.LazyAttribute(
+        lambda obj: Country.objects.order_by("?").first() or CountryFactory()
+    )
     code = factory.Sequence(lambda n: f"REG{n:05d}")
     name = factory.Faker("city")
     geometry = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
@@ -264,8 +279,10 @@ class RegionFactory(factory.django.DjangoModelFactory):
 
 class BannerFactory(factory.django.DjangoModelFactory):
     image = factory.django.ImageField(color="red", width=1200, height=800)
-    # Reuse existing banner group randomly
-    group = factory.LazyAttribute(lambda obj: BannerGroup.objects.order_by("?").first())
+    # Reuse existing banner group randomly, create one if none exist
+    group = factory.LazyAttribute(
+        lambda obj: BannerGroup.objects.order_by("?").first() or BannerGroupFactory()
+    )
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
@@ -288,8 +305,11 @@ class NotificationFactory(factory.django.DjangoModelFactory):
 
 
 class WalletTransactionFactory(factory.django.DjangoModelFactory):
-    # Reuse existing wallet randomly
-    wallet = factory.LazyAttribute(lambda obj: Wallet.objects.order_by("?").first())
+    # Reuse existing wallet randomly, create one if none exist
+    wallet = factory.LazyAttribute(
+        lambda obj: Wallet.objects.order_by("?").first()
+        or WalletFactory(user=CustomerFactory())
+    )
     transaction_type = factory.Iterator(
         [choice[0] for choice in WalletTransactionType.choices]
     )
@@ -298,9 +318,9 @@ class WalletTransactionFactory(factory.django.DjangoModelFactory):
         if obj.wallet
         else Money(50, "SAR")
     )
-    # Reuse existing admin randomly
+    # Reuse existing admin randomly, create one if none exist
     action_by = factory.LazyAttribute(
-        lambda obj: AdminUser.objects.order_by("?").first()
+        lambda obj: AdminUser.objects.order_by("?").first() or AdminUserFactory()
     )
     transaction_note = factory.Faker("sentence")
 

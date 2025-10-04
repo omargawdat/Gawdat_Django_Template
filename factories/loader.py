@@ -83,7 +83,26 @@ def load_all_factories(count=2, skip_factories=None, use_transaction=False):
 
     factories = discover_factories()
 
-    for factory_name, factory_class in factories:
+    # Sort factories by dependency order: independent factories first
+    # Priority 0: No dependencies (countries, groups, etc.)
+    # Priority 1: User models
+    # Priority 2: Models dependent on users
+    priority_order = {
+        "CountryFactory": 0,
+        "AppInfoFactory": 0,
+        "SocialAccountFactory": 0,
+        "BannerGroupFactory": 0,
+        "FAQFactory": 0,
+        "OnboardingFactory": 0,
+        "PopUpBannerFactory": 0,
+        "AdminUserFactory": 1,
+        "CustomerFactory": 1,
+        # Everything else gets priority 2 (dependent on users/countries)
+    }
+
+    factories_sorted = sorted(factories, key=lambda x: priority_order.get(x[0], 2))
+
+    for factory_name, factory_class in factories_sorted:
         if factory_name in skip_factories:
             results["skipped"].append(factory_name)
             continue
