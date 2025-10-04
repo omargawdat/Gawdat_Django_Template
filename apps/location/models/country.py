@@ -1,9 +1,9 @@
-import phonenumbers
-import pycountry
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
+
+from apps.location.domain.utils import CountryInfoUtil
 
 
 class Country(models.Model):
@@ -65,53 +65,35 @@ class Country(models.Model):
 
     @cached_property
     def currency(self) -> str:
-        """Get currency code based on country code using Babel"""
-        from babel.core import get_global
-
-        # Try to get the currency for this country using Babel
-        territory_currencies = get_global("territory_currencies")
-        currencies = territory_currencies.get(self.code, [])
-        # Return the first currency code (tuple format: (currency_code, start_date, end_date, is_tender))
-        currency_data = currencies[0]
-        return currency_data[0] if isinstance(currency_data, tuple) else currency_data
+        """Get currency code based on country code"""
+        return CountryInfoUtil.get_currency_code(self.code)
 
     @cached_property
     def phone_code(self) -> str:
-        """Get phone code using phonenumbers library"""
-        return f"+{phonenumbers.country_code_for_region(self.code)}"
+        """Get phone code/prefix for this country"""
+        return CountryInfoUtil.get_phone_code(self.code)
 
     @cached_property
     def max_phone_length(self) -> int:
         """Get maximum phone number length for this country"""
-        example_number = phonenumbers.example_number(self.code)
-        national_number = str(example_number.national_number)
-        return len(national_number)
+        return CountryInfoUtil.get_max_phone_length(self.code)
 
     @property
     def name(self) -> str:
-        """Get country name from pycountry with translation"""
-        country = pycountry.countries.get(alpha_2=self.code)
-        country_name = country.name if country else self.code
-        # Use Django's translation system to translate the country name
-        return _(country_name)
+        """Get localized country name based on request language"""
+        return CountryInfoUtil.get_name(self.code)
 
     @cached_property
     def alpha_3(self) -> str:
         """Get ISO 3166-1 alpha-3 country code"""
-        country = pycountry.countries.get(alpha_2=self.code)
-        return country.alpha_3 if country else ""
+        return CountryInfoUtil.get_alpha_3(self.code)
 
     @cached_property
     def currency_symbol(self) -> str:
         """Get currency symbol"""
-        from babel.numbers import get_currency_symbol
-
-        return get_currency_symbol(self.currency, locale="en_US")
+        return CountryInfoUtil.get_currency_symbol(self.code)
 
     @cached_property
     def phone_example(self) -> str:
         """Get example phone number for this country"""
-        example_number = phonenumbers.example_number(self.code)
-        return phonenumbers.format_number(
-            example_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL
-        )
+        return CountryInfoUtil.get_phone_example(self.code)
