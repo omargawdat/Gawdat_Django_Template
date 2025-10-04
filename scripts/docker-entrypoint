@@ -27,7 +27,7 @@ fi
 
 # Run Django migrations
 python manage.py migrate
-python manage.py loadcountries
+python manage.py loadcountries --download-flags
 python manage.py loadzones
 python manage.py createsu
 python manage.py createcachetable

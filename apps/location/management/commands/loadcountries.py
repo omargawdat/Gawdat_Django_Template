@@ -1,4 +1,6 @@
+import requests
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from djmoney.money import Money
 
@@ -9,16 +11,44 @@ from apps.location.models.country import Country
 class Command(BaseCommand):
     help = "Load supported countries from settings.SUPPORTED_COUNTRY_CODES into the database"
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--download-flags",
+            action="store_true",
+            help="Download and set flag images from flagcdn.com",
+        )
+
+    def download_flag(self, country_code):
+        """Download flag image from flagcdn.com API"""
+        try:
+            # Use flagcdn.com API (free, no auth required)
+            # Format: https://flagcdn.com/w320/{country_code}.png
+            url = f"https://flagcdn.com/w320/{country_code.lower()}.png"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            # Return ContentFile with the image data
+            return ContentFile(response.content, name=f"{country_code}.png")
+        except Exception as e:
+            self.stdout.write(
+                self.style.WARNING(f"    ⚠ Could not download flag: {e!s}")
+            )
+            return None
+
+    def handle(self, *args, **options):  # noqa: C901, PLR0912
+        download_flags = options.get("download_flags", False)
         supported_codes = settings.SUPPORTED_COUNTRY_CODES
         created_count = 0
         existing_count = 0
         deactivated_count = 0
         failed_count = 0
+        flags_downloaded = 0
 
         self.stdout.write(
             self.style.SUCCESS(f"Loading {len(supported_codes)} supported countries...")
         )
+        if download_flags:
+            self.stdout.write(self.style.SUCCESS("Flag download enabled"))
 
         for country_code in supported_codes:
             try:
@@ -63,6 +93,18 @@ class Command(BaseCommand):
                         )
                     )
 
+                # Download and set flag if requested and not already set
+                if download_flags and not country.flag:
+                    flag_file = self.download_flag(country_code)
+                    if flag_file:
+                        country.flag.save(f"{country_code}.png", flag_file, save=True)
+                        flags_downloaded += 1
+                        self.stdout.write(
+                            self.style.SUCCESS(
+                                f"    ↓ Downloaded flag for {country_code}"
+                            )
+                        )
+
             except Exception as e:
                 failed_count += 1
                 self.stdout.write(
@@ -87,6 +129,10 @@ class Command(BaseCommand):
         self.stdout.write("\n" + "=" * 50)
         self.stdout.write(self.style.SUCCESS(f"✓ Created: {created_count}"))
         self.stdout.write(self.style.WARNING(f"- Already existed: {existing_count}"))
+        if flags_downloaded > 0:
+            self.stdout.write(
+                self.style.SUCCESS(f"↓ Flags downloaded: {flags_downloaded}")
+            )
         if deactivated_count > 0:
             self.stdout.write(self.style.WARNING(f"⊗ Deactivated: {deactivated_count}"))
         if failed_count > 0:
