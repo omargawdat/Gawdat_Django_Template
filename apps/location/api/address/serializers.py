@@ -11,6 +11,7 @@ class AddressMinimalSerializer(serializers.ModelSerializer):
         model = Address
         fields = [
             "id",
+            "country",
             "description",
             "location_type",
             "point",
@@ -29,6 +30,7 @@ class AddressCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = [
+            "country",
             "point",
             "description",
             "map_description",
@@ -41,6 +43,7 @@ class AddressUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = [
+            "country",
             "point",
             "description",
             "map_description",

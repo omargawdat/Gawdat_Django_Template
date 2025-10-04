@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django_softdelete.models import SoftDeleteModel
 
 from apps.location.constants import LocationNameChoices
+from apps.location.models.country import Country
 from apps.users.models.customer import Customer
 
 
@@ -13,6 +14,12 @@ class Address(SoftDeleteModel, models.Model):
         on_delete=models.CASCADE,
         related_name="addresses",
         verbose_name=_("Customer"),
+    )
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        related_name="addresses",
+        verbose_name=_("Country"),
     )
     point = gis_models.PointField(srid=4326, verbose_name=_("Location Point"))
     description = models.TextField(verbose_name=_("Description"))

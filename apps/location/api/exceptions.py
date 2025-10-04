@@ -15,3 +15,11 @@ class RegionCountryMismatchException(APIException):
         "The region of the provided location does not match the user's country."
     )
     default_code = "region_country_mismatch"
+
+
+class InactiveCountryException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = _(
+        "The provided location is in a country that is not currently active."
+    )
+    default_code = "inactive_country"

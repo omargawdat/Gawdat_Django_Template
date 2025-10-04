@@ -27,7 +27,7 @@ fi
 
 # Run Django migrations
 python manage.py migrate
-python manage.py loaddata assets/fixtures/countries.json
+python manage.py loadcountries
 python manage.py loadzones
 python manage.py createsu
 python manage.py createcachetable
