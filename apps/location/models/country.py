@@ -1,9 +1,9 @@
+import phonenumbers
+import pycountry
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
-
-from apps.location.constants import CountryChoices
-from apps.location.constants import CurrencyCode
 
 
 class Country(models.Model):
@@ -12,20 +12,9 @@ class Country(models.Model):
         unique=True,
         primary_key=True,
         verbose_name=_("Code"),
-        choices=CountryChoices.choices,
-    )
-    name = models.CharField(
-        max_length=100,
-        verbose_name=_("Name"),
-        unique=True,
-    )
-    currency = models.CharField(
-        max_length=3, verbose_name=_("Currency"), choices=CurrencyCode.choices
     )
     flag = models.ImageField(upload_to="flags", verbose_name=_("Flag"))
     is_active = models.BooleanField(default=True, verbose_name=_("Is Active"))
-    phone_code = models.CharField(max_length=4, verbose_name=_("Number Code"))
-
     app_install_money_inviter = MoneyField(
         max_digits=14,
         decimal_places=2,
@@ -54,46 +43,73 @@ class Country(models.Model):
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
-        constraints = [
-            models.CheckConstraint(
-                condition=models.Q(
-                    app_install_money_inviter_currency=models.F("currency")
-                ),
-                name="app_install_money_inviter_currency_consistency",
-                violation_error_message=_(
-                    "App install money inviter currency must match country currency."
-                ),
-            ),
-            models.CheckConstraint(
-                condition=models.Q(
-                    app_install_money_invitee_currency=models.F("currency")
-                ),
-                name="app_install_money_invitee_currency_consistency",
-                violation_error_message=_(
-                    "App install money invitee currency must match country currency."
-                ),
-            ),
-            models.CheckConstraint(
-                condition=models.Q(order_money_inviter_currency=models.F("currency")),
-                name="order_money_inviter_currency_consistency",
-                violation_error_message=_(
-                    "Order money inviter currency must match country currency."
-                ),
-            ),
-            models.CheckConstraint(
-                condition=models.Q(order_money_invitee_currency=models.F("currency")),
-                name="order_money_invitee_currency_consistency",
-                violation_error_message=_(
-                    "Order money invitee currency must match country currency."
-                ),
-            ),
-        ]
 
     def __str__(self):
-        return f"{self.get_code_display()}"
+        return f"{self.name}"
 
     def save(self, *args, **kwargs):
-        # Note: referral_points field doesn't exist in model, commented out to fix
-        # if self.currency:
-        #     self.referral_points = Money(self.referral_points.amount, self.currency)
+        # Ensure all MoneyField currencies match the country's currency
+        country_currency = self.currency
+
+        # Update currency for all MoneyFields
+        if self.app_install_money_inviter_currency != country_currency:
+            self.app_install_money_inviter_currency = country_currency
+        if self.app_install_money_invitee_currency != country_currency:
+            self.app_install_money_invitee_currency = country_currency
+        if self.order_money_inviter_currency != country_currency:
+            self.order_money_inviter_currency = country_currency
+        if self.order_money_invitee_currency != country_currency:
+            self.order_money_invitee_currency = country_currency
+
         super().save(*args, **kwargs)
+
+    @cached_property
+    def currency(self) -> str:
+        """Get currency code based on country code using Babel"""
+        from babel.core import get_global
+
+        # Try to get the currency for this country using Babel
+        territory_currencies = get_global("territory_currencies")
+        currencies = territory_currencies.get(self.code, [])
+        # Return the first currency code (tuple format: (currency_code, start_date, end_date, is_tender))
+        currency_data = currencies[0]
+        return currency_data[0] if isinstance(currency_data, tuple) else currency_data
+
+    @cached_property
+    def phone_code(self) -> str:
+        """Get phone code using phonenumbers library"""
+        return f"+{phonenumbers.country_code_for_region(self.code)}"
+
+    @cached_property
+    def max_phone_length(self) -> int:
+        """Get maximum phone number length for this country"""
+        example_number = phonenumbers.example_number(self.code)
+        national_number = str(example_number.national_number)
+        return len(national_number)
+
+    @cached_property
+    def name(self) -> str:
+        """Get country name from pycountry"""
+        country = pycountry.countries.get(alpha_2=self.code)
+        return country.name if country else self.code
+
+    @cached_property
+    def alpha_3(self) -> str:
+        """Get ISO 3166-1 alpha-3 country code"""
+        country = pycountry.countries.get(alpha_2=self.code)
+        return country.alpha_3 if country else ""
+
+    @cached_property
+    def currency_symbol(self) -> str:
+        """Get currency symbol"""
+        from babel.numbers import get_currency_symbol
+
+        return get_currency_symbol(self.currency, locale="en_US")
+
+    @cached_property
+    def phone_example(self) -> str:
+        """Get example phone number for this country"""
+        example_number = phonenumbers.example_number(self.code)
+        return phonenumbers.format_number(
+            example_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL
+        )

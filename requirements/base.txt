@@ -5,6 +5,8 @@ argon2-cffi==25.1.0
 pydantic==2.11.7
 pydantic-settings==2.10.1
 boto3==1.40.4
+pycountry==24.6.1
+py-moneyed==3.0
 
 # Redis
 redis==5.3.1

@@ -16,7 +16,7 @@ class OTPSendView(APIView):
     serializer_class = OTPSendSerializer
 
     @extend_schema(
-        tags=["User/Authentication/PhoneNumber"],
+        tags=["Authentication/PhoneNumber"],
         operation_id="sendOTP",
         request={"application/json": OTPSendSerializer},
         responses={

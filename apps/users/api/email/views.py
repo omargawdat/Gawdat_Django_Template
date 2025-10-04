@@ -41,7 +41,7 @@ class CheckEmailView(APIView):
     serializer_class = CheckEmailSerializer
 
     @extend_schema(
-        tags=["User/Authentication/Mail"],
+        tags=["Authentication/Mail"],
         operation_id="checkEmail",
         description="Check if an email is registered, verified, and has a password set.",
         request={"application/json": CheckEmailSerializer},
@@ -101,21 +101,10 @@ class RegisterView(APIView):
     serializer_class = RegisterSerializer
 
     @extend_schema(
-        tags=["User/Authentication/Mail"],
+        tags=["Authentication/Mail"],
         operation_id="registerUser",
         description="Register a new user with email, phone number, and password. Returns auth tokens and the customer profile.",
         request={"application/json": RegisterSerializer},
-        examples=[
-            OpenApiExample(
-                name="Minimal registration",
-                value={
-                    "email": "user@example.com",
-                    "password": "Str0ngP@ssw0rd!",  # pragma: allowlist secret
-                },
-                request_only=True,
-                media_type="application/json",
-            ),
-        ],
         responses={
             200: OpenApiResponse(
                 response=inline_serializer(
@@ -213,7 +202,7 @@ class VerifyCustomerEmailView(APIView):
     serializer_class = VerifyCustomerEmailSerializer
 
     @extend_schema(
-        tags=["User/Authentication/Mail"],
+        tags=["Authentication/Mail"],
         operation_id="verifyCustomerEmail",
         description="Verify a customer's email using an OTP code. Requires a valid Bearer access token.",
         request={"application/json": VerifyCustomerEmailSerializer},
@@ -289,7 +278,7 @@ class LoginView(APIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        tags=["User/Authentication/Mail"],
+        tags=["Authentication/Mail"],
         operation_id="loginUser",
         description="Authenticate a user and return JWT tokens. If the email is not verified, an OTP is sent.",
         request={"application/json": LoginSerializer},
@@ -369,7 +358,7 @@ class ChangePasswordView(APIView):
     serializer_class = ChangePasswordSerializer
 
     @extend_schema(
-        tags=["User/Authentication/Mail"],
+        tags=["Authentication/Mail"],
         operation_id="changePassword",
         description="Change the password of an authenticated user. Requires a valid Bearer access token.",
         request={"application/json": ChangePasswordSerializer},

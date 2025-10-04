@@ -13,7 +13,7 @@ from apps.users.domain.services.user import UserServices
 
 
 @extend_schema(
-    tags=["User/Token"],
+    tags=["Authentication/Token"],
 )
 class DocumentedTokenRefreshView(TokenRefreshView):
     pass
@@ -24,7 +24,7 @@ class LogoutAllDevicesView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["User/Token"],
+        tags=["Authentication/Token"],
         operation_id="logoutAllDevices",
         description="Log out the current user from all devices by invalidating their refresh tokens.",
         request=None,
@@ -49,7 +49,7 @@ class LogoutDeviceView(APIView):
     parser_classes = [CamelCaseJSONParser]
 
     @extend_schema(
-        tags=["User/Token"],
+        tags=["Authentication/Token"],
         operation_id="logoutDevice",
         request=DeviceLogoutSerializer,
         responses={

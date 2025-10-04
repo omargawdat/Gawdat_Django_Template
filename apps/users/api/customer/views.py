@@ -31,7 +31,7 @@ class CustomerAuthView(APIView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Auhthentication/PhoneNumber"],
+        tags=["Authentication/PhoneNumber"],
         operation_id="AuthenticateCustomer",
         parameters=[
             OpenApiParameter(
@@ -64,6 +64,7 @@ class CustomerAuthView(APIView):
                     },
                     "referralCustomerId": "1",
                     "language": "en",
+                    "country": "SA",
                 },
                 request_only=True,
                 media_type="application/json",

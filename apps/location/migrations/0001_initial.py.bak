@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Country',
             fields=[
-                ('code', models.CharField(choices=[('EG', 'Egypt'), ('SA', 'Saudi Arabia'), ('AE', 'United Arab Emirates'), ('KW', 'Kuwait'), ('QA', 'Qatar'), ('OM', 'Oman'), ('BH', 'Bahrain')], max_length=10, primary_key=True, serialize=False, unique=True, verbose_name='Code')),
+                ('code', models.CharField(choices=[('EG', 'Egypt'), ('SA', 'Saudi Arabia'), ('AE', 'United Arab Emirates'), ('KW', 'Kuwait'), ('QA', 'Qatar'), ('OM', 'Oman'), ('BH', 'Bahrain'), ('UN', 'Unselected')], max_length=10, primary_key=True, serialize=False, unique=True, verbose_name='Code')),
                 ('name', models.CharField(max_length=100, unique=True, verbose_name='Name')),
                 ('name_ar', models.CharField(max_length=100, null=True, unique=True, verbose_name='Name')),
                 ('name_en', models.CharField(max_length=100, null=True, unique=True, verbose_name='Name')),

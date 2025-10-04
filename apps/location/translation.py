@@ -12,4 +12,4 @@ class RegionTranslationOptions(TranslationOptions):
 
 @register(Country)
 class CountryTranslationOptions(TranslationOptions):
-    fields = ("name",)
+    fields = ()  # name is now a property, not a field

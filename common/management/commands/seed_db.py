@@ -1,171 +1,180 @@
-"""
-Management command to seed database with factory data
-
-Auto-discovers all factories and creates random amounts of data.
-Flushes existing data by default.
-
-Usage:
-    python manage.py seed_db                    # Flush + Random amounts (5-20 per model)
-    python manage.py seed_db --count 50         # Flush + Fixed amount for all models
-    python manage.py seed_db --no-flush         # Don't flush, just add data
-"""
-
-import random
-
+# management/commands/seed_db.py
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from factories.loader import create_factory_data
-from factories.loader import discover_factories
+from factories import AddressFactory
+from factories import AppInfoFactory
+from factories import BannerFactory
+from factories import BannerGroupFactory
+from factories import ContactUsFactory
+from factories import CustomerFactory
+from factories import FAQFactory
+from factories import NotificationFactory
+from factories import OnboardingFactory
+from factories import PopUpBannerFactory
+from factories import RegionFactory
+from factories import SocialAccountFactory
+from factories import WalletFactory
+from factories import WalletTransactionFactory
+
+# Single source of truth for factory ordering
+# Order matters: dependencies must come after their dependents
+FACTORY_REGISTRY = [
+    # Independent models (no foreign keys)
+    {"factory": AppInfoFactory, "count": 1},
+    {"factory": SocialAccountFactory, "count": 1},
+    # User models
+    {"factory": CustomerFactory, "count": "count"},  # Auto-creates wallets
+    # Customer-dependent models
+    {"factory": AddressFactory, "count": "1.5x"},
+    {"factory": ContactUsFactory, "count": "0.8x"},
+    # Content models
+    {"factory": BannerGroupFactory, "count": 10},
+    {"factory": BannerFactory, "count": "count"},
+    {"factory": FAQFactory, "count": 15},
+    {"factory": OnboardingFactory, "count": "count"},
+    {"factory": PopUpBannerFactory, "count": "count"},
+    # Location models
+    {"factory": RegionFactory, "count": "count"},
+    # Transaction models
+    {"factory": NotificationFactory, "count": "count"},
+    {"factory": WalletTransactionFactory, "count": "count"},
+]
 
 
 class Command(BaseCommand):
-    help = "Seed database with test data using all available factories"
+    help = "Seed database with test data"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--count",
             type=int,
-            help="Fixed number of instances to create for each factory",
-        )
-        parser.add_argument(
-            "--min",
-            type=int,
-            default=5,
-            help="Minimum number of instances per factory (default: 5)",
-        )
-        parser.add_argument(
-            "--max",
-            type=int,
             default=20,
-            help="Maximum number of instances per factory (default: 20)",
+            help="Number of instances to create (default: 20)",
         )
         parser.add_argument(
             "--no-flush",
             action="store_false",
             dest="flush",
             default=True,
-            help="Skip flushing data (flush is enabled by default)",
+            help="Skip flushing data",
         )
 
     def handle(self, *args, **options):
         from config.helpers.env import env
 
-        # Safety check: only allow in local/development environments
         if env.environment not in ("local", "development"):
             self.stdout.write(
                 self.style.ERROR(
-                    f"❌ seed_db command is not allowed in '{env.environment}' environment.\n"
-                    f"This command can only be run in 'local' or 'development' environments."
+                    f"❌ seed_db only allowed in local/development, not '{env.environment}'"
                 )
             )
             return
+
+        count = options["count"]
 
         if options["flush"]:
             self.stdout.write(self.style.WARNING("Flushing existing data..."))
             self._flush_data()
 
-            # Recreate superuser after flushing
-            self.stdout.write(self.style.WARNING("\nRecreating superuser..."))
             from django.core.management import call_command
 
             call_command("createsu")
 
-        # Auto-discover all factories
-        factories = discover_factories()
-
-        if not factories:
-            self.stdout.write(self.style.ERROR("No factories found!"))
-            return
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Discovered {len(factories)} factories. Seeding database...\n"
-            )
-        )
+        self.stdout.write(self.style.SUCCESS("\n🌱 Seeding database...\n"))
 
         total_created = 0
         created_summary = []
 
-        # Create data for each factory in separate transactions
-        for _, factory_class in factories:
-            # Determine count for this factory
-            if options["count"]:
-                count = options["count"]
-            else:
-                count = random.randint(options["min"], options["max"])  # noqa: S311
+        for config in FACTORY_REGISTRY:
+            factory_class = config["factory"]
+            count_spec = config["count"]
+            kwargs = config.get("kwargs", {})
 
+            # Calculate actual count from specification
+            create_count = self._calculate_count(count_spec, count)
+
+            # Get model name from factory
             model_name = factory_class._meta.model.__name__
 
-            # Handle singleton models
-            if hasattr(factory_class._meta.model, "singleton_instance_id"):
-                count = 1
-
             try:
-                self.stdout.write(f"  Creating {count} {model_name}(s)...")
-                # Each factory creation in its own transaction
+                self.stdout.write(f"  Creating {create_count} {model_name}(s)...")
+
                 with transaction.atomic():
-                    success = create_factory_data(
-                        factory_class, count, skip_if_exists=True
+                    if create_count == 1:
+                        factory_class.create(**kwargs)
+                        actual_count = 1
+                    else:
+                        factory_class.create_batch(create_count, **kwargs)
+                        actual_count = create_count
+
+                    total_created += actual_count
+                    created_summary.append(f"  ✓ {actual_count} {model_name}(s)")
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"    ✓ Created {actual_count} {model_name}(s)"
+                        )
                     )
 
-                    if success:
-                        total_created += count
-                        created_summary.append(f"  - {count} {model_name}(s)")
-                        self.stdout.write(
-                            self.style.SUCCESS(f"    ✓ Created {count} {model_name}(s)")
-                        )
-                    else:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"    ⚠ Skipped {model_name}: singleton already exists"
-                            )
-                        )
             except Exception as e:
-                self.stdout.write(
-                    self.style.WARNING(f"    ⚠ Skipped {model_name}: {e!s}")
-                )
+                self.stdout.write(self.style.ERROR(f"    ✗ Failed {model_name}: {e}"))
 
-        # Print summary
+        # Summary
         self.stdout.write(
             self.style.SUCCESS(
                 f"\n✓ Database seeded successfully!\n"
-                f"Total instances created: {total_created}\n\n"
-                + "\n".join(created_summary)
+                f"Total instances: {total_created}\n\n" + "\n".join(created_summary)
             )
         )
 
     def _flush_data(self):
-        """Flush existing factory-created data by auto-discovering models"""
+        """Flush data in reverse dependency order"""
         from django.db.models.deletion import ProtectedError
 
-        factories = discover_factories()
+        # Reverse registry order + add WalletFactory (auto-created)
+        factories_to_flush = [
+            config["factory"] for config in reversed(FACTORY_REGISTRY)
+        ]
+        # Add WalletFactory since it's auto-created but not in registry
+        factories_to_flush.insert(0, WalletFactory)
 
-        # Collect all models from factories
-        models_to_flush = []
-        for _, factory_class in factories:
+        for factory_class in factories_to_flush:
             model = factory_class._meta.model
-            models_to_flush.append((model.__name__, model))
+            model_name = model.__name__
 
-        # Delete in reverse order (to handle dependencies)
-        for model_name, model in reversed(models_to_flush):
             try:
-                # Special handling for Country - keep UN country
-                if model_name == "Country":
-                    count = model.objects.exclude(code="UN").count()
-                    model.objects.exclude(code="UN").delete()
-                    self.stdout.write(
-                        f"    Deleted {count} {model_name}(s) (kept UN country)"
-                    )
-                else:
-                    count = model.objects.count()
-                    model.objects.all().delete()
-                    self.stdout.write(f"    Deleted {count} {model_name}(s)")
+                count = model.objects.count()
+                model.objects.all().delete()
+                self.stdout.write(f"    Deleted {count} {model_name}(s)")
             except ProtectedError:
                 self.stdout.write(
-                    self.style.WARNING(
-                        f"    ⚠ Cannot delete {model_name}: protected by foreign keys"
-                    )
+                    self.style.WARNING(f"    ⚠ Cannot delete {model_name}: protected")
                 )
 
         self.stdout.write(self.style.SUCCESS("✓ Data flushed"))
+
+    def _calculate_count(self, count_spec, base_count):
+        """
+        Calculate actual count from specification
+
+        Args:
+            count_spec: Can be:
+                - int: exact count
+                - "count": use base_count
+                - "1.5x", "0.8x": multiply base_count
+            base_count: Base count from command argument
+
+        Returns:
+            int: Calculated count
+        """
+        if isinstance(count_spec, int):
+            return count_spec
+
+        if count_spec == "count":
+            return base_count
+
+        if isinstance(count_spec, str) and count_spec.endswith("x"):
+            multiplier = float(count_spec[:-1])
+            return int(base_count * multiplier)
+
+        return base_count

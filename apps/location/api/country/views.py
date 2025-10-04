@@ -17,5 +17,7 @@ class ActiveCountryList(APIView):
     )
     def get(self, request):
         queryset = CountrySelector.get_active_countries()
-        serializer = CountrySerializer(queryset, many=True)
+        serializer = CountrySerializer(
+            queryset, many=True, context={"request": request}
+        )
         return Response(serializer.data)

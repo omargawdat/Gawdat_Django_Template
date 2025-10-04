@@ -20,7 +20,7 @@ class CustomerSocialAccountAdapter(DefaultSocialAccountAdapter):
             or f"{data.get('first_name', '')} {data.get('last_name', '')}"
         ).strip()
 
-        country = Country.objects.get(pk="UNSELECTED")  # TODO remove it
+        country = Country.objects.filter(is_active=True).first()
 
         customer = Customer(
             username=username,

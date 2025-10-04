@@ -26,7 +26,7 @@ class GoogleIDTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Authentication/OAuth"],
+        tags=["Authentication/OAuth"],
         operation_id="googleAuthentication",
         description=(
             "Login using a **Google access token** (e.g. from Google One Tap / GIS). "
@@ -82,7 +82,7 @@ class FacebookAccessTokenLogin(SocialLoginView):
     permission_classes = []
 
     @extend_schema(
-        tags=["User/Authentication/OAuth"],
+        tags=["Authentication/OAuth"],
         operation_id="facebookAuthentication",
         description="Login with Facebook using an access token. Returns JWT access/refresh tokens and the customer profile.",
         request=FacebookIDTokenRequest,
