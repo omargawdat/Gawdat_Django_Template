@@ -337,7 +337,7 @@ CONSTANCE_CONFIG = {
     "ENABLE_REGION_VALIDATION": (
         False,
         "Enable validation that user addresses must be in supported regions",
-        "bool",
+        bool,
     ),
 }
 

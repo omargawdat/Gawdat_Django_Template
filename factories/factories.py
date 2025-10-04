@@ -225,6 +225,8 @@ class WalletFactory(factory.django.DjangoModelFactory):
 class AddressFactory(factory.django.DjangoModelFactory):
     # Reuse existing customer randomly
     customer = factory.LazyAttribute(lambda obj: Customer.objects.order_by("?").first())
+    # Reuse existing country randomly
+    country = factory.LazyAttribute(lambda obj: Country.objects.order_by("?").first())
     point = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
     description = factory.Faker("address")
     map_description = factory.Faker("sentence")
