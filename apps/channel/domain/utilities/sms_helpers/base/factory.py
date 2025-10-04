@@ -12,13 +12,26 @@ if TYPE_CHECKING:
 
 
 class SMSProviderFactory:
-    @staticmethod
-    def get_sms_provider_by_country(phone: PhoneNumber) -> OTPSenderBase:
+    """
+    Factory for getting SMS providers based on country code.
+
+    To add a new provider:
+    1. Import the provider class
+    2. Add an entry to PROVIDER_REGISTRY mapping country code to provider class
+    """
+
+    # Registry mapping country codes to SMS provider classes
+    PROVIDER_REGISTRY: dict[str, type[OTPSenderBase]] = {
+        "SA": OurSMSUtils,
+        "EG": SMSMisrUtils,
+    }
+
+    # Default provider for countries not in registry
+    DEFAULT_PROVIDER: type[OTPSenderBase] = OurSMSUtils
+
+    @classmethod
+    def get_sms_provider_by_country(cls, phone: PhoneNumber) -> OTPSenderBase:
         country: Country = CountrySelector.country_by_phone(phone)
 
-        if country.code == "SA":
-            return OurSMSUtils()
-        elif country.code == "EG":
-            return SMSMisrUtils()
-        else:
-            raise NotImplementedError("Country not supported")
+        provider_class = cls.PROVIDER_REGISTRY.get(country.code, cls.DEFAULT_PROVIDER)
+        return provider_class()
