@@ -2,44 +2,9 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from factories import AddressFactory
-from factories import AppInfoFactory
-from factories import BannerFactory
-from factories import BannerGroupFactory
-from factories import ContactUsFactory
-from factories import CustomerFactory
-from factories import FAQFactory
-from factories import NotificationFactory
-from factories import OnboardingFactory
-from factories import PopUpBannerFactory
-from factories import RegionFactory
-from factories import SocialAccountFactory
-from factories import WalletFactory
-from factories import WalletTransactionFactory
-
-# Single source of truth for factory ordering
-# Order matters: dependencies must come after their dependents
-FACTORY_REGISTRY = [
-    # Independent models (no foreign keys)
-    {"factory": AppInfoFactory, "count": 1},
-    {"factory": SocialAccountFactory, "count": 1},
-    # User models
-    {"factory": CustomerFactory, "count": "count"},  # Auto-creates wallets
-    # Customer-dependent models
-    {"factory": AddressFactory, "count": "1.5x"},
-    {"factory": ContactUsFactory, "count": "0.8x"},
-    # Content models
-    {"factory": BannerGroupFactory, "count": 10},
-    {"factory": BannerFactory, "count": "count"},
-    {"factory": FAQFactory, "count": 15},
-    {"factory": OnboardingFactory, "count": "count"},
-    {"factory": PopUpBannerFactory, "count": "count"},
-    # Location models
-    {"factory": RegionFactory, "count": "count"},
-    # Transaction models
-    {"factory": NotificationFactory, "count": "count"},
-    {"factory": WalletTransactionFactory, "count": "count"},
-]
+from factories.loader import discover_factories
+from factories.loader import get_factory_priority
+from factories.loader import get_factory_seed_count
 
 
 class Command(BaseCommand):
@@ -83,29 +48,44 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("\n🌱 Seeding database...\n"))
 
+        # Auto-discover all factories and sort by priority
+        all_factories = discover_factories()
+        sorted_factories = sorted(
+            all_factories, key=lambda x: get_factory_priority(x[1])
+        )
+
         total_created = 0
         created_summary = []
 
-        for config in FACTORY_REGISTRY:
-            factory_class = config["factory"]
-            count_spec = config["count"]
-            kwargs = config.get("kwargs", {})
+        for _factory_name, factory_class in sorted_factories:
+            model = factory_class._meta.model
+            model_name = model.__name__
+
+            # Skip singletons if they already exist
+            if hasattr(model, "singleton_instance_id"):
+                if model.objects.exists():
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"  ⊘ Skipping {model_name} (singleton already exists)"
+                        )
+                    )
+                    continue
+
+            # Get count specification from factory config
+            count_spec = get_factory_seed_count(factory_class, count)
 
             # Calculate actual count from specification
             create_count = self._calculate_count(count_spec, count)
-
-            # Get model name from factory
-            model_name = factory_class._meta.model.__name__
 
             try:
                 self.stdout.write(f"  Creating {create_count} {model_name}(s)...")
 
                 with transaction.atomic():
                     if create_count == 1:
-                        factory_class.create(**kwargs)
+                        factory_class.create()
                         actual_count = 1
                     else:
-                        factory_class.create_batch(create_count, **kwargs)
+                        factory_class.create_batch(create_count)
                         actual_count = create_count
 
                     total_created += actual_count
@@ -131,21 +111,29 @@ class Command(BaseCommand):
         """Flush data in reverse dependency order"""
         from django.db.models.deletion import ProtectedError
 
-        # Reverse registry order + add WalletFactory (auto-created)
-        factories_to_flush = [
-            config["factory"] for config in reversed(FACTORY_REGISTRY)
-        ]
-        # Add WalletFactory since it's auto-created but not in registry
-        factories_to_flush.insert(0, WalletFactory)
+        # Get all factories and reverse order for deletion
+        all_factories = discover_factories()
+        sorted_factories = sorted(
+            all_factories, key=lambda x: get_factory_priority(x[1]), reverse=True
+        )
 
-        for factory_class in factories_to_flush:
+        for _factory_name, factory_class in sorted_factories:
             model = factory_class._meta.model
             model_name = model.__name__
 
             try:
-                count = model.objects.count()
-                model.objects.all().delete()
-                self.stdout.write(f"    Deleted {count} {model_name}(s)")
+                # Handle singleton models (AppInfo, SocialAccount)
+                if hasattr(model, "singleton_instance_id"):
+                    try:
+                        instance = model.objects.get(pk=model.singleton_instance_id)
+                        instance.delete()
+                        self.stdout.write(f"    Deleted 1 {model_name} (singleton)")
+                    except model.DoesNotExist:
+                        self.stdout.write(f"    No {model_name} to delete")
+                else:
+                    count = model.objects.count()
+                    model.objects.all().delete()
+                    self.stdout.write(f"    Deleted {count} {model_name}(s)")
             except ProtectedError:
                 self.stdout.write(
                     self.style.WARNING(f"    ⚠ Cannot delete {model_name}: protected")

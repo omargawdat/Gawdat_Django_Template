@@ -40,7 +40,6 @@ from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 from factories.factories import WalletFactory
 from factories.factories import WalletTransactionFactory
-from factories.loader import create_factory_data
 from factories.loader import discover_factories
 from factories.loader import load_all_factories
 
@@ -61,7 +60,6 @@ __all__ = [
     "SocialAccountFactory",
     "WalletFactory",
     "WalletTransactionFactory",
-    "create_factory_data",
     "discover_factories",
     "load_all_factories",
 ]

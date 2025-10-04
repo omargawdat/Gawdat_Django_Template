@@ -1,6 +1,19 @@
 """
 Simple factories using factory_boy + Faker
 All factories reuse existing related instances instead of creating new ones
+
+Factory Configuration:
+    Add _priority, _seed_count, _test_count attributes to customize factory behavior:
+
+    class AddressFactory(factory.django.DjangoModelFactory):
+        class Meta:
+            model = Address
+
+        _priority = 2           # Load order: 0=first, 1=user models, 2=dependent (default)
+        _seed_count = "1.5x"    # For seed_db: "count", "1.5x", "0.8x", or int
+        _test_count = 2         # For tests (default: 2)
+
+    If not provided, the loader will infer settings automatically based on factory name.
 """
 
 import factory
@@ -70,15 +83,18 @@ class CountryFactory(factory.django.DjangoModelFactory):
 
 
 class AppInfoFactory(factory.django.DjangoModelFactory):
+    id = 1  # Singleton ID
     about_us = factory.Faker("text", max_nb_chars=1000)
     terms = factory.Faker("text", max_nb_chars=1000)
     policy = factory.Faker("text", max_nb_chars=1000)
 
     class Meta:
         model = AppInfo
+        django_get_or_create = ("id",)  # Singleton: update if exists
 
 
 class SocialAccountFactory(factory.django.DjangoModelFactory):
+    id = 1  # Singleton ID
     email = factory.Faker("email")
     phone_number = factory.Faker("numerify", text="+###########")
     twitter = factory.Faker("url")
@@ -88,6 +104,7 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = SocialAccount
+        django_get_or_create = ("id",)  # Singleton: update if exists
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
@@ -247,6 +264,11 @@ class AddressFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Address
+
+    # Factory configuration (prefix with _ to avoid conflicts)
+    _priority = 2  # Depends on Customer and Country
+    _seed_count = "1.5x"  # Create 1.5x more addresses than base count
+    _test_count = 2  # Create 2 addresses in tests
 
 
 class ContactUsFactory(factory.django.DjangoModelFactory):
