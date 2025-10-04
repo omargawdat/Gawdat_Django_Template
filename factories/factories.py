@@ -20,7 +20,6 @@ from apps.appInfo.models.social import SocialAccount
 from apps.appInfo.other.constants import ContactCategory
 from apps.channel.constants import NotificationType
 from apps.channel.models.notification import Notification
-from apps.location.constants import CountryChoices
 from apps.location.constants import LocationNameChoices
 from apps.location.models.address import Address
 from apps.location.models.country import Country
@@ -32,15 +31,15 @@ from apps.users.constants import GenderChoices
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
 
-# Mapping of country codes to their currency and phone prefix
+# Mapping of country codes to their currency, phone prefix, and name
 COUNTRY_DATA = {
-    "EG": {"currency": "EGP", "phone_code": "20"},
-    "SA": {"currency": "SAR", "phone_code": "966"},
-    "AE": {"currency": "AED", "phone_code": "971"},
-    "KW": {"currency": "KWD", "phone_code": "965"},
-    "QA": {"currency": "QAR", "phone_code": "974"},
-    "OM": {"currency": "OMR", "phone_code": "968"},
-    "BH": {"currency": "BHD", "phone_code": "973"},
+    "EG": {"currency": "EGP", "phone_code": "20", "name": "Egypt"},
+    "SA": {"currency": "SAR", "phone_code": "966", "name": "Saudi Arabia"},
+    "AE": {"currency": "AED", "phone_code": "971", "name": "United Arab Emirates"},
+    "KW": {"currency": "KWD", "phone_code": "965", "name": "Kuwait"},
+    "QA": {"currency": "QAR", "phone_code": "974", "name": "Qatar"},
+    "OM": {"currency": "OMR", "phone_code": "968", "name": "Oman"},
+    "BH": {"currency": "BHD", "phone_code": "973", "name": "Bahrain"},
 }
 
 # Initialize Faker with E164 provider for valid phone numbers
@@ -55,7 +54,7 @@ fake.add_provider(E164Provider)
 
 class CountryFactory(factory.django.DjangoModelFactory):
     code = factory.Iterator(list(COUNTRY_DATA.keys()))
-    name = factory.LazyAttribute(lambda obj: dict(CountryChoices.choices)[obj.code])
+    name = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["name"])
     currency = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["currency"])
     phone_code = factory.LazyAttribute(lambda obj: COUNTRY_DATA[obj.code]["phone_code"])
     flag = factory.django.ImageField(color="blue", width=100, height=100)
