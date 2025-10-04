@@ -334,6 +334,11 @@ CONSTANCE_CONFIG = {
         "Testing phone numbers",
         "textarea_field",
     ),
+    "ENABLE_REGION_VALIDATION": (
+        False,
+        "Enable validation that user addresses must be in supported regions",
+        "bool",
+    ),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -349,6 +354,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "OTP_TEST_CODE",
         "TESTING_PHONE_NUMBERS",
     ),
+    "Location Settings": ("ENABLE_REGION_VALIDATION",),
 }
 
 

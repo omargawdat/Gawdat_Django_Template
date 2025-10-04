@@ -1,3 +1,4 @@
+from constance import config
 from django.contrib.gis.geos import Point
 
 from apps.location.api.exceptions import RegionCountryMismatchException
@@ -22,7 +23,7 @@ class RegionValidator:
 
     @staticmethod
     def validate_user_location(*, point: Point, user: User) -> None:
-        region = RegionSelector.get_region_by_point(point=point)
+        if not config.ENABLE_REGION_VALIDATION:
+            return
 
         RegionValidator.validate_point_inside_a_region(point=point)
-        RegionValidator.validate_user_country_match(region=region, user=user)
