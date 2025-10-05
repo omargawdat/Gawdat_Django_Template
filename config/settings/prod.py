@@ -8,6 +8,7 @@ print("loading production settings")  # noqa: T201
 DEBUG = False
 ALLOWED_HOSTS = [env.domain_name]
 
+
 # ------------------------------------------------------------------------------
 # SECURITY CONFIGURATION
 # ------------------------------------------------------------------------------
