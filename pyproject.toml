@@ -3,6 +3,7 @@
 name = "django-template"
 version = "1.0.0"
 description = "Django REST API template with modular app structure"
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     # Python Utilities
@@ -106,6 +107,8 @@ lint = [
 minversion = "6.0"
 addopts = """
     --ds=config.settings.test
+    --reuse-db
+    -n auto
     --import-mode=importlib
     -v
     --tb=short
@@ -117,10 +120,15 @@ python_files = [
     "test_*.py",
 ]
 console_output_style = "progress"
+markers = [
+    "slow: marks tests as slow (integration tests, API calls)",
+    "unit: fast isolated unit tests",
+    "integration: tests requiring DB/external services",
+]
 
 # ==== Coverage ====
 [tool.coverage.run]
-include = ["projectname/**"]
+include = ["config/**", "apps/**", "common/**"]
 omit = ["*/migrations/*", "*/tests/*"]
 plugins = ["django_coverage_plugin"]
 
@@ -138,6 +146,10 @@ show_column_numbers = true
 show_error_codes = true
 show_error_context = true
 show_traceback = true
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
 
 # Django migrations should not produce any errors:
 [[tool.mypy.overrides]]
@@ -167,7 +179,7 @@ indent_size = 2
 indent_size = 2
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py313"
 # Exclude a variety of commonly ignored directories.
 extend-exclude = [
     "*/migrations/*.py",
@@ -259,9 +271,7 @@ ignore = [
     "TID252", # ignore absoulte import
     "BLE001",
     "PLR0913",
-    "S107",
     "RET504",
-    "SLF001",
     "G004"
 ]
 
