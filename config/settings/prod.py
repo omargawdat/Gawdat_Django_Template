@@ -41,7 +41,7 @@ CSRF_COOKIE_SAMESITE = "Lax"
 # HSTS (HTTP Strict Transport Security)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
 # Start with 60 seconds, then increase to 518400 (6 months) after testing
-SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_SECONDS = 518400
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-preload
