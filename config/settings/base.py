@@ -105,8 +105,6 @@ DJANGO_APPS = [
     "django.forms",
     "django_model_suite",
     "modeltranslation",
-    "django_tasks",
-    "django_tasks.backends.database",
     "django.contrib.gis",
     "allauth",
     "allauth.account",
@@ -353,11 +351,6 @@ LOGGING = {
         },
     },
 }
-
-# ==============================================================================
-# BACKGROUND TASKS
-# ==============================================================================
-TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
 
 # ==============================================================================
 # OTP (ONE-TIME PASSWORD) SETTINGS

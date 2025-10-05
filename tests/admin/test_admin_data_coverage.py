@@ -15,7 +15,6 @@ def test_models_have_test_data():
         "authtoken.tokenproxy",
         "token_blacklist.outstandingtoken",
         "token_blacklist.blacklistedtoken",
-        "django_tasks_database.dbtaskresult",
         "account.emailaddress",
         "socialaccount.socialapp",
         "socialaccount.socialtoken",

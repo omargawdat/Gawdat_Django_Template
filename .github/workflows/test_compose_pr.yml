@@ -8,28 +8,60 @@ on:
   pull_request:
     branches: [ 'main' ]
 
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   docker_compose_test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Setup Environment File
         run: cp dummy.env .env
-      - name: Build Stack
-        run: docker compose -f docker-compose.local.yml build
+
+      - name: Build and cache Stack
+        uses: docker/bake-action@v6
+        with:
+          push: false
+          load: true
+          files: docker-compose.local.yml
+          targets: django
+          set: |
+            django.cache-from=type=gha,scope=django-compose-test
+            django.cache-to=type=gha,scope=django-compose-test,mode=max
+            postgres.cache-from=type=gha,scope=postgres-compose-test
+            postgres.cache-to=type=gha,scope=postgres-compose-test,mode=max
       - name: Create Media Directories
         run: |
           mkdir -p assets/media
           chmod -R 777 assets
+
+      - name: Start Services
+        run: docker compose -f docker-compose.local.yml up -d
+
+      - name: Wait for PostgreSQL
+        run: |
+          timeout 30 sh -c 'until docker compose -f docker-compose.local.yml exec -T postgres pg_isready; do sleep 1; done'
+
       - name: Check Missing Migrations
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations --check --dry-run
+
       - name: Apply DB Migrations
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py migrate --noinput
       - name: Django System Checks
         run: docker compose -f docker-compose.local.yml run --rm django python manage.py check
+
+      - name: Collect Static Files Check
+        run: docker compose -f docker-compose.local.yml run --rm django python manage.py collectstatic --noinput --dry-run
+
       - name: Django Unit Tests
-        run: docker compose -f docker-compose.local.yml run --rm django pytest
+        run: docker compose -f docker-compose.local.yml run --rm django pytest -n auto
       - name: Tear down Stack
         if: always()
         run: docker compose -f docker-compose.local.yml down -v

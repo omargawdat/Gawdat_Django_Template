@@ -823,20 +823,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-tasks"
-version = "0.8.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "django-stubs-ext" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/d9/3670506bf2a5173310ec221cc7d24585e0d91627d86c1f0a6fbe243fbb4a/django_tasks-0.8.1.tar.gz", hash = "sha256:32673a9f56108ac1ea4664dc62580e5fc3536dd40858b38fd3b6a099913244b7", size = 31407, upload-time = "2025-07-04T15:51:59.68Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/56/da9b5df9bad6322d8a2cf38a60ecaa834fc5a9ee995a9647d2e87708ca73/django_tasks-0.8.1-py3-none-any.whl", hash = "sha256:5323f3858f7ea99d899a772b832098d8d694444b291c24f1e0ed5446272b880b", size = 43085, upload-time = "2025-07-04T15:51:58.087Z" },
-]
-
-[[package]]
 name = "django-template"
 version = "1.0.0"
 source = { virtual = "." }
@@ -864,7 +850,6 @@ dependencies = [
     { name = "django-simple-history" },
     { name = "django-soft-delete" },
     { name = "django-solo" },
-    { name = "django-tasks" },
     { name = "django-unfold" },
     { name = "djangorestframework" },
     { name = "djangorestframework-camel-case" },
@@ -917,6 +902,7 @@ test = [
     { name = "pytest-django" },
     { name = "pytest-factoryboy" },
     { name = "pytest-sugar" },
+    { name = "pytest-xdist" },
 ]
 typing = [
     { name = "django-stubs", extra = ["compatible-mypy"] },
@@ -951,7 +937,6 @@ requires-dist = [
     { name = "django-soft-delete", specifier = "==1.0.21" },
     { name = "django-solo", specifier = "==2.4.0" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 'prod'", specifier = "==1.14.6" },
-    { name = "django-tasks", specifier = "==0.8.1" },
     { name = "django-unfold", specifier = "==0.67.0" },
     { name = "djangorestframework", specifier = "==3.16.1" },
     { name = "djangorestframework-camel-case", specifier = "==1.4.2" },
@@ -999,6 +984,7 @@ test = [
     { name = "pytest-django", specifier = "==4.11.1" },
     { name = "pytest-factoryboy", specifier = "==2.8.1" },
     { name = "pytest-sugar", specifier = "==1.1.1" },
+    { name = "pytest-xdist", specifier = "==3.6.1" },
 ]
 typing = [
     { name = "django-stubs", extras = ["compatible-mypy"], specifier = "==5.2.6" },
@@ -1162,6 +1148,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d3/38/af70d7ab1ae9d4da450eeec1fa3918940a5fafb9055e934af8d6eb0c2313/et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54", size = 17234, upload-time = "2024-10-25T17:25:40.039Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa", size = 18059, upload-time = "2024-10-25T17:25:39.051Z" },
+]
+
+[[package]]
+name = "execnet"
+version = "2.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/ff/b4c0dc78fbe20c3e59c0c7334de0c27eb4001a2b2017999af398bf730817/execnet-2.1.1.tar.gz", hash = "sha256:5189b52c6121c24feae288166ab41b32549c7e2348652736540b9e6e7d4e72e3", size = 166524, upload-time = "2024-04-08T09:04:19.245Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/09/2aea36ff60d16dd8879bdb2f5b3ee0ba8d08cbbdcdfe870e695ce3784385/execnet-2.1.1-py3-none-any.whl", hash = "sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc", size = 40612, upload-time = "2024-04-08T09:04:17.414Z" },
 ]
 
 [[package]]
@@ -2301,6 +2296,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0b/4e/60fed105549297ba1a700e1ea7b828044842ea27d72c898990510b79b0e2/pytest-sugar-1.1.1.tar.gz", hash = "sha256:73b8b65163ebf10f9f671efab9eed3d56f20d2ca68bda83fa64740a92c08f65d", size = 16533, upload-time = "2025-08-23T12:19:35.737Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/87/d5/81d38a91c1fdafb6711f053f5a9b92ff788013b19821257c2c38c1e132df/pytest_sugar-1.1.1-py3-none-any.whl", hash = "sha256:2f8319b907548d5b9d03a171515c1d43d2e38e32bd8182a1781eb20b43344cc8", size = 11440, upload-time = "2025-08-23T12:19:34.894Z" },
+]
+
+[[package]]
+name = "pytest-xdist"
+version = "3.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "execnet" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/41/c4/3c310a19bc1f1e9ef50075582652673ef2bfc8cd62afef9585683821902f/pytest_xdist-3.6.1.tar.gz", hash = "sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d", size = 84060, upload-time = "2024-04-28T19:29:54.414Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/82/1d96bf03ee4c0fdc3c0cbe61470070e659ca78dc0086fb88b66c185e2449/pytest_xdist-3.6.1-py3-none-any.whl", hash = "sha256:9ed4adfb68a016610848639bb7e02c9352d5d9f03d04809919e2dafc3be4cca7", size = 46108, upload-time = "2024-04-28T19:29:52.813Z" },
 ]
 
 [[package]]
