@@ -1,148 +1,164 @@
+{% load i18n %}
 
+<!-- Social Media Section -->
+<br>
+<div class="social-section-wrapper">
+    <div class="social-card">
+        <div class="social-header">
+            <div class="social-title-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    {% trans "Social Media Links" %}
+                </h2>
+                <p class="text-gray-600 mb-6">{% trans "Follow us on social media and stay connected" %}</p>
+            </div>
+            <div class="social-actions">
+                <a href="/admin/appInfo/socialaccount/" class="edit-social-btn" title="{% trans 'Edit Social Media' %}">
+                    <i class="fas fa-edit"></i>
+                    <span>{% trans "Edit" %}</span>
+                </a>
+            </div>
+        </div>
 
+        <!-- Contact Information -->
+        {% if social_accounts.email or social_accounts.phone_number %}
+        <div class="contact-info-section">
+            <h3 class="contact-section-title">
+                <i class="fas fa-address-book mr-2"></i>
+                {% trans "Contact Information" %}
+            </h3>
+            <div class="contact-info-grid">
+                {% if social_accounts.email %}
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-label">{% trans "Email" %}</div>
+                        <div class="contact-value">
+                            <a href="mailto:{{ social_accounts.email }}" class="contact-link">
+                                {{ social_accounts.email }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
-<div class="modern-social-accounts-table-container" style="margin-bottom:2rem;">
-  <h2 style="font-size:2rem;font-weight:800;color:#2563eb;margin-bottom:2rem;text-align:center;letter-spacing:-1px;">Social Accounts</h2>
-  <div class="table-responsive">
-    <table class="modern-social-table">
-      <thead>
-        <tr>
-          <th>Platform</th>
-          <th>Account</th>
-          <th>View</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="social-table-icon" style="background:#fbbf24;"><i class="fas fa-envelope"></i></span> Email</td>
-          <td>{{ social_account.email|default:'—' }}</td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="social-table-icon" style="background:#38bdf8;"><i class="fas fa-phone"></i></span> Phone Number</td>
-          <td>{{ social_account.phone_number|default:'—' }}</td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="social-table-icon" style="background:#1da1f2;"><i class="fab fa-twitter"></i></span> Twitter</td>
-          <td>
-            {% if social_account.twitter %}
-              <a href="{{ social_account.twitter }}" target="_blank" style="color:#1da1f2;font-weight:600;word-break:break-all;"><i class="fab fa-twitter"></i> {{ social_account.twitter }}</a>
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="social-table-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);"><i class="fab fa-instagram"></i></span> Instagram</td>
-          <td>
-            {% if social_account.instagram %}
-              <a href="{{ social_account.instagram }}" target="_blank" style="color:#dd2a7b;font-weight:600;word-break:break-all;"><i class="fab fa-instagram"></i> {{ social_account.instagram }}</a>
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="social-table-icon" style="background:#000;"><i class="fab fa-tiktok"></i></span> TikTok</td>
-          <td>
-            {% if social_account.tiktok %}
-              <a href="{{ social_account.tiktok }}" target="_blank" style="color:#ef4444;font-weight:600;word-break:break-all;"><i class="fab fa-tiktok"></i> {{ social_account.tiktok }}</a>
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="social-table-icon" style="background:#4ade80;"><i class="fas fa-globe"></i></span> Website</td>
-          <td>
-            {% if social_account.website %}
-              <a href="{{ social_account.website }}" target="_blank" style="color:#4ade80;font-weight:600;word-break:break-all;"><i class="fas fa-globe"></i> {{ social_account.website }}</a>
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            <a href="http://127.0.0.1:8000/admin/appInfo/socialaccount/" class="view-btn-table" title="View SocialAccount Model" target="_blank"><i class="fas fa-eye"></i> View</a>
-          </td>
-        </tr>
+                {% if social_accounts.phone_number %}
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-label">{% trans "Phone" %}</div>
+                        <div class="contact-value">
+                            <a href="tel:{{ social_accounts.phone_number }}" class="contact-link">
+                                {{ social_accounts.phone_number }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
 
-      </tbody>
-    </table>
-  </div>
+        <!-- Social Media Links -->
+        {% if social_accounts.twitter or social_accounts.instagram or social_accounts.tiktok or social_accounts.website %}
+        <div class="social-links-section">
+            <h3 class="social-section-title">
+                <i class="fas fa-share-alt mr-2"></i>
+                {% trans "Follow Us On Social Media" %}
+            </h3>
+            <div class="social-links-grid">
+                {% if social_accounts.twitter %}
+                <div class="social-link-card" data-platform="twitter">
+                    <a href="{{ social_accounts.twitter }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <div class="social-icon-container"
+                            style="background-color: #1DA1F215; border-color: #1DA1F230;">
+                            <i class="fab fa-twitter" style="color: #1DA1F2;"></i>
+                        </div>
+                        <div class="social-info">
+                            <div class="social-platform">Twitter</div>
+                            <div class="social-handle">{{ social_accounts.twitter|truncatechars:30 }}</div>
+                        </div>
+                        <div class="social-arrow">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if social_accounts.instagram %}
+                <div class="social-link-card" data-platform="instagram">
+                    <a href="{{ social_accounts.instagram }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <div class="social-icon-container"
+                            style="background-color: #E4405F15; border-color: #E4405F30;">
+                            <i class="fab fa-instagram" style="color: #E4405F;"></i>
+                        </div>
+                        <div class="social-info">
+                            <div class="social-platform">Instagram</div>
+                            <div class="social-handle">{{ social_accounts.instagram|truncatechars:30 }}</div>
+                        </div>
+                        <div class="social-arrow">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if social_accounts.tiktok %}
+                <div class="social-link-card" data-platform="tiktok">
+                    <a href="{{ social_accounts.tiktok }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <div class="social-icon-container"
+                            style="background-color: #00000015; border-color: #00000030;">
+                            <i class="fab fa-tiktok" style="color: #000000;"></i>
+                        </div>
+                        <div class="social-info">
+                            <div class="social-platform">TikTok</div>
+                            <div class="social-handle">{{ social_accounts.tiktok|truncatechars:30 }}</div>
+                        </div>
+                        <div class="social-arrow">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if social_accounts.website %}
+                <div class="social-link-card" data-platform="website">
+                    <a href="{{ social_accounts.website }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <div class="social-icon-container"
+                            style="background-color: #7c3aed15; border-color: #7c3aed30;">
+                            <i class="fas fa-globe" style="color: #7c3aed;"></i>
+                        </div>
+                        <div class="social-info">
+                            <div class="social-platform">Website</div>
+                            <div class="social-handle">{{ social_accounts.website|truncatechars:30 }}</div>
+                        </div>
+                        <div class="social-arrow">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="no-social-message">
+            <div class="no-social-icon">
+                <i class="fas fa-share-alt"></i>
+            </div>
+            <div class="no-social-title">{% trans "Social Media Coming Soon" %}</div>
+            <div class="no-social-text">{% trans "We're setting up our social media presence. Stay tuned!" %}</div>
+        </div>
+        {% endif %}
+
+        <!-- Decorative Elements -->
+        <div class="social-decoration-1"></div>
+        <div class="social-decoration-2"></div>
+    </div>
 </div>
-
-<style>
-.modern-social-accounts-table-container {
-  animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
-}
-.modern-social-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
-  border-radius: 18px;
-  box-shadow: 0 6px 24px rgba(37,99,235,0.08);
-  overflow: hidden;
-  font-size: 1.08rem;
-}
-.modern-social-table thead th {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  color: #fff;
-  font-weight: 700;
-  padding: 1.1rem 0.8rem;
-  border: none;
-  text-align: left;
-  font-size: 1.1rem;
-}
-.modern-social-table tbody td {
-  padding: 1rem 0.8rem;
-  border-top: 1px solid #334155;
-  color: #fff;
-  vertical-align: middle;
-  background: #1e293b;
-}
-.modern-social-table tbody tr:first-child td {
-  border-top: none;
-}
-.social-table-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 1.3rem;
-  margin-right: 0.7rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-}
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-@media (max-width: 768px) {
-  .modern-social-table thead th, .modern-social-table tbody td {
-    padding: 0.7rem 0.5rem;
-    font-size: 0.98rem;
-  }
-  .modern-social-accounts-table-container h2 {
-    font-size: 1.3rem;
-  }
-  .social-table-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 1.05rem;
-    margin-right: 0.4rem;
-  }
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
