@@ -151,10 +151,13 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
 ]
 AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
 # ------------------------------------------------------------------------------
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -213,7 +216,8 @@ TEMPLATES = [
 # ------------------------------------------------------------------------------
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
-# todo: is that needed when using docker and app runner or local?
+# https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# See https://docs.djangoproject.com/en/dev/topics/logging for more details
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -230,6 +234,13 @@ LOGGING = {
         },
     },
     "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": {
+        "django.db.backends": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
 }
 
 # Google Map Widget
@@ -320,7 +331,6 @@ CACHES = {
     }
 }
 
-# Email settings
 # Email settings
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
