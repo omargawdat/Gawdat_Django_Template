@@ -1,5 +1,22 @@
 version: 2
 updates:
+  # Update Python dependencies in pyproject.toml
+  - package-ecosystem: 'pip'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    open-pull-requests-limit: 5
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+
   # Update GitHub actions in workflows
   - package-ecosystem: 'github-actions'
     directory: '/'
