@@ -12,15 +12,23 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: '.python-version'
+          cache: 'pip'
+
       - name: Set up UV
         uses: astral-sh/setup-uv@v5
         with:
           version: "0.8.22"
+          enable-cache: true
+
       - name: Install dependencies with UV
         run: uv sync --group lint
+
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files --show-diff-on-failure
