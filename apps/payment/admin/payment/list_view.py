@@ -1,5 +1,5 @@
 class PaymentListView:
-    list_display = ("display_header", "")
+    list_display = ("display_header",)
     list_editable = ()
     list_filter = ()
     date_hierarchy = None

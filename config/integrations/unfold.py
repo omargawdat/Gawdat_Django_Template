@@ -132,6 +132,14 @@ UNFOLD = {
                 "separator": True,
                 "items": [
                     {
+                        "title": _("Payment"),
+                        "icon": "payment",
+                        "link": reverse_lazy("admin:payment_payment_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "payment.view_payment"
+                        ),
+                    },
+                    {
                         "title": _("Wallet"),
                         "icon": "wallet",
                         "link": reverse_lazy("admin:payment_wallet_changelist"),
