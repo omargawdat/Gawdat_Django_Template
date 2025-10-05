@@ -12,7 +12,8 @@ services:
     depends_on:
       - postgres
     volumes:
-      - .:/app:z
+      - /app/.venv  # Anonymous volume for .venv (must be first)
+      - .:/app:z    # Mount source code
     ports:
       - '8000:8000'
     env_file:

@@ -7,6 +7,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Django REST API template project with a modular app structure and comprehensive CI/CD pipeline. The project
 uses Docker for local development and includes OAuth integrations, payment systems, and location services.
 
+## Package Management
+
+This project uses **uv** package manager with dependencies defined in `pyproject.toml`:
+
+- **pyproject.toml** - Single source of truth for all dependencies
+  - `[project.dependencies]` - Core/base dependencies (Django, DRF, etc.)
+  - `[project.optional-dependencies]` - Production extras (gunicorn, sentry, S3)
+  - `[dependency-groups]` - PEP 735 groups (dev, test, typing, lint)
+- **uv.lock** - Lockfile with exact versions and SHA256 hashes (auto-generated)
+
+### Managing Dependencies
+
+```bash
+# Add a new dependency
+uv add package-name
+
+# Add to dev group
+uv add --group dev package-name
+
+# Remove a dependency
+uv remove package-name
+
+# Update specific package
+uv lock --upgrade-package django
+
+# Update all packages
+uv lock --upgrade
+```
+
 ## Development Commands
 
 ### Local Development Setup
