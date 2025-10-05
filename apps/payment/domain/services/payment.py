@@ -49,7 +49,7 @@ class PaymentService:
 
     @staticmethod
     @transaction.atomic
-    def mark_payment_session_as_completed(payment: Payment) -> None:
+    def mark_payment_as_completed(payment: Payment) -> None:
         if payment.is_paid:
             return  # Already completed
 
