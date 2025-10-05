@@ -6,7 +6,7 @@
     ```bash
     git clone https://github.com/omargawdat/Gawdat_Django_Template.git
     ```
-2. Replace `projectname` with your `project name`
+2. Replace `projectname` with your `project name`.
 3. create 'media' folder
     ```bash
     mkdir assets/media
