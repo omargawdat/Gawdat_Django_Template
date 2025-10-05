@@ -33,3 +33,7 @@ class WalletTransactionType(models.TextChoices):
 class ReferralType(models.TextChoices):
     APP_INSTALL = "APP_INSTALL", _("App Install")
     FIRST_ORDER = "FIRST_ORDER", _("First Order")
+
+
+class PaymentType(models.TextChoices):
+    other = "other", _("Other")
