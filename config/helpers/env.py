@@ -22,15 +22,7 @@ class EnvSettings(BaseSettings):
     django_jwt_refresh_token_lifetime_minutes: Annotated[int, Field(gt=0)]
 
     # Database Configuration
-    db_host: str
-    db_port: Annotated[int, Field(ge=1, le=65535)] = 5432
-    db_user: str
-    db_password: SecretStr
-    db_name: str
-
-    @property
-    def database_url(self) -> str:
-        return f"postgis://{self.db_user}:{self.db_password.get_secret_value()}@{self.db_host}:{self.db_port}/{self.db_name}"
+    database_url: str
 
     # AWS Settings
     s3_bucket_name: str
