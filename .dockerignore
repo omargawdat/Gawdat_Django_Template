@@ -8,5 +8,7 @@
 .readthedocs.yml
 .travis.yml
 venv
+.venv
 .git
 old.envs/
+requirements/

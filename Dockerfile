@@ -1,5 +1,8 @@
-# Build stage
-FROM docker.io/python:3.12.9-slim-bookworm AS python-build-stage
+# Define an alias for the specific python version used in this file
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS python
+
+# Python build stage
+FROM python AS python-build-stage
 
 # Only keep is_local as build argument since it affects build-time behavior
 ARG is_local
@@ -9,7 +12,14 @@ RUN if [ -z "$is_local" ]; then \
     echo "ERROR: is_local build argument must be explicitly set to 'true' or 'false'" && exit 1; \
 fi
 
-WORKDIR /usr/src/app
+ARG APP_HOME=/app
+
+WORKDIR ${APP_HOME}
+
+# UV environment variables for optimization
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=0
 
 # Install build dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -17,33 +27,51 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libpq-dev \
     libgdal-dev \
     git \
+    gettext \
+    wait-for-it \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements files
-COPY ./requirements .
+# Install dependencies based on environment
+# Use cache mount for faster rebuilds
+# First sync: install dependencies only (no project)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    if [ "$is_local" = "true" ]; then \
+        echo "Installing LOCAL dependencies (with dev groups)" && \
+        uv sync --frozen --no-install-project --group dev --group test --group typing --group lint; \
+    else \
+        echo "Installing PRODUCTION dependencies" && \
+        uv sync --frozen --no-install-project --extra prod --no-dev; \
+    fi
 
-# Install dependencies into wheels
-RUN if [ "$is_local" = "true" ]; then \
-    echo "Building with LOCAL dependencies" && \
-    pip wheel --wheel-dir /usr/src/app/wheels -r local.txt; \
-else \
-    echo "Building with PRODUCTION dependencies" && \
-    pip wheel --wheel-dir /usr/src/app/wheels -r prod.txt; \
-fi
+# Copy application code
+COPY . ${APP_HOME}
 
-# Run stage
-FROM docker.io/python:3.12.7-slim-bookworm AS python-run-stage
+# Second sync: install the project itself
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    if [ "$is_local" = "true" ]; then \
+        uv sync --frozen --group dev --group test --group typing --group lint; \
+    else \
+        uv sync --frozen --extra prod --no-dev; \
+    fi
 
-# Pass is_local from build stage to runtime
+# Set PATH to use .venv
+ENV PATH="${APP_HOME}/.venv/bin:$PATH"
+
+# Copy entrypoint script
+COPY ./scripts/docker-entrypoint /scripts/entrypoint
+RUN sed -i 's/\r$//g' /scripts/entrypoint && chmod +x /scripts/entrypoint
+
+# Python run stage
+FROM python:3.12.9-slim-bookworm AS python-run-stage
+
 ARG is_local
-ENV IS_LOCAL=$is_local
+ARG APP_HOME=/app
 
-
-# Set common environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-WORKDIR /app
+WORKDIR ${APP_HOME}
 
 # Create application user
 RUN groupadd -r django && useradd -r -g django -u 1000 -s /bin/false django
@@ -55,29 +83,30 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     gettext \
     wait-for-it \
     git \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY --from=python-build-stage /usr/src/app/wheels /wheels/
-RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
-    && rm -rf /wheels/
-
-# Create and configure scripts directory
-RUN mkdir -p /scripts && chown django:django /scripts
-
-# Copy combined entrypoint script
+# Copy entrypoint script
 COPY --chown=django:django ./scripts/docker-entrypoint /scripts/entrypoint
 RUN sed -i 's/\r$//g' /scripts/entrypoint && chmod +x /scripts/entrypoint
 
-# Copy application code
-COPY --chown=django:django . /app
+# Copy the application from the builder stage
+COPY --from=python-build-stage --chown=django:django ${APP_HOME} ${APP_HOME}
 
-# Switch to non-root user
+# Make django owner of the WORKDIR
+RUN chown -R django:django ${APP_HOME}
+
+# Place executables in the environment at the front of the path
+ENV PATH="${APP_HOME}/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    IS_LOCAL=${is_local}
+
 USER django
 
 ENTRYPOINT ["/scripts/entrypoint"]
 
 # Metadata
 LABEL maintainer="your-email@example.com" \
-      version="1.0" \
-      description="Django application image"
+      version="2.0" \
+      description="Django application image with uv package manager"
