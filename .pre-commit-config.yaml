@@ -1,4 +1,4 @@
-exclude: '^docs/|/migrations/|^devcontainer.json$|.*\.tmp$'
+exclude: '^docs/|/migrations/|^devcontainer.json$|.*\.tmp$|^uv\.lock$'
 default_stages: [ pre-commit ]
 
 default_language_version:

@@ -141,7 +141,7 @@ class Command(BaseCommand):
         }
 
         try:
-            obj, created = Region.objects.update_or_create(
+            _obj, created = Region.objects.update_or_create(
                 code=region_code,
                 defaults=defaults,
             )
