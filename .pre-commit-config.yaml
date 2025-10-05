@@ -94,7 +94,7 @@ repos:
   # Local hooks
   - repo: local
     hooks:
-      # Python linting and formatting (using uv for 10x speed)
+      # Python linting and formatting (using uv for 10x speed).
       - id: ruff-check
         name: ruff check
         entry: uv run ruff check .
