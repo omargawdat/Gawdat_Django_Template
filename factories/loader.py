@@ -22,12 +22,6 @@ def get_factory_priority(factory_class):
     # Priority 0: Independent models
     if name in {
         "CountryFactory",
-        "AppInfoFactory",
-        "SocialAccountFactory",
-        "BannerGroupFactory",
-        "FAQFactory",
-        "OnboardingFactory",
-        "PopUpBannerFactory",
     }:
         return 0
     # Priority 1: User models

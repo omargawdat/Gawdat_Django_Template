@@ -39,10 +39,11 @@ class Command(BaseCommand):
         count = options["count"]
 
         if options["flush"]:
-            self.stdout.write(self.style.WARNING("Flushing existing data..."))
-            self._flush_data()
-
             from django.core.management import call_command
+
+            self.stdout.write(self.style.WARNING("Flushing existing data..."))
+            call_command("flush", "--no-input")
+            self.stdout.write(self.style.SUCCESS("✓ Data flushed"))
 
             call_command("createsu")
 
@@ -106,40 +107,6 @@ class Command(BaseCommand):
                 f"Total instances: {total_created}\n\n" + "\n".join(created_summary)
             )
         )
-
-    def _flush_data(self):
-        """Flush data in reverse dependency order"""
-        from django.db.models.deletion import ProtectedError
-
-        # Get all factories and reverse order for deletion
-        all_factories = discover_factories()
-        sorted_factories = sorted(
-            all_factories, key=lambda x: get_factory_priority(x[1]), reverse=True
-        )
-
-        for _factory_name, factory_class in sorted_factories:
-            model = factory_class._meta.model
-            model_name = model.__name__
-
-            try:
-                # Handle singleton models (AppInfo, SocialAccount)
-                if hasattr(model, "singleton_instance_id"):
-                    try:
-                        instance = model.objects.get(pk=model.singleton_instance_id)
-                        instance.delete()
-                        self.stdout.write(f"    Deleted 1 {model_name} (singleton)")
-                    except model.DoesNotExist:
-                        self.stdout.write(f"    No {model_name} to delete")
-                else:
-                    count = model.objects.count()
-                    model.objects.all().delete()
-                    self.stdout.write(f"    Deleted {count} {model_name}(s)")
-            except ProtectedError:
-                self.stdout.write(
-                    self.style.WARNING(f"    ⚠ Cannot delete {model_name}: protected")
-                )
-
-        self.stdout.write(self.style.SUCCESS("✓ Data flushed"))
 
     def _calculate_count(self, count_spec, base_count):
         """
