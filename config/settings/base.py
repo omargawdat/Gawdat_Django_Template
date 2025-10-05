@@ -59,17 +59,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
     "default": {
-        **dj_database_url.parse(str(env.database_url)),
+        **dj_database_url.config(
+            default=env.database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
         "ATOMIC_REQUESTS": True,
-        "OPTIONS": {
-            "pool": {
-                "min_size": 0,
-                "max_size": 5,
-                "timeout": 30,
-                "max_lifetime": 1800,
-                "max_idle": 120,
-            },
-        },
     },
 }
 

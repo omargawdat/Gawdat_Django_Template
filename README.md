@@ -75,11 +75,7 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
    ```json
    {
      "SENTRY_SDK_DSN": "MUST-BE-REPLACED",
-     "DB_HOST": "MUST-BE-REPLACED",
-     "DB_USER": "MUST-BE-REPLACED",
-     "DB_PASSWORD": "MUST-BE-REPLACED",
-     "DB_PORT": "5432",
-     "DB_NAME": "MUST-BE-REPLACED",
+     "DATABASE_URL": "postgis://user:password@host:5432/dbname",
      "DJANGO_SECRET_KEY": "MUST-BE-REPLACED",
      "DJANGO_SUPERUSER_USERNAME": "MUST-BE-REPLACED",
      "DJANGO_SUPERUSER_PASSWORD": "MUST-BE-REPLACED",

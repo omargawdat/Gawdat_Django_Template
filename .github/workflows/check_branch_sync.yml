@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: ['main']
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   check_branch_sync:
     runs-on: ubuntu-latest
@@ -12,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Check Branch Up-to-date with Main
         run: |
           git fetch origin main

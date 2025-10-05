@@ -17,8 +17,13 @@ else
 fi
 
 # Wait for PostgreSQL
-wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
->&2 echo 'PostgreSQL is available'
+# Extract host and port from DATABASE_URL (format: postgis://user:pass@host:port/dbname)  # pragma: allowlist secret
+if [[ "$DATABASE_URL" =~ @([^:]+):([0-9]+)/ ]]; then
+    DB_HOST="${BASH_REMATCH[1]}"
+    DB_PORT="${BASH_REMATCH[2]}"
+    wait-for-it "${DB_HOST}:${DB_PORT}" -t 30
+    >&2 echo 'PostgreSQL is available'
+fi
 
 # If arguments are provided, execute them
 if [ "$#" -gt 0 ]; then

@@ -1,12 +1,76 @@
-.editorconfig
-.gitattributes
-.github
-.gitignore
-.gitlab-ci.yml
-.idea
-.pre-commit-config.yaml
-.readthedocs.yml
-.travis.yml
-venv
+# Version control
 .git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.pre-commit-config.yaml
+
+# IDEs
+.idea
+.vscode
+.editorconfig
+
+# Documentation
+.readthedocs.yml
+docs/
+*.md
+!README.md
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+coverage.xml
+*.cover
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Linting
+.ruff_cache/
+
+# UV specific
+.uv/
+uv.lock.bak
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# Environment variables
+.env
+.env.*
 old.envs/
+.envs/
+
+# Legacy
+requirements/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -12,17 +12,14 @@ services:
     depends_on:
       - postgres
     volumes:
-      - .:/app:z
+      - /app/.venv  # Anonymous volume for .venv (must be first)
+      - .:/app:z    # Mount source code
     ports:
       - '8000:8000'
     env_file:
       - .env
     environment:
-      DB_HOST: 'postgres'
-      DB_PORT: '5432'
-      DB_NAME: 'mydatabase'
-      DB_USER: 'postgres'
-      DB_PASSWORD: 'postgres' # pragma: allowlist secret
+      DATABASE_URL: 'postgis://postgres:postgres@postgres:5432/mydatabase' # pragma: allowlist secret
 
   postgres:
     image: imresamu/postgis:17-3.5.0-alpine3.20
