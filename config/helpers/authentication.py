@@ -6,7 +6,7 @@ class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         auth_result = super().authenticate(request)
         if auth_result:
-            user, token = auth_result
+            user, _token = auth_result
             user_language = user.language
             translation.activate(user_language)
             request.LANGUAGE_CODE = user_language
