@@ -1,5 +1,6 @@
 # Define an alias for the specific python version used in this file
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS python
+# Pin UV version to prevent breaking changes (uv is pre-1.0)
+FROM ghcr.io/astral-sh/uv:0.8.22-python3.13-trixie-slim AS python
 
 # Python build stage
 FROM python AS python-build-stage
@@ -66,7 +67,7 @@ COPY ./scripts/docker-entrypoint /scripts/entrypoint
 RUN sed -i 's/\r$//g' /scripts/entrypoint && chmod +x /scripts/entrypoint
 
 # Python run stage
-FROM python:3.12.9-slim-bookworm AS python-run-stage
+FROM python:3.13-slim-trixie AS python-run-stage
 
 ARG is_local
 ARG APP_HOME=/app

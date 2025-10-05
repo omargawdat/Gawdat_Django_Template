@@ -1,5 +1,3 @@
-# ruff: noqa: F405
-
 import socket
 
 from .base import *  # noqa
@@ -27,7 +25,7 @@ INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
 
 # Docker-specific IP configuration
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
+INTERNAL_IPS += [".".join([*ip.split(".")[:-1], "1"]) for ip in ips]
 
 # ------------------------------------------------------------------------------
 # DEVELOPMENT TOOLS

@@ -1,0 +1,51 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.8.22"
+
+      - name: Update uv.lock
+        run: |
+          uv lock --upgrade
+
+      - name: Generate dependency summary
+        id: summary
+        run: |
+          echo "## Dependency Updates" > summary.md
+          echo "" >> summary.md
+          echo "This PR updates all dependencies to their latest compatible versions." >> summary.md
+          echo "" >> summary.md
+          echo "### Changes" >> summary.md
+          git diff uv.lock | grep -E "^[\+\-]    version" | head -20 >> summary.md || echo "No version changes detected" >> summary.md
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies via uv lock --upgrade"
+          title: "chore: weekly dependency update"
+          body-path: summary.md
+          branch: automated/dependency-update
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+          assignees: ${{ github.repository_owner }}

@@ -80,15 +80,7 @@ repos:
       - id: commitizen
         stages: [ commit-msg ]
 
-  # Python linting and formatting
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.9
-    hooks:
-      - id: ruff
-        args: [ --fix, --exit-non-zero-on-fix ]
-      - id: ruff-format
-
-  # Additional linters
+  # Additional linters (non-Python)
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.10.0
     hooks:
@@ -102,6 +94,46 @@ repos:
   # Local hooks
   - repo: local
     hooks:
+      # Python linting and formatting (using uv for 10x speed)
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix --exit-non-zero-on-fix
+        language: system
+        types: [python]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        require_serial: true
+
+      # - id: mypy
+      #   name: mypy
+      #   entry: uv run mypy
+      #   language: system
+      #   types: [python]
+      #   require_serial: true
+      #   pass_filenames: false
+
+      # UV lockfile validation
+      - id: uv-lock-check
+        name: uv lock check (prevent lockfile drift)
+        entry: uv lock --check
+        language: system
+        pass_filenames: false
+        files: (pyproject\.toml|uv\.lock)$
+
+      # Security scanning
+      - id: pip-audit
+        name: pip-audit (vulnerability scanning)
+        entry: bash -c 'uv export --no-hashes | pip-audit -r /dev/stdin'
+        language: system
+        pass_filenames: false
+        stages: [manual, pre-push]
+
+      # Django-specific checks
       - id: check-branch-up-to-date
         name: Check branch is up to date with origin/main
         entry: bash -c 'git fetch origin main && git merge-base --is-ancestor origin/main HEAD || (echo "Branch is behind origin/main. Please rebase or merge first." && exit 1)'
