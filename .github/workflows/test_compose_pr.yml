@@ -25,7 +25,7 @@ jobs:
       - name: Setup Environment File
         run: cp dummy.env .env
 
-      - name: Build and cache Stack
+      - name: Build and cache Django
         uses: docker/bake-action@v6
         with:
           push: false
@@ -35,8 +35,6 @@ jobs:
           set: |
             django.cache-from=type=gha,scope=django-compose-test
             django.cache-to=type=gha,scope=django-compose-test,mode=max
-            postgres.cache-from=type=gha,scope=postgres-compose-test
-            postgres.cache-to=type=gha,scope=postgres-compose-test,mode=max
       - name: Create Media Directories
         run: |
           mkdir -p assets/media

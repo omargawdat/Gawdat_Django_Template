@@ -1,4 +1,4 @@
-## 🚀 Getting Started.
+## 🚀 Getting Started.,
 
 ### 1. One-Time Project Setup
 
@@ -24,7 +24,7 @@
    ```
 6. Share the project on GitHub
 
-### 2. Local Development
+### 2. Local Development.
 
 1. install pre-commit hooks
    ```bash
