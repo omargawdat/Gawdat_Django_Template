@@ -7,7 +7,7 @@ default_language_version:
 repos:
   # General pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
         args: [ --maxkb=500 ]
@@ -28,7 +28,7 @@ repos:
 
   # API validation
   - repo: https://github.com/python-openapi/openapi-spec-validator
-    rev: 0.7.1
+    rev: 0.8.0b1
     hooks:
       - id: openapi-spec-validator  # OpenAPI Spec Validation
 
@@ -46,13 +46,13 @@ repos:
   #        args: [ --config=auto ]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.25.1
+    rev: v8.28.0
     hooks:
       - id: gitleaks
         exclude: README.md
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.3
+    rev: 1.8.6
     hooks:
       - id: bandit
         args: [
@@ -62,7 +62,7 @@ repos:
 
   # Django tools
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: '1.24.0'
+    rev: '1.28.0'
     hooks:
       - id: django-upgrade
         args: [ '--target-version', '5.2' ]
@@ -75,14 +75,14 @@ repos:
 
   # Commit message validation
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.6.3
+    rev: v4.9.1
     hooks:
       - id: commitizen
         stages: [ commit-msg ]
 
   # Additional linters (non-Python)
   - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.10.0
+    rev: v0.11.0
     hooks:
       - id: shellcheck
 

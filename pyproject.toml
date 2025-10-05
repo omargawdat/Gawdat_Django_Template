@@ -234,6 +234,7 @@ select = [
 ]
 
 ignore = [
+    "PLC0415",
     "S101", # Use of assert detected
     "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
     "SIM102", # sometimes it's better to nest
