@@ -99,17 +99,17 @@ repos:
         name: ruff check
         entry: uv run ruff check .
         language: system
-        types: [python]
         require_serial: true
         pass_filenames: false
+        always_run: true
 
       - id: ruff-format
         name: ruff format
         entry: uv run ruff format
         language: system
-        types: [python]
         require_serial: true
         pass_filenames: false
+        always_run: true
 
       # - id: mypy
       #   name: mypy
