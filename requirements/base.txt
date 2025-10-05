@@ -5,6 +5,8 @@ argon2-cffi==25.1.0
 pydantic==2.11.7
 pydantic-settings==2.10.1
 boto3==1.40.4
+pycountry==24.6.1
+py-moneyed==3.0
 
 # Redis
 redis==5.3.1
@@ -18,6 +20,7 @@ django-redis==5.4.0
 django-import-export==4.3.9
 openpyxl==3.1.5
 django-phonenumber-field[phonenumbers]==8.1.0
+faker-e164==0.1.0
 django-polymorphic==4.1.0
 django-unfold==0.64.2
 fcm-django==2.3.1

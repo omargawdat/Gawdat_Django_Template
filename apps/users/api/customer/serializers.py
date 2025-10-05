@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.channel.api.notification.serializers import FCMDeviceCreateSerializer
 from apps.channel.constants import Language
 from apps.location.api.country.serializers import CountrySerializer
+from apps.location.models.country import Country
 from apps.payment.api.wallet.serializers import WalletMinimalSerializer
 from apps.users.api.serializer_validations import ValidCountryPhoneNumberField
 from apps.users.models.customer import Customer
@@ -52,6 +53,7 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
                     "type": "android",
                 },
                 "language": "en",
+                "country": "SA",
             },
             request_only=True,
         ),
@@ -63,6 +65,10 @@ class CustomerCreateSerializer(serializers.Serializer):
     device = FCMDeviceCreateSerializer(required=False, allow_null=True)
     language = serializers.ChoiceField(choices=Language.choices)
     referral_customer_id = serializers.IntegerField(required=False, allow_null=True)
+    country = serializers.PrimaryKeyRelatedField(
+        queryset=Country.objects.filter(is_active=True),
+        required=True,
+    )
 
 
 @extend_schema_serializer(

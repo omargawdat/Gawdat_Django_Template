@@ -27,15 +27,14 @@ fi
 
 # Run Django migrations
 python manage.py migrate
-python manage.py loaddata assets/fixtures/countries.json
+python manage.py loadcountries --download-flags
 python manage.py loadzones
 python manage.py createsu
 python manage.py createcachetable
 
-# Load fixtures if in local or development environment
-if [ "$ENVIRONMENT" = "local" ] || [ "$ENVIRONMENT" = "development" ]; then
+# Load fixtures in development environment only
+if [ "$ENVIRONMENT" = "development" ]; then
     python manage.py loadfixtures
-
 fi
 
 # Start the db_worker in the background (non-production environments only)

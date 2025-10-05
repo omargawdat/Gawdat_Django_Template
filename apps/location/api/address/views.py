@@ -47,6 +47,7 @@ class AddressCreateView(APIView):
                 name="Create Address Example",
                 description="An example of creating a new address.",
                 value={
+                    "country": "SA",
                     "point": {"type": "Point", "coordinates": [45.0792, 23.8859]},
                     "description": "123 Main St, Springfield, USA",
                     "mapDescription": "Near the big park",
@@ -64,9 +65,10 @@ class AddressCreateView(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = request.user
+        country = serializer.validated_data["country"]
         point = serializer.validated_data["point"]
 
-        RegionValidator.validate_user_location(point=point, user=user)
+        RegionValidator.validate_country_for_address(country=country, point=point)
 
         address = serializer.save(customer=user)
         user.primary_address = address
@@ -95,10 +97,11 @@ class AddressUpdateView(APIView):
         request={"multipart/form-data": AddressUpdateSerializer},
         examples=[
             OpenApiExample(
-                "Create Address Example",
-                summary="Create Address Example",
-                description="An example of creating a new address.",
+                "Update Address Example",
+                summary="Update Address Example",
+                description="An example of updating an address.",
                 value={
+                    "country": "SA",
                     "point": {"type": "Point", "coordinates": [45.0792, 23.8859]},
                     "description": "123 Main St, Springfield, USA",
                     "mapDescription": "Near the big park",
@@ -119,10 +122,14 @@ class AddressUpdateView(APIView):
         serializer = AddressUpdateSerializer(address, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        # [EXPLAIN]: as the endpoint is patch so point is optional to update
-        if "point" in serializer.validated_data:
-            point = serializer.validated_data["point"]
-            RegionValidator.validate_user_location(point=point, user=request.user)
+        # [EXPLAIN]: as the endpoint is patch so country and point are optional to update
+        if (
+            "country" in serializer.validated_data
+            or "point" in serializer.validated_data
+        ):
+            country = serializer.validated_data.get("country", address.country)
+            point = serializer.validated_data.get("point", address.point)
+            RegionValidator.validate_country_for_address(country=country, point=point)
 
         address = serializer.save()
 

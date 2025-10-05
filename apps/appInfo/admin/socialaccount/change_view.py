@@ -18,7 +18,6 @@ class SocialAccountChangeView:
             {
                 "fields": ("twitter", "instagram", "tiktok"),
                 "description": _("Links to social media profiles."),
-                "classes": ("collapse",),
             },
         ),
         (
@@ -26,7 +25,6 @@ class SocialAccountChangeView:
             {
                 "fields": ("website",),
                 "description": _("Official website URL."),
-                "classes": ("collapse",),
             },
         ),
     )

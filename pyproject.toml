@@ -1,11 +1,19 @@
 # ==== pytest ====
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--ds=config.settings.test --reuse-db --import-mode=importlib"
+addopts = """
+    --ds=config.settings.test
+    --import-mode=importlib
+    -v
+    --tb=short
+    --strict-markers
+    --showlocals
+"""
 python_files = [
     "tests.py",
     "test_*.py",
 ]
+console_output_style = "progress"
 
 # ==== Coverage ====
 [tool.coverage.run]
