@@ -249,7 +249,6 @@ ignore = [
     "S101", # Use of assert detected
     "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
     "SIM102", # sometimes it's better to nest
-    "UP038", # Checks for uses of isinstance/issubclass that take a tuple of types for comparison
     "COM812", # Missing trailing comma in Python 3.6+
     "ISC001", # Single line implicit string concatenation
     "RET506",
@@ -276,9 +275,7 @@ ignore = [
 
 # The fixes in extend-unsafe-fixes will require
 # provide the `--unsafe-fixes` flag when fixing.
-extend-unsafe-fixes = [
-    "UP038",
-]
+extend-unsafe-fixes = []
 
 [tool.ruff.lint.isort]
 force-single-line = true
