@@ -3,7 +3,7 @@
 name = "django-template"
 version = "1.0.0"
 description = "Django REST API template with modular app structure"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     # Python Utilities
     "python-slugify==8.0.4",
