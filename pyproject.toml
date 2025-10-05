@@ -255,7 +255,6 @@ ignore = [
     "RET506",
     "S603",
     "TRY003", # ensure using execption for consistance in messages
-    "ERA001", # no commented out code
     "EM101", # avoid using string directly inside the exceptions
     "PGH004", # use correct noqa code
     "N806", # lower case ensuring

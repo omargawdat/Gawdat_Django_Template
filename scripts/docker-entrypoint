@@ -46,7 +46,7 @@ if [ "$IS_LOCAL" = "true" ]; then
     exec python manage.py runserver_plus 0.0.0.0:8000
 else
     python manage.py collectstatic --noinput --clear
-    exec /usr/local/bin/gunicorn config.wsgi \
+    exec gunicorn config.wsgi \
         --bind 0.0.0.0:5000 \
         --chdir=/app \
         --workers 3 \
