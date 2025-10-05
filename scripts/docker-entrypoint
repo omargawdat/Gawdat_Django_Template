@@ -42,13 +42,10 @@ if [ "$ENVIRONMENT" = "development" ]; then
     python manage.py loadfixtures
 fi
 
-# Start the db_worker in the background (non-production environments only)
 if [ "$IS_LOCAL" = "true" ]; then
-    (python manage.py db_worker --verbosity 2 > /proc/1/fd/1 2>&1) &
     exec python manage.py runserver_plus 0.0.0.0:8000
 else
     python manage.py collectstatic --noinput --clear
-    (python manage.py db_worker > /proc/1/fd/1 2>&1) &
     exec /usr/local/bin/gunicorn config.wsgi \
         --bind 0.0.0.0:5000 \
         --chdir=/app \
