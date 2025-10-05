@@ -108,7 +108,6 @@ minversion = "6.0"
 addopts = """
     --ds=config.settings.test
     --reuse-db
-    -n auto
     --import-mode=importlib
     -v
     --tb=short
