@@ -97,7 +97,7 @@ repos:
       # Python linting and formatting (using uv for 10x speed)
       - id: ruff-check
         name: ruff check
-        entry: uv run ruff check --fix --exit-non-zero-on-fix
+        entry: uv run ruff check .
         language: system
         types: [python]
         require_serial: true
