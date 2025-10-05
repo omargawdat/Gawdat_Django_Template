@@ -1,0 +1,232 @@
+/* Combined Chart Controls Styling - Dark Elegant Theme */
+.combined-chart-section.payments-orders-chart-section {
+  background: #0f172a !important;
+  border-radius: 20px !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  margin-bottom: 2rem;
+}
+
+.payments-orders-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.payments-orders-chart-title-section h2 {
+  color: #f1f5f9 !important;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.payments-orders-chart-title-section p {
+  color: #cbd5e1 !important;
+  font-size: 0.875rem;
+}
+
+.period-toggle-section {
+  display: flex;
+  align-items: center;
+}
+
+.period-buttons {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 8px;
+  padding: 0.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.2);
+}
+
+.period-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.period-btn:hover {
+  background: rgba(71, 85, 105, 0.3);
+  transform: translateY(-1px);
+}
+
+.period-btn.active {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  color: #f8fafc;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.3);
+}
+
+.period-icon {
+  font-size: 1rem;
+}
+
+.period-text {
+  font-weight: 600;
+}
+
+.chart-controls {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.2);
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+  color: #e2e8f0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.control-btn:hover::before {
+  left: 100%;
+}
+
+.control-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(34, 197, 94, 0.15);
+}
+
+.control-btn.active {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  color: white;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(71, 85, 105, 0.4);
+}
+
+.control-btn.payments-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #047857;
+}
+
+.control-btn.orders-btn.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border-color: #4338ca;
+}
+
+.control-icon {
+  font-size: 1.1rem;
+}
+
+.control-text {
+  font-weight: 600;
+}
+
+/* Chart Container Styling */
+.payments-orders-chart-container.dark-theme {
+  position: relative !important;
+  height: 400px !important;
+  background: #0f172a !important;
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  border: 2px solid rgba(148, 163, 184, 0.15) !important;
+  backdrop-filter: blur(15px) !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.4), 0 8px 16px rgba(15, 23, 42, 0.2) !important;
+  overflow: hidden !important;
+}
+
+.payments-orders-chart-container canvas {
+  background-color: #0f172a !important;
+}
+
+.payments-orders-chart-container.dark-theme::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(51, 65, 85, 0.1) 0%, rgba(71, 85, 105, 0.15) 100%);
+  z-index: 0;
+}
+
+#paymentsOrdersChart {
+  background-color: #0f172a !important;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payments-orders-chart-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .period-toggle-section {
+    margin-top: 1rem;
+  }
+
+  .control-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .control-btn {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-controls {
+    padding: 1rem;
+  }
+
+  .period-buttons {
+    width: 100%;
+  }
+
+  .period-btn {
+    flex: 1;
+    min-width: auto;
+  }
+}

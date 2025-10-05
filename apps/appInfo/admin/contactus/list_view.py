@@ -9,7 +9,7 @@ class ContactUsListView:
         "has_checked",
     )
     list_editable = ("has_checked",)
-    list_filter = ("contact_type",)
+    list_filter = ("contact_type", "has_checked")
     date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True

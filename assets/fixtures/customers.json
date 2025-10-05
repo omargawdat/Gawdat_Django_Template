@@ -24,7 +24,8 @@
       "full_name": "mezo mezoo",
       "gender": "M",
       "birth_date": "2005-03-21",
-      "country": "EG"
+      "country": "EG",
+      "is_verified": true
     }
   },
   {
@@ -63,7 +64,9 @@
       "full_name": "omar omar",
       "gender": "M",
       "birth_date": "2005-03-21",
-      "country": "SA"
+      "country": "SA",
+            "is_verified": true
+
     }
   },
   {

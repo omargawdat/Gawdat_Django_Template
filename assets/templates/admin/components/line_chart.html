@@ -1,212 +1,336 @@
-<div class="chart-container" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); box-shadow: 0 8px 32px 0 rgba(37,99,235,0.25);">
-    <div class="chart-header">
-        <h3 class="chart-title" id="growthChartTitle" style="color: #fff; text-shadow: 0 2px 8px #4ade80cc;">Customer Growth - New Customers Per Day 🌱</h3>
-        <div class="chart-legend">
-            <span class="legend-item">
-                <span class="legend-color" style="background: #4ade80; box-shadow: 0 0 8px 2px #4ade8099;"></span>
-                New Customers
-            </span>
+<!-- Combined Payments & Orders Chart Section - Dark Elegant Theme -->
+<div class="combined-chart-section payments-orders-chart-section">
+  <div>
+    <!-- Header Section -->
+    <div class="payments-orders-chart-header">
+      <div class="payments-orders-chart-title-section">
+        <h2 class="text-2xl font-bold text-gray-100 mb-2" id="paymentsOrdersChartTitle">💰 Payments Analytics</h2>
+        <p class="text-sm text-gray-300"><span id="chart-subtitle">Monthly insights for financial performance</span></p>
+      </div>
+
+      <!-- Period Toggle Buttons -->
+      <div class="period-toggle-section">
+        <div class="period-buttons">
+          <button id="monthlyBtn" class="period-btn active" data-period="monthly">
+            <span class="period-icon">📅</span>
+            <span class="period-text">Monthly</span>
+          </button>
+          <button id="yearlyBtn" class="period-btn" data-period="yearly">
+            <span class="period-icon">📊</span>
+            <span class="period-text">Yearly</span>
+          </button>
         </div>
-        <div style="margin-left:auto; display: flex; gap: 0.5rem;">
-            <button id="growthChartDayBtn" class="growth-switch-btn active">Per Day</button>
-            <button id="growthChartYearBtn" class="growth-switch-btn">Per Year</button>
-        </div>
-    <style>
-      .growth-switch-btn {
-        background: #fff;
-        color: #2563eb;
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1.2rem;
-        font-weight: 700;
-        font-size: 1rem;
-        box-shadow: 0 2px 8px #2563eb33;
-        cursor: pointer;
-        transition: background 0.2s, color 0.2s;
-        outline: none;
-      }
-      .growth-switch-btn.active, .growth-switch-btn:focus {
-        background: #2563eb;
-        color: #fff;
-      }
-    </style>
+      </div>
     </div>
-    <div class="chart-wrapper">
-        <canvas id="customerGrowthLineChart" width="800" height="400" style="background: transparent;"></canvas>
+
+    <!-- Chart Controls -->
+    <div class="chart-controls">
+      <div class="control-buttons">
+        <button id="paymentsBtn" class="control-btn payments-btn active" data-dataset="payments">
+          <span class="control-icon">💰</span>
+          <span class="control-text">Payments</span>
+        </button>
+        <button id="ordersBtn" class="control-btn orders-btn" data-dataset="orders">
+          <span class="control-icon">�</span>
+          <span class="control-text">Orders</span>
+        </button>
+      </div>
     </div>
+
+    <!-- Chart Container -->
+    <div class="payments-orders-chart-container dark-theme">
+      <canvas id="paymentsOrdersChart" width="400" height="200"></canvas>
+    </div>
+  </div>
 </div>
 
+<!-- Chart.js Integration -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get chart data from Django context
-        const chartData = JSON.parse('{{ customer_growth_chart|safe }}');
-        let currentMode = 'daily';
-        const canvas = document.getElementById('customerGrowthLineChart');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let chartInstance = null;
+class PaymentsOrdersAnalyticsChart {
+  constructor() {
+    this.chart = null;
+    this.currentDataType = 'payments';
+    this.currentTimePeriod = 'monthly';
+    // Use data from Django backend instead of hardcoded data
+    this.chartData = {{ payments_orders_chart|safe }};
+    this.init();
+  }
 
-        function getGradient(ctx, color) {
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            // Use blue gradients for all modes
-            gradient.addColorStop(0, 'rgba(37,99,235,0.5)'); // #2563eb
-            gradient.addColorStop(0.5, 'rgba(30,64,175,0.15)'); // #1e40af
-            gradient.addColorStop(1, 'rgba(37,99,235,0.05)');
-            return gradient;
+  init() {
+    const canvas = document.getElementById('paymentsOrdersChart');
+    if (!canvas) {
+      console.log('Payments Orders chart canvas not found');
+      return;
+    }
+
+    this.createChart();
+    this.setupControls();
+    this.setupPeriodToggle();
+  }
+
+  getGradient(ctx, color) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    if (color === '#10b981') {
+      // Green gradient for payments
+      gradient.addColorStop(0, 'rgba(16,185,129,0.5)');
+      gradient.addColorStop(0.5, 'rgba(5,150,105,0.15)');
+      gradient.addColorStop(1, 'rgba(16,185,129,0.05)');
+    } else {
+      // Indigo gradient for orders
+      gradient.addColorStop(0, 'rgba(99,102,241,0.5)');
+      gradient.addColorStop(0.5, 'rgba(79,70,229,0.15)');
+      gradient.addColorStop(1, 'rgba(99,102,241,0.05)');
+    }
+    return gradient;
+  }
+
+  updateTitleAndSubtitle() {
+    const title = document.getElementById('paymentsOrdersChartTitle');
+    const subtitle = document.getElementById('chart-subtitle');
+
+    const dataTypeEmoji = this.currentDataType === 'payments' ? '💰' : '�';
+    const dataTypeText = this.currentDataType === 'payments' ? 'Payments' : 'Orders';
+    const timePeriodText = this.currentTimePeriod === 'monthly' ? 'Monthly' : 'Yearly';
+
+    if (title) {
+      title.textContent = `${dataTypeEmoji} ${dataTypeText} Analytics`;
+    }
+
+    if (subtitle) {
+      if (this.currentTimePeriod === 'monthly') {
+        subtitle.textContent = `Monthly insights for ${this.currentDataType === 'payments' ? 'financial performance' : 'order tracking'}`;
+      } else {
+        subtitle.textContent = `Yearly trends for ${this.currentDataType === 'payments' ? 'revenue growth' : 'order volume'}`;
+      }
+    }
+  }
+
+  createChart() {
+    const ctx = document.getElementById('paymentsOrdersChart').getContext('2d');
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    // Get current data based on selected type and period
+    const currentData = this.chartData[this.currentDataType][this.currentTimePeriod];
+
+    // Set gradient background for the dataset
+    currentData.datasets[0].backgroundColor = this.getGradient(ctx, currentData.datasets[0].borderColor);
+
+    // Update labels based on period
+    const isMonthly = this.currentTimePeriod === 'monthly';
+    const dataLabel = this.currentDataType === 'payments'
+      ? (isMonthly ? 'Monthly Payments' : 'Yearly Revenue')
+      : (isMonthly ? 'Monthly Orders' : 'Yearly Orders');
+    const xAxisTitle = isMonthly ? 'Month' : 'Year';
+
+    const config = {
+      type: 'line',
+      data: {
+        labels: currentData.labels,
+        datasets: [{
+          ...currentData.datasets[0],
+          label: dataLabel,
+          backgroundColor: currentData.datasets[0].backgroundColor
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        animation: {
+          duration: 2200,
+          easing: 'easeOutElastic'
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#f1f5f9',
+            borderColor: 'rgba(148, 163, 184, 0.5)',
+            borderWidth: 2,
+            cornerRadius: 12,
+            displayColors: true,
+            titleFont: {
+              size: 14,
+              weight: 'bold'
+            },
+            bodyFont: {
+              size: 13,
+              weight: '500'
+            },
+            callbacks: {
+              title: (context) => {
+                const unit = this.currentTimePeriod === 'monthly' ? '📅 Month' : '📊 Year';
+                return `${unit}: ${context[0].label}`;
+              },
+              label: (context) => {
+                if (this.currentDataType === 'payments') {
+                  return `💰 Revenue: $${context.parsed.y.toLocaleString()}`;
+                } else {
+                  return `� Orders: ${context.parsed.y}`;
+                }
+              }
+            }
+          }
+        },
+        layout: {
+          padding: 20
+        },
+        backgroundColor: '#0f172a',
+        scales: {
+          y: {
+            type: 'linear',
+            display: true,
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+              borderColor: 'rgba(148, 163, 184, 0.2)'
+            },
+            ticks: {
+              color: '#f1f5f9',
+              font: {
+                weight: '500'
+              },
+              callback: (value) => {
+                if (this.currentDataType === 'payments') {
+                  return '$' + value.toLocaleString();
+                }
+                return value;
+              }
+            },
+            title: {
+              display: true,
+              text: this.currentDataType === 'payments' ? 'Revenue ($)' : 'Number of Orders',
+              color: '#f8fafc',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+              borderColor: 'rgba(148, 163, 184, 0.2)'
+            },
+            ticks: {
+              color: '#f1f5f9',
+              font: {
+                weight: '500'
+              },
+              maxRotation: 45,
+              minRotation: 0,
+              maxTicksLimit: this.currentTimePeriod === 'monthly' ? 12 : 6
+            },
+            title: {
+              display: true,
+              text: xAxisTitle,
+              color: '#f8fafc',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          }
+        },
+        elements: {
+          line: {
+            borderWidth: 4,
+            tension: 0.45,
+            fill: true,
+            shadowBlur: 24,
+            shadowColor: currentData.datasets[0].borderColor
+          },
+          point: {
+            radius: 7,
+            backgroundColor: '#f1f5f9',
+            borderColor: currentData.datasets[0].borderColor,
+            borderWidth: 4,
+            hoverRadius: 12,
+            hoverBackgroundColor: currentData.datasets[0].borderColor,
+            hoverBorderColor: '#f1f5f9',
+            shadowBlur: 16,
+            shadowColor: currentData.datasets[0].borderColor
+          }
+        },
+        onHover: (event, activeElements) => {
+          event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
         }
+      }
+    };
 
-        // Custom plugin for glowing points
-        const glowPlugin = {
-            id: 'glow',
-            afterDatasetsDraw(chart) {
-                const ctx = chart.ctx;
-                chart.getDatasetMeta(0).data.forEach(point => {
-                    ctx.save();
-                    ctx.shadowColor = '#2563eb';
-                    ctx.shadowBlur = 16;
-                    ctx.beginPath();
-                    ctx.arc(point.x, point.y, 9, 0, 2 * Math.PI);
-                    ctx.fillStyle = 'rgba(37,99,235,0.18)';
-                    ctx.fill();
-                    ctx.restore();
-                });
-            }
-        };
+    this.chart = new Chart(ctx, config);
+    this.updateTitleAndSubtitle();
+  }
 
-        function renderChart(mode) {
-            const data = chartData[mode];
-            // Set line and point color to white for yearly mode, else keep original
-            if (mode === 'yearly') {
-                data.datasets[0].borderColor = '#fff';
-                data.datasets[0].pointBorderColor = '#fff';
-                data.datasets[0].pointBackgroundColor = '#fff';
-            }
-            // Set gradient background for the dataset
-            data.datasets[0].backgroundColor = getGradient(ctx, data.datasets[0].borderColor);
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: data.datasets[0].type,
-                data: {
-                    labels: data.labels,
-                    datasets: data.datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(255,255,255,0.98)',
-                            titleColor: data.datasets[0].borderColor,
-                            bodyColor: '#2563eb',
-                            borderColor: 'rgba(37,99,235,0.3)',
-                            borderWidth: 2,
-                            cornerRadius: 10,
-                            displayColors: false,
-                            padding: 16,
-                            callbacks: {
-                                title: function(context) {
-                                    return mode === 'yearly' ? 'Month: ' + context[0].label : 'Day: ' + context[0].label;
-                                },
-                                label: function(context) {
-                                    return 'New Customers: ' + context.parsed.y;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(37,99,235,0.15)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#fff',
-                                font: { size: 13, weight: 'bold' },
-                                maxTicksLimit: mode === 'yearly' ? 12 : 10
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: 'rgba(37,99,235,0.12)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#fff',
-                                font: { size: 13, weight: 'bold' },
-                                callback: function(value) {
-                                    return value;
-                                }
-                            }
-                        }
-                    },
-                    elements: {
-                        line: {
-                            borderWidth: 4,
-                            borderColor: data.datasets[0].borderColor,
-                            tension: 0.45,
-                            fill: true,
-                            shadowBlur: 24,
-                            shadowColor: data.datasets[0].borderColor
-                        },
-                        point: {
-                            radius: 7,
-                            backgroundColor: '#fff',
-                            borderColor: data.datasets[0].borderColor,
-                            borderWidth: 4,
-                            hoverRadius: 12,
-                            hoverBackgroundColor: data.datasets[0].borderColor,
-                            hoverBorderColor: '#fff',
-                            shadowBlur: 16,
-                            shadowColor: data.datasets[0].borderColor
-                        }
-                    },
-                    animation: {
-                        duration: 2200,
-                        easing: 'easeOutElastic'
-                    }
-                },
-                plugins: [glowPlugin]
-            });
-            // Update chart title
-            const title = document.getElementById('growthChartTitle');
-            if (title) {
-                title.textContent = mode === 'yearly' ? 'Customer Growth - New Customers Per Month 🌱' : 'Customer Growth - New Customers Per Day 🌱';
-            }
-        }
-
-        renderChart(currentMode);
-
-        // Two-button switch logic
-        const dayBtn = document.getElementById('growthChartDayBtn');
-        const yearBtn = document.getElementById('growthChartYearBtn');
-        function setActiveBtn(mode) {
-            if (mode === 'daily') {
-                dayBtn.classList.add('active');
-                yearBtn.classList.remove('active');
-            } else {
-                yearBtn.classList.add('active');
-                dayBtn.classList.remove('active');
-            }
-        }
-        dayBtn.addEventListener('click', function() {
-            if (currentMode !== 'daily') {
-                currentMode = 'daily';
-                renderChart(currentMode);
-                setActiveBtn(currentMode);
-            }
-        });
-        yearBtn.addEventListener('click', function() {
-            if (currentMode !== 'yearly') {
-                currentMode = 'yearly';
-                renderChart(currentMode);
-                setActiveBtn(currentMode);
-            }
-        });
-        setActiveBtn(currentMode);
+  setupPeriodToggle() {
+    // Monthly toggle button
+    document.getElementById('monthlyBtn')?.addEventListener('click', () => {
+      this.switchPeriod('monthly');
     });
+
+    // Yearly toggle button
+    document.getElementById('yearlyBtn')?.addEventListener('click', () => {
+      this.switchPeriod('yearly');
+    });
+  }
+
+  switchPeriod(period) {
+    if (this.currentTimePeriod === period) return;
+
+    this.currentTimePeriod = period;
+
+    // Update button states
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelector(`[data-period="${period}"]`).classList.add('active');
+
+    // Recreate chart with new data
+    this.createChart();
+  }
+
+  setupControls() {
+    // Payments toggle button
+    document.getElementById('paymentsBtn')?.addEventListener('click', () => {
+      this.switchDataset('payments');
+    });
+
+    // Orders toggle button
+    document.getElementById('ordersBtn')?.addEventListener('click', () => {
+      this.switchDataset('orders');
+    });
+  }
+
+  switchDataset(datasetType) {
+    if (this.currentDataType === datasetType) return;
+
+    this.currentDataType = datasetType;
+
+    // Update button states
+    document.querySelectorAll('.control-btn[data-dataset]').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelector(`[data-dataset="${datasetType}"]`).classList.add('active');
+
+    // Recreate chart with new active dataset
+    this.createChart();
+  }
+}
+
+// Initialize the chart when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  window.paymentsOrdersAnalyticsChart = new PaymentsOrdersAnalyticsChart();
+});
 </script>
