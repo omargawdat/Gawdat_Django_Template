@@ -1,6 +1,6 @@
 # Define an alias for the specific python version used in this file
 # Pin UV version to prevent breaking changes (uv is pre-1.0)
-FROM ghcr.io/astral-sh/uv:0.8.22-python3.13-trixie-slim AS python
+FROM ghcr.io/astral-sh/uv:0.8.23-python3.13-trixie-slim AS python
 
 # Python build stage
 FROM python AS python-build-stage
