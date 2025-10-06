@@ -3,6 +3,8 @@ import logging
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
+from apps.payment.constants import WalletTransactionType
+from apps.payment.domain.services.wallet_transaction import WalletTransactionService
 from apps.payment.domain.utilities.payment_gateways.factory import PaymentGatewayFactory
 from apps.payment.models.payment import Payment
 from config.helpers.env import env
@@ -51,11 +53,15 @@ class PaymentService:
     @transaction.atomic
     def mark_payment_as_completed(payment: Payment, request_payload) -> None:
         if payment.is_paid:
-            return  # Already completed
+            return
 
-        # todo: do the logic when payment is successful
-
-        # Mark payment as paid
         payment.is_paid = True
         payment.bank_transaction_response = request_payload
         payment.save(update_fields=["is_paid"])
+
+        WalletTransactionService.create_transaction(
+            wallet=payment.customer.wallet,
+            amount=payment.price_after_discount,
+            transaction_type=WalletTransactionType.CHARGING,
+            transaction_note=f"Wallet charged via payment #{payment.id}",
+        )
