@@ -131,6 +131,7 @@ terraform.rc
 
 # Security and Credentials
 firebase_cred.json
+firebase.json
 *.pem
 *.key
 *.crt
