@@ -49,7 +49,7 @@ class PaymentService:
 
     @staticmethod
     @transaction.atomic
-    def mark_payment_as_completed(payment: Payment) -> None:
+    def mark_payment_as_completed(payment: Payment, request_payload) -> None:
         if payment.is_paid:
             return  # Already completed
 
@@ -57,4 +57,5 @@ class PaymentService:
 
         # Mark payment as paid
         payment.is_paid = True
+        payment.bank_transaction_response = request_payload
         payment.save(update_fields=["is_paid"])

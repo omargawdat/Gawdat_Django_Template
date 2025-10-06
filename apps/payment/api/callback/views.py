@@ -73,6 +73,8 @@ class BankCallbackAPI(APIView):
         payment.save(update_fields=["bank_transaction_response"])
 
         if payment_status.is_completed:
-            PaymentService.mark_payment_as_completed(payment=payment)
+            PaymentService.mark_payment_as_completed(
+                payment=payment, request_payload=request.data
+            )
 
         return Response({}, status=status.HTTP_200_OK)
