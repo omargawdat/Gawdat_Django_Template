@@ -152,3 +152,8 @@ dump.rdb
 .env
 
 my_awesome_project
+
+# Schemas
+schema.yml
+schema.yaml
+schema.json
