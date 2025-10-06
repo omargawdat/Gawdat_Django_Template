@@ -53,6 +53,8 @@ class PaymentService:
         if payment.is_paid:
             return  # Already completed
 
+        # todo: do the logic when payment is successful
+
         # Mark payment as paid
         payment.is_paid = True
         payment.save(update_fields=["is_paid"])
