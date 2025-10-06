@@ -132,7 +132,7 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
     image = factory.django.ImageField(color="cyan", width=1200, height=800)
     text = factory.Faker("text", max_nb_chars=75)
     sub_text = factory.Faker("text", max_nb_chars=50)
-    order = factory.Sequence(lambda n: n)
+    order = factory.Sequence(lambda n: n + 1)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
