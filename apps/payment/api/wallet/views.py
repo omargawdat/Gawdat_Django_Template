@@ -19,6 +19,12 @@ from apps.payment.api.wallet_transaction.serializers import (
 from apps.payment.domain.selectors.wallet_transactions import WalletTransactionSelector
 
 
+class RechargeWalletAPIView(APIView):
+    authentication_classes = []
+    permission_classess = []
+    serializer_class = None
+
+
 class WalletDetailAPI(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
