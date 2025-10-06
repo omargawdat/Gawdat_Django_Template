@@ -1,75 +1,69 @@
 # Django Template Justfile
-# Common development commands for the project
+#
+# First time setup:
+#   just install && just up && just migrate && just createsuperuser
+#
+# Common workflows:
+#   just rebuild     # After dependency changes
+#   just test        # Run tests
+#   just lint-all    # Fix code style
 
-# Default recipe - show available commands
+# Show all commands
 default:
     @just --list
 
 # ============================================================================
-# Development Environment
+# 🚀 Quick Start
 # ============================================================================
 
-# Install all dependencies locally with uv
+# Install dependencies
 install:
     uv sync --group dev --group test --group typing --group lint
 
-# Update all dependencies to latest versions
-update:
-    uv lock --upgrade
-    @echo "✅ Dependencies updated. Run 'just build' to rebuild containers."
-
-# Clean all caches and build artifacts
-clean:
-    docker compose -f docker-compose.local.yml down -v
-    docker volume prune -f
-    rm -rf .venv .ruff_cache .mypy_cache .pytest_cache htmlcov .coverage
-    find . -type d -name __pycache__ -exec rm -rf {} +
-    find . -type f -name "*.pyc" -delete
-    @echo "✅ Cleaned all caches and build artifacts"
-
-# ============================================================================
-# Docker Management
-# ============================================================================
-
-# Build Docker containers
-build:
-    docker compose -f docker-compose.local.yml build
-
-# Start development environment
+# Start all services
 up:
     docker compose -f docker-compose.local.yml up -d
 
-# Stop development environment
+# Stop all services
 down:
     docker compose -f docker-compose.local.yml down
 
-# Restart development environment
-restart:
-    docker compose -f docker-compose.local.yml restart
-
-# View logs (follow mode)
-logs service="django":
-    docker compose -f docker-compose.local.yml logs -f {{service}}
-
-# Rebuild and restart (full refresh)
+# Rebuild and restart everything
 rebuild:
     docker compose -f docker-compose.local.yml up --build -d
 
+# View logs (usage: just logs [service])
+logs service="django":
+    docker compose -f docker-compose.local.yml logs -f {{service}}
+
 # ============================================================================
-# Django Management Commands
+# 🗄️ Database
 # ============================================================================
 
-# Run Django management command
-manage *args:
-    docker compose -f docker-compose.local.yml run --rm django python manage.py {{args}}
-
-# Create and apply database migrations
+# Apply migrations
 migrate:
     docker compose -f docker-compose.local.yml run --rm django python manage.py migrate
 
-# Create new migrations
+# Create migrations (usage: just makemigrations [app])
 makemigrations *args:
     docker compose -f docker-compose.local.yml run --rm django python manage.py makemigrations {{args}}
+
+# Reset database - DELETES ALL DATA!
+db-reset:
+    @echo "⚠️  Deleting all data in 3 seconds..."
+    @sleep 3
+    docker compose -f docker-compose.local.yml down -v
+    docker compose -f docker-compose.local.yml up -d postgres
+    @sleep 3
+    @just migrate
+
+# ============================================================================
+# 🐍 Django
+# ============================================================================
+
+# Run management command (usage: just manage [command])
+manage *args:
+    docker compose -f docker-compose.local.yml run --rm django python manage.py {{args}}
 
 # Create superuser
 createsuperuser:
@@ -77,47 +71,17 @@ createsuperuser:
 
 # Open Django shell
 shell:
-    docker compose -f docker-compose.local.yml run --rm django python manage.py shell
-
-# Open Django shell plus (requires django-extensions)
-shell-plus:
     docker compose -f docker-compose.local.yml run --rm django python manage.py shell_plus
-
-# Run Django development server (alternative to docker compose up)
-runserver:
-    docker compose -f docker-compose.local.yml run --rm --service-ports django python manage.py runserver 0.0.0.0:8000
 
 # Load seed data
 seed:
     docker compose -f docker-compose.local.yml run --rm django python manage.py seed_db
 
 # ============================================================================
-# Database Management
+# 🧪 Testing
 # ============================================================================
 
-# Reset database (WARNING: destroys all data)
-db-reset:
-    docker compose -f docker-compose.local.yml down -v
-    docker compose -f docker-compose.local.yml up -d postgres
-    sleep 3
-    @just migrate
-    @echo "✅ Database reset complete"
-
-# Open PostgreSQL shell
-db-shell:
-    docker compose -f docker-compose.local.yml exec postgres psql -U postgres -d mydatabase
-
-# Backup database
-db-backup:
-    @echo "Creating database backup..."
-    docker compose -f docker-compose.local.yml exec postgres pg_dump -U postgres mydatabase > backup_$(date +%Y%m%d_%H%M%S).sql
-    @echo "✅ Database backup created"
-
-# ============================================================================
-# Testing
-# ============================================================================
-
-# Run all tests
+# Run tests (usage: just test [-v] [-k test_name])
 test *args:
     docker compose -f docker-compose.local.yml run --rm django pytest {{args}}
 
@@ -125,96 +89,69 @@ test *args:
 test-cov:
     docker compose -f docker-compose.local.yml run --rm django pytest --cov --cov-report=html --cov-report=term
 
-# Run specific test file or directory
-test-file path:
-    docker compose -f docker-compose.local.yml run --rm django pytest {{path}}
-
 # ============================================================================
-# Code Quality
+# ✨ Code Quality
 # ============================================================================
 
-# Run ruff linter
-lint:
-    uv run ruff check .
-
-# Run ruff formatter
-format:
-    uv run ruff format .
-
-# Run both linter and formatter
+# Fix linting and format code
 lint-all:
     uv run ruff check . --fix
     uv run ruff format .
 
-# Run type checking with mypy
+# Check code style
+lint:
+    uv run ruff check .
+
+# Format code
+format:
+    uv run ruff format .
+
+# Type check
 typecheck:
     uv run mypy .
 
-# Run all code quality checks
+# Run all checks
 check: lint typecheck
-    @echo "✅ All code quality checks passed"
 
 # ============================================================================
-# Security
+# 📦 Dependencies
 # ============================================================================
 
-# Scan dependencies for vulnerabilities
-audit:
-    @echo "Scanning dependencies for security vulnerabilities..."
-    uv export --no-hashes | pip-audit -r /dev/stdin
+# Update all dependencies
+update:
+    uv lock --upgrade
+    @echo "Run 'just rebuild' to apply changes"
 
-# Run security checks (bandit)
-security:
-    uv run bandit -r apps/ config/ common/ -ll
-
-# Check for secrets in code
-secrets:
-    docker compose -f docker-compose.local.yml run --rm django python manage.py check --deploy
+# Show outdated packages
+outdated:
+    @uv tree --outdated || echo "All packages up to date"
 
 # ============================================================================
-# Pre-commit
+# 🛠️ Utilities
 # ============================================================================
 
-# Install pre-commit hooks
+# Show container status
+ps:
+    docker compose -f docker-compose.local.yml ps
+
+# Open bash in Django container
+bash:
+    docker compose -f docker-compose.local.yml exec django bash
+
+# Clean all artifacts and volumes
+clean:
+    docker compose -f docker-compose.local.yml down -v
+    docker volume prune -f
+    rm -rf .venv .ruff_cache .mypy_cache .pytest_cache htmlcov .coverage
+    find . -type d -name __pycache__ -exec rm -rf {} +
+    find . -type f -name "*.pyc" -delete
+
+# Setup pre-commit hooks
 pre-commit-install:
     pre-commit install
     pre-commit install --hook-type commit-msg
     pre-commit install --hook-type pre-push
 
-# Run pre-commit on all files
-pre-commit-all:
-    pre-commit run --all-files
-
-# Update pre-commit hooks
-pre-commit-update:
-    pre-commit autoupdate
-
-# ============================================================================
-# Utilities
-# ============================================================================
-
-# Show Docker container status
-ps:
-    docker compose -f docker-compose.local.yml ps
-
-# Enter Django container shell
-bash:
-    docker compose -f docker-compose.local.yml exec django bash
-
-# Enter PostgreSQL container shell
-bash-db:
-    docker compose -f docker-compose.local.yml exec postgres bash
-
-# Check uv.lock is in sync with pyproject.toml
-lock-check:
-    uv lock --check
-
-# Show outdated packages
-outdated:
-    @echo "Checking for outdated packages..."
-    @uv tree --outdated || echo "All packages are up to date"
-
-# Generate requirements.txt for legacy tools
-export-requirements:
-    uv export --no-hashes --format requirements-txt > requirements.txt
-    @echo "✅ Generated requirements.txt"
+# Scan for security vulnerabilities
+audit:
+    uv export --no-hashes | pip-audit -r /dev/stdin
