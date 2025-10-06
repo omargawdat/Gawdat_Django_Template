@@ -9,6 +9,10 @@ print("loading local settings")  # noqa: T201
 # ------------------------------------------------------------------------------
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
+
+# ------------------------------------------------------------------------------
+# CORS CONFIGURATION (Development Only)
+# ------------------------------------------------------------------------------
 INSTALLED_APPS += ["debug_toolbar"]
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 

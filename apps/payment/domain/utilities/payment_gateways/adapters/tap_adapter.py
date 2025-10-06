@@ -35,7 +35,7 @@ class TapPaymentAdapter(PaymentAdapterBase):
         first_name: str = "N/A",
         last_name: str = "N/A",
         customer_id: str | None = None,
-        card_token: str = "src_all",
+        card_token: str = "src_all",  # noqa: S107
     ) -> ChargeResponse:
         phone_parsed = phonenumbers.parse(str(phone_number))
 

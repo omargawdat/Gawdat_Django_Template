@@ -8,24 +8,50 @@ print("loading production settings")  # noqa: T201
 DEBUG = False
 ALLOWED_HOSTS = [env.domain_name]
 
+
 # ------------------------------------------------------------------------------
 # SECURITY CONFIGURATION
 # ------------------------------------------------------------------------------
-# SSL and Cookie Security
+# SSL and Proxy Security
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
 SECURE_SSL_REDIRECT = True
 
-# Session and CSRF Settings
+# Session Cookie Security
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-secure
 SESSION_COOKIE_SECURE = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-name
 SESSION_COOKIE_NAME = "__Secure-sessionid"
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_NAME = "__Secure-csrftoken"
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
+SESSION_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-samesite
+SESSION_COOKIE_SAMESITE = "Lax"
 
-# HSTS Settings
-SECURE_HSTS_SECONDS = 60
+# CSRF Cookie Security
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-secure
+CSRF_COOKIE_SECURE = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-name
+CSRF_COOKIE_NAME = "__Secure-csrftoken"
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
+CSRF_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-samesite
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# HSTS (HTTP Strict Transport Security)
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
+# Start with 60 seconds, then increase to 518400 (6 months) after testing
+SECURE_HSTS_SECONDS = 518400
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-preload
 SECURE_HSTS_PRELOAD = True
+
+# Additional Security Headers
+# https://docs.djangoproject.com/en/dev/ref/middleware/#x-content-type-options-nosniff
 SECURE_CONTENT_TYPE_NOSNIFF = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
+SECURE_BROWSER_XSS_FILTER = True
 
 # ------------------------------------------------------------------------------
 # AWS S3 STORAGE CONFIGURATION
@@ -82,6 +108,50 @@ INSTALLED_APPS = ["collectfasta", *INSTALLED_APPS]
 SPECTACULAR_SETTINGS["SERVERS"] = [
     {"url": f"https://{env.domain_name}", "description": "Production server"}  # type: ignore[list-item]
 ]
+
+# ------------------------------------------------------------------------------
+# LOGGING CONFIGURATION
+# ------------------------------------------------------------------------------
+# Override base logging for production
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": {
+        "django.db.backends": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "sentry_sdk": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "django.security.DisallowedHost": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "django.request": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
+}
 
 # ------------------------------------------------------------------------------
 # EXTERNAL INTEGRATIONS

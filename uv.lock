@@ -823,20 +823,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-tasks"
-version = "0.8.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "django-stubs-ext" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/d9/3670506bf2a5173310ec221cc7d24585e0d91627d86c1f0a6fbe243fbb4a/django_tasks-0.8.1.tar.gz", hash = "sha256:32673a9f56108ac1ea4664dc62580e5fc3536dd40858b38fd3b6a099913244b7", size = 31407, upload-time = "2025-07-04T15:51:59.68Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/56/da9b5df9bad6322d8a2cf38a60ecaa834fc5a9ee995a9647d2e87708ca73/django_tasks-0.8.1-py3-none-any.whl", hash = "sha256:5323f3858f7ea99d899a772b832098d8d694444b291c24f1e0ed5446272b880b", size = 43085, upload-time = "2025-07-04T15:51:58.087Z" },
-]
-
-[[package]]
 name = "django-template"
 version = "1.0.0"
 source = { virtual = "." }
@@ -864,7 +850,6 @@ dependencies = [
     { name = "django-simple-history" },
     { name = "django-soft-delete" },
     { name = "django-solo" },
-    { name = "django-tasks" },
     { name = "django-unfold" },
     { name = "djangorestframework" },
     { name = "djangorestframework-camel-case" },
@@ -951,7 +936,6 @@ requires-dist = [
     { name = "django-soft-delete", specifier = "==1.0.21" },
     { name = "django-solo", specifier = "==2.4.0" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 'prod'", specifier = "==1.14.6" },
-    { name = "django-tasks", specifier = "==0.8.1" },
     { name = "django-unfold", specifier = "==0.67.0" },
     { name = "djangorestframework", specifier = "==3.16.1" },
     { name = "djangorestframework-camel-case", specifier = "==1.4.2" },

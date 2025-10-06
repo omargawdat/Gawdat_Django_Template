@@ -3,6 +3,7 @@
 name = "django-template"
 version = "1.0.0"
 description = "Django REST API template with modular app structure"
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     # Python Utilities
@@ -39,7 +40,6 @@ dependencies = [
     "django_model_suite==0.2.1",
     "django-simple-history==3.10.1",
     "django-modeltranslation==0.19.17",
-    "django-tasks==0.8.1",
     "django-soft-delete==1.0.21",
     "django-guardian==3.2.0",
     "django-location-field==2.7.3",
@@ -107,6 +107,7 @@ lint = [
 minversion = "6.0"
 addopts = """
     --ds=config.settings.test
+    --reuse-db
     --import-mode=importlib
     -v
     --tb=short
@@ -118,10 +119,15 @@ python_files = [
     "test_*.py",
 ]
 console_output_style = "progress"
+markers = [
+    "slow: marks tests as slow (integration tests, API calls)",
+    "unit: fast isolated unit tests",
+    "integration: tests requiring DB/external services",
+]
 
 # ==== Coverage ====
 [tool.coverage.run]
-include = ["projectname/**"]
+include = ["config/**", "apps/**", "common/**"]
 omit = ["*/migrations/*", "*/tests/*"]
 plugins = ["django_coverage_plugin"]
 
@@ -139,6 +145,10 @@ show_column_numbers = true
 show_error_codes = true
 show_error_context = true
 show_traceback = true
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
 
 # Django migrations should not produce any errors:
 [[tool.mypy.overrides]]
@@ -168,7 +178,7 @@ indent_size = 2
 indent_size = 2
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py313"
 # Exclude a variety of commonly ignored directories.
 extend-exclude = [
     "*/migrations/*.py",
@@ -238,7 +248,6 @@ ignore = [
     "S101", # Use of assert detected
     "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
     "SIM102", # sometimes it's better to nest
-    "UP038", # Checks for uses of isinstance/issubclass that take a tuple of types for comparison
     "COM812", # Missing trailing comma in Python 3.6+
     "ISC001", # Single line implicit string concatenation
     "RET506",
@@ -260,17 +269,13 @@ ignore = [
     "TID252", # ignore absoulte import
     "BLE001",
     "PLR0913",
-    "S107",
     "RET504",
-    "SLF001",
     "G004"
 ]
 
 # The fixes in extend-unsafe-fixes will require
 # provide the `--unsafe-fixes` flag when fixing.
-extend-unsafe-fixes = [
-    "UP038",
-]
+extend-unsafe-fixes = []
 
 [tool.ruff.lint.isort]
 force-single-line = true

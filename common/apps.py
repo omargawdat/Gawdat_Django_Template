@@ -10,8 +10,7 @@ class CoreConfig(AppConfig):
     name = "common"
 
     def ready(self):
-        import common.money_patches
-        import common.signals  # noqa
+        import common.money_patches  # noqa
 
         # this code is for importing admins
         for app_config in apps.get_app_configs():
