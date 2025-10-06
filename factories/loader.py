@@ -5,7 +5,7 @@ Usage:
     # Optionally add metadata to override defaults:
     class AddressFactory(factory.DjangoModelFactory):
         _priority = 2        # Load order: 0=first, 1=users, 2=dependent (default)
-        _seed_count = "1.5x" # For seed_db: int, "count", "1.5x", etc. (default: "count")
+        _seed_count = "1.5x" # For seed_db: int, "count", "1.5x", etc. (default: "count").
 """
 
 import inspect
