@@ -74,29 +74,41 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
 
    ```json
    {
-     "SENTRY_SDK_DSN": "MUST-BE-REPLACED",
-     "DATABASE_URL": "postgis://user:password@host:5432/dbname",
      "DJANGO_SECRET_KEY": "MUST-BE-REPLACED",
      "DJANGO_SUPERUSER_USERNAME": "MUST-BE-REPLACED",
      "DJANGO_SUPERUSER_PASSWORD": "MUST-BE-REPLACED",
      "DJANGO_ADMIN_NAME": "MUST-BE-REPLACED",
      "DJANGO_ADMIN_EMAIL": "MUST-BE-REPLACED",
-     "S3_BUCKET_NAME": "MUST-BE-REPLACED",
-     "DOMAIN_NAME": "MUST-BE-REPLACED",
+     "DJANGO_ADMIN_URL": "admin/",
      "DJANGO_JWT_ACCESS_TOKEN_LIFETIME_MINUTES": "14400",
      "DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES": "43200",
      "GOOGLE_APPLICATION_CREDENTIALS": "/app/credentials/google-service-account.json",
      "TAPS_SECRET_KEY": "taps_secret_dummy_123456",
      "PAYMENT_CONFIRMATION_KEY": "MUST-BE-REPLACED",
+
+     "DATABASE_URL": "postgis://user:password@host:5432/dbname",
+
+     "DOMAIN_NAME": "MUST-BE-REPLACED",
      "ENVIRONMENT": "development",
-     "IS_TESTING_SMS": "true",
-     "DJANGO_ADMIN_URL": "admin/",
-     "OUR_SMS_API_KEY": "sms_api_key_987654321",
-     "OUR_SMS_SENDER_NAME": "ExampleApp",
-     "SMS_MISR_USERNAME": "sms-misr-user-id-abc123",
-     "SMS_MISR_PASSWORD": "secure-sms-misr-pass-xyz789",
-     "SMS_MISR_SENDER": "example_sms_sender_id",
+     "SENTRY_SDK_DSN": "MUST-BE-REPLACED",
+
+     "AWS_REGION_NAME": "us-east-1",
+     "S3_BUCKET_NAME": "MUST-BE-REPLACED",
+
+     "FIREBASE_CREDENTIALS_B64": "MUST-BE-REPLACED",
+
+     "GOOGLE_APPLICATION_CREDENTIALS": "/app/credentials/google-service-account.json",
      "GOOGLE_MAP_API_KEY": "MUST-BE-REPLACED",
+
+     "TAPS_SECRET_KEY": "MUST-BE-REPLACED",
+
+     "IS_TESTING_SMS": "true",
+     "OUR_SMS_API_KEY": "MUST-BE-REPLACED",
+     "OUR_SMS_SENDER_NAME": "YourApp",
+     "SMS_MISR_USERNAME": "MUST-BE-REPLACED",
+     "SMS_MISR_PASSWORD": "MUST-BE-REPLACED",
+     "SMS_MISR_SENDER": "MUST-BE-REPLACED",
+
      "GOOGLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
      "GOOGLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
      "FACEBOOK_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
@@ -104,7 +116,12 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "APPLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
      "APPLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
      "KEY_ID": "MUST-BE-REPLACED",
-     "TEAM_ID": "MUST-BE-REPLACED"
+     "TEAM_ID": "MUST-BE-REPLACED",
+
+     "EMAIL_HOST_USER": "MUST-BE-REPLACED",
+     "EMAIL_HOST_PASSWORD": "MUST-BE-REPLACED",
+
+     "API_KEY": "MUST-BE-REPLACED"
    }
    ```
     4. create app runner, port 5000 include permissions and write the secrets of the apprunner itself

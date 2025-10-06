@@ -68,17 +68,17 @@ class Customer(User):
         return CustomerSelector.is_profile_completed(self)
 
     def clean(self):
-        from apps.location.domain.validators.country import CountryValidator
         from apps.users.domain.validators.customer import CustomerValidator
 
         super().clean()
         # [WHY]: to ensure the country for this phone exists before trying to save
         CountrySelector.country_by_phone(self.phone_number)
 
-        if self.pk:
-            CountryValidator.validate_match_country_phone(
-                phone_number=self.phone_number, country=self.country
-            )
+        # todo: can user change the default country?
+        # if self.pk:
+        #     CountryValidator.validate_match_country_phone(
+        #         phone_number=self.phone_number, country=self.country
+        #     )
         CustomerValidator.validate_address_belongs_to_customer(
             address=self.primary_address, customer=self
         )
