@@ -87,6 +87,7 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES": "43200",
      "GOOGLE_APPLICATION_CREDENTIALS": "/app/credentials/google-service-account.json",
      "TAPS_SECRET_KEY": "taps_secret_dummy_123456",
+     "PAYMENT_CONFIRMATION_KEY": "MUST-BE-REPLACED",
      "ENVIRONMENT": "development",
      "IS_TESTING_SMS": "true",
      "DJANGO_ADMIN_URL": "admin/",
