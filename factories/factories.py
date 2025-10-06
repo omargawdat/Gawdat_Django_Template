@@ -111,7 +111,7 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("words", nb=3)
-    order = factory.Sequence(lambda n: n)
+    order = factory.Sequence(lambda n: n + 10)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
@@ -121,7 +121,7 @@ class BannerGroupFactory(factory.django.DjangoModelFactory):
 class FAQFactory(factory.django.DjangoModelFactory):
     question = factory.Faker("sentence", nb_words=8)
     answer = factory.Faker("text", max_nb_chars=300)
-    order = factory.Sequence(lambda n: n)
+    order = factory.Sequence(lambda n: n + 10)
 
     class Meta:
         model = FAQ
@@ -154,7 +154,7 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
 
 class AdminUserFactory(factory.django.DjangoModelFactory):
-    username = factory.Sequence(lambda n: f"admin_{n}")
+    username = factory.Sequence(lambda n: f"admin_{n}_user")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.django.ImageField(color="purple", width=800, height=800)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
