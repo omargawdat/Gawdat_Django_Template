@@ -36,4 +36,5 @@ class ReferralType(models.TextChoices):
 
 
 class PaymentType(models.TextChoices):
+    charge_wallet = "charge_wallet", _("Charge Wallet")
     other = "other", _("Other")
