@@ -82,12 +82,18 @@ class CustomerCreateSerializer(serializers.Serializer):
                 "birth_date": "1990-01-01",
                 "primary_address": 1,
                 "language": "en",
+                "country": 1,
             },
             request_only=True,
         ),
     ]
 )
 class CustomerUpdateSerializer(serializers.ModelSerializer):
+    country = serializers.PrimaryKeyRelatedField(
+        queryset=Country.objects.filter(is_active=True),
+        required=False,
+    )
+
     class Meta:
         model = Customer
         fields = [
@@ -96,7 +102,7 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
             "birth_date",
             "primary_address",
             "email",
-            "birth_date",
             "gender",
             "language",
+            "country",
         ]

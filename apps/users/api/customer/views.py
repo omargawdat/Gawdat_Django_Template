@@ -177,6 +177,7 @@ class CustomerUpdateView(APIView):
                     "gender": "M",
                     "language": "en",
                     "image": "default_image.png",
+                    "country": "SA",
                 },
                 request_only=True,
                 media_type="multipart/form-data",
