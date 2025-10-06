@@ -24,6 +24,14 @@ class InsightSelector:
     def get_total_revenue() -> dict:
         payments = Payment.objects.filter(is_paid=True)
 
+        # Handle case where there are no payments
+        if not payments.exists():
+            return {
+                "value": 0.0,
+                "currency": "SAR",  # Default currency
+                "display": "0.00 SAR",
+            }
+
         # Get currency from first payment
         first_payment = payments.first()
         currency = first_payment.price_after_discount.currency
@@ -31,10 +39,18 @@ class InsightSelector:
         # Sum the decimal amounts
         total_amount = payments.aggregate(total=Sum("price_after_discount"))["total"]
 
+        # Handle case where total_amount is None (shouldn't happen but be safe)
+        if total_amount is None:
+            total_amount_value = 0.0
+            display_amount = f"0.00 {currency}"
+        else:
+            total_amount_value = float(total_amount)
+            display_amount = f"{total_amount} {currency}"
+
         return {
-            "value": float(total_amount),
+            "value": total_amount_value,
             "currency": str(currency),
-            "display": f"{total_amount} {currency}",
+            "display": display_amount,
         }
 
     @staticmethod
