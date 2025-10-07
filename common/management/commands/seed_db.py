@@ -1,23 +1,19 @@
 # management/commands/seed_db.py
+import random
+
 from django.core.management.base import BaseCommand
 
-from factories.factories import AddressFactory
 from factories.factories import AdminUserFactory
 from factories.factories import AppInfoFactory
-from factories.factories import BannerFactory
 from factories.factories import BannerGroupFactory
-from factories.factories import ContactUsFactory
 from factories.factories import CountryFactory
 from factories.factories import CustomerFactory
 from factories.factories import FAQFactory
 from factories.factories import NotificationFactory
 from factories.factories import OnboardingFactory
 from factories.factories import PopUpBannerFactory
-from factories.factories import PopUpTrackingFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
-from factories.factories import WalletFactory
-from factories.factories import WalletTransactionFactory
 
 
 class Command(BaseCommand):
@@ -66,71 +62,36 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"✓ Seeded (factor={factor})"))
 
     def _load_all_factories(self, factor):
-        """Load test data with explicit control over quantities and relationships."""
+        """Load test data with relationships handled by factories."""
         # ========================================================================
         # SINGLETONS
         # ========================================================================
-        if not AppInfoFactory._meta.model.objects.exists():
-            AppInfoFactory.create()
-
-        if not SocialAccountFactory._meta.model.objects.exists():
-            SocialAccountFactory.create()
+        AppInfoFactory.create()
+        SocialAccountFactory.create()
 
         # ========================================================================
         # INDEPENDENT MODELS
         # ========================================================================
         CountryFactory.create_batch(2 * factor)
-
-        # Create banner groups with explicit order
-        banner_groups = [BannerGroupFactory.create(order=i) for i in range(3 * factor)]
-
-        # Create FAQs with explicit order
-        for i in range(5 * factor):
-            FAQFactory.create(order=i)
-
-        # Create onboarding screens with explicit order
-        for i in range(3 * factor):
-            OnboardingFactory.create(order=i)
-
-        popups = PopUpBannerFactory.create_batch(2 * factor)
+        BannerGroupFactory.create_batch(3 * factor)
+        FAQFactory.create_batch(5 * factor)
+        OnboardingFactory.create_batch(3 * factor)
+        PopUpBannerFactory.create_batch(2 * factor)
 
         # ========================================================================
-        # USER MODELS
+        # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
         AdminUserFactory.create_batch(2 * factor)
-        customers = CustomerFactory.create_batch(5)  # Fixed number for customers
+        customers = CustomerFactory.create_batch(5 * factor)
 
         # ========================================================================
-        # DEPENDENT MODELS - EXPLICIT RELATIONSHIPS
+        # ADDITIONAL RELATIONSHIPS
         # ========================================================================
-
-        # Single loop: Create all customer-related objects
-        for customer in customers:
-            # 1. Create wallet first (required for transactions)
-            wallet = WalletFactory.create(user=customer)
-
-            # 2. Create customer-related data
-            AddressFactory.create_batch(2, customer=customer)
-            ContactUsFactory.create(customer=customer)
-
-            # 3. Create popup tracking for each popup
-            for popup in popups:
-                PopUpTrackingFactory.create(customer=customer, popup=popup)
-
-            # 4. Create wallet transactions (after wallet exists)
-            WalletTransactionFactory.create_batch(3, wallet=wallet)
-
-        # Additional standalone wallets
-        WalletFactory.create_batch(2 * factor)
 
         # Regions
         RegionFactory.create_batch(3 * factor)
 
-        # Single loop: Create banners for each group
-        for group in banner_groups:
-            BannerFactory.create_batch(2, group=group)
-
-        # Notifications with users
-        notifications = NotificationFactory.create_batch(3 * factor)
+        # Notifications with M2M users
+        notifications = NotificationFactory.create_batch(factor)
         for notification in notifications:
-            notification.users.add(*customers[:3])
+            notification.users.add(*random.sample(customers, k=min(3, len(customers))))

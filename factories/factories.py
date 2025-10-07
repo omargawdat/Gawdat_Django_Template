@@ -123,6 +123,15 @@ class BannerGroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BannerGroup
 
+    @factory.post_generation
+    def create_banners(self, create, extracted, **kwargs):
+        """Auto-create banners for this group"""
+        if not create:
+            return
+        count = extracted if extracted is not None else 2
+        if count > 0:
+            BannerFactory.create_batch(count, group=self)
+
 
 class FAQFactory(factory.django.DjangoModelFactory):
     """FAQ - no dependencies"""
@@ -224,6 +233,29 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         self.set_password(password)
         self.save()
 
+    @factory.post_generation
+    def create_wallet(self, create, extracted, **kwargs):
+        """Auto-create wallet for customer"""
+        if not create:
+            return
+        WalletFactory.create(user=self)
+
+    @factory.post_generation
+    def create_addresses(self, create, extracted, **kwargs):
+        """Auto-create addresses for customer"""
+        if not create:
+            return
+        count = extracted if extracted is not None else 2
+        AddressFactory.create_batch(count, customer=self)
+
+    @factory.post_generation
+    def create_contact_us(self, create, extracted, **kwargs):
+        """Auto-create contact us entry for customer"""
+        if not create:
+            return
+        if extracted is not False:  # Allow explicit skip with False
+            ContactUsFactory.create(customer=self)
+
 
 # ============================================================================
 # DEPENDENT FACTORIES (Use SubFactory for relationships)
@@ -241,6 +273,15 @@ class WalletFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Wallet
+
+    @factory.post_generation
+    def create_transactions(self, create, extracted, **kwargs):
+        """Auto-create wallet transactions"""
+        if not create:
+            return
+        count = extracted if extracted is not None else 3
+        if count > 0:
+            WalletTransactionFactory.create_batch(count, wallet=self)
 
 
 class AddressFactory(factory.django.DjangoModelFactory):
