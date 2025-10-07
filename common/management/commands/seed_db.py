@@ -80,9 +80,18 @@ class Command(BaseCommand):
         # INDEPENDENT MODELS
         # ========================================================================
         CountryFactory.create_batch(2 * factor)
-        banner_groups = BannerGroupFactory.create_batch(3 * factor)
-        FAQFactory.create_batch(5 * factor)
-        OnboardingFactory.create_batch(3 * factor)
+
+        # Create banner groups with explicit order
+        banner_groups = [BannerGroupFactory.create(order=i) for i in range(3 * factor)]
+
+        # Create FAQs with explicit order
+        for i in range(5 * factor):
+            FAQFactory.create(order=i)
+
+        # Create onboarding screens with explicit order
+        for i in range(3 * factor):
+            OnboardingFactory.create(order=i)
+
         popups = PopUpBannerFactory.create_batch(2 * factor)
 
         # ========================================================================

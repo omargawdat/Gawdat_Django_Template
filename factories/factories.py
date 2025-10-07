@@ -241,7 +241,6 @@ class WalletFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Wallet
-        django_get_or_create = ("user",)
 
 
 class AddressFactory(factory.django.DjangoModelFactory):
