@@ -256,8 +256,12 @@ class AddressFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomerFactory)
     country = factory.SubFactory(CountryFactory)
 
-    point = factory.LazyFunction(
-        lambda: Point(float(fake.longitude()), float(fake.latitude()))
+    # Generate realistic coordinates based on country
+    point = factory.LazyAttribute(
+        lambda obj: Point(
+            float(fake.local_latlng(country_code=obj.country.code)[1]),  # longitude
+            float(fake.local_latlng(country_code=obj.country.code)[0]),  # latitude
+        )
     )
     description = factory.Faker("address")
     map_description = factory.Faker("sentence")
