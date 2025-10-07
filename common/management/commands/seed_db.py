@@ -98,7 +98,7 @@ class Command(BaseCommand):
         # USER MODELS
         # ========================================================================
         AdminUserFactory.create_batch(2 * factor)
-        customers = CustomerFactory.create_batch(5 * factor)
+        customers = CustomerFactory.create_batch(5)  # Fixed number for customers
 
         # ========================================================================
         # DEPENDENT MODELS - EXPLICIT RELATIONSHIPS
