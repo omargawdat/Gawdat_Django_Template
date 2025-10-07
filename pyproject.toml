@@ -109,21 +109,28 @@ addopts = """
     --ds=config.settings.test
     --reuse-db
     --import-mode=importlib
-    -v
     --tb=short
-    --strict-markers
-    --showlocals
+    -x
 """
 python_files = [
     "tests.py",
     "test_*.py",
 ]
-console_output_style = "progress"
+console_output_style = "classic"
 markers = [
     "slow: marks tests as slow (integration tests, API calls)",
     "unit: fast isolated unit tests",
     "integration: tests requiring DB/external services",
 ]
+
+# Key options for clearer errors:
+# --tb=short : Concise traceback (not overwhelming)
+# -x         : Stop on first failure (fix one issue at a time)
+#
+# Override when needed:
+#   pytest --tb=line    (one line per failure - clearest)
+#   pytest -vv          (verbose for debugging)
+#   pytest --lf         (rerun last failed only)
 
 # ==== Coverage ====
 [tool.coverage.run]
