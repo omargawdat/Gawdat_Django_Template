@@ -21,7 +21,7 @@ Usage:
     customer = CustomerFactory(full_name="John Doe")
 
     # Use loader utilities
-    from factories.loader import discover_factories, load_all_factories
+    from factories.loader import load_all_factories
 """
 
 from factories.factories import AddressFactory
@@ -41,7 +41,6 @@ from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 from factories.factories import WalletFactory
 from factories.factories import WalletTransactionFactory
-from factories.loader import discover_factories
 from factories.loader import load_all_factories
 
 __all__ = [
@@ -62,6 +61,5 @@ __all__ = [
     "SocialAccountFactory",
     "WalletFactory",
     "WalletTransactionFactory",
-    "discover_factories",
     "load_all_factories",
 ]

@@ -1,73 +1,89 @@
-import inspect
+"""
+Explicit factory loader with full control over data creation.
 
-import factories as factories_module
+Define exactly how many instances of each model and their relationships.
+"""
+
+from factories.factories import AddressFactory
+from factories.factories import AdminUserFactory
+from factories.factories import AppInfoFactory
+from factories.factories import BannerFactory
+from factories.factories import BannerGroupFactory
+from factories.factories import ContactUsFactory
+from factories.factories import CountryFactory
+from factories.factories import CustomerFactory
+from factories.factories import FAQFactory
+from factories.factories import NotificationFactory
+from factories.factories import OnboardingFactory
+from factories.factories import PopUpBannerFactory
+from factories.factories import PopUpTrackingFactory
+from factories.factories import RegionFactory
+from factories.factories import SocialAccountFactory
+from factories.factories import WalletFactory
+from factories.factories import WalletTransactionFactory
 
 
-def discover_factories():
-    """Auto-discover all factories. Returns [(name, class), ...]"""
-    return [
-        (name, obj)
-        for name, obj in inspect.getmembers(factories_module)
-        if inspect.isclass(obj)
-        and name.endswith("Factory")
-        and hasattr(obj, "_meta")
-        and hasattr(obj._meta, "model")
-    ]
-
-
-def load_all_factories(count=2, use_transaction=False, verbose=False):
+def load_all_factories(factor=1):
     """
-    Load test data for all factories.
-
-    Used by:
-    - tests/conftest.py (count=2, verbose=False)
-    - seed_db command (count=20+, verbose=True)
+    Load test data with explicit control over quantities and relationships.
 
     Args:
-        count: Number of instances to create for each factory
-        use_transaction: Wrap each factory in atomic transaction
-        verbose: Print creation progress (for seed_db command)
-
-    Returns:
-        dict: Statistics {"success": 10, "failed": 1, "skipped": 2}
+        factor: Multiplier for all quantities (e.g., factor=2 doubles everything)
     """
-    import logging
+    # ========================================================================
+    # SINGLETONS
+    # ========================================================================
+    if not AppInfoFactory._meta.model.objects.exists():
+        AppInfoFactory.create()
 
-    logger = logging.getLogger(__name__)
-    factories = discover_factories()
+    if not SocialAccountFactory._meta.model.objects.exists():
+        SocialAccountFactory.create()
 
-    stats = {"success": 0, "failed": 0, "skipped": 0}
+    # ========================================================================
+    # INDEPENDENT MODELS
+    # ========================================================================
+    CountryFactory.create_batch(2 * factor)
+    banner_groups = BannerGroupFactory.create_batch(3 * factor)
+    FAQFactory.create_batch(5 * factor)
+    OnboardingFactory.create_batch(3 * factor)
+    popups = PopUpBannerFactory.create_batch(2 * factor)
 
-    for factory_name, factory_class in factories:
-        try:
-            model = factory_class._meta.model
-            model_name = model.__name__
+    # ========================================================================
+    # USER MODELS
+    # ========================================================================
+    AdminUserFactory.create_batch(2 * factor)
+    customers = CustomerFactory.create_batch(5 * factor)  # Wallets auto-created
 
-            # Handle singletons (AppInfo, SocialAccount)
-            if hasattr(model, "singleton_instance_id"):
-                if model.objects.exists():
-                    stats["skipped"] += 1
-                    if verbose:
-                        logger.info(
-                            f"  ⊘ Skipped {model_name} (singleton already exists)"
-                        )
-                    continue
-                factory_class.create()
-                stats["success"] += 1
-                if verbose:
-                    logger.info(f"  ✓ Created singleton {model_name}")
-            else:
-                if verbose:
-                    logger.info(f"  Creating {count} {model_name}(s)...")
+    # ========================================================================
+    # DEPENDENT MODELS - EXPLICIT RELATIONSHIPS
+    # ========================================================================
 
-                factory_class.create_batch(count)
-                stats["success"] += 1
+    # Create additional standalone wallets
+    WalletFactory.create_batch(2 * factor)
 
-                if verbose:
-                    logger.info(f"    ✓ Created {count} {model_name}(s)")
+    # Create 2 addresses per customer
+    for customer in customers:
+        AddressFactory.create_batch(2, customer=customer)
 
-        except Exception:
-            stats["failed"] += 1
-            logger.exception(f"Failed to create {factory_name}")
+    # Create 1 contact per customer
+    for customer in customers:
+        ContactUsFactory.create(customer=customer)
 
-    return stats
+    # Regions
+    RegionFactory.create_batch(3 * factor)
+
+    # Create 2 banners per group
+    for group in banner_groups:
+        BannerFactory.create_batch(2, group=group)
+
+    # Notifications
+    NotificationFactory.create_batch(3 * factor)
+
+    # Create 1 popup tracking per customer per popup
+    for customer in customers:
+        for popup in popups:
+            PopUpTrackingFactory.create(customer=customer, popup=popup)
+
+    # Create 3 wallet transactions per customer
+    for customer in customers:
+        WalletTransactionFactory.create_batch(3, wallet=customer.wallet)

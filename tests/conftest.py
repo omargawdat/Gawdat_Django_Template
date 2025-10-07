@@ -52,12 +52,11 @@ def django_db_setup(django_db_setup, django_db_blocker):
     - autouse=True: Runs automatically, no need to inject in tests
     - scope="session": Data loaded once, shared across all tests
     - Tests access data via Model.objects.first(), etc.
-    - Works with --reuse-db flag for faster subsequent runs
 
     When you add a new factory, it's automatically loaded - zero maintenance!
     """
     with django_db_blocker.unblock():
-        load_all_factories(count=2, use_transaction=False)
+        load_all_factories(factor=1)
 
 
 # ============================================================================

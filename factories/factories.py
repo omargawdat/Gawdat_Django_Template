@@ -177,6 +177,7 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AdminUser
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def hash_password(self, create, extracted, **kwargs):

@@ -14,10 +14,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--count",
+            "--factor",
             type=int,
-            default=20,
-            help="Base number of instances to create (default: 20)",
+            default=4,
+            help="Multiplier for data quantities (default: 4)",
         )
         parser.add_argument(
             "--no-flush",
@@ -39,7 +39,7 @@ class Command(BaseCommand):
             )
             return
 
-        count = options["count"]
+        factor = options["factor"]
 
         # Flush existing data if requested
         if options["flush"]:
@@ -61,22 +61,7 @@ class Command(BaseCommand):
                     self.style.WARNING(f"Could not create superuser: {e}")
                 )
 
-        # Seed database using unified loader
+        # Seed database
         self.stdout.write(self.style.SUCCESS("🌱 Seeding database...\n"))
-
-        stats = load_all_factories(count=count, verbose=True)
-
-        # Summary
-        total = stats["success"] + stats["failed"] + stats["skipped"]
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"\n{'=' * 60}\n"
-                f"✓ Database seeding complete!\n"
-                f"{'=' * 60}\n"
-                f"  Success: {stats['success']}\n"
-                f"  Failed:  {stats['failed']}\n"
-                f"  Skipped: {stats['skipped']}\n"
-                f"  Total:   {total}\n"
-                f"{'=' * 60}\n"
-            )
-        )
+        load_all_factories(factor=factor)
+        self.stdout.write(self.style.SUCCESS("\n✓ Database seeding complete!\n"))
