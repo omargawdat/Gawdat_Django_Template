@@ -211,8 +211,6 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     # Generate phone number based on country
     phone_number = factory.LazyAttribute(
         lambda obj: fake.e164(region_code=obj.country.code, valid=True, possible=True)
-        if obj.country
-        else "+966501234567"
     )
 
     class Meta:
@@ -257,11 +255,7 @@ class WalletFactory(factory.django.DjangoModelFactory):
     # SubFactory: Creates Customer if not provided
     user = factory.SubFactory(CustomerFactory, wallet=False)
 
-    balance = factory.LazyAttribute(
-        lambda obj: Money(100, obj.user.country.currency)
-        if hasattr(obj, "user") and obj.user
-        else Money(100, "SAR")
-    )
+    balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
     is_use_wallet_in_payment = True
 
     class Meta:
@@ -388,8 +382,6 @@ class WalletTransactionFactory(factory.django.DjangoModelFactory):
     )
     amount = factory.LazyAttribute(
         lambda obj: Money(50, obj.wallet.user.country.currency)
-        if obj.wallet
-        else Money(50, "SAR")
     )
     action_by = factory.SubFactory(AdminUserFactory)
     transaction_note = factory.Faker("sentence")
