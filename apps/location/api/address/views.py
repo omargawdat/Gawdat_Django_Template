@@ -78,6 +78,36 @@ class AddressCreateView(APIView):
         return Response(detailed_serializer.data, status=status.HTTP_201_CREATED)
 
 
+class AddressRetrieveView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Account/Address"],
+        operation_id="RetrieveAddress",
+        parameters=[
+            OpenApiParameter(
+                name="address_id",
+                description="ID of the address to retrieve",
+                required=True,
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+            )
+        ],
+        responses={
+            200: AddressDetailedSerializer,
+            404: OpenApiResponse(description="Address not found"),
+        },
+    )
+    def get(self, request, address_id):
+        user_addresses = AddressSelector.get_all_customer_addresses(
+            customer=request.user
+        )
+        address = get_object_or_404(user_addresses, pk=address_id)
+        serializer = AddressDetailedSerializer(address)
+        return Response(serializer.data)
+
+
 class AddressUpdateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

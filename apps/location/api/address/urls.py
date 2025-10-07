@@ -6,6 +6,11 @@ urlpatterns = [
     path("addresses/", views.AddressListView.as_view(), name="address-list"),
     path("addresses/create/", views.AddressCreateView.as_view(), name="address-create"),
     path(
+        "addresses/<int:address_id>/",
+        views.AddressRetrieveView.as_view(),
+        name="address-detail",
+    ),
+    path(
         "addresses/<int:address_id>/update/",
         views.AddressUpdateView.as_view(),
         name="address-update",

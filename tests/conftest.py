@@ -65,3 +65,32 @@ def mock_request(admin_user):
     request = request_factory.get("/admin/")
     request.user = admin_user
     return request
+
+
+# API-specific fixtures
+@pytest.fixture
+def api_user(db):
+    """Get existing customer from session test data for API testing"""
+    from apps.users.models.customer import Customer
+
+    # Reuse existing customer created by django_db_setup
+    customer = Customer.objects.first()
+    if not customer:
+        # Fallback: create one if none exists
+        import factories
+
+        customer = factories.CustomerFactory.create()
+
+    return customer
+
+
+@pytest.fixture
+def api_client_authenticated(api_user):
+    """API client with JWT authentication"""
+    from rest_framework.test import APIClient
+    from rest_framework_simplejwt.tokens import RefreshToken
+
+    client = APIClient()
+    refresh = RefreshToken.for_user(api_user)
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
+    return client
