@@ -111,6 +111,7 @@ addopts = """
     --import-mode=importlib
     --tb=short
     -x
+    -v
 """
 python_files = [
     "tests.py",
@@ -123,13 +124,15 @@ markers = [
     "integration: tests requiring DB/external services",
 ]
 
-# Key options for clearer errors:
+# Key options:
+# -v         : Verbose - show test names (what's being tested)
 # --tb=short : Concise traceback (not overwhelming)
 # -x         : Stop on first failure (fix one issue at a time)
 #
 # Override when needed:
-#   pytest --tb=line    (one line per failure - clearest)
-#   pytest -vv          (verbose for debugging)
+#   pytest -q           (quiet - less detail)
+#   pytest -vv          (very verbose - more details)
+#   pytest --tb=line    (one line per failure)
 #   pytest --lf         (rerun last failed only)
 
 # ==== Coverage ====

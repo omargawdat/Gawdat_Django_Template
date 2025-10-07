@@ -30,6 +30,7 @@ from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
 from apps.appInfo.models.onboarding import Onboarding
 from apps.appInfo.models.popup import PopUpBanner
+from apps.appInfo.models.popup import PopUpTracking
 from apps.appInfo.models.social import SocialAccount
 from apps.appInfo.other.constants import ContactCategory
 from apps.channel.constants import NotificationType
@@ -144,6 +145,21 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PopUpBanner
+
+
+class PopUpTrackingFactory(factory.django.DjangoModelFactory):
+    # Reuse existing customer
+    customer = factory.LazyAttribute(
+        lambda obj: Customer.objects.first() or CustomerFactory(wallet=False)
+    )
+    # Reuse existing popup banner
+    popup = factory.LazyAttribute(
+        lambda obj: PopUpBanner.objects.first() or PopUpBannerFactory()
+    )
+    view_count = factory.Faker("random_int", min=1, max=20)
+
+    class Meta:
+        model = PopUpTracking
 
 
 # ============================================================================
