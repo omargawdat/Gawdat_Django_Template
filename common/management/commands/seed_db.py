@@ -1,12 +1,23 @@
 # management/commands/seed_db.py
-import logging
-
 from django.core.management.base import BaseCommand
 
-from factories.loader import load_all_factories
-
-# Configure logging to show INFO messages
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+from factories.factories import AddressFactory
+from factories.factories import AdminUserFactory
+from factories.factories import AppInfoFactory
+from factories.factories import BannerFactory
+from factories.factories import BannerGroupFactory
+from factories.factories import ContactUsFactory
+from factories.factories import CountryFactory
+from factories.factories import CustomerFactory
+from factories.factories import FAQFactory
+from factories.factories import NotificationFactory
+from factories.factories import OnboardingFactory
+from factories.factories import PopUpBannerFactory
+from factories.factories import PopUpTrackingFactory
+from factories.factories import RegionFactory
+from factories.factories import SocialAccountFactory
+from factories.factories import WalletFactory
+from factories.factories import WalletTransactionFactory
 
 
 class Command(BaseCommand):
@@ -31,10 +42,10 @@ class Command(BaseCommand):
         from config.helpers.env import env
 
         # Safety check: only allow in development
-        if env.environment not in ("local", "development"):
+        if env.environment not in ("local", "development", "test"):
             self.stdout.write(
                 self.style.ERROR(
-                    f"❌ seed_db only allowed in local/development, not '{env.environment}'"
+                    f"❌ seed_db only allowed in local/development/test, not '{env.environment}'"
                 )
             )
             return
@@ -45,23 +56,71 @@ class Command(BaseCommand):
         if options["flush"]:
             from django.core.management import call_command
 
-            self.stdout.write(self.style.WARNING("\n🗑️  Flushing existing data...\n"))
-            try:
-                call_command("flush", "--no-input")
-                self.stdout.write(self.style.SUCCESS("✓ Data flushed\n"))
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"✗ Flush failed: {e}"))
-                self.stdout.write(self.style.WARNING("Continuing without flush...\n"))
-
-            # Create superuser
-            try:
-                call_command("createsu")
-            except Exception as e:
-                self.stdout.write(
-                    self.style.WARNING(f"Could not create superuser: {e}")
-                )
+            call_command("flush", "--no-input", verbosity=0)
+            call_command("createsu", verbosity=0)
 
         # Seed database
-        self.stdout.write(self.style.SUCCESS("🌱 Seeding database...\n"))
-        load_all_factories(factor=factor)
-        self.stdout.write(self.style.SUCCESS("\n✓ Database seeding complete!\n"))
+        self._load_all_factories(factor)
+
+        # Output summary
+        self.stdout.write(self.style.SUCCESS(f"✓ Seeded (factor={factor})"))
+
+    def _load_all_factories(self, factor):
+        """Load test data with explicit control over quantities and relationships."""
+        # ========================================================================
+        # SINGLETONS
+        # ========================================================================
+        if not AppInfoFactory._meta.model.objects.exists():
+            AppInfoFactory.create()
+
+        if not SocialAccountFactory._meta.model.objects.exists():
+            SocialAccountFactory.create()
+
+        # ========================================================================
+        # INDEPENDENT MODELS
+        # ========================================================================
+        CountryFactory.create_batch(2 * factor)
+        banner_groups = BannerGroupFactory.create_batch(3 * factor)
+        FAQFactory.create_batch(5 * factor)
+        OnboardingFactory.create_batch(3 * factor)
+        popups = PopUpBannerFactory.create_batch(2 * factor)
+
+        # ========================================================================
+        # USER MODELS
+        # ========================================================================
+        AdminUserFactory.create_batch(2 * factor)
+        customers = CustomerFactory.create_batch(5 * factor)  # Wallets auto-created
+
+        # ========================================================================
+        # DEPENDENT MODELS - EXPLICIT RELATIONSHIPS
+        # ========================================================================
+
+        # Create additional standalone wallets
+        WalletFactory.create_batch(2 * factor)
+
+        # Create 2 addresses per customer
+        for customer in customers:
+            AddressFactory.create_batch(2, customer=customer)
+
+        # Create 1 contact per customer
+        for customer in customers:
+            ContactUsFactory.create(customer=customer)
+
+        # Regions
+        RegionFactory.create_batch(3 * factor)
+
+        # Create 2 banners per group
+        for group in banner_groups:
+            BannerFactory.create_batch(2, group=group)
+
+        # Notifications
+        NotificationFactory.create_batch(3 * factor)
+
+        # Create 1 popup tracking per customer per popup
+        for customer in customers:
+            for popup in popups:
+                PopUpTrackingFactory.create(customer=customer, popup=popup)
+
+        # Create 3 wallet transactions per customer
+        for customer in customers:
+            WalletTransactionFactory.create_batch(3, wallet=customer.wallet)

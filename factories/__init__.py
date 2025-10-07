@@ -20,8 +20,8 @@ Usage:
     # Create with custom attributes
     customer = CustomerFactory(full_name="John Doe")
 
-    # Use loader utilities
-    from factories.loader import load_all_factories
+    # Load data via management command
+    # python manage.py seed_db --factor 4
 """
 
 from factories.factories import AddressFactory
@@ -41,7 +41,6 @@ from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 from factories.factories import WalletFactory
 from factories.factories import WalletTransactionFactory
-from factories.loader import load_all_factories
 
 __all__ = [
     "AddressFactory",
@@ -61,5 +60,4 @@ __all__ = [
     "SocialAccountFactory",
     "WalletFactory",
     "WalletTransactionFactory",
-    "load_all_factories",
 ]
