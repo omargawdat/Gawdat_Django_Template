@@ -1,33 +1,36 @@
 # management/commands/seed_db.py
-from django.core.management.base import BaseCommand
-from django.db import transaction
+import logging
 
-from factories.loader import discover_factories
-from factories.loader import get_factory_priority
-from factories.loader import get_factory_seed_count
+from django.core.management.base import BaseCommand
+
+from factories.loader import load_all_factories
+
+# Configure logging to show INFO messages
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 class Command(BaseCommand):
-    help = "Seed database with test data"
+    help = "Seed database with test data using factories"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--count",
             type=int,
             default=20,
-            help="Number of instances to create (default: 20)",
+            help="Base number of instances to create (default: 20)",
         )
         parser.add_argument(
             "--no-flush",
             action="store_false",
             dest="flush",
             default=True,
-            help="Skip flushing data",
+            help="Skip flushing data before seeding",
         )
 
     def handle(self, *args, **options):
         from config.helpers.env import env
 
+        # Safety check: only allow in development
         if env.environment not in ("local", "development"):
             self.stdout.write(
                 self.style.ERROR(
@@ -38,98 +41,42 @@ class Command(BaseCommand):
 
         count = options["count"]
 
+        # Flush existing data if requested
         if options["flush"]:
             from django.core.management import call_command
 
-            self.stdout.write(self.style.WARNING("Flushing existing data..."))
-            call_command("flush", "--no-input")
-            self.stdout.write(self.style.SUCCESS("✓ Data flushed"))
-
-            call_command("createsu")
-
-        self.stdout.write(self.style.SUCCESS("\n🌱 Seeding database...\n"))
-
-        # Auto-discover all factories and sort by priority
-        all_factories = discover_factories()
-        sorted_factories = sorted(
-            all_factories, key=lambda x: get_factory_priority(x[1])
-        )
-
-        total_created = 0
-        created_summary = []
-
-        for _factory_name, factory_class in sorted_factories:
-            model = factory_class._meta.model
-            model_name = model.__name__
-
-            # Skip singletons if they already exist
-            if hasattr(model, "singleton_instance_id"):
-                if model.objects.exists():
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"  ⊘ Skipping {model_name} (singleton already exists)"
-                        )
-                    )
-                    continue
-
-            # Get count specification from factory config
-            count_spec = get_factory_seed_count(factory_class, count)
-
-            # Calculate actual count from specification
-            create_count = self._calculate_count(count_spec, count)
-
+            self.stdout.write(self.style.WARNING("\n🗑️  Flushing existing data...\n"))
             try:
-                self.stdout.write(f"  Creating {create_count} {model_name}(s)...")
-
-                with transaction.atomic():
-                    if create_count == 1:
-                        factory_class.create()
-                        actual_count = 1
-                    else:
-                        factory_class.create_batch(create_count)
-                        actual_count = create_count
-
-                    total_created += actual_count
-                    created_summary.append(f"  ✓ {actual_count} {model_name}(s)")
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"    ✓ Created {actual_count} {model_name}(s)"
-                        )
-                    )
-
+                call_command("flush", "--no-input")
+                self.stdout.write(self.style.SUCCESS("✓ Data flushed\n"))
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f"    ✗ Failed {model_name}: {e}"))
+                self.stdout.write(self.style.ERROR(f"✗ Flush failed: {e}"))
+                self.stdout.write(self.style.WARNING("Continuing without flush...\n"))
+
+            # Create superuser
+            try:
+                call_command("createsu")
+            except Exception as e:
+                self.stdout.write(
+                    self.style.WARNING(f"Could not create superuser: {e}")
+                )
+
+        # Seed database using unified loader
+        self.stdout.write(self.style.SUCCESS("🌱 Seeding database...\n"))
+
+        stats = load_all_factories(count=count, verbose=True)
 
         # Summary
+        total = stats["success"] + stats["failed"] + stats["skipped"]
         self.stdout.write(
             self.style.SUCCESS(
-                f"\n✓ Database seeded successfully!\n"
-                f"Total instances: {total_created}\n\n" + "\n".join(created_summary)
+                f"\n{'=' * 60}\n"
+                f"✓ Database seeding complete!\n"
+                f"{'=' * 60}\n"
+                f"  Success: {stats['success']}\n"
+                f"  Failed:  {stats['failed']}\n"
+                f"  Skipped: {stats['skipped']}\n"
+                f"  Total:   {total}\n"
+                f"{'=' * 60}\n"
             )
         )
-
-    def _calculate_count(self, count_spec, base_count):
-        """
-        Calculate actual count from specification
-
-        Args:
-            count_spec: Can be:
-                - int: exact count
-                - "count": use base_count
-                - "1.5x", "0.8x": multiply base_count
-            base_count: Base count from command argument
-
-        Returns:
-            int: Calculated count
-        """
-        if isinstance(count_spec, int):
-            return count_spec
-
-        if count_spec == "count":
-            return base_count
-
-        if isinstance(count_spec, str) and count_spec.endswith("x"):
-            multiplier = float(count_spec[:-1])
-            return int(base_count * multiplier)
-
-        return base_count

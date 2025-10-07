@@ -50,22 +50,95 @@ def discover_factories():
     ]
 
 
-def load_all_factories(count=2, use_transaction=False):
-    """Load test data for all factories (used by tests/conftest.py)"""
+def load_all_factories(count=2, use_transaction=False, verbose=False):
+    """
+    Load test data for all factories.
+
+    Used by:
+    - tests/conftest.py (count=2, verbose=False)
+    - seed_db command (count=20+, verbose=True)
+
+    Args:
+        count: Base count for creating instances
+        use_transaction: Wrap each factory in atomic transaction
+        verbose: Print creation progress (for seed_db command)
+
+    Returns:
+        dict: Statistics {"success": 10, "failed": 1, "skipped": 2}
+    """
     import logging
 
+    logger = logging.getLogger(__name__)
     factories = sorted(discover_factories(), key=lambda x: get_factory_priority(x[1]))
+
+    stats = {"success": 0, "failed": 0, "skipped": 0}
 
     for factory_name, factory_class in factories:
         try:
             model = factory_class._meta.model
+            model_name = model.__name__
 
             # Handle singletons (AppInfo, SocialAccount)
             if hasattr(model, "singleton_instance_id"):
-                if not model.objects.exists():
-                    factory_class.create()
+                if model.objects.exists():
+                    stats["skipped"] += 1
+                    if verbose:
+                        logger.info(
+                            f"  ⊘ Skipped {model_name} (singleton already exists)"
+                        )
+                    continue
+                factory_class.create()
+                stats["success"] += 1
+                if verbose:
+                    logger.info(f"  ✓ Created singleton {model_name}")
             else:
-                factory_class.create_batch(count)
+                # Get count from factory config or use default
+                count_spec = get_factory_seed_count(factory_class, count)
+                create_count = _calculate_count(count_spec, count)
+
+                if verbose:
+                    logger.info(f"  Creating {create_count} {model_name}(s)...")
+
+                factory_class.create_batch(create_count)
+                stats["success"] += 1
+
+                if verbose:
+                    logger.info(f"    ✓ Created {create_count} {model_name}(s)")
 
         except Exception:
-            logging.exception(f"Failed to create {factory_name}")
+            stats["failed"] += 1
+            logger.exception(f"Failed to create {factory_name}")
+
+    return stats
+
+
+def _calculate_count(count_spec, base_count):
+    """
+    Calculate actual count from specification.
+
+    Args:
+        count_spec: Can be:
+            - int: exact count (e.g., 10)
+            - "count": use base_count
+            - "1.5x", "0.8x": multiply base_count
+        base_count: Base count from caller
+
+    Returns:
+        int: Calculated count
+
+    Examples:
+        _calculate_count(10, 20) -> 10
+        _calculate_count("count", 20) -> 20
+        _calculate_count("1.5x", 20) -> 30
+    """
+    if isinstance(count_spec, int):
+        return count_spec
+
+    if count_spec == "count":
+        return base_count
+
+    if isinstance(count_spec, str) and count_spec.endswith("x"):
+        multiplier = float(count_spec[:-1])
+        return int(base_count * multiplier)
+
+    return base_count
