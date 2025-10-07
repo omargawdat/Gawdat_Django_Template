@@ -256,11 +256,12 @@ class AddressFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomerFactory)
     country = factory.SubFactory(CountryFactory)
 
-    # Generate realistic coordinates based on country
+    # Generate realistic coordinates based on country (with fallback)
     point = factory.LazyAttribute(
-        lambda obj: Point(
-            float(fake.local_latlng(country_code=obj.country.code)[1]),  # longitude
-            float(fake.local_latlng(country_code=obj.country.code)[0]),  # latitude
+        lambda obj: (
+            Point(float(coords[1]), float(coords[0]))
+            if (coords := fake.local_latlng(country_code=obj.country.code))
+            else Point(float(fake.longitude()), float(fake.latitude()))
         )
     )
     description = factory.Faker("address")
@@ -292,8 +293,13 @@ class RegionFactory(factory.django.DjangoModelFactory):
     country = factory.SubFactory(CountryFactory)
     code = factory.Sequence(lambda n: f"REG{n:05d}")
     name = factory.Faker("city")
-    geometry = factory.LazyFunction(
-        lambda: Point(float(fake.longitude()), float(fake.latitude()))
+    # Generate realistic coordinates based on country (with fallback)
+    geometry = factory.LazyAttribute(
+        lambda obj: (
+            Point(float(coords[1]), float(coords[0]))
+            if (coords := fake.local_latlng(country_code=obj.country.code))
+            else Point(float(fake.longitude()), float(fake.latitude()))
+        )
     )
 
     class Meta:
