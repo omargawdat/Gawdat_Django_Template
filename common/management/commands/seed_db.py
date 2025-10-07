@@ -89,38 +89,39 @@ class Command(BaseCommand):
         # USER MODELS
         # ========================================================================
         AdminUserFactory.create_batch(2 * factor)
-        customers = CustomerFactory.create_batch(5 * factor)  # Wallets auto-created
+        customers = CustomerFactory.create_batch(5 * factor)
 
         # ========================================================================
         # DEPENDENT MODELS - EXPLICIT RELATIONSHIPS
         # ========================================================================
 
-        # Create additional standalone wallets
-        WalletFactory.create_batch(2 * factor)
-
-        # Create 2 addresses per customer
+        # Single loop: Create all customer-related objects
         for customer in customers:
+            # 1. Create wallet first (required for transactions)
+            wallet = WalletFactory.create(user=customer)
+
+            # 2. Create customer-related data
             AddressFactory.create_batch(2, customer=customer)
-
-        # Create 1 contact per customer
-        for customer in customers:
             ContactUsFactory.create(customer=customer)
+
+            # 3. Create popup tracking for each popup
+            for popup in popups:
+                PopUpTrackingFactory.create(customer=customer, popup=popup)
+
+            # 4. Create wallet transactions (after wallet exists)
+            WalletTransactionFactory.create_batch(3, wallet=wallet)
+
+        # Additional standalone wallets
+        WalletFactory.create_batch(2 * factor)
 
         # Regions
         RegionFactory.create_batch(3 * factor)
 
-        # Create 2 banners per group
+        # Single loop: Create banners for each group
         for group in banner_groups:
             BannerFactory.create_batch(2, group=group)
 
-        # Notifications
-        NotificationFactory.create_batch(3 * factor)
-
-        # Create 1 popup tracking per customer per popup
-        for customer in customers:
-            for popup in popups:
-                PopUpTrackingFactory.create(customer=customer, popup=popup)
-
-        # Create 3 wallet transactions per customer
-        for customer in customers:
-            WalletTransactionFactory.create_batch(3, wallet=customer.wallet)
+        # Notifications with users
+        notifications = NotificationFactory.create_batch(3 * factor)
+        for notification in notifications:
+            notification.users.add(*customers[:3])

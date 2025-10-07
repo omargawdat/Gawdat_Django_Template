@@ -189,12 +189,7 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
-    """
-    Customer factory - depends on Country.
-
-    Creates wallet automatically via post_generation.
-    Use wallet=False to skip wallet creation.
-    """
+    """Customer factory - depends on Country."""
 
     username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
@@ -229,15 +224,6 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         self.set_password(password)
         self.save()
 
-    @factory.post_generation
-    def wallet(self, create, extracted, **kwargs):
-        """Automatically create wallet for customer"""
-        if not create:
-            return
-        if extracted is False:
-            return
-        WalletFactory(user=self)
-
 
 # ============================================================================
 # DEPENDENT FACTORIES (Use SubFactory for relationships)
@@ -245,15 +231,10 @@ class CustomerFactory(factory.django.DjangoModelFactory):
 
 
 class WalletFactory(factory.django.DjangoModelFactory):
-    """
-    Wallet factory - depends on Customer.
-
-    Note: Wallets are typically created via CustomerFactory post_generation.
-    Only use this directly if you need standalone wallets.
-    """
+    """Wallet factory - depends on Customer."""
 
     # SubFactory: Creates Customer if not provided
-    user = factory.SubFactory(CustomerFactory, wallet=False)
+    user = factory.SubFactory(CustomerFactory)
 
     balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
     is_use_wallet_in_payment = True
@@ -273,7 +254,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
     """
 
     # SubFactories: Automatically create related objects
-    customer = factory.SubFactory(CustomerFactory, wallet=False)
+    customer = factory.SubFactory(CustomerFactory)
     country = factory.SubFactory(CountryFactory)
 
     point = factory.LazyFunction(
@@ -293,7 +274,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
 class ContactUsFactory(factory.django.DjangoModelFactory):
     """Contact us - depends on Customer"""
 
-    customer = factory.SubFactory(CustomerFactory, wallet=False)
+    customer = factory.SubFactory(CustomerFactory)
     contact_type = factory.Iterator([choice[0] for choice in ContactCategory.choices])
     description = factory.Faker("text", max_nb_chars=500)
     has_checked = factory.Faker("boolean", chance_of_getting_true=40)
@@ -329,7 +310,7 @@ class BannerFactory(factory.django.DjangoModelFactory):
 
 
 class NotificationFactory(factory.django.DjangoModelFactory):
-    """Notification - no FK dependencies (M2M handled separately)"""
+    """Notification - M2M relationships handled explicitly in seed_db"""
 
     title = factory.Faker("sentence", nb_words=5)
     message_body = factory.Faker("text", max_nb_chars=200)
@@ -343,29 +324,12 @@ class NotificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Notification
-        skip_postgeneration_save = True
-
-    @factory.post_generation
-    def users(self, create, extracted, **kwargs):
-        """Assign users to notification (M2M)"""
-        if not create:
-            return
-
-        if extracted:
-            # Use provided users
-            for user in extracted:
-                self.users.add(user)
-        else:
-            # Add existing customers (if any)
-            customers = Customer.objects.all()[:3]
-            if customers:
-                self.users.add(*customers)
 
 
 class PopUpTrackingFactory(factory.django.DjangoModelFactory):
     """Popup tracking - depends on Customer and PopUpBanner"""
 
-    customer = factory.SubFactory(CustomerFactory, wallet=False)
+    customer = factory.SubFactory(CustomerFactory)
     popup = factory.SubFactory(PopUpBannerFactory)
     view_count = factory.Faker("random_int", min=1, max=20)
 
