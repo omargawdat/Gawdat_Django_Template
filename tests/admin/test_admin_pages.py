@@ -1,12 +1,13 @@
 """
 Test admin page loading and navigation
+
+Test data is automatically loaded via session-scoped fixture in conftest.py.
+No setup needed - just access models via Model.objects.first(), etc.
 """
 
 import pytest
 from django.contrib import admin
 from django.urls import reverse
-
-from factories.loader import load_all_factories
 
 HTTP_200_OK = 200
 HTTP_302_FOUND = 302
@@ -14,13 +15,12 @@ HTTP_302_FOUND = 302
 
 @pytest.mark.django_db
 class TestAdminPages:
-    """Test admin pages with test data"""
+    """
+    Admin panel smoke tests - zero maintenance overhead.
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_test_data(self, django_db_blocker):
-        """Create test data once for all tests in this class"""
-        with django_db_blocker.unblock():
-            load_all_factories(count=2, use_transaction=False)
+    Data is auto-loaded by conftest.py session fixture.
+    Tests auto-discover new models via admin.site._registry.
+    """
 
     def test_admin_index(self, admin_client):
         """Test admin index page loads"""

@@ -1,5 +1,7 @@
 """
 Test admin CRUD operations (save, delete)
+
+Test data is automatically loaded via session-scoped fixture in conftest.py.
 """
 
 import pytest

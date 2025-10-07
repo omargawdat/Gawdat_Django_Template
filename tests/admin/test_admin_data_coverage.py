@@ -1,5 +1,8 @@
 """
 Test data coverage - ensure all models have test data
+
+Validates that all admin models have test data loaded.
+Fails if a new model is added to admin without a corresponding factory.
 """
 
 import pytest
