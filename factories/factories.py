@@ -153,7 +153,7 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 class BannerGroupFactory(factory.django.DjangoModelFactory):
     """Banner group - no dependencies"""
 
-    name = factory.Faker("words", nb=3)
+    name = factory.Sequence(lambda n: f"Banner Group {n}")
     order = factory.Sequence(lambda n: n)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
