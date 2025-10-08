@@ -86,7 +86,7 @@ UNFOLD = {
     },
     "SIDEBAR": {
         "show_search": True,
-        "show_all_applications": True,
+        "show_all_applications": False,
         "navigation": [
             {
                 "title": _("Users 👥"),
@@ -131,6 +131,14 @@ UNFOLD = {
                 "title": _("Payment 💳"),
                 "separator": True,
                 "items": [
+                    {
+                        "title": _("Payment"),
+                        "icon": "payment",
+                        "link": reverse_lazy("admin:payment_payment_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "payment.view_payment"
+                        ),
+                    },
                     {
                         "title": _("Wallet"),
                         "icon": "wallet",

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
@@ -28,3 +30,9 @@ class WalletUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ["is_use_wallet_in_payment"]
+
+
+class WalletRechargeSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("1.00")
+    )

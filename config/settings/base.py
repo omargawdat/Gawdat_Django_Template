@@ -55,6 +55,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATABASES = {
     "default": {
         **dj_database_url.config(
+            default=env.database_url,
             conn_max_age=600,
             conn_health_checks=True,
         ),

@@ -1,0 +1,62 @@
+[
+  {
+    "model": "payment.payment",
+    "pk": 1,
+    "fields": {
+      "customer": 1000,
+      "price_before_discount": "150.00",
+      "price_before_discount_currency": "SAR",
+      "price_after_discount": "120.00",
+      "price_after_discount_currency": "SAR",
+      "payment_type": "other",
+      "is_paid": true,
+      "payment_charge_id": "ch_3QLm8hJ8k7Kx9Qr20HKF2wX1",
+      "bank_transaction_response": {
+        "status": "succeeded",
+        "transaction_id": "txn_3QLm8hJ8k7Kx9Qr20HKF2wX1",
+        "amount": 12000,
+        "currency": "egp",
+        "method": "card"
+      },
+      "created_at": "2025-10-15T10:30:00Z"
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 2,
+    "fields": {
+      "customer": 1001,
+      "price_before_discount": "200.00",
+      "price_before_discount_currency": "SAR",
+      "price_after_discount": "180.00",
+      "price_after_discount_currency": "SAR",
+      "payment_type": "other",
+      "is_paid": true,
+      "payment_charge_id": "ch_3QLn2bJ8k7Kx9Qr21MNO3yZ2",
+      "bank_transaction_response": {
+        "status": "succeeded",
+        "transaction_id": "txn_3QLn2bJ8k7Kx9Qr21MNO3yZ2",
+        "amount": 18000,
+        "currency": "sar",
+        "method": "wallet"
+      },
+      "created_at": "2025-10-15T10:30:00Z"
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 3,
+    "fields": {
+      "customer": 1000,
+      "price_before_discount": "75.00",
+      "price_before_discount_currency": "SAR",
+      "price_after_discount": "75.00",
+      "price_after_discount_currency": "SAR",
+      "payment_type": "other",
+      "is_paid": true,
+      "payment_charge_id": "",
+      "bank_transaction_response": null,
+      "created_at": "2025-10-15T10:30:00Z"
+    }
+  }
+]

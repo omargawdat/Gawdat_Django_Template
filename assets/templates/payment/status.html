@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Payment Status</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f6f8;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 80px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        padding: 40px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .success {
+        color: #28a745;
+      }
+
+      .failed {
+        color: #dc3545;
+      }
+
+      .transaction-id {
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: #f8f9fa;
+        color: #333;
+        border-radius: 4px;
+        margin-top: 20px;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+      }
+
+      /* Optional: Add a subtle fade-in animation */
+      .container {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% if status == 'true' %}
+        <h1 class="success">Payment Successful</h1>
+      {% else %}
+        <h1 class="failed">Payment Failed</h1>
+      {% endif %}
+      <p class="transaction-id">Transaction ID: {{ transaction_id }}</p>
+    </div>
+  </body>
+</html>

@@ -41,7 +41,9 @@ from apps.location.domain.utils import CountryInfoUtil
 from apps.location.models.address import Address
 from apps.location.models.country import Country
 from apps.location.models.region import Region
+from apps.payment.constants import PaymentType
 from apps.payment.constants import WalletTransactionType
+from apps.payment.models.payment import Payment
 from apps.payment.models.wallet import Wallet
 from apps.payment.models.wallet_transaction import WalletTransaction
 from apps.users.constants import GenderChoices
@@ -460,3 +462,61 @@ class WalletTransactionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = WalletTransaction
+
+
+class PaymentFactory(factory.django.DjangoModelFactory):
+    """Payment factory - depends on Customer"""
+
+    # Reuse existing customer randomly, create one if none exist
+    customer = factory.LazyAttribute(
+        lambda obj: Customer.objects.order_by("?").first() or CustomerFactory()
+    )
+    price_before_discount = factory.LazyAttribute(
+        lambda obj: Money(
+            fake.random_int(min=50, max=500),
+            obj.customer.country.currency if obj.customer else "SAR",
+        )
+    )
+    price_after_discount = factory.LazyAttribute(
+        lambda obj: Money(
+            int(
+                obj.price_before_discount.amount
+                * fake.pydecimal(
+                    left_digits=1,
+                    right_digits=2,
+                    positive=True,
+                    min_value=0.7,
+                    max_value=1.0,
+                )
+            ),
+            obj.price_before_discount.currency,
+        )
+    )
+    payment_type = factory.Iterator([choice[0] for choice in PaymentType.choices])
+    is_paid = factory.Faker("boolean", chance_of_getting_true=70)
+    payment_charge_id = factory.Faker("uuid4")
+    bank_transaction_response = factory.LazyFunction(
+        lambda: {
+            "status": fake.random_element(["success", "pending", "failed"]),
+            "transaction_id": fake.uuid4(),
+            "gateway": fake.random_element(["stripe", "paypal", "visa"]),
+            "timestamp": fake.iso8601(),
+        }
+    )
+
+    class Meta:
+        model = Payment
+
+    @classmethod
+    def create_batch_bulk(cls, count, customers=None, **kwargs):
+        """Create Payments in bulk (pass customers list to avoid queries)."""
+        import random
+
+        if customers:
+            payments = [
+                cls.build(customer=random.choice(customers), **kwargs)  # noqa: S311
+                for _ in range(count)
+            ]
+        else:
+            payments = [cls.build(**kwargs) for _ in range(count)]
+        return Payment.objects.bulk_create(payments)

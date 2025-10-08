@@ -1,3 +1,4 @@
+from django.db import transaction
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.utils import inline_serializer
@@ -9,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.payment.api.wallet.serializers import WalletDetailedSerializer
+from apps.payment.api.wallet.serializers import WalletRechargeSerializer
 from apps.payment.api.wallet.serializers import WalletUpdateSerializer
 from apps.payment.api.wallet_transaction.pagination import (
     WalletTransactionCursorPagination,
@@ -16,7 +18,61 @@ from apps.payment.api.wallet_transaction.pagination import (
 from apps.payment.api.wallet_transaction.serializers import (
     WalletTransactionDetailedSerializer,
 )
+from apps.payment.constants import PaymentType
 from apps.payment.domain.selectors.wallet_transactions import WalletTransactionSelector
+from apps.payment.domain.services.payment import PaymentService
+from apps.payment.domain.utilities.money import WalletUtilities
+from apps.payment.models.payment import Payment
+
+
+class WalletRechargeAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = WalletRechargeSerializer
+
+    @extend_schema(
+        tags=["Account/Wallet"],
+        operation_id="rechargeWallet",
+        request={
+            "application/json": WalletRechargeSerializer,
+        },
+        responses={
+            200: inline_serializer(
+                name="WalletRechargeResponse",
+                fields={
+                    "payment_url": serializers.URLField(),
+                },
+            ),
+        },
+    )
+    @transaction.atomic
+    def post(self, request):
+        user = request.user
+
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+
+        amount = serializer.validated_data["amount"]
+        currency = user.wallet.balance.currency
+        amount_of_money = WalletUtilities.to_money_obj(amount, currency)
+
+        payment = Payment.objects.create(
+            customer=user,
+            payment_type=PaymentType.charge_wallet,
+            price_before_discount=amount_of_money,
+            price_after_discount=amount_of_money,
+            is_paid=False,
+        )
+
+        payment_url = PaymentService.initialize_online_payment(payment)
+
+        return Response(
+            {
+                "payment_url": payment_url,
+            }
+        )
 
 
 class WalletDetailAPI(APIView):

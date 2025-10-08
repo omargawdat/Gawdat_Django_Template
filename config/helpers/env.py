@@ -43,6 +43,7 @@ class EnvSettings(BaseSettings):
 
     # Payment
     taps_secret_key: SecretStr
+    payment_confirmation_key: SecretStr
 
     # SMS
     is_testing_sms: bool

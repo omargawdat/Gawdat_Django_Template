@@ -10,7 +10,8 @@ class Notification(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     message_body = models.TextField(_("Message Body"))
     notification_type = models.CharField(
-        _("Notification Type"),
+        max_length=50,
+        verbose_name=_("Notification Type"),
         choices=NotificationType.choices,
         default=NotificationType.OTHER,
     )
