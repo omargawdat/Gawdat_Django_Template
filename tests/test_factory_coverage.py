@@ -42,7 +42,7 @@ def test_all_models_have_factories():
         "sites.site",
         # apps
         # ignore PopUpTrackingFactory
-        "appinfo.popuptracking",
+        "appInfo.popuptracking",
     }
 
     # Check which models have no data

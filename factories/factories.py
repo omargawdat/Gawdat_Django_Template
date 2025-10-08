@@ -418,7 +418,16 @@ class PaymentFactory(factory.django.DjangoModelFactory):
     )
     price_after_discount = factory.LazyAttribute(
         lambda obj: Money(
-            int(obj.price_before_discount.amount * fake.random.uniform(0.7, 1.0)),
+            int(
+                obj.price_before_discount.amount
+                * fake.pydecimal(
+                    left_digits=1,
+                    right_digits=2,
+                    positive=True,
+                    min_value=0.7,
+                    max_value=1.0,
+                )
+            ),
             obj.price_before_discount.currency,
         )
     )

@@ -11,7 +11,9 @@ from factories.factories import CustomerFactory
 from factories.factories import FAQFactory
 from factories.factories import NotificationFactory
 from factories.factories import OnboardingFactory
+from factories.factories import PaymentFactory
 from factories.factories import PopUpBannerFactory
+from factories.factories import PopUpTrackingFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 
@@ -95,3 +97,13 @@ class Command(BaseCommand):
         notifications = NotificationFactory.create_batch(factor)
         for notification in notifications:
             notification.users.add(*random.sample(customers, k=min(3, len(customers))))
+
+        # ========================================================================
+        # DEPENDENT MODELS (require existing customers/banners)
+        # ========================================================================
+
+        # PopUp tracking for customers
+        PopUpTrackingFactory.create_batch(2 * factor)
+
+        # Payments for customers
+        PaymentFactory.create_batch(3 * factor)
