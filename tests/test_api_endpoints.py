@@ -18,6 +18,8 @@ from django.urls import URLResolver
 from django.urls import get_resolver
 from django.urls import reverse
 
+from apps.location.models.address import Address
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +28,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 RETRIEVE_MODELS: dict[str, Any] = {
-    # 'address-detail': Address,
+    "address-detail": Address,
 }
 
 QUERY_PARAMS: dict[str, dict[str, str]] = {
