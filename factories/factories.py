@@ -17,6 +17,8 @@ Usage:
 import factory
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from djmoney.money import Money
 from faker import Faker
 from faker_e164.providers import E164Provider
@@ -51,6 +53,25 @@ fake.add_provider(E164Provider)
 
 
 # ============================================================================
+# SHARED IMAGE (Generated once, reused everywhere)
+# ============================================================================
+
+# Generate one image at module load time and reuse it
+_shared_image_field = factory.django.ImageField(color="blue", width=100, height=100)
+_shared_image_bytes = _shared_image_field._make_data({})
+_shared_image_name = "shared_test_image.png"
+
+# Pre-save the shared image to storage once
+if not default_storage.exists(_shared_image_name):
+    default_storage.save(_shared_image_name, ContentFile(_shared_image_bytes))
+
+
+def get_shared_image():
+    """Return the path to the pre-saved shared image."""
+    return _shared_image_name
+
+
+# ============================================================================
 # INDEPENDENT FACTORIES (No dependencies)
 # ============================================================================
 
@@ -63,7 +84,7 @@ class CountryFactory(factory.django.DjangoModelFactory):
     """
 
     code = factory.Iterator(settings.SUPPORTED_COUNTRY_CODES)
-    flag = factory.django.ImageField(color="blue", width=100, height=100)
+    flag = factory.LazyFunction(get_shared_image)
     is_active = True
 
     app_install_money_inviter = factory.LazyAttribute(
@@ -148,7 +169,7 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
     """Onboarding screen - no dependencies"""
 
     title = factory.Faker("sentence", nb_words=4)
-    image = factory.django.ImageField(color="cyan", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     text = factory.Faker("text", max_nb_chars=75)
     sub_text = factory.Faker("text", max_nb_chars=50)
     order = factory.Sequence(lambda n: n)
@@ -161,7 +182,7 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
 class PopUpBannerFactory(factory.django.DjangoModelFactory):
     """Popup banner - no dependencies"""
 
-    image = factory.django.ImageField(color="yellow", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     count_per_user = factory.Faker("random_int", min=1, max=5)
     is_active = factory.Faker("boolean", chance_of_getting_true=70)
 
@@ -179,7 +200,7 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
-    image = factory.django.ImageField(color="purple", width=800, height=800)
+    image = factory.LazyFunction(get_shared_image)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
     is_staff = True
     password = "adminpass123"  # pragma: allowlist secret  # noqa: S105
@@ -203,7 +224,7 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     full_name = factory.Faker("name")
-    image = factory.django.ImageField(color="green", width=800, height=800)
+    image = factory.LazyFunction(get_shared_image)
     gender = factory.Iterator([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
@@ -310,7 +331,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
     location_type = factory.Iterator(
         [choice[0] for choice in LocationNameChoices.choices]
     )
-    map_image = factory.django.ImageField(color="orange", width=600, height=400)
+    map_image = factory.LazyFunction(get_shared_image)
 
     class Meta:
         model = Address
@@ -351,7 +372,7 @@ class RegionFactory(factory.django.DjangoModelFactory):
 class BannerFactory(factory.django.DjangoModelFactory):
     """Banner - depends on BannerGroup"""
 
-    image = factory.django.ImageField(color="red", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     group = factory.SubFactory(BannerGroupFactory)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
