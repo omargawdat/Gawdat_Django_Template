@@ -6,8 +6,11 @@ from contextlib import contextmanager
 from django.core.management.base import BaseCommand
 from django.db import connection
 
+from apps.appInfo.models.banner import Banner
+from apps.appInfo.models.banner_group import BannerGroup
 from factories.factories import AdminUserFactory
 from factories.factories import AppInfoFactory
+from factories.factories import BannerFactory
 from factories.factories import BannerGroupFactory
 from factories.factories import CountryFactory
 from factories.factories import CustomerFactory
@@ -40,10 +43,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--factor",
+            "--count",
             type=int,
-            default=4,
-            help="Multiplier for data quantities (default: 4)",
+            help="Base count for data quantities (default: 4)",
         )
         parser.add_argument(
             "--no-flush",
@@ -65,7 +67,7 @@ class Command(BaseCommand):
             )
             return
 
-        factor = options["factor"]
+        count = options["count"]
         total_start = time.time()
 
         # Flush existing data if requested
@@ -77,17 +79,18 @@ class Command(BaseCommand):
                 call_command("createsu", verbosity=0)
 
         # Seed database
-        self._load_all_factories(factor)
+        self._load_all_factories(count)
 
         # Output summary
         total_elapsed = time.time() - total_start
         self.stdout.write(
             self.style.SUCCESS(
-                f"\n✓ Seeded (factor={factor}) - Total time: {total_elapsed:.2f}s"
+                f"\n✓ Seeded (count={count}) - Total time: {total_elapsed:.2f}s"
             )
         )
 
-    def _load_all_factories(self, factor):
+    def _load_all_factories(self, count):
+        fixed_count = 10
         """Load test data with relationships handled by factories."""
         # ========================================================================
         # SINGLETONS
@@ -100,43 +103,50 @@ class Command(BaseCommand):
         # INDEPENDENT MODELS
         # ========================================================================
         # TODO: Use bulk create for countries (requires handling LazyAttribute for Money fields)
-        with self._timer(f"Creating {2 * factor} countries"):
-            CountryFactory.create_batch(2 * factor)
+        with self._timer(f"Creating {fixed_count} countries"):
+            CountryFactory.create_batch(fixed_count)
 
-        # TODO: Use bulk create for banner groups (requires handling post_generation banners)
-        with self._timer(f"Creating {3 * factor} banner groups"):
-            BannerGroupFactory.create_batch(3 * factor)
+        with self._timer(f"Creating {count} banner groups + banners (bulk)"):
+            # Create banner groups in bulk
+            groups = [BannerGroupFactory.build() for _ in range(count)]
+            banner_groups = BannerGroup.objects.bulk_create(groups)
 
-        with self._timer(f"Creating {5 * factor} FAQs (bulk)"):
-            FAQFactory.create_batch_bulk(5 * factor)
+            # Create 2 banners per group in bulk
+            banners = []
+            for group in banner_groups:
+                banners.extend([BannerFactory.build(group=group) for _ in range(2)])
+            Banner.objects.bulk_create(banners)
 
-        with self._timer(f"Creating {3 * factor} onboarding screens (bulk)"):
-            OnboardingFactory.create_batch_bulk(3 * factor)
+        with self._timer(f"Creating {count} FAQs (bulk)"):
+            FAQFactory.create_batch_bulk(count)
 
-        with self._timer(f"Creating {2 * factor} popup banners (bulk)"):
-            PopUpBannerFactory.create_batch_bulk(2 * factor)
+        with self._timer(f"Creating {count} onboarding screens (bulk)"):
+            OnboardingFactory.create_batch_bulk(count)
+
+        with self._timer(f"Creating {count} popup banners (bulk)"):
+            PopUpBannerFactory.create_batch_bulk(count)
 
         # ========================================================================
         # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
         # TODO: Cannot use bulk - AdminUser uses multi-table inheritance (polymorphic)
-        with self._timer(f"Creating {2 * factor} admin users"):
-            AdminUserFactory.create_batch(2 * factor)
+        with self._timer(f"Creating {fixed_count} admin users"):
+            AdminUserFactory.create_batch(fixed_count)
 
         # TODO: Cannot use bulk - Customer has post_generation hooks (wallet, addresses, contact_us)
         with self._timer(
-            f"Creating {5 * factor} customers (+ wallets, addresses, contact_us)"
+            f"Creating {count} customers (+ wallets, addresses, contact_us)"
         ):
-            customers = CustomerFactory.create_batch(5 * factor)
+            customers = CustomerFactory.create_batch(fixed_count)
 
         # ========================================================================
         # ADDITIONAL RELATIONSHIPS
         # ========================================================================
-        with self._timer(f"Creating {3 * factor} regions (bulk)"):
-            RegionFactory.create_batch_bulk(3 * factor)
+        with self._timer(f"Creating {count} regions (bulk)"):
+            RegionFactory.create_batch_bulk(count)
 
-        with self._timer(f"Creating {factor} notifications with M2M users (bulk)"):
-            notifications = NotificationFactory.create_batch_bulk(factor)
+        with self._timer(f"Creating {fixed_count} notifications with M2M users (bulk)"):
+            notifications = NotificationFactory.create_batch_bulk(fixed_count)
             for notification in notifications:
                 notification.users.add(
                     *random.sample(customers, k=min(3, len(customers)))

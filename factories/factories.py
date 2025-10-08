@@ -160,15 +160,6 @@ class BannerGroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BannerGroup
 
-    @factory.post_generation
-    def create_banners(self, create, extracted, **kwargs):
-        """Auto-create banners for this group"""
-        if not create:
-            return
-        count = extracted if extracted is not None else 2
-        if count > 0:
-            BannerFactory.create_batch(count, group=self)
-
 
 class FAQFactory(factory.django.DjangoModelFactory):
     """FAQ - no dependencies"""
