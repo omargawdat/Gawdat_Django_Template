@@ -131,6 +131,7 @@ terraform.rc
 
 # Security and Credentials
 firebase_cred.json
+firebase.json
 *.pem
 *.key
 *.crt
@@ -151,3 +152,8 @@ dump.rdb
 .env
 
 my_awesome_project
+
+# Schemas
+schema.yml
+schema.yaml
+schema.json

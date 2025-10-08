@@ -1,135 +1,97 @@
 # management/commands/seed_db.py
-from django.core.management.base import BaseCommand
-from django.db import transaction
+import random
 
-from factories.loader import discover_factories
-from factories.loader import get_factory_priority
-from factories.loader import get_factory_seed_count
+from django.core.management.base import BaseCommand
+
+from factories.factories import AdminUserFactory
+from factories.factories import AppInfoFactory
+from factories.factories import BannerGroupFactory
+from factories.factories import CountryFactory
+from factories.factories import CustomerFactory
+from factories.factories import FAQFactory
+from factories.factories import NotificationFactory
+from factories.factories import OnboardingFactory
+from factories.factories import PopUpBannerFactory
+from factories.factories import RegionFactory
+from factories.factories import SocialAccountFactory
 
 
 class Command(BaseCommand):
-    help = "Seed database with test data"
+    help = "Seed database with test data using factories"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--count",
+            "--factor",
             type=int,
-            default=20,
-            help="Number of instances to create (default: 20)",
+            default=4,
+            help="Multiplier for data quantities (default: 4)",
         )
         parser.add_argument(
             "--no-flush",
             action="store_false",
             dest="flush",
             default=True,
-            help="Skip flushing data",
+            help="Skip flushing data before seeding",
         )
 
     def handle(self, *args, **options):
         from config.helpers.env import env
 
-        if env.environment not in ("local", "development"):
+        # Safety check: only allow in development
+        if env.environment not in ("local", "development", "test"):
             self.stdout.write(
                 self.style.ERROR(
-                    f"❌ seed_db only allowed in local/development, not '{env.environment}'"
+                    f"❌ seed_db only allowed in local/development/test, not '{env.environment}'"
                 )
             )
             return
 
-        count = options["count"]
+        factor = options["factor"]
 
+        # Flush existing data if requested
         if options["flush"]:
             from django.core.management import call_command
 
-            self.stdout.write(self.style.WARNING("Flushing existing data..."))
-            call_command("flush", "--no-input")
-            self.stdout.write(self.style.SUCCESS("✓ Data flushed"))
+            call_command("flush", "--no-input", verbosity=0)
+            call_command("createsu", verbosity=0)
 
-            call_command("createsu")
+        # Seed database
+        self._load_all_factories(factor)
 
-        self.stdout.write(self.style.SUCCESS("\n🌱 Seeding database...\n"))
+        # Output summary
+        self.stdout.write(self.style.SUCCESS(f"✓ Seeded (factor={factor})"))
 
-        # Auto-discover all factories and sort by priority
-        all_factories = discover_factories()
-        sorted_factories = sorted(
-            all_factories, key=lambda x: get_factory_priority(x[1])
-        )
+    def _load_all_factories(self, factor):
+        """Load test data with relationships handled by factories."""
+        # ========================================================================
+        # SINGLETONS
+        # ========================================================================
+        AppInfoFactory.create()
+        SocialAccountFactory.create()
 
-        total_created = 0
-        created_summary = []
+        # ========================================================================
+        # INDEPENDENT MODELS
+        # ========================================================================
+        CountryFactory.create_batch(2 * factor)
+        BannerGroupFactory.create_batch(3 * factor)
+        FAQFactory.create_batch(5 * factor)
+        OnboardingFactory.create_batch(3 * factor)
+        PopUpBannerFactory.create_batch(2 * factor)
 
-        for _factory_name, factory_class in sorted_factories:
-            model = factory_class._meta.model
-            model_name = model.__name__
+        # ========================================================================
+        # USER MODELS (auto-creates wallet, addresses, contact_us)
+        # ========================================================================
+        AdminUserFactory.create_batch(2 * factor)
+        customers = CustomerFactory.create_batch(5 * factor)
 
-            # Skip singletons if they already exist
-            if hasattr(model, "singleton_instance_id"):
-                if model.objects.exists():
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"  ⊘ Skipping {model_name} (singleton already exists)"
-                        )
-                    )
-                    continue
+        # ========================================================================
+        # ADDITIONAL RELATIONSHIPS
+        # ========================================================================
 
-            # Get count specification from factory config
-            count_spec = get_factory_seed_count(factory_class, count)
+        # Regions
+        RegionFactory.create_batch(3 * factor)
 
-            # Calculate actual count from specification
-            create_count = self._calculate_count(count_spec, count)
-
-            try:
-                self.stdout.write(f"  Creating {create_count} {model_name}(s)...")
-
-                with transaction.atomic():
-                    if create_count == 1:
-                        factory_class.create()
-                        actual_count = 1
-                    else:
-                        factory_class.create_batch(create_count)
-                        actual_count = create_count
-
-                    total_created += actual_count
-                    created_summary.append(f"  ✓ {actual_count} {model_name}(s)")
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"    ✓ Created {actual_count} {model_name}(s)"
-                        )
-                    )
-
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"    ✗ Failed {model_name}: {e}"))
-
-        # Summary
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"\n✓ Database seeded successfully!\n"
-                f"Total instances: {total_created}\n\n" + "\n".join(created_summary)
-            )
-        )
-
-    def _calculate_count(self, count_spec, base_count):
-        """
-        Calculate actual count from specification
-
-        Args:
-            count_spec: Can be:
-                - int: exact count
-                - "count": use base_count
-                - "1.5x", "0.8x": multiply base_count
-            base_count: Base count from command argument
-
-        Returns:
-            int: Calculated count
-        """
-        if isinstance(count_spec, int):
-            return count_spec
-
-        if count_spec == "count":
-            return base_count
-
-        if isinstance(count_spec, str) and count_spec.endswith("x"):
-            multiplier = float(count_spec[:-1])
-            return int(base_count * multiplier)
-
-        return base_count
+        # Notifications with M2M users
+        notifications = NotificationFactory.create_batch(factor)
+        for notification in notifications:
+            notification.users.add(*random.sample(customers, k=min(3, len(customers))))

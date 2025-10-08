@@ -35,7 +35,7 @@ class Command(BaseCommand):
             )
             return None
 
-    def handle(self, *args, **options):  # noqa: C901, PLR0912
+    def handle(self, *args, **options):  # noqa: PLR0912
         download_flags = options.get("download_flags", False)
         supported_codes = settings.SUPPORTED_COUNTRY_CODES
         created_count = 0

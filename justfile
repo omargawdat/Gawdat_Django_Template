@@ -138,6 +138,10 @@ ps:
 bash:
     docker compose -f docker-compose.local.yml exec django bash
 
+# Encode Firebase credentials and update .env
+firebase-setup path:
+    ./scripts/encode_firebase.sh {{path}}
+
 # Clean all artifacts and volumes
 clean:
     docker compose -f docker-compose.local.yml down -v

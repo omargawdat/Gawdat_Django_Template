@@ -1,19 +1,17 @@
 """
-Simple factories using factory_boy + Faker
-All factories reuse existing related instances instead of creating new ones
+Factory definitions using SubFactory pattern for explicit relationships.
 
-Factory Configuration:
-    Add _priority, _seed_count, _test_count attributes to customize factory behavior:
+Benefits:
+- Explicit dependencies (no manual priority management)
+- Self-documenting (clear relationships)
+- factory_boy handles dependency order automatically
 
-    class AddressFactory(factory.django.DjangoModelFactory):
-        class Meta:
-            model = Address
+Usage:
+    # Seed DB - creates full object graph
+    CustomerFactory.create_batch(10)
 
-        _priority = 2           # Load order: 0=first, 1=user models, 2=dependent (default)
-        _seed_count = "1.5x"    # For seed_db: "count", "1.5x", "0.8x", or int
-        _test_count = 2         # For tests (default: 2)
-
-    If not provided, the loader will infer settings automatically based on factory name.
+    # Tests - override as needed
+    address = AddressFactory(customer__username="john")
 """
 
 import factory
@@ -30,6 +28,7 @@ from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
 from apps.appInfo.models.onboarding import Onboarding
 from apps.appInfo.models.popup import PopUpBanner
+from apps.appInfo.models.popup import PopUpTracking
 from apps.appInfo.models.social import SocialAccount
 from apps.appInfo.other.constants import ContactCategory
 from apps.channel.constants import NotificationType
@@ -48,23 +47,26 @@ from apps.users.constants import GenderChoices
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
 
-# Initialize Faker with E164 provider for valid phone numbers
+# Initialize Faker
 fake = Faker()
 fake.add_provider(E164Provider)
 
 
 # ============================================================================
-# INDEPENDENT FACTORIES (No foreign keys)
+# INDEPENDENT FACTORIES (No dependencies)
 # ============================================================================
 
 
 class CountryFactory(factory.django.DjangoModelFactory):
+    """
+    Country factory - no dependencies.
+
+    Uses iterator to cycle through supported countries.
+    """
+
     code = factory.Iterator(settings.SUPPORTED_COUNTRY_CODES)
     flag = factory.django.ImageField(color="blue", width=100, height=100)
     is_active = True
-
-    # Note: name, currency, and phone_code are now properties on the Country model
-    # They are automatically derived from the country code using pycountry/phonenumbers
 
     app_install_money_inviter = factory.LazyAttribute(
         lambda obj: Money(10, CountryInfoUtil.get_currency_code(obj.code))
@@ -85,18 +87,22 @@ class CountryFactory(factory.django.DjangoModelFactory):
 
 
 class AppInfoFactory(factory.django.DjangoModelFactory):
-    id = 1  # Singleton ID
+    """Singleton factory for app info"""
+
+    id = 1
     about_us = factory.Faker("text", max_nb_chars=1000)
     terms = factory.Faker("text", max_nb_chars=1000)
     policy = factory.Faker("text", max_nb_chars=1000)
 
     class Meta:
         model = AppInfo
-        django_get_or_create = ("id",)  # Singleton: update if exists
+        django_get_or_create = ("id",)
 
 
 class SocialAccountFactory(factory.django.DjangoModelFactory):
-    id = 1  # Singleton ID
+    """Singleton factory for social accounts"""
+
+    id = 1
     email = factory.Faker("email")
     phone_number = factory.Faker("numerify", text="+###########")
     twitter = factory.Faker("url")
@@ -106,10 +112,12 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = SocialAccount
-        django_get_or_create = ("id",)  # Singleton: update if exists
+        django_get_or_create = ("id",)
 
 
 class BannerGroupFactory(factory.django.DjangoModelFactory):
+    """Banner group - no dependencies"""
+
     name = factory.Faker("words", nb=3)
     order = factory.Sequence(lambda n: n + 10)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
@@ -117,8 +125,19 @@ class BannerGroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BannerGroup
 
+    @factory.post_generation
+    def create_banners(self, create, extracted, **kwargs):
+        """Auto-create banners for this group"""
+        if not create:
+            return
+        count = extracted if extracted is not None else 2
+        if count > 0:
+            BannerFactory.create_batch(count, group=self)
+
 
 class FAQFactory(factory.django.DjangoModelFactory):
+    """FAQ - no dependencies"""
+
     question = factory.Faker("sentence", nb_words=8)
     answer = factory.Faker("text", max_nb_chars=300)
     order = factory.Sequence(lambda n: n + 10)
@@ -128,6 +147,8 @@ class FAQFactory(factory.django.DjangoModelFactory):
 
 
 class OnboardingFactory(factory.django.DjangoModelFactory):
+    """Onboarding screen - no dependencies"""
+
     title = factory.Faker("sentence", nb_words=4)
     image = factory.django.ImageField(color="cyan", width=1200, height=800)
     text = factory.Faker("text", max_nb_chars=75)
@@ -140,6 +161,8 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
 
 
 class PopUpBannerFactory(factory.django.DjangoModelFactory):
+    """Popup banner - no dependencies"""
+
     image = factory.django.ImageField(color="yellow", width=1200, height=800)
     count_per_user = factory.Faker("random_int", min=1, max=5)
     is_active = factory.Faker("boolean", chance_of_getting_true=70)
@@ -149,12 +172,12 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
 
 # ============================================================================
-# USER FACTORIES
+# USER FACTORIES (Depend on Country)
 # ============================================================================
 
 
 class AdminUserFactory(factory.django.DjangoModelFactory):
-    username = factory.Sequence(lambda n: f"admin_{n}_user")
+    username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.django.ImageField(color="purple", width=800, height=800)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
@@ -163,10 +186,10 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AdminUser
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def hash_password(self, create, extracted, **kwargs):
-        """Hash the password after creation"""
         if not create:
             return
         password = extracted if extracted else self.password
@@ -175,6 +198,8 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
+    """Customer factory - depends on Country."""
+
     username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     full_name = factory.Faker("name")
@@ -184,20 +209,17 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
     password = "testpass123"  # pragma: allowlist secret  # noqa: S105
 
-    # Get a random country - evaluated once per instance
-    country = factory.LazyFunction(
-        lambda: Country.objects.filter(is_active=True).order_by("?").first()
-    )
+    # SubFactory: Automatically creates Country if needed
+    country = factory.SubFactory(CountryFactory)
 
-    # Generate valid phone number
+    # Generate phone number based on country
     phone_number = factory.LazyAttribute(
         lambda obj: fake.e164(region_code=obj.country.code, valid=True, possible=True)
-        if obj.country
-        else "+966501234567"
     )
 
     class Meta:
         model = Customer
+        skip_postgeneration_save = True
 
     class Params:
         verified = factory.Trait(is_verified=True)
@@ -205,7 +227,6 @@ class CustomerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def hash_password(self, create, extracted, **kwargs):
-        """Hash the password after creation"""
         if not create:
             return
         password = extracted if extracted else self.password
@@ -213,50 +234,77 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         self.save()
 
     @factory.post_generation
-    def wallet(self, create, extracted, **kwargs):
-        """Automatically create wallet for customer"""
+    def create_wallet(self, create, extracted, **kwargs):
+        """Auto-create wallet for customer"""
         if not create:
             return
-        if extracted is False:
+        WalletFactory.create(user=self)
+
+    @factory.post_generation
+    def create_addresses(self, create, extracted, **kwargs):
+        """Auto-create addresses for customer"""
+        if not create:
             return
-        WalletFactory(user=self)
+        count = extracted if extracted is not None else 2
+        AddressFactory.create_batch(count, customer=self)
+
+    @factory.post_generation
+    def create_contact_us(self, create, extracted, **kwargs):
+        """Auto-create contact us entry for customer"""
+        if not create:
+            return
+        if extracted is not False:  # Allow explicit skip with False
+            ContactUsFactory.create(customer=self)
 
 
 # ============================================================================
-# DEPENDENT FACTORIES (Reuse existing instances)
+# DEPENDENT FACTORIES (Use SubFactory for relationships)
 # ============================================================================
 
 
 class WalletFactory(factory.django.DjangoModelFactory):
-    # User should be passed explicitly when called from CustomerFactory
-    # If no user provided, this factory shouldn't be called directly - wallets are created via CustomerFactory
-    user = factory.LazyAttribute(
-        lambda obj: Customer.objects.order_by("?").first()
-        or CustomerFactory(wallet=False)
-    )
-    balance = factory.LazyAttribute(
-        lambda obj: Money(100, obj.user.country.currency)
-        if hasattr(obj, "user") and obj.user
-        else Money(100, "SAR")
-    )
+    """Wallet factory - depends on Customer."""
+
+    # SubFactory: Creates Customer if not provided
+    user = factory.SubFactory(CustomerFactory)
+
+    balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
     is_use_wallet_in_payment = True
 
     class Meta:
         model = Wallet
-        django_get_or_create = ("user",)
+
+    @factory.post_generation
+    def create_transactions(self, create, extracted, **kwargs):
+        """Auto-create wallet transactions"""
+        if not create:
+            return
+        count = extracted if extracted is not None else 3
+        if count > 0:
+            WalletTransactionFactory.create_batch(count, wallet=self)
 
 
 class AddressFactory(factory.django.DjangoModelFactory):
-    # Reuse existing customer randomly, create one if none exist
-    customer = factory.LazyAttribute(
-        lambda obj: Customer.objects.order_by("?").first()
-        or CustomerFactory(wallet=False)
+    """
+    Address factory - depends on Customer and Country.
+
+    Creates complete object graph:
+    Address → Customer → Country
+            → Wallet
+    """
+
+    # SubFactories: Automatically create related objects
+    customer = factory.SubFactory(CustomerFactory)
+    country = factory.SubFactory(CountryFactory)
+
+    # Generate realistic coordinates based on country (with fallback)
+    point = factory.LazyAttribute(
+        lambda obj: (
+            Point(float(coords[1]), float(coords[0]))
+            if (coords := fake.local_latlng(country_code=obj.country.code))
+            else Point(float(fake.longitude()), float(fake.latitude()))
+        )
     )
-    # Reuse existing country randomly, create one if none exist
-    country = factory.LazyAttribute(
-        lambda obj: Country.objects.order_by("?").first() or CountryFactory()
-    )
-    point = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
     description = factory.Faker("address")
     map_description = factory.Faker("sentence")
     location_type = factory.Iterator(
@@ -267,18 +315,11 @@ class AddressFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Address
 
-    # Factory configuration (prefix with _ to avoid conflicts)
-    _priority = 2  # Depends on Customer and Country
-    _seed_count = "1.5x"  # Create 1.5x more addresses than base count
-    _test_count = 2  # Create 2 addresses in tests
-
 
 class ContactUsFactory(factory.django.DjangoModelFactory):
-    # Reuse existing customer randomly, create one if none exist
-    customer = factory.LazyAttribute(
-        lambda obj: Customer.objects.order_by("?").first()
-        or CustomerFactory(wallet=False)
-    )
+    """Contact us - depends on Customer"""
+
+    customer = factory.SubFactory(CustomerFactory)
     contact_type = factory.Iterator([choice[0] for choice in ContactCategory.choices])
     description = factory.Faker("text", max_nb_chars=500)
     has_checked = factory.Faker("boolean", chance_of_getting_true=40)
@@ -288,13 +329,19 @@ class ContactUsFactory(factory.django.DjangoModelFactory):
 
 
 class RegionFactory(factory.django.DjangoModelFactory):
-    # Reuse existing country randomly, create one if none exist
-    country = factory.LazyAttribute(
-        lambda obj: Country.objects.order_by("?").first() or CountryFactory()
-    )
+    """Region - depends on Country"""
+
+    country = factory.SubFactory(CountryFactory)
     code = factory.Sequence(lambda n: f"REG{n:05d}")
     name = factory.Faker("city")
-    geometry = factory.LazyAttribute(lambda obj: Point(-74.0, 40.7))
+    # Generate realistic coordinates based on country (with fallback)
+    geometry = factory.LazyAttribute(
+        lambda obj: (
+            Point(float(coords[1]), float(coords[0]))
+            if (coords := fake.local_latlng(country_code=obj.country.code))
+            else Point(float(fake.longitude()), float(fake.latitude()))
+        )
+    )
 
     class Meta:
         model = Region
@@ -302,11 +349,10 @@ class RegionFactory(factory.django.DjangoModelFactory):
 
 
 class BannerFactory(factory.django.DjangoModelFactory):
+    """Banner - depends on BannerGroup"""
+
     image = factory.django.ImageField(color="red", width=1200, height=800)
-    # Reuse existing banner group randomly, create one if none exist
-    group = factory.LazyAttribute(
-        lambda obj: BannerGroup.objects.order_by("?").first() or BannerGroupFactory()
-    )
+    group = factory.SubFactory(BannerGroupFactory)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
@@ -314,6 +360,8 @@ class BannerFactory(factory.django.DjangoModelFactory):
 
 
 class NotificationFactory(factory.django.DjangoModelFactory):
+    """Notification - M2M relationships handled explicitly in seed_db"""
+
     title = factory.Faker("sentence", nb_words=5)
     message_body = factory.Faker("text", max_nb_chars=200)
     notification_type = factory.Iterator(
@@ -328,24 +376,28 @@ class NotificationFactory(factory.django.DjangoModelFactory):
         model = Notification
 
 
+class PopUpTrackingFactory(factory.django.DjangoModelFactory):
+    """Popup tracking - depends on Customer and PopUpBanner"""
+
+    customer = factory.SubFactory(CustomerFactory)
+    popup = factory.SubFactory(PopUpBannerFactory)
+    view_count = factory.Faker("random_int", min=1, max=20)
+
+    class Meta:
+        model = PopUpTracking
+
+
 class WalletTransactionFactory(factory.django.DjangoModelFactory):
-    # Reuse existing wallet randomly, create one if none exist
-    wallet = factory.LazyAttribute(
-        lambda obj: Wallet.objects.order_by("?").first()
-        or WalletFactory(user=CustomerFactory())
-    )
+    """Wallet transaction - depends on Wallet and AdminUser"""
+
+    wallet = factory.SubFactory(WalletFactory)
     transaction_type = factory.Iterator(
         [choice[0] for choice in WalletTransactionType.choices]
     )
     amount = factory.LazyAttribute(
         lambda obj: Money(50, obj.wallet.user.country.currency)
-        if obj.wallet
-        else Money(50, "SAR")
     )
-    # Reuse existing admin randomly, create one if none exist
-    action_by = factory.LazyAttribute(
-        lambda obj: AdminUser.objects.order_by("?").first() or AdminUserFactory()
-    )
+    action_by = factory.SubFactory(AdminUserFactory)
     transaction_note = factory.Faker("sentence")
 
     class Meta:

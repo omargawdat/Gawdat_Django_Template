@@ -1,51 +1,85 @@
-## 🚀 Getting Started.
+## 🚀 Getting Started
+
+### Prerequisites
+
+```bash
+# Install required tools (macOS)
+brew install uv just docker
+```
 
 ### 1. One-Time Project Setup
 
-1. Clone this repository
+1. Clone this repository:
     ```bash
     git clone https://github.com/omargawdat/Gawdat_Django_Template.git
+    cd Gawdat_Django_Template
     ```
-2. Replace `projectname` with your `project name`
-3. create 'media' folder
+
+2. Install dependencies:
     ```bash
-    mkdir assets/media
+    just install
+    ```
+
+3. Setup pre-commit hooks:
+    ```bash
+    just pre-commit-install
+    ```
+
+4. Create media folder:
+    ```bash
+    mkdir -p assets/media
     touch assets/media/.gitkeep
     ```
-4. move the `build_test` file to the workflow directory:
-5. Initialize the Git repository:
+
+5. Replace `projectname` with your `project name`
+
+6. Initialize Git repository (optional):
    ```bash
    sudo rm -r .git
    git init
    git add .
    git commit -m "Initial commit"
-   pre-commit install
-   pre-commit install --hook-type commit-msg
    ```
-6. Share the project on GitHub
+
+7. Share the project on GitHub
 
 ### 2. Local Development
 
-1. install pre-commit hooks
-   ```bash
-   pre-commit install
-   pre-commit install --hook-type commit-msg
-   ```
-
-2. Create `.env` file in the root directory:
+1. Create `.env` file:
     ```bash
     cp dummy.env .env
     ```
 
-3. Build and run the application with Docker Compose:
+2. Configure Firebase credentials (if using FCM/push notifications):
+    ```bash
+    # Download firebase.json from Firebase Console
+    # https://console.firebase.google.com/ → Project Settings → Service Accounts
+    just firebase-setup firebase.json
+    ```
+
+3. Start the application:
    ```bash
-   docker-compose -f docker-compose.local.yml up --build -d
+   just up
    ```
 
-4. Run Django management commands:
-   ```bash
-   docker compose -f docker-compose.local.yml run --rm django python manage.py [command]
-   ```
+4. Access the application:
+   - **Admin Panel**: http://localhost:8000/admin
+   - **API**: http://localhost:8000/api
+   - **API Docs**: http://localhost:8000/api/schema/swagger-ui
+
+**Common commands:**
+```bash
+just up              # Start services
+just down            # Stop services
+just rebuild         # Rebuild containers
+just migrate         # Run migrations
+just makemigrations  # Create migrations
+just shell           # Django shell
+just test            # Run tests
+just lint-all        # Fix code style
+```
+
+Run `just` to see all available commands.
 
 ### 3. Deployment
 
