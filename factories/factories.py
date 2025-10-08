@@ -16,7 +16,10 @@ Usage:
 
 import factory
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 from django.contrib.gis.geos import Point
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from djmoney.money import Money
 from faker import Faker
 from faker_e164.providers import E164Provider
@@ -53,6 +56,34 @@ fake.add_provider(E164Provider)
 
 
 # ============================================================================
+# SHARED IMAGE (Generated once, reused everywhere)
+# ============================================================================
+
+# Generate one image at module load time and reuse it
+_shared_image_field = factory.django.ImageField(color="blue", width=100, height=100)
+_shared_image_bytes = _shared_image_field._make_data({})
+_shared_image_name = "shared_test_image.png"
+
+# Pre-save the shared image to storage once
+if not default_storage.exists(_shared_image_name):
+    default_storage.save(_shared_image_name, ContentFile(_shared_image_bytes))
+
+
+def get_shared_image():
+    """Return the path to the pre-saved shared image."""
+    return _shared_image_name
+
+
+# ============================================================================
+# SHARED PASSWORD HASH (Generated once, reused everywhere)
+# ============================================================================
+
+# Pre-hash password once to avoid expensive re-hashing for test data
+
+_SHARED_PASSWORD_HASH = make_password("testpass123")  # pragma: allowlist secret
+
+
+# ============================================================================
 # INDEPENDENT FACTORIES (No dependencies)
 # ============================================================================
 
@@ -65,7 +96,7 @@ class CountryFactory(factory.django.DjangoModelFactory):
     """
 
     code = factory.Iterator(settings.SUPPORTED_COUNTRY_CODES)
-    flag = factory.django.ImageField(color="blue", width=100, height=100)
+    flag = factory.LazyFunction(get_shared_image)
     is_active = True
 
     app_install_money_inviter = factory.LazyAttribute(
@@ -84,6 +115,12 @@ class CountryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Country
         django_get_or_create = ("code",)
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Countries in bulk for better performance."""
+        countries = [cls.build(**kwargs) for _ in range(count)]
+        return Country.objects.bulk_create(countries, ignore_conflicts=True)
 
 
 class AppInfoFactory(factory.django.DjangoModelFactory):
@@ -118,21 +155,12 @@ class SocialAccountFactory(factory.django.DjangoModelFactory):
 class BannerGroupFactory(factory.django.DjangoModelFactory):
     """Banner group - no dependencies"""
 
-    name = factory.Faker("words", nb=3)
-    order = factory.Sequence(lambda n: n + 10)
+    name = factory.Sequence(lambda n: f"Banner Group {n}")
+    order = factory.Sequence(lambda n: n)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
         model = BannerGroup
-
-    @factory.post_generation
-    def create_banners(self, create, extracted, **kwargs):
-        """Auto-create banners for this group"""
-        if not create:
-            return
-        count = extracted if extracted is not None else 2
-        if count > 0:
-            BannerFactory.create_batch(count, group=self)
 
 
 class FAQFactory(factory.django.DjangoModelFactory):
@@ -145,12 +173,18 @@ class FAQFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FAQ
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create FAQs in bulk for better performance."""
+        faqs = [cls.build(**kwargs) for _ in range(count)]
+        return FAQ.objects.bulk_create(faqs)
+
 
 class OnboardingFactory(factory.django.DjangoModelFactory):
     """Onboarding screen - no dependencies"""
 
     title = factory.Faker("sentence", nb_words=4)
-    image = factory.django.ImageField(color="cyan", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     text = factory.Faker("text", max_nb_chars=75)
     sub_text = factory.Faker("text", max_nb_chars=50)
     order = factory.Sequence(lambda n: n + 1)
@@ -159,16 +193,28 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Onboarding
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Onboarding screens in bulk for better performance."""
+        onboardings = [cls.build(**kwargs) for _ in range(count)]
+        return Onboarding.objects.bulk_create(onboardings)
+
 
 class PopUpBannerFactory(factory.django.DjangoModelFactory):
     """Popup banner - no dependencies"""
 
-    image = factory.django.ImageField(color="yellow", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     count_per_user = factory.Faker("random_int", min=1, max=5)
     is_active = factory.Faker("boolean", chance_of_getting_true=70)
 
     class Meta:
         model = PopUpBanner
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create PopUp Banners in bulk for better performance."""
+        popups = [cls.build(**kwargs) for _ in range(count)]
+        return PopUpBanner.objects.bulk_create(popups)
 
 
 # ============================================================================
@@ -179,7 +225,7 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 class AdminUserFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
-    image = factory.django.ImageField(color="purple", width=800, height=800)
+    image = factory.LazyFunction(get_shared_image)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
     is_staff = True
     password = "adminpass123"  # pragma: allowlist secret  # noqa: S105
@@ -192,9 +238,9 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
     def hash_password(self, create, extracted, **kwargs):
         if not create:
             return
-        password = extracted if extracted else self.password
-        self.set_password(password)
-        self.save()
+        # Use pre-hashed password to avoid expensive re-hashing
+        self.password = _SHARED_PASSWORD_HASH
+        self.save(update_fields=["password"])
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
@@ -203,7 +249,7 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     full_name = factory.Faker("name")
-    image = factory.django.ImageField(color="green", width=800, height=800)
+    image = factory.LazyFunction(get_shared_image)
     gender = factory.Iterator([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
@@ -229,9 +275,9 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     def hash_password(self, create, extracted, **kwargs):
         if not create:
             return
-        password = extracted if extracted else self.password
-        self.set_password(password)
-        self.save()
+        # Use pre-hashed password to avoid expensive re-hashing
+        self.password = _SHARED_PASSWORD_HASH
+        self.save(update_fields=["password"])
 
     @factory.post_generation
     def create_wallet(self, create, extracted, **kwargs):
@@ -310,7 +356,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
     location_type = factory.Iterator(
         [choice[0] for choice in LocationNameChoices.choices]
     )
-    map_image = factory.django.ImageField(color="orange", width=600, height=400)
+    map_image = factory.LazyFunction(get_shared_image)
 
     class Meta:
         model = Address
@@ -347,11 +393,17 @@ class RegionFactory(factory.django.DjangoModelFactory):
         model = Region
         django_get_or_create = ("code",)
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Regions in bulk for better performance."""
+        regions = [cls.build(**kwargs) for _ in range(count)]
+        return Region.objects.bulk_create(regions)
+
 
 class BannerFactory(factory.django.DjangoModelFactory):
     """Banner - depends on BannerGroup"""
 
-    image = factory.django.ImageField(color="red", width=1200, height=800)
+    image = factory.LazyFunction(get_shared_image)
     group = factory.SubFactory(BannerGroupFactory)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
@@ -374,6 +426,12 @@ class NotificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Notification
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Notifications in bulk for better performance."""
+        notifications = [cls.build(**kwargs) for _ in range(count)]
+        return Notification.objects.bulk_create(notifications)
 
 
 class PopUpTrackingFactory(factory.django.DjangoModelFactory):

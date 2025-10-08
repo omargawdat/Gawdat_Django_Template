@@ -1,10 +1,16 @@
 # management/commands/seed_db.py
 import random
+import time
+from contextlib import contextmanager
 
 from django.core.management.base import BaseCommand
+from django.db import connection
 
+from apps.appInfo.models.banner import Banner
+from apps.appInfo.models.banner_group import BannerGroup
 from factories.factories import AdminUserFactory
 from factories.factories import AppInfoFactory
+from factories.factories import BannerFactory
 from factories.factories import BannerGroupFactory
 from factories.factories import CountryFactory
 from factories.factories import CustomerFactory
@@ -21,12 +27,27 @@ from factories.factories import SocialAccountFactory
 class Command(BaseCommand):
     help = "Seed database with test data using factories"
 
+    @contextmanager
+    def _timer(self, label):
+        """Context manager to time operations and print debug info."""
+        start_time = time.time()
+        start_queries = len(connection.queries)
+
+        self.stdout.write(f"⏳ {label}...")
+
+        yield
+
+        elapsed = time.time() - start_time
+        num_queries = len(connection.queries) - start_queries
+        self.stdout.write(
+            self.style.SUCCESS(f"✓ {label} - {elapsed:.2f}s ({num_queries} queries)")
+        )
+
     def add_arguments(self, parser):
         parser.add_argument(
-            "--factor",
+            "--count",
             type=int,
-            default=4,
-            help="Multiplier for data quantities (default: 4)",
+            help="Base count for data quantities (default: 4)",
         )
         parser.add_argument(
             "--no-flush",
@@ -48,62 +69,87 @@ class Command(BaseCommand):
             )
             return
 
-        factor = options["factor"]
+        count = options["count"]
+        total_start = time.time()
 
         # Flush existing data if requested
         if options["flush"]:
             from django.core.management import call_command
 
-            call_command("flush", "--no-input", verbosity=0)
-            call_command("createsu", verbosity=0)
+            with self._timer("Flushing database"):
+                call_command("flush", "--no-input", verbosity=0)
+                call_command("createsu", verbosity=0)
 
         # Seed database
-        self._load_all_factories(factor)
+        self._load_all_factories(count)
 
         # Output summary
-        self.stdout.write(self.style.SUCCESS(f"✓ Seeded (factor={factor})"))
+        total_elapsed = time.time() - total_start
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\n✓ Seeded (count={count}) - Total time: {total_elapsed:.2f}s"
+            )
+        )
 
-    def _load_all_factories(self, factor):
+    def _load_all_factories(self, count):
+        fixed_count = 10
         """Load test data with relationships handled by factories."""
         # ========================================================================
         # SINGLETONS
         # ========================================================================
-        AppInfoFactory.create()
-        SocialAccountFactory.create()
+        with self._timer("Creating singletons (AppInfo, SocialAccount)"):
+            AppInfoFactory.create()
+            SocialAccountFactory.create()
 
         # ========================================================================
         # INDEPENDENT MODELS
         # ========================================================================
-        CountryFactory.create_batch(2 * factor)
-        BannerGroupFactory.create_batch(3 * factor)
-        FAQFactory.create_batch(5 * factor)
-        OnboardingFactory.create_batch(3 * factor)
-        PopUpBannerFactory.create_batch(2 * factor)
+        # TODO: Use bulk create for countries (requires handling LazyAttribute for Money fields)
+        with self._timer(f"Creating {fixed_count} countries"):
+            CountryFactory.create_batch(fixed_count)
+
+        with self._timer(f"Creating {count} banner groups + banners (bulk)"):
+            # Create banner groups in bulk
+            groups = [BannerGroupFactory.build() for _ in range(count)]
+            banner_groups = BannerGroup.objects.bulk_create(groups)
+
+            # Create 2 banners per group in bulk
+            banners = []
+            for group in banner_groups:
+                banners.extend([BannerFactory.build(group=group) for _ in range(2)])
+            Banner.objects.bulk_create(banners)
+
+        with self._timer(f"Creating {count} FAQs (bulk)"):
+            FAQFactory.create_batch_bulk(count)
+
+        with self._timer(f"Creating {count} onboarding screens (bulk)"):
+            OnboardingFactory.create_batch_bulk(count)
+
+        with self._timer(f"Creating {count} popup banners (bulk)"):
+            PopUpBannerFactory.create_batch_bulk(count)
 
         # ========================================================================
         # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
-        AdminUserFactory.create_batch(2 * factor)
-        customers = CustomerFactory.create_batch(5 * factor)
+        # TODO: Cannot use bulk - AdminUser uses multi-table inheritance (polymorphic)
+        with self._timer(f"Creating {fixed_count} admin users"):
+            AdminUserFactory.create_batch(fixed_count)
+
+        # TODO: Cannot use bulk - Customer has post_generation hooks (wallet, addresses, contact_us)
+        with self._timer(
+            f"Creating {count} customers (+ wallets, addresses, contact_us)"
+        ):
+            customers = CustomerFactory.create_batch(fixed_count)
 
         # ========================================================================
         # ADDITIONAL RELATIONSHIPS
         # ========================================================================
+        with self._timer(f"Creating {count} regions (bulk)"):
+            RegionFactory.create_batch_bulk(count)
 
-        # Regions
-        RegionFactory.create_batch(3 * factor)
-
-        # Notifications with M2M users
-        notifications = NotificationFactory.create_batch(factor)
-        for notification in notifications:
-            notification.users.add(*random.sample(customers, k=min(3, len(customers))))
-
-        # ========================================================================
-        # DEPENDENT MODELS (require existing customers/banners)
-        # ========================================================================
-
-        # PopUp tracking for customers
-        PopUpTrackingFactory.create_batch(2 * factor)
-
-        # Payments for customers
-        PaymentFactory.create_batch(3 * factor)
+        with self._timer(f"Creating {fixed_count} notifications with M2M users (bulk)"):
+            notifications = NotificationFactory.create_batch_bulk(fixed_count)
+            for notification in notifications:
+                notification.users.add(
+                    *random.sample(customers, k=min(3, len(customers)))
+                )
