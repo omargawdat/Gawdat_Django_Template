@@ -21,7 +21,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
         from django.core.management import call_command
 
         # Suppress command output in tests
-        call_command("seed_db", factor=5, flush=False, stdout=StringIO())
+        call_command("seed_db", count=10, flush=False, stdout=StringIO())
 
 
 # ============================================================================

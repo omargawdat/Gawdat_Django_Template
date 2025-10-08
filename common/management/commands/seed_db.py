@@ -19,7 +19,6 @@ from factories.factories import NotificationFactory
 from factories.factories import OnboardingFactory
 from factories.factories import PaymentFactory
 from factories.factories import PopUpBannerFactory
-from factories.factories import PopUpTrackingFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 
@@ -153,3 +152,9 @@ class Command(BaseCommand):
                 notification.users.add(
                     *random.sample(customers, k=min(3, len(customers)))
                 )
+
+        # ========================================================================
+        # PAYMENT MODELS
+        # ========================================================================
+        with self._timer(f"Creating {count} payments (bulk)"):
+            PaymentFactory.create_batch_bulk(count, customers=customers)

@@ -168,7 +168,7 @@ class FAQFactory(factory.django.DjangoModelFactory):
 
     question = factory.Faker("sentence", nb_words=8)
     answer = factory.Faker("text", max_nb_chars=300)
-    order = factory.Sequence(lambda n: n + 10)
+    order = factory.Sequence(lambda n: n)
 
     class Meta:
         model = FAQ
@@ -187,7 +187,7 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
     image = factory.LazyFunction(get_shared_image)
     text = factory.Faker("text", max_nb_chars=75)
     sub_text = factory.Faker("text", max_nb_chars=50)
-    order = factory.Sequence(lambda n: n + 1)
+    order = factory.Sequence(lambda n: n)
     is_active = factory.Faker("boolean", chance_of_getting_true=80)
 
     class Meta:
@@ -223,6 +223,8 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
 
 class AdminUserFactory(factory.django.DjangoModelFactory):
+    """Admin user - no dependencies"""
+
     username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.LazyFunction(get_shared_image)
@@ -463,10 +465,11 @@ class WalletTransactionFactory(factory.django.DjangoModelFactory):
 
 
 class PaymentFactory(factory.django.DjangoModelFactory):
+    """Payment factory - depends on Customer"""
+
     # Reuse existing customer randomly, create one if none exist
     customer = factory.LazyAttribute(
-        lambda obj: Customer.objects.order_by("?").first()
-        or CustomerFactory(wallet=False)
+        lambda obj: Customer.objects.order_by("?").first() or CustomerFactory()
     )
     price_before_discount = factory.LazyAttribute(
         lambda obj: Money(
@@ -503,3 +506,17 @@ class PaymentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Payment
+
+    @classmethod
+    def create_batch_bulk(cls, count, customers=None, **kwargs):
+        """Create Payments in bulk (pass customers list to avoid queries)."""
+        import random
+
+        if customers:
+            payments = [
+                cls.build(customer=random.choice(customers), **kwargs)  # noqa: S311
+                for _ in range(count)
+            ]
+        else:
+            payments = [cls.build(**kwargs) for _ in range(count)]
+        return Payment.objects.bulk_create(payments)
