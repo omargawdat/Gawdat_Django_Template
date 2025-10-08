@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.test import Client
 from django.test import RequestFactory
+from rest_framework.test import APIClient
 
 # ============================================================================
 # AUTO-LOAD TEST DATA (minimal maintenance)
@@ -58,3 +59,31 @@ def mock_request(admin_user):
     request = request_factory.get("/admin/")
     request.user = admin_user
     return request
+
+
+# ============================================================================
+# API FIXTURES (For REST API testing)
+# ============================================================================
+
+
+@pytest.fixture
+def api_client():
+    """Unauthenticated API client for testing public endpoints"""
+    return APIClient()
+
+
+@pytest.fixture
+def authenticated_api_client(db):
+    """API client authenticated as a Customer user"""
+    from apps.users.models.customer import Customer
+
+    # Get or create a customer for API testing
+    customer = Customer.objects.filter(is_verified=True).first()
+    if not customer:
+        from factories.factories import CustomerFactory
+
+        customer = CustomerFactory.create(is_verified=True)
+
+    client = APIClient()
+    client.force_authenticate(user=customer)
+    return client
