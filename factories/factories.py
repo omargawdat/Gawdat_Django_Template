@@ -16,6 +16,7 @@ Usage:
 
 import factory
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -72,6 +73,15 @@ def get_shared_image():
 
 
 # ============================================================================
+# SHARED PASSWORD HASH (Generated once, reused everywhere)
+# ============================================================================
+
+# Pre-hash password once to avoid expensive re-hashing for test data
+
+_SHARED_PASSWORD_HASH = make_password("testpass123")  # pragma: allowlist secret
+
+
+# ============================================================================
 # INDEPENDENT FACTORIES (No dependencies)
 # ============================================================================
 
@@ -103,6 +113,12 @@ class CountryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Country
         django_get_or_create = ("code",)
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Countries in bulk for better performance."""
+        countries = [cls.build(**kwargs) for _ in range(count)]
+        return Country.objects.bulk_create(countries, ignore_conflicts=True)
 
 
 class AppInfoFactory(factory.django.DjangoModelFactory):
@@ -164,6 +180,12 @@ class FAQFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FAQ
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create FAQs in bulk for better performance."""
+        faqs = [cls.build(**kwargs) for _ in range(count)]
+        return FAQ.objects.bulk_create(faqs)
+
 
 class OnboardingFactory(factory.django.DjangoModelFactory):
     """Onboarding screen - no dependencies"""
@@ -178,6 +200,12 @@ class OnboardingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Onboarding
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Onboarding screens in bulk for better performance."""
+        onboardings = [cls.build(**kwargs) for _ in range(count)]
+        return Onboarding.objects.bulk_create(onboardings)
+
 
 class PopUpBannerFactory(factory.django.DjangoModelFactory):
     """Popup banner - no dependencies"""
@@ -188,6 +216,12 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PopUpBanner
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create PopUp Banners in bulk for better performance."""
+        popups = [cls.build(**kwargs) for _ in range(count)]
+        return PopUpBanner.objects.bulk_create(popups)
 
 
 # ============================================================================
@@ -213,9 +247,9 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
     def hash_password(self, create, extracted, **kwargs):
         if not create:
             return
-        password = extracted if extracted else self.password
-        self.set_password(password)
-        self.save()
+        # Use pre-hashed password to avoid expensive re-hashing
+        self.password = _SHARED_PASSWORD_HASH
+        self.save(update_fields=["password"])
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
@@ -250,9 +284,9 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     def hash_password(self, create, extracted, **kwargs):
         if not create:
             return
-        password = extracted if extracted else self.password
-        self.set_password(password)
-        self.save()
+        # Use pre-hashed password to avoid expensive re-hashing
+        self.password = _SHARED_PASSWORD_HASH
+        self.save(update_fields=["password"])
 
     @factory.post_generation
     def create_wallet(self, create, extracted, **kwargs):
@@ -368,6 +402,12 @@ class RegionFactory(factory.django.DjangoModelFactory):
         model = Region
         django_get_or_create = ("code",)
 
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Regions in bulk for better performance."""
+        regions = [cls.build(**kwargs) for _ in range(count)]
+        return Region.objects.bulk_create(regions)
+
 
 class BannerFactory(factory.django.DjangoModelFactory):
     """Banner - depends on BannerGroup"""
@@ -395,6 +435,12 @@ class NotificationFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Notification
+
+    @classmethod
+    def create_batch_bulk(cls, count, **kwargs):
+        """Create Notifications in bulk for better performance."""
+        notifications = [cls.build(**kwargs) for _ in range(count)]
+        return Notification.objects.bulk_create(notifications)
 
 
 class PopUpTrackingFactory(factory.django.DjangoModelFactory):

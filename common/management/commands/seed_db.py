@@ -86,7 +86,6 @@ class Command(BaseCommand):
                 f"\n✓ Seeded (factor={factor}) - Total time: {total_elapsed:.2f}s"
             )
         )
-        self._print_summary()
 
     def _load_all_factories(self, factor):
         """Load test data with relationships handled by factories."""
@@ -100,27 +99,31 @@ class Command(BaseCommand):
         # ========================================================================
         # INDEPENDENT MODELS
         # ========================================================================
+        # TODO: Use bulk create for countries (requires handling LazyAttribute for Money fields)
         with self._timer(f"Creating {2 * factor} countries"):
             CountryFactory.create_batch(2 * factor)
 
+        # TODO: Use bulk create for banner groups (requires handling post_generation banners)
         with self._timer(f"Creating {3 * factor} banner groups"):
             BannerGroupFactory.create_batch(3 * factor)
 
-        with self._timer(f"Creating {5 * factor} FAQs"):
-            FAQFactory.create_batch(5 * factor)
+        with self._timer(f"Creating {5 * factor} FAQs (bulk)"):
+            FAQFactory.create_batch_bulk(5 * factor)
 
-        with self._timer(f"Creating {3 * factor} onboarding screens"):
-            OnboardingFactory.create_batch(3 * factor)
+        with self._timer(f"Creating {3 * factor} onboarding screens (bulk)"):
+            OnboardingFactory.create_batch_bulk(3 * factor)
 
-        with self._timer(f"Creating {2 * factor} popup banners"):
-            PopUpBannerFactory.create_batch(2 * factor)
+        with self._timer(f"Creating {2 * factor} popup banners (bulk)"):
+            PopUpBannerFactory.create_batch_bulk(2 * factor)
 
         # ========================================================================
         # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
+        # TODO: Cannot use bulk - AdminUser uses multi-table inheritance (polymorphic)
         with self._timer(f"Creating {2 * factor} admin users"):
             AdminUserFactory.create_batch(2 * factor)
 
+        # TODO: Cannot use bulk - Customer has post_generation hooks (wallet, addresses, contact_us)
         with self._timer(
             f"Creating {5 * factor} customers (+ wallets, addresses, contact_us)"
         ):
@@ -129,41 +132,12 @@ class Command(BaseCommand):
         # ========================================================================
         # ADDITIONAL RELATIONSHIPS
         # ========================================================================
-        with self._timer(f"Creating {3 * factor} regions"):
-            RegionFactory.create_batch(3 * factor)
+        with self._timer(f"Creating {3 * factor} regions (bulk)"):
+            RegionFactory.create_batch_bulk(3 * factor)
 
-        with self._timer(f"Creating {factor} notifications with M2M users"):
-            notifications = NotificationFactory.create_batch(factor)
+        with self._timer(f"Creating {factor} notifications with M2M users (bulk)"):
+            notifications = NotificationFactory.create_batch_bulk(factor)
             for notification in notifications:
                 notification.users.add(
                     *random.sample(customers, k=min(3, len(customers)))
                 )
-
-    def _print_summary(self):
-        """Print summary of created data."""
-        from apps.appInfo.models.banner import Banner
-        from apps.appInfo.models.banner_group import BannerGroup
-        from apps.appInfo.models.faq import FAQ
-        from apps.appInfo.models.onboarding import Onboarding
-        from apps.appInfo.models.popup import PopUpBanner
-        from apps.channel.models.notification import Notification
-        from apps.location.models.address import Address
-        from apps.location.models.country import Country
-        from apps.location.models.region import Region
-        from apps.payment.models.wallet import Wallet
-        from apps.users.models.admin import AdminUser
-        from apps.users.models.customer import Customer
-
-        self.stdout.write("\n📊 Database Summary:")
-        self.stdout.write(f"  • Customers: {Customer.objects.count()}")
-        self.stdout.write(f"  • Admin Users: {AdminUser.objects.count()}")
-        self.stdout.write(f"  • Countries: {Country.objects.count()}")
-        self.stdout.write(f"  • Regions: {Region.objects.count()}")
-        self.stdout.write(f"  • Addresses: {Address.objects.count()}")
-        self.stdout.write(f"  • Wallets: {Wallet.objects.count()}")
-        self.stdout.write(f"  • Banner Groups: {BannerGroup.objects.count()}")
-        self.stdout.write(f"  • Banners: {Banner.objects.count()}")
-        self.stdout.write(f"  • FAQs: {FAQ.objects.count()}")
-        self.stdout.write(f"  • Onboarding: {Onboarding.objects.count()}")
-        self.stdout.write(f"  • Popup Banners: {PopUpBanner.objects.count()}")
-        self.stdout.write(f"  • Notifications: {Notification.objects.count()}")
