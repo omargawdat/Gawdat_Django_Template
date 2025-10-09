@@ -4,7 +4,7 @@
 
 ```bash
 # Install required tools (macOS)
-brew install uv just docker osv-scanner
+brew install uv just docker
 
 # Note: No need to install pre-commit, ruff, mypy, or other dev tools globally
 # They will be automatically managed per-project using 'uv tool run'
@@ -101,6 +101,22 @@ uv tool run pre-commit run ruff-check --all-files
 # Update hook versions
 uv tool run pre-commit autoupdate
 ```
+
+### 3.1 Security Scanning (GitHub Dependabot)
+
+Instead of local security scanning tools, this project uses **GitHub Dependabot** for vulnerability detection and automated fixes.
+
+**Setup (one-time):**
+1. Go to your GitHub repo → **Settings** → **Security** → **Code security and analysis**
+2. Enable **Dependabot alerts**
+3. Enable **Dependabot security updates**
+
+**Benefits:**
+- ✅ Automatic vulnerability scanning of `uv.lock`
+- ✅ Automatic PRs to fix vulnerable dependencies
+- ✅ No local tools needed
+- ✅ Doesn't slow down commits/pushes
+- ✅ Free for all repositories
 
 ### 4. Deployment
 

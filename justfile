@@ -161,8 +161,8 @@ pre-commit-install:
     uv tool run pre-commit install --hook-type pre-push
     @echo "✅ Pre-commit hooks configured"
 
-# Scan for security vulnerabilities using OSV-Scanner
+# Check for outdated packages (use GitHub Dependabot for vulnerability scanning)
 audit:
-    @echo "🔍 Scanning for vulnerabilities..."
-    @uv export --format requirements-txt --no-hashes > /tmp/requirements.txt
-    @osv-scanner scan --lockfile=/tmp/requirements.txt
+    @echo "🔍 Checking for outdated packages..."
+    @echo "💡 For vulnerability scanning, enable GitHub Dependabot in repo settings"
+    @uv tree --outdated
