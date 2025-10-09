@@ -13,12 +13,12 @@ from ..Integrations.paymob import PaymobPaymentIntegration
 
 class PaymobPaymentAdapter(PaymentAdapterBase):
     def __init__(self):
-        self.secret_token = env("PAYMOB_SECRET_KEY")
-        self.public_key = env("PAYMOB_PUBLIC_KEY")
-        self.payment_confirmation_key = env("PAYMENT_CONFIRMATION_KEY")
+        self.secret_token = env.paymob_secret_key.get_secret_value()
+        self.public_key = env.paymob_public_key
+        self.payment_confirmation_key = env.payment_confirmation_key
         self.integration = PaymobPaymentIntegration()
-        self.card_payment_method = env("PAYMOB_CARD_PAYMENT_METHOD")
-        self.wallet_payment_method = env("PAYMOB_WALLET_PAYMENT_METHOD")
+        self.card_payment_method = env.paymob_card_payment_method
+        self.wallet_payment_method = env.paymob_wallet_payment_method
 
     def create_charge(
         self,
