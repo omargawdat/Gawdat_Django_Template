@@ -5,6 +5,7 @@ Test admin page loading and navigation
 import pytest
 from django.contrib import admin
 from django.urls import reverse
+
 from factories.loader import load_all_factories
 
 HTTP_200_OK = 200
