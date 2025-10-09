@@ -130,7 +130,7 @@ repos:
       # Security scanning
       - id: pip-audit
         name: pip-audit (vulnerability scanning)
-        entry: bash -c 'uv tool run pip-audit <(uv export --no-hashes)'
+        entry: bash -c 'uv export --no-hashes | uv tool run pip-audit -r /dev/stdin'
         language: system
         pass_filenames: false
         stages: [manual, pre-push]
