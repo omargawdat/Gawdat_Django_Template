@@ -16,9 +16,13 @@ default:
 # 🚀 Quick Start
 # ============================================================================
 
-# Install dependencies
+# Install dependencies and setup pre-commit hooks
 install:
     uv sync --group dev
+    uv tool run pre-commit install
+    uv tool run pre-commit install --hook-type commit-msg
+    uv tool run pre-commit install --hook-type pre-push
+    @echo "✅ Dependencies installed and pre-commit hooks configured"
 
 # Start all services
 up:
@@ -150,11 +154,12 @@ clean:
     find . -type d -name __pycache__ -exec rm -rf {} +
     find . -type f -name "*.pyc" -delete
 
-# Setup pre-commit hooks
+# Setup pre-commit hooks (automatically done by 'just install')
 pre-commit-install:
     uv tool run pre-commit install
     uv tool run pre-commit install --hook-type commit-msg
     uv tool run pre-commit install --hook-type pre-push
+    @echo "✅ Pre-commit hooks configured"
 
 # Scan for security vulnerabilities
 audit:

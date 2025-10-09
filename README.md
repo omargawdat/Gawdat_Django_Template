@@ -18,25 +18,20 @@ brew install uv just docker
     cd Gawdat_Django_Template
     ```
 
-2. Install dependencies:
+2. Install dependencies and setup pre-commit hooks:
     ```bash
     just install
     ```
 
-3. Setup pre-commit hooks:
-    ```bash
-    just pre-commit-install
-    ```
-
-4. Create media folder:
+3. Create media folder:
     ```bash
     mkdir -p assets/media
     touch assets/media/.gitkeep
     ```
 
-5. Replace `projectname` with your `project name`
+4. Replace `projectname` with your `project name`
 
-6. Initialize Git repository (optional):
+5. Initialize Git repository (optional):
    ```bash
    sudo rm -r .git
    git init
@@ -44,7 +39,7 @@ brew install uv just docker
    git commit -m "Initial commit"
    ```
 
-7. Share the project on GitHub
+6. Share the project on GitHub
 
 ### 2. Local Development
 
@@ -86,17 +81,18 @@ Run `just` to see all available commands.
 
 ### 3. Pre-commit Hooks
 
-This project uses pre-commit hooks to maintain code quality. The hooks are automatically managed per-project, so you don't need to install tools globally.
+Pre-commit hooks are **automatically installed** when you run `just install`. They maintain code quality by running checks before each commit.
 
 **How it works:**
-- Pre-commit hooks run automatically on `git commit`
-- Tools (ruff, mypy, etc.) are installed per-project via `uv tool run`
+- Hooks are installed automatically during project setup
+- Run automatically on `git commit`
+- Tools (ruff, mypy, etc.) are managed per-project via `uv tool run`
 - Each project uses its own tool versions from `pyproject.toml`
 - No conflicts between different projects with different tool versions
 
-**Manual pre-commit runs:**
+**Manual commands:**
 ```bash
-# Run all hooks on all files
+# Run all hooks manually
 uv tool run pre-commit run --all-files
 
 # Run specific hook
