@@ -128,12 +128,14 @@ repos:
         files: (pyproject\.toml|uv\.lock)$
 
       # Security scanning using OSV-Scanner (Google's vulnerability database)
-      - id: osv-scanner
-        name: osv-scanner (vulnerability scanning)
-        entry: bash -c 'uv export --format requirements-txt --no-hashes > /tmp/requirements.txt && osv-scanner scan --lockfile=/tmp/requirements.txt'
-        language: system
-        pass_filenames: false
-        stages: [manual, pre-push]
+      # Install: brew install osv-scanner
+      # Disabled by default - run manually with 'just audit'
+      # - id: osv-scanner
+      #   name: osv-scanner (vulnerability scanning)
+      #   entry: bash -c 'uv export --format requirements-txt --no-hashes > /tmp/requirements.txt && osv-scanner scan --lockfile=/tmp/requirements.txt'
+      #   language: system
+      #   pass_filenames: false
+      #   stages: [manual, pre-push]
 
       # Django-specific checks
       - id: check-branch-up-to-date
