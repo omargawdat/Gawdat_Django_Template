@@ -15,7 +15,7 @@ class PaymobPaymentAdapter(PaymentAdapterBase):
     def __init__(self):
         self.secret_token = env.paymob_secret_key.get_secret_value()
         self.public_key = env.paymob_public_key
-        self.payment_confirmation_key = env.payment_confirmation_key
+        self.payment_confirmation_key = env.payment_confirmation_key.get_secret_value()
         self.integration = PaymobPaymentIntegration()
         self.card_payment_method = env.paymob_card_payment_method
         self.wallet_payment_method = env.paymob_wallet_payment_method
@@ -64,7 +64,9 @@ class PaymobPaymentAdapter(PaymentAdapterBase):
         )
 
         # 4) Return a ChargeResponse
-        return ChargeResponse(payment_url=payment_url)
+        return ChargeResponse(
+            payment_url=payment_url, payment_id=str(raw_response.get("id"))
+        )
 
     def extract_payment_callback(self, callback_data: dict) -> PaymentStatusCallback:
         obj = callback_data.get("obj", {})

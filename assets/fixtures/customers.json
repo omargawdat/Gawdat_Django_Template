@@ -79,5 +79,47 @@
       "is_use_wallet_in_payment": true,
       "last_update": "2023-01-01T00:00:00Z"
     }
+  },
+
+  {
+    "model": "users.user",
+    "pk": 1002,
+    "fields": {
+      "username": "ahmed_egypt",
+      "email": "ahmed@gmail.com",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-01-01T00:00:00Z",
+      "language": "ar",
+      "polymorphic_ctype": [
+        "users",
+        "customer"
+      ]
+    }
+  },
+  {
+    "model": "users.customer",
+    "pk": 1002,
+    "fields": {
+      "phone_number": "+201234567890",
+      "image": "flags/EG.png",
+      "full_name": "Ahmed Mohamed",
+      "gender": "M",
+      "birth_date": "1990-05-15",
+      "country": "EG",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "payment.wallet",
+    "pk": 1002,
+    "fields": {
+      "user": 1002,
+      "balance": "100.00",
+      "balance_currency": "EGP",
+      "is_use_wallet_in_payment": true,
+      "last_update": "2023-01-01T00:00:00Z"
+    }
   }
+
 ]
