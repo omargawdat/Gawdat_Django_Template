@@ -161,6 +161,8 @@ pre-commit-install:
     uv tool run pre-commit install --hook-type pre-push
     @echo "✅ Pre-commit hooks configured"
 
-# Scan for security vulnerabilities
+# Scan for security vulnerabilities using OSV-Scanner
 audit:
-    uv tool run pip-audit <(uv export --no-hashes)
+    @echo "🔍 Scanning for vulnerabilities..."
+    @uv export --format requirements-txt --no-hashes > /tmp/requirements.txt
+    @osv-scanner scan --lockfile=/tmp/requirements.txt

@@ -127,10 +127,10 @@ repos:
         pass_filenames: false
         files: (pyproject\.toml|uv\.lock)$
 
-      # Security scanning
-      - id: pip-audit
-        name: pip-audit (vulnerability scanning)
-        entry: bash -c 'uv export --no-hashes --format requirements-txt > /tmp/requirements.txt && uv tool run pip-audit -r /tmp/requirements.txt --skip-editable'
+      # Security scanning using OSV-Scanner (Google's vulnerability database)
+      - id: osv-scanner
+        name: osv-scanner (vulnerability scanning)
+        entry: bash -c 'uv export --format requirements-txt --no-hashes > /tmp/requirements.txt && osv-scanner scan --lockfile=/tmp/requirements.txt'
         language: system
         pass_filenames: false
         stages: [manual, pre-push]

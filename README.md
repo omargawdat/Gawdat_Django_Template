@@ -4,7 +4,7 @@
 
 ```bash
 # Install required tools (macOS)
-brew install uv just docker
+brew install uv just docker osv-scanner
 
 # Note: No need to install pre-commit, ruff, mypy, or other dev tools globally
 # They will be automatically managed per-project using 'uv tool run'
