@@ -5,6 +5,9 @@
 ```bash
 # Install required tools (macOS)
 brew install uv just docker
+
+# Note: No need to install pre-commit, ruff, mypy, or other dev tools globally
+# They will be automatically managed per-project using 'uv tool run'
 ```
 
 ### 1. One-Time Project Setup
@@ -81,7 +84,29 @@ just lint-all        # Fix code style
 
 Run `just` to see all available commands.
 
-### 3. Deployment
+### 3. Pre-commit Hooks
+
+This project uses pre-commit hooks to maintain code quality. The hooks are automatically managed per-project, so you don't need to install tools globally.
+
+**How it works:**
+- Pre-commit hooks run automatically on `git commit`
+- Tools (ruff, mypy, etc.) are installed per-project via `uv tool run`
+- Each project uses its own tool versions from `pyproject.toml`
+- No conflicts between different projects with different tool versions
+
+**Manual pre-commit runs:**
+```bash
+# Run all hooks on all files
+uv tool run pre-commit run --all-files
+
+# Run specific hook
+uv tool run pre-commit run ruff-check --all-files
+
+# Update hook versions
+uv tool run pre-commit autoupdate
+```
+
+### 4. Deployment
 
 This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps to set up your deployment environment:
 

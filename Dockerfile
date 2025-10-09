@@ -39,11 +39,11 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     if [ "$is_local" = "true" ]; then \
-        echo "Installing LOCAL dependencies (with dev groups)" && \
-        uv sync --frozen --no-install-project --group dev --group test --group typing --group lint; \
+        echo "Installing LOCAL dependencies (base + dev)" && \
+        uv sync --frozen --no-install-project --group dev; \
     else \
-        echo "Installing PRODUCTION dependencies" && \
-        uv sync --frozen --no-install-project --extra prod --no-dev; \
+        echo "Installing PRODUCTION dependencies (base + production)" && \
+        uv sync --frozen --no-install-project --group production --no-dev; \
     fi
 
 # Copy application code
@@ -54,9 +54,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     if [ "$is_local" = "true" ]; then \
-        uv sync --frozen --group dev --group test --group typing --group lint; \
+        uv sync --frozen --group dev; \
     else \
-        uv sync --frozen --extra prod --no-dev; \
+        uv sync --frozen --group production --no-dev; \
     fi
 
 # Set PATH to use .venv

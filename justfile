@@ -18,7 +18,7 @@ default:
 
 # Install dependencies
 install:
-    uv sync --group dev --group test --group typing --group lint
+    uv sync --group dev
 
 # Start all services
 up:
@@ -95,20 +95,20 @@ test-cov:
 
 # Fix linting and format code
 lint-all:
-    uv run ruff check . --fix
-    uv run ruff format .
+    uv tool run ruff check . --fix
+    uv tool run ruff format .
 
 # Check code style
 lint:
-    uv run ruff check .
+    uv tool run ruff check .
 
 # Format code
 format:
-    uv run ruff format .
+    uv tool run ruff format .
 
 # Type check
 typecheck:
-    uv run mypy .
+    uv tool run mypy .
 
 # Run all checks
 check: lint typecheck
@@ -152,10 +152,10 @@ clean:
 
 # Setup pre-commit hooks
 pre-commit-install:
-    pre-commit install
-    pre-commit install --hook-type commit-msg
-    pre-commit install --hook-type pre-push
+    uv tool run pre-commit install
+    uv tool run pre-commit install --hook-type commit-msg
+    uv tool run pre-commit install --hook-type pre-push
 
 # Scan for security vulnerabilities
 audit:
-    uv export --no-hashes | pip-audit -r /dev/stdin
+    uv tool run pip-audit <(uv export --no-hashes)

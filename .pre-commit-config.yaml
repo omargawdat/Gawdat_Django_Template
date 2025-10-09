@@ -94,10 +94,10 @@ repos:
   # Local hooks
   - repo: local
     hooks:
-      # Python linting and formatting (using uv for 10x speed).
+      # Python linting and formatting (using uv tool run for automatic installation).
       - id: ruff-check
         name: ruff check
-        entry: uv run ruff check --fix .
+        entry: uv tool run ruff check --fix .
         language: system
         require_serial: true
         pass_filenames: false
@@ -105,7 +105,7 @@ repos:
 
       - id: ruff-format
         name: ruff format
-        entry: uv run ruff format
+        entry: uv tool run ruff format
         language: system
         require_serial: true
         pass_filenames: false
@@ -113,7 +113,7 @@ repos:
 
       # - id: mypy
       #   name: mypy
-      #   entry: uv run mypy
+      #   entry: uv tool run mypy
       #   language: system
       #   types: [python]
       #   require_serial: true
@@ -130,7 +130,7 @@ repos:
       # Security scanning
       - id: pip-audit
         name: pip-audit (vulnerability scanning)
-        entry: bash -c 'uv export --no-hashes | pip-audit -r /dev/stdin'
+        entry: bash -c 'uv tool run pip-audit <(uv export --no-hashes)'
         language: system
         pass_filenames: false
         stages: [manual, pre-push]
