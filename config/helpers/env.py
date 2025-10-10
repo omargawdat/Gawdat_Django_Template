@@ -45,6 +45,12 @@ class EnvSettings(BaseSettings):
     taps_secret_key: SecretStr
     payment_confirmation_key: SecretStr
 
+    # Payment - Paymob
+    paymob_secret_key: SecretStr
+    paymob_public_key: str
+    paymob_card_payment_method: str
+    paymob_wallet_payment_method: str
+
     # SMS
     is_testing_sms: bool
     our_sms_sender_name: str
