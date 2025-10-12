@@ -107,14 +107,10 @@ DJANGO_APPS = [
     "django_model_suite",
     "modeltranslation",
     "django.contrib.gis",
+    # Django-allauth
     "allauth",
     "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.facebook",
-    "allauth.socialaccount.providers.apple",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
+    "allauth.headless",
 ]
 
 # Project applications
@@ -150,7 +146,6 @@ MIDDLEWARE = [
 # AUTHENTICATION
 # ==============================================================================
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 AUTH_USER_MODEL = "users.User"
@@ -175,53 +170,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ==============================================================================
-# DJANGO-ALLAUTH CONFIGURATION
+# DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-REST_USE_JWT = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+# Authentication: Email only (simple and secure)
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Email must be verified before login
 ACCOUNT_UNIQUE_EMAIL = True
-SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIALACCOUNT_ADAPTER = "config.helpers.oauth_adapter.CustomerSocialAccountAdapter"
 
-# OAuth providers
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "APP": {
-            "client_id": env.google_oauth2_client_id,
-            "secret": env.google_oauth2_client_secret.get_secret_value(),
-            "key": "",
-        },
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {
-            "access_type": "online",
-        },
-        "OAUTH_PKCE_ENABLED": True,
-    },
-    "facebook": {
-        "METHOD": "oauth2",
-        "SCOPE": ["email", "public_profile"],
-        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
-        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
-        "APP": {
-            "client_id": env.facebook_oauth2_client_id,
-            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
-            "key": "",
-        },
-    },
-    "apple": {
-        "APP": {
-            "client_id": env.apple_oauth2_client_id,
-            "secret": {
-                "key": env.apple_oauth2_client_secret.get_secret_value(),
-                "key_id": env.key_id,
-                "team_id": env.team_id,
-            },
-        },
-    },
+# Signup: Email + Password only
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+# Prevent login until email is verified
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+# Headless API configuration
+HEADLESS_ONLY = True
+HEADLESS_SERVE_SPECIFICATION = True  # Enable OpenAPI spec at /_allauth/openapi.json
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "http://localhost:3000/verify-email/{key}",  # pragma: allowlist secret
+    "account_reset_password": "http://localhost:3000/password/reset",  # pragma: allowlist secret
+    "account_reset_password_from_key": "http://localhost:3000/password/reset/key/{key}",  # pragma: allowlist secret
+    "account_signup": "http://localhost:3000/signup",
 }
 
 # ==============================================================================

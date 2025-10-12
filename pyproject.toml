@@ -52,8 +52,7 @@ dependencies = [
     "drf-spectacular==0.28.0",
     "drf-standardized-errors[openapi]==0.15.0",
     "djangorestframework-camel-case==1.4.2",
-    # OAuth
-    "dj-rest-auth[with_social]==7.0.1",  # IMPORTANT: 7.0.1 isn't working correctly
+    "django-allauth[headless-spec,socialaccount]>=65.12.0",
 ]
 
 # ==== Dependency Groups (PEP 735) ====

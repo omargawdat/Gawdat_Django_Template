@@ -53,16 +53,6 @@ class EnvSettings(BaseSettings):
     sms_misr_password: SecretStr
     sms_misr_sender: str
 
-    # OAuth
-    google_oauth2_client_id: str
-    google_oauth2_client_secret: SecretStr
-    facebook_oauth2_client_id: str
-    facebook_oauth2_client_secret: SecretStr
-    apple_oauth2_client_id: str
-    apple_oauth2_client_secret: SecretStr
-    key_id: str
-    team_id: str
-
     # Email
     email_host_user: str
     email_host_password: SecretStr

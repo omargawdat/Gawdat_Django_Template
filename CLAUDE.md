@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a Django REST API template project with a modular app structure and comprehensive CI/CD pipeline. The project
-uses Docker for local development and includes OAuth integrations, payment systems, and location services.
+uses Docker for local development and includes payment systems and location services.
 
 ## Package Management
 

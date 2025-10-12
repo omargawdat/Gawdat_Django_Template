@@ -35,3 +35,9 @@ INTERNAL_IPS += [".".join([*ip.split(".")[:-1], "1"]) for ip in ips]
 # DEVELOPMENT TOOLS
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ["django_extensions"]
+
+# ------------------------------------------------------------------------------
+# EMAIL CONFIGURATION (Development - Console Backend)
+# ------------------------------------------------------------------------------
+# Print emails to console for testing email verification
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
