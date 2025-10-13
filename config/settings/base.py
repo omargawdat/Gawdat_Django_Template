@@ -176,12 +176,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Email must be verified before login
 ACCOUNT_UNIQUE_EMAIL = True
-
-# Signup: Email + Password only
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
-
-# Prevent login until email is verified
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+# Signup: Email + Password + Custom fields
+# Note: Use 'email*' only for headless API (password is handled separately)
+ACCOUNT_SIGNUP_FIELDS = ["email*"]
+
+# Custom signup form with additional fields (language, device info)
+ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
+
+# Custom account adapter for handling signup logic
+ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 
 # Headless API configuration
 HEADLESS_ONLY = True
@@ -192,6 +197,7 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password_from_key": "http://localhost:3000/password/reset/key/{key}",  # pragma: allowlist secret
     "account_signup": "http://localhost:3000/signup",
 }
+
 
 # ==============================================================================
 # SECURITY

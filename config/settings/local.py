@@ -37,7 +37,29 @@ INTERNAL_IPS += [".".join([*ip.split(".")[:-1], "1"]) for ip in ips]
 INSTALLED_APPS += ["django_extensions"]
 
 # ------------------------------------------------------------------------------
-# EMAIL CONFIGURATION (Development - Console Backend)
+# EMAIL CONFIGURATION (Development - Real Email via Gmail SMTP)
 # ------------------------------------------------------------------------------
-# Print emails to console for testing email verification
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Use real Gmail SMTP for testing (configured in base.py)
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Disabled
+
+# ------------------------------------------------------------------------------
+# CORS CONFIGURATION (Development - Allow localhost frontend)
+# ------------------------------------------------------------------------------
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+]
+CORS_ALLOW_CREDENTIALS = True  # Required for CSRF cookies
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+]
+# Allow CSRF cookie to be read by JavaScript
+CSRF_COOKIE_HTTPONLY = False  # Only for development!
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
