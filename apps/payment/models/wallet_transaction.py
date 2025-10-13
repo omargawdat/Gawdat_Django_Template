@@ -5,7 +5,7 @@ from simple_history.models import HistoricalRecords
 
 from apps.payment.constants import WalletTransactionType
 from apps.payment.models.wallet import Wallet
-from apps.users.models.admin import AdminUser
+from apps.users.models import User
 
 
 class WalletTransaction(models.Model):
@@ -17,7 +17,9 @@ class WalletTransaction(models.Model):
         max_length=30, choices=WalletTransactionType.choices
     )
     amount = MoneyField(max_digits=14, decimal_places=2)
-    action_by = models.ForeignKey(AdminUser, on_delete=models.PROTECT, null=True)
+    action_by = models.ForeignKey(
+        User, on_delete=models.PROTECT, null=True, limit_choices_to={"is_staff": True}
+    )
     transaction_note = models.TextField(max_length=1500, blank=True, default="")
     attachment = models.FileField(
         upload_to="wallet_transactions", blank=True, null=True

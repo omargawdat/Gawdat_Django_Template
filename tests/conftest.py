@@ -85,5 +85,6 @@ def authenticated_api_client(db):
         customer = CustomerFactory.create(is_verified=True)
 
     client = APIClient()
-    client.force_authenticate(user=customer)
+    # Authenticate with User object, not Customer
+    client.force_authenticate(user=customer.user)
     return client

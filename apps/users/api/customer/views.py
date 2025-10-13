@@ -78,13 +78,14 @@ class CustomerUpdateView(APIView):
         },
     )
     def patch(self, request):
+        customer = request.user.customer
         serializer = CustomerUpdateSerializer(
-            request.user, data=request.data, partial=True, context={"request": request}
+            customer, data=request.data, partial=True, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            CustomerDetailedSerializer(request.user, context={"request": request}).data
+            CustomerDetailedSerializer(customer, context={"request": request}).data
         )
 
 
@@ -100,7 +101,7 @@ class CustomerDetailView(APIView):
         },
     )
     def get(self, request):
-        customer = request.user
+        customer = request.user.customer
         serializer = CustomerDetailedSerializer(customer, context={"request": request})
         return Response(serializer.data)
 
@@ -133,8 +134,8 @@ class CustomerDeleteView(APIView):
         },
     )
     def delete(self, request):
-        customer = request.user
-        customer.is_active = False
-        UserServices.user_logout_all_devices(customer)
-        customer.save()
+        customer = request.user.customer
+        customer.user.is_active = False
+        UserServices.user_logout_all_devices(customer.user)
+        customer.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

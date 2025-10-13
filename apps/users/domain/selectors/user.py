@@ -7,7 +7,6 @@ from apps.channel.constants import Language
 from apps.location.domain.selector.country import CountrySelector
 from apps.users.constants import UserType
 from apps.users.models import User
-from apps.users.models.customer import Customer
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class UserSelector:
         """Group users by their type."""
         user_groups = {}
         for user in users:
-            if isinstance(user, Customer):
+            if hasattr(user, "customer"):
                 user_type = UserType.CUSTOMER
             else:
                 logger.exception("Unsupported user type: %s", type(user))

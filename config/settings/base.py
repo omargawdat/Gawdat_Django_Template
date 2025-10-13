@@ -146,7 +146,8 @@ MIDDLEWARE = [
 # AUTHENTICATION
 # ==============================================================================
 AUTHENTICATION_BACKENDS = [
-    "allauth.account.auth_backends.AuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",  # Required for Django admin
+    "allauth.account.auth_backends.AuthenticationBackend",  # For API/customer auth
 ]
 AUTH_USER_MODEL = "users.User"
 

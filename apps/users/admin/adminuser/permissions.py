@@ -39,10 +39,6 @@ class AdminUserPermissions:
                 visible=(),
                 editable=(),
             ),
-            AdminUserFields.POLYMORPHIC_CTYPE: FieldPermissions(
-                visible=(context.is_staff),
-                editable=(),
-            ),
             AdminUserFields.USERNAME: FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),

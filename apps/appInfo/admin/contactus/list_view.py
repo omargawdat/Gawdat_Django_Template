@@ -15,7 +15,7 @@ class ContactUsListView:
     list_filter_submit = True
     list_fullwidth = False
     list_horizontal_scrollbar_top = False
-    search_fields = ("customer__phone_number",)
+    search_fields = ("customer__user__phone_number",)
     search_help_text = _("Search by customer phone...")
 
     def get_ordering(self, request):

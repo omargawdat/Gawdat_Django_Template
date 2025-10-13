@@ -29,7 +29,9 @@ class AddressListView(APIView):
         responses={200: AddressDetailedSerializer(many=True)},
     )
     def get(self, request):
-        queryset = AddressSelector.get_all_customer_addresses(customer=request.user)
+        queryset = AddressSelector.get_all_customer_addresses(
+            customer=request.user.customer
+        )
         serializer = AddressDetailedSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -64,15 +66,15 @@ class AddressCreateView(APIView):
         serializer = AddressCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = request.user
+        customer = request.user.customer
         country = serializer.validated_data["country"]
         point = serializer.validated_data["point"]
 
         RegionValidator.validate_country_for_address(country=country, point=point)
 
-        address = serializer.save(customer=user)
-        user.primary_address = address
-        user.save()
+        address = serializer.save(customer=customer)
+        customer.primary_address = address
+        customer.save()
 
         detailed_serializer = AddressDetailedSerializer(address)
         return Response(detailed_serializer.data, status=status.HTTP_201_CREATED)
@@ -98,7 +100,7 @@ class AddressDetailView(APIView):
     )
     def get(self, request, pk):
         user_addresses = AddressSelector.get_all_customer_addresses(
-            customer=request.user
+            customer=request.user.customer
         )
         address = get_object_or_404(user_addresses, pk=pk)
         serializer = AddressDetailedSerializer(address)
@@ -142,7 +144,7 @@ class AddressUpdateView(APIView):
     )
     def patch(self, request, address_id):
         user_addresses = AddressSelector.get_all_customer_addresses(
-            customer=request.user
+            customer=request.user.customer
         )
         address = get_object_or_404(user_addresses, pk=address_id)
 
@@ -186,12 +188,14 @@ class AddressDeleteView(APIView):
         },
     )
     def delete(self, request, address_id):
-        queryset = AddressSelector.get_all_customer_addresses(customer=request.user)
+        queryset = AddressSelector.get_all_customer_addresses(
+            customer=request.user.customer
+        )
 
         address = get_object_or_404(queryset, pk=address_id)
 
         AddressValidator.validate_not_primary_address(
-            address=address, customer=request.user
+            address=address, customer=request.user.customer
         )
 
         address.delete()

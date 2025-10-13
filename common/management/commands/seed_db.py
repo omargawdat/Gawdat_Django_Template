@@ -148,10 +148,14 @@ class Command(BaseCommand):
 
         with self._timer(f"Creating {fixed_count} notifications with M2M users (bulk)"):
             notifications = NotificationFactory.create_batch_bulk(fixed_count)
+            # Get User instances from customers for notifications
+            customer_users = [customer.user for customer in customers]
             for notification in notifications:
-                notification.users.add(
-                    *random.sample(customers, k=min(3, len(customers)))
+                # Randomly assign users to each notification
+                selected_users = random.sample(
+                    customer_users, k=min(3, len(customer_users))
                 )
+                notification.users.add(*selected_users)
 
         # ========================================================================
         # PAYMENT MODELS

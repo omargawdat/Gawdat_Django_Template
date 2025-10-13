@@ -9,11 +9,24 @@ from apps.payment.models.wallet import Wallet
 class WalletDisplayMixin:
     @display(description=_("Wallet"), header=True)
     def display_header(self, wallet: Wallet):
+        # Get full_name from Customer if exists, otherwise use username
+        full_name = (
+            wallet.user.customer.full_name
+            if hasattr(wallet.user, "customer")
+            else wallet.user.username
+        )
+        # Get image from Customer or AdminUser if exists
+        image_url = None
+        if hasattr(wallet.user, "customer") and wallet.user.customer.image:
+            image_url = wallet.user.customer.image.url
+        elif hasattr(wallet.user, "adminuser") and wallet.user.adminuser.image:
+            image_url = wallet.user.adminuser.image.url
+
         return [
             wallet.user,
-            wallet.user.full_name,
+            full_name,
             "WA",
-            {"path": wallet.user.image.url if wallet.user.image else None},
+            {"path": image_url},
         ]
 
     @display(description=_("Balance"), ordering="balance", label="info")
