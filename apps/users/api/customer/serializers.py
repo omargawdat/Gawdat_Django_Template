@@ -14,22 +14,17 @@ from apps.users.models.customer import Customer
 class CustomerMinimalSerializer(serializers.ModelSerializer):
     # Since user is primary_key, pk will be the user_id
     id = serializers.IntegerField(source="pk", read_only=True)
-    # phone_number is a PhoneNumber object, needs proper serialization
-    phone_number = serializers.CharField(read_only=True)
 
     class Meta:
         model = Customer
         fields = [
             "id",
-            "phone_number",
             "full_name",
-            "email",
             "image",
             "gender",
             "birth_date",
             "primary_address",
             "is_profile_completed",
-            "language",
         ]
 
 

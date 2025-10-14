@@ -91,47 +91,47 @@ class Customer(models.Model):
 
     # Proxy properties for User fields
     @property
-    def email(self):
+    def email(self) -> str:
         return self.user.email
 
     @email.setter
-    def email(self, value):
+    def email(self, value) -> None:
         self.user.email = value
 
     @property
-    def username(self):
+    def username(self) -> str:
         return self.user.username
 
     @username.setter
-    def username(self, value):
+    def username(self, value) -> None:
         self.user.username = value
 
     @property
-    def language(self):
+    def language(self) -> str:
         return self.user.language
 
     @language.setter
-    def language(self, value):
+    def language(self, value) -> None:
         self.user.language = value
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         return self.user.is_active
 
     @is_active.setter
-    def is_active(self, value):
+    def is_active(self, value) -> None:
         self.user.is_active = value
 
     @property
-    def date_joined(self):
+    def date_joined(self) -> str:
         return self.user.date_joined
 
     @property
-    def phone_number(self):
+    def phone_number(self) -> str:
         return self.user.phone_number
 
     @phone_number.setter
-    def phone_number(self, value):
+    def phone_number(self, value) -> None:
         self.user.phone_number = value
 
     @property
