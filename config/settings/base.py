@@ -182,12 +182,12 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # Signup: Email + Password (minimal signup)
 # Note: Use 'email*' only for headless API (password is handled separately)
 # Profile-specific fields are collected in a separate profile completion step
-ACCOUNT_SIGNUP_FIELDS = ["email*"]
-
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
 ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
 ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 
 # Headless API configuration
+HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
 HEADLESS_ONLY = True
 HEADLESS_SERVE_SPECIFICATION = True  # Enable OpenAPI spec at /_allauth/openapi.json
 HEADLESS_FRONTEND_URLS = {
