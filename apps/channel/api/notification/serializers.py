@@ -24,7 +24,4 @@ class NotificationDetailedSerializer(NotificationMinimalSerializer):
 class FCMDeviceCreateSerializer(serializers.Serializer):
     registration_id = serializers.CharField()
     device_id = serializers.CharField()
-    type = serializers.ChoiceField(
-        choices=["android", "ios", "web"],
-        default="android",
-    )
+    type = serializers.ChoiceField(choices=["android", "ios", "web"])

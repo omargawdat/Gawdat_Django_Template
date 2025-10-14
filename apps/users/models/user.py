@@ -30,3 +30,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    @property
+    def is_profile_complete(self) -> bool:
+        """Check if user has completed profile setup by checking for related profiles."""
+        return hasattr(self, "customer") or hasattr(self, "adminuser")

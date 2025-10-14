@@ -1,8 +1,14 @@
+from django.db import transaction
 from rest_framework.exceptions import AuthenticationFailed
 
+from apps.channel.data_class import DeviceData
+from apps.channel.domain.services.device import DeviceService
+from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
+from apps.payment.domain.services.wallet import WalletService
 from apps.users.domain.validators.user import UserValidator
 from apps.users.models.customer import Customer
+from apps.users.models.user import User
 
 
 class CustomerService:
@@ -66,3 +72,42 @@ class CustomerService:
 
         customer.user.set_password(new_password)
         customer.user.save()
+
+    @staticmethod
+    @transaction.atomic
+    def complete_customer_profile(
+        *,
+        user: User,
+        country: Country,
+        phone_number: str | None = None,
+        language: str | None = None,
+        fcm_token: str | None = None,
+        device_id: str | None = None,
+        device_type: str | None = None,
+    ) -> User:
+        """Complete customer profile after initial signup."""
+        # Update User
+        if phone_number:
+            user.phone_number = phone_number
+            CountrySelector.country_by_phone(phone_number)
+
+        if language:
+            user.language = language
+        user.save()
+
+        # Create Customer profile
+        Customer.objects.create(user=user, country=country)
+
+        # Create wallet
+        WalletService.create_wallet_for_user(user=user)
+
+        # Register device if provided
+        if fcm_token and device_type:
+            device_data = DeviceData(
+                registration_id=fcm_token,
+                device_id=device_id,
+                type=device_type,
+            )
+            DeviceService.register_device(user=user, device_data=device_data)
+
+        return user
