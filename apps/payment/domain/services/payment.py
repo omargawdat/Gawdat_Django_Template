@@ -28,7 +28,7 @@ class PaymentService:
         )
 
         if env.environment in ["local", "development"]:
-            currency = "KWD"  # todo: remove this code
+            currency = "EGP"  # todo: remove this code (KWT if Tap EGP if Paymob) JUST FOR TESTING PURPOSES
 
         domain_name = env.domain_name
         domain_url = f"https://{domain_name}"
