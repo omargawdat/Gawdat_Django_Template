@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Google Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background-color: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #357ae8;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Google Authentication</h1>
+
+    <h2>Step 1: Get Configuration</h2>
+    <button onclick="getConfig()">Get Available Providers</button>
+    <div id="config-response" class="response"></div>
+
+    <h2>Step 2: Initiate Google Login</h2>
+    <button onclick="initiateGoogleLogin()">Sign in with Google</button>
+    <div id="login-response" class="response"></div>
+
+    <h2>Step 3: Check Session</h2>
+    <button onclick="checkSession()">Check Current Session</button>
+    <div id="session-response" class="response"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        async function getConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/_allauth/browser/v1/config`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                document.getElementById('config-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('config-response').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function initiateGoogleLogin() {
+            try {
+                const response = await fetch(`${API_BASE}/_allauth/browser/v1/auth/provider/redirect`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        provider: 'google',
+                        callback_url: window.location.origin + '/callback.html',
+                        process: 'login'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('login-response').textContent = JSON.stringify(data, null, 2);
+
+                // Automatically redirect to Google
+                if (data.data && data.data.redirect_to) {
+                    setTimeout(() => {
+                        window.location.href = data.data.redirect_to;
+                    }, 2000);
+                }
+            } catch (error) {
+                document.getElementById('login-response').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE}/_allauth/browser/v1/auth/session`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                document.getElementById('session-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('session-response').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

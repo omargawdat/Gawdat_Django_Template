@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Callback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .success {
+            color: green;
+            padding: 15px;
+            background-color: #d4edda;
+            border-radius: 4px;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Authentication Callback</h1>
+    <div id="status">Processing authentication...</div>
+    <div id="user-info" class="info"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        async function handleCallback() {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+
+            document.getElementById('status').innerHTML = `
+                <div class="info">
+                    <strong>Callback received!</strong><br>
+                    Code: ${code ? code.substring(0, 20) + '...' : 'None'}<br>
+                    State: ${state ? state.substring(0, 20) + '...' : 'None'}
+                </div>
+            `;
+
+            // Check if user is authenticated
+            try {
+                const response = await fetch(`${API_BASE}/_allauth/browser/v1/auth/session`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.data && data.data.user) {
+                    document.getElementById('status').innerHTML = '<div class="success">✅ Successfully authenticated!</div>';
+                    document.getElementById('user-info').textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    document.getElementById('status').textContent = 'Not authenticated yet. Check console for details.';
+                    console.log('Session data:', data);
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error checking session: ' + error.message;
+            }
+        }
+
+        // Run on page load
+        handleCallback();
+    </script>
+</body>
+</html>
