@@ -43,23 +43,9 @@ INSTALLED_APPS += ["django_extensions"]
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Disabled
 
 # ------------------------------------------------------------------------------
-# CORS CONFIGURATION (Development - Allow localhost frontend)
+# CORS & CSRF CONFIGURATION
 # ------------------------------------------------------------------------------
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000",
-]
-CORS_ALLOW_CREDENTIALS = True  # Required for CSRF cookies
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000",
-]
-# Allow CSRF cookie to be read by JavaScript
-CSRF_COOKIE_HTTPONLY = False  # Only for development!
-CSRF_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SAMESITE = "Lax"
+# Note: CORS and CSRF settings are configured in base.py using environment variables
+# Local development uses the same configuration as production, just with different
+# environment variable values (localhost URLs, no cookie domain, etc.)
+# See: dummy.env for local development configuration examples

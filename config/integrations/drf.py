@@ -77,6 +77,7 @@ SPECTACULAR_SETTINGS = {
         }
     },
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "EXTERNAL_DOCS": {"description": "allauth", "url": "/_allauth/openapi.html"},
 }
 
 SIMPLE_JWT = {

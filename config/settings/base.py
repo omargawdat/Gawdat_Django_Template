@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import dj_database_url
+from corsheaders.defaults import default_headers
 from django.utils.translation import gettext_lazy as _
 
 from config.helpers.env import env
@@ -183,7 +184,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # Signup: Email + Password (minimal signup)
 # Note: Use 'email*' only for headless API (password is handled separately)
 # Profile-specific fields are collected in a separate profile completion step
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
 ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 
@@ -191,11 +192,15 @@ ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
 HEADLESS_ONLY = True
 HEADLESS_SERVE_SPECIFICATION = True  # Enable OpenAPI spec at /_allauth/openapi.json
+
+# Frontend URLs for email links (uses default frontend URL from env)
+# Note: For mobile apps, these URLs can be deep links (e.g., myapp://password-reset/{key})
+# Configure FRONTEND_DEFAULT_URL in .env to use your app's deep link scheme
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "http://localhost:3000/verify-email/{key}",  # pragma: allowlist secret
-    "account_reset_password": "http://localhost:3000/password/reset",  # pragma: allowlist secret
-    "account_reset_password_from_key": "http://localhost:3000/password/reset/key/{key}",  # pragma: allowlist secret
-    "account_signup": "http://localhost:3000/signup",
+    "account_confirm_email": f"{env.frontend_default_url}/verify-email/{{key}}",
+    "account_reset_password": f"{env.frontend_default_url}/password/reset",
+    "account_reset_password_from_key": f"{env.frontend_default_url}/password/reset/key/{{key}}",
+    "account_signup": f"{env.frontend_default_url}/signup",
 }
 
 
@@ -203,16 +208,53 @@ HEADLESS_FRONTEND_URLS = {
 # SECURITY
 # ==============================================================================
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
 
-# CORS Configuration
+# Parse allowed frontend origins from environment variable (comma-separated)
+FRONTEND_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in env.frontend_allowed_origins.split(",")
+    if origin.strip()
+]
+
+# ==============================================================================
+# CSRF CONFIGURATION (Django-Allauth Headless)
+# ==============================================================================
+# Store CSRF token in cookie (not session) so JavaScript can access it
+CSRF_USE_SESSIONS = False
+# CSRF cookie must be readable by JavaScript for headless API
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+# Set cookie domain from environment (None for localhost, .example.com for subdomains)
+CSRF_COOKIE_DOMAIN = env.cookie_domain if env.cookie_domain else None
+# Trusted origins for CSRF validation
+CSRF_TRUSTED_ORIGINS = FRONTEND_ALLOWED_ORIGINS
+
+# ==============================================================================
+# SESSION CONFIGURATION
+# ==============================================================================
+SESSION_COOKIE_SAMESITE = "Lax"
+# Set cookie domain from environment (None for localhost, .example.com for subdomains)
+SESSION_COOKIE_DOMAIN = env.cookie_domain if env.cookie_domain else None
+
+# ==============================================================================
+# CORS CONFIGURATION
+# ==============================================================================
 # https://github.com/adamchainz/django-cors-headers#configuration
-# Override in local.py for development and prod.py for production
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = FRONTEND_ALLOWED_ORIGINS
+CORS_ALLOW_CREDENTIALS = True  # Required for session cookies and CSRF
 # Only allow CORS on API endpoints, not admin or other pages
 CORS_URLS_REGEX = r"^/api/.*$"
+
+# Django-allauth headless requires custom headers for authentication flows
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "x-session-token",
+    "x-email-verification-key",
+    "x-password-reset-key",
+)
 
 # ==============================================================================
 # ADMIN

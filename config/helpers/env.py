@@ -57,6 +57,11 @@ class EnvSettings(BaseSettings):
     email_host_user: str
     email_host_password: SecretStr
 
+    # Frontend Configuration
+    frontend_default_url: str
+    frontend_allowed_origins: str
+    cookie_domain: str | None = None
+
     # Other
     api_key: SecretStr
 
