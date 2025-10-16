@@ -37,6 +37,16 @@ class EnvSettings(BaseSettings):
     google_application_credentials: str
     google_map_api_key: SecretStr
 
+    # OAuth Providers
+    google_oauth2_client_id: str
+    google_oauth2_client_secret: SecretStr
+    facebook_oauth2_client_id: str
+    facebook_oauth2_client_secret: SecretStr
+    apple_oauth2_client_id: str
+    apple_oauth2_client_secret: SecretStr
+    apple_key_id: str
+    apple_team_id: str
+
     # Payment
     taps_secret_key: SecretStr
     payment_confirmation_key: SecretStr

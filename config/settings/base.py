@@ -109,6 +109,10 @@ DJANGO_APPS = [
     # Django-allauth
     "allauth",
     "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.apple",
     "allauth.headless",
 ]
 
@@ -199,6 +203,55 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password": f"{env.frontend_default_url}/password/reset",
     "account_reset_password_from_key": f"{env.frontend_default_url}/password/reset/key/{{key}}",
     "account_signup": f"{env.frontend_default_url}/signup",
+}
+
+# Social account global settings
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
+SOCIALACCOUNT_STORE_TOKENS = False
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+
+# Social account providers configuration
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env.google_oauth2_client_id,
+            "secret": env.google_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "OAUTH_PKCE_ENABLED": True,
+        "VERIFIED_EMAIL": True,
+    },
+    "facebook": {
+        "METHOD": "oauth2",
+        "SCOPE": ["email", "public_profile"],
+        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
+        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
+        "APP": {
+            "client_id": env.facebook_oauth2_client_id,
+            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
+            "key": "",
+        },
+        "EXCHANGE_TOKEN": True,
+        "VERIFIED_EMAIL": False,
+        "VERSION": "v21.0",
+    },
+    "apple": {
+        "APP": {
+            "client_id": env.apple_oauth2_client_id,
+            "secret": env.apple_key_id,
+            "key": env.apple_team_id,
+            "settings": {
+                "certificate_key": env.apple_oauth2_client_secret.get_secret_value(),
+            },
+        },
+        "VERIFIED_EMAIL": True,
+    },
 }
 
 
