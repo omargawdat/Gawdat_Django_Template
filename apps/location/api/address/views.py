@@ -8,7 +8,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.location.domain.selector.address import AddressSelector
 
@@ -20,7 +19,6 @@ from .serializers import AddressUpdateSerializer
 
 
 class AddressListView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -37,7 +35,6 @@ class AddressListView(APIView):
 
 
 class AddressCreateView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -81,7 +78,6 @@ class AddressCreateView(APIView):
 
 
 class AddressDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -108,7 +104,6 @@ class AddressDetailView(APIView):
 
 
 class AddressUpdateView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -167,7 +162,6 @@ class AddressUpdateView(APIView):
 
 
 class AddressDeleteView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

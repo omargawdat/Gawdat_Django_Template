@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.customer.serializers import CustomerUpdateSerializer
@@ -15,7 +14,6 @@ from apps.users.domain.services.user import UserServices
 
 
 class CustomerUpdateView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -90,7 +88,6 @@ class CustomerUpdateView(APIView):
 
 
 class CustomerDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -107,7 +104,6 @@ class CustomerDetailView(APIView):
 
 
 class CustomerDeleteView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

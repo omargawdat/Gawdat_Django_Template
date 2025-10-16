@@ -1,7 +1,5 @@
-from typing import Annotated
 from typing import Literal
 
-from pydantic import Field
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
@@ -19,8 +17,6 @@ class EnvSettings(BaseSettings):
     django_admin_url: str
     django_admin_name: str
     django_admin_email: str
-    django_jwt_access_token_lifetime_minutes: Annotated[int, Field(gt=0)]
-    django_jwt_refresh_token_lifetime_minutes: Annotated[int, Field(gt=0)]
 
     # Database
     database_url: str

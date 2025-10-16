@@ -1,12 +1,9 @@
-from datetime import timedelta
-
-from config.helpers.env import env
-
 # REST Framework settings
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "allauth.headless.contrib.rest_framework.authentication.XSessionTokenAuthentication",
     ),
     "DEFAULT_PARSER_CLASSES": (
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
@@ -67,32 +64,6 @@ SPECTACULAR_SETTINGS = {
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
         "config.schema_hooks.merge_allauth_spec",  # Merge django-allauth headless endpoints
     ],
-    "APPEND_COMPONENTS": {
-        "securitySchemes": {
-            "jwtAuth": {
-                "type": "http",
-                "scheme": "bearer",
-                # No bearerFormat specified # todo: as apidog has bug when the bearerFormat is specified it detect the whole schema as jwt
-            }
-        }
-    },
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
     "EXTERNAL_DOCS": {"description": "allauth", "url": "/_allauth/openapi.html"},
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=env.django_jwt_access_token_lifetime_minutes
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        minutes=env.django_jwt_refresh_token_lifetime_minutes
-    ),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "REUSE_REFRESH_TOKENS": False,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": env.django_secret_key.get_secret_value(),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
 }

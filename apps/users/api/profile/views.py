@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.users.api.user.serializers import UserWithProfileSerializer
 
@@ -17,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class CustomerProfileCompletionView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -66,7 +64,6 @@ class CustomerProfileCompletionView(APIView):
 class ProfileStatusView(APIView):
     """Check if user's profile is complete."""
 
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
