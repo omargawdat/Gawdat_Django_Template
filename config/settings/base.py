@@ -203,6 +203,9 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password": f"{env.frontend_default_url}/password/reset",
     "account_reset_password_from_key": f"{env.frontend_default_url}/password/reset/key/{{key}}",
     "account_signup": f"{env.frontend_default_url}/signup",
+    # Social account URLs
+    "socialaccount_login_error": f"{env.frontend_default_url}/auth/error",
+    "socialaccount_signup": f"{env.frontend_default_url}/auth/signup",
 }
 
 # Social account global settings
@@ -215,11 +218,6 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 # Social account providers configuration
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        "APP": {
-            "client_id": env.google_oauth2_client_id,
-            "secret": env.google_oauth2_client_secret.get_secret_value(),
-            "key": "",
-        },
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {
             "access_type": "online",
@@ -232,24 +230,11 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": ["email", "public_profile"],
         "AUTH_PARAMS": {"auth_type": "reauthenticate"},
         "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
-        "APP": {
-            "client_id": env.facebook_oauth2_client_id,
-            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
-            "key": "",
-        },
         "EXCHANGE_TOKEN": True,
         "VERIFIED_EMAIL": False,
         "VERSION": "v21.0",
     },
     "apple": {
-        "APP": {
-            "client_id": env.apple_oauth2_client_id,
-            "secret": env.apple_key_id,
-            "key": env.apple_team_id,
-            "settings": {
-                "certificate_key": env.apple_oauth2_client_secret.get_secret_value(),
-            },
-        },
         "VERIFIED_EMAIL": True,
     },
 }
