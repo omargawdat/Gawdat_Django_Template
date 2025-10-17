@@ -203,40 +203,6 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password": f"{env.frontend_default_url}/password/reset",
     "account_reset_password_from_key": f"{env.frontend_default_url}/password/reset/key/{{key}}",
     "account_signup": f"{env.frontend_default_url}/signup",
-    # Social account URLs
-    "socialaccount_login_error": f"{env.frontend_default_url}/auth/error",
-    "socialaccount_signup": f"{env.frontend_default_url}/auth/signup",
-}
-
-# Social account global settings
-SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
-SOCIALACCOUNT_STORE_TOKENS = False
-SOCIALACCOUNT_EMAIL_REQUIRED = True
-
-# Social account providers configuration
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {
-            "access_type": "online",
-        },
-        "OAUTH_PKCE_ENABLED": True,
-        "VERIFIED_EMAIL": True,
-    },
-    "facebook": {
-        "METHOD": "oauth2",
-        "SCOPE": ["email", "public_profile"],
-        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
-        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
-        "EXCHANGE_TOKEN": True,
-        "VERIFIED_EMAIL": False,
-        "VERSION": "v21.0",
-    },
-    "apple": {
-        "VERIFIED_EMAIL": True,
-    },
 }
 
 
