@@ -39,7 +39,6 @@ api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.payment.api.callback.urls")),
     # Django-allauth headless API
     path("_allauth/", include("allauth.headless.urls")),
-    path("accounts/", include("allauth.urls")),
 ]
 
 api_patterns = [
@@ -53,6 +52,8 @@ api_patterns = [
 urlpatterns = [
     *core_patterns,
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    # Django-allauth traditional URLs (for OAuth callbacks)
+    path("accounts/", include("allauth.urls")),
     path("api/", include(api_patterns)),
     path("", include("common.views.urls"), name="terms_and_policy"),
 ]

@@ -39,12 +39,6 @@ class EnvSettings(BaseSettings):
     # OAuth Providers
     google_oauth2_client_id: str
     google_oauth2_client_secret: SecretStr
-    facebook_oauth2_client_id: str
-    facebook_oauth2_client_secret: SecretStr
-    apple_oauth2_client_id: str
-    apple_oauth2_client_secret: SecretStr
-    apple_key_id: str
-    apple_team_id: str
 
     # Payment
     taps_secret_key: SecretStr
@@ -71,7 +65,6 @@ class EnvSettings(BaseSettings):
     # Frontend Configuration
     frontend_default_url: str
     frontend_allowed_origins: str
-    cookie_domain: str | None = None
 
     # Other
     api_key: SecretStr

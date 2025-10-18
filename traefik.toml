@@ -1,0 +1,47 @@
+defaultEntryPoints = ["http"]
+
+[log]
+level = "DEBUG"
+
+[api]
+dashboard = true
+
+[accessLog]
+
+[providers]
+providersThrottleDuration = 10
+[providers.file]
+filename = "traefik.toml"
+directory = "/etc/traefik/"
+watch = true
+
+[entryPoints]
+[entryPoints.web]
+address = ":10000"
+
+[http.routers]
+
+# Django backend routes - handle API and allauth endpoints
+# Priority: 10 (higher priority = processed first)
+[http.routers.django]
+service = "django"
+rule = "PathPrefix(`/api`) || PathPrefix(`/accounts`) || PathPrefix(`/_allauth`) || PathPrefix(`/admin`) || PathPrefix(`/media`)"
+entrypoints = ["web"]
+priority = 10
+
+# React frontend routes - handle everything else (including OAuth callbacks and /static)
+# Priority: 1 (lower priority = catch-all)
+[http.routers.react]
+service = "react"
+rule = "PathPrefix(`/`)"
+entrypoints = ["web"]
+priority = 1
+
+[http.services]
+[http.services.react.loadBalancer]
+[[http.services.react.loadBalancer.servers]]
+url = "http://frontend:3000"
+
+[http.services.django.loadBalancer]
+[[http.services.django.loadBalancer.servers]]
+url = "http://django:8000"
