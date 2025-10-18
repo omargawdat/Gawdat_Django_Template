@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.channel.api.notification.serializers import NotificationDetailedSerializer
 from apps.channel.domain.selectors.notification import NotificationSelector
@@ -23,7 +22,6 @@ class CustomFCMDeviceViewSet(FCMDeviceAuthorizedViewSet):
 
 
 class NotificationListView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = NotificationCursorPagination
 
@@ -44,7 +42,6 @@ class NotificationListView(APIView):
 
 
 class NotificationDeleteView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -61,7 +58,6 @@ class NotificationDeleteView(APIView):
 
 
 class NotificationBulkDeleteView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -77,7 +73,6 @@ class NotificationBulkDeleteView(APIView):
 
 
 class NotificationMarkAsReadView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

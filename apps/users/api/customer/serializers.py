@@ -12,25 +12,26 @@ from apps.users.models.customer import Customer
 
 
 class CustomerMinimalSerializer(serializers.ModelSerializer):
+    # Since user is primary_key, pk will be the user_id
+    id = serializers.IntegerField(source="pk", read_only=True)
+
     class Meta:
         model = Customer
         fields = [
             "id",
-            "phone_number",
             "full_name",
-            "email",
             "image",
             "gender",
             "birth_date",
             "primary_address",
             "is_profile_completed",
-            "language",
         ]
 
 
 class CustomerDetailedSerializer(CustomerMinimalSerializer):
     country = CountrySerializer(read_only=True)
-    wallet = WalletMinimalSerializer(read_only=True)
+    # Wallet is on User, not Customer
+    wallet = WalletMinimalSerializer(source="user.wallet", read_only=True)
 
     class Meta(CustomerMinimalSerializer.Meta):
         fields = [
@@ -93,6 +94,9 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
         queryset=Country.objects.filter(is_active=True),
         required=False,
     )
+    email = serializers.EmailField(required=False)
+    language = serializers.ChoiceField(choices=Language.choices, required=False)
+    phone_number = ValidCountryPhoneNumberField(required=False)
 
     class Meta:
         model = Customer
@@ -105,4 +109,23 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
             "gender",
             "language",
             "country",
+            "phone_number",
         ]
+
+    def update(self, instance, validated_data):
+        # Handle User fields
+        email = validated_data.pop("email", None)
+        language = validated_data.pop("language", None)
+        phone_number = validated_data.pop("phone_number", None)
+
+        if email:
+            instance.user.email = email
+        if language:
+            instance.user.language = language
+        if phone_number:
+            instance.user.phone_number = phone_number
+        if email or language or phone_number:
+            instance.user.save()
+
+        # Handle Customer fields
+        return super().update(instance, validated_data)

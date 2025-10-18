@@ -153,7 +153,6 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "DJANGO_ADMIN_URL": "admin/",
      "DJANGO_JWT_ACCESS_TOKEN_LIFETIME_MINUTES": "14400",
      "DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES": "43200",
-     "GOOGLE_APPLICATION_CREDENTIALS": "/app/credentials/google-service-account.json",
      "TAPS_SECRET_KEY": "taps_secret_dummy_123456",
      "PAYMENT_CONFIRMATION_KEY": "MUST-BE-REPLACED",
 
@@ -168,7 +167,6 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
 
      "FIREBASE_CREDENTIALS_B64": "MUST-BE-REPLACED",
 
-     "GOOGLE_APPLICATION_CREDENTIALS": "/app/credentials/google-service-account.json",
      "GOOGLE_MAP_API_KEY": "MUST-BE-REPLACED",
 
      "TAPS_SECRET_KEY": "MUST-BE-REPLACED",
@@ -179,15 +177,6 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "SMS_MISR_USERNAME": "MUST-BE-REPLACED",
      "SMS_MISR_PASSWORD": "MUST-BE-REPLACED",
      "SMS_MISR_SENDER": "MUST-BE-REPLACED",
-
-     "GOOGLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
-     "GOOGLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
-     "FACEBOOK_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
-     "FACEBOOK_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
-     "APPLE_OAUTH2_CLIENT_ID": "MUST-BE-REPLACED",
-     "APPLE_OAUTH2_CLIENT_SECRET": "MUST-BE-REPLACED",
-     "KEY_ID": "MUST-BE-REPLACED",
-     "TEAM_ID": "MUST-BE-REPLACED",
 
      "EMAIL_HOST_USER": "MUST-BE-REPLACED",
      "EMAIL_HOST_PASSWORD": "MUST-BE-REPLACED",

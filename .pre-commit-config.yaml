@@ -1,4 +1,4 @@
-exclude: '^docs/|/migrations/|^devcontainer.json$|.*\.tmp$|^uv\.lock$'
+exclude: '^docs/|/migrations/|^devcontainer.json$|.*\.tmp$|^uv\.lock$|^frontend/'
 default_stages: [ pre-commit ]
 
 default_language_version:
@@ -10,7 +10,8 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
-        args: [ --maxkb=500 ]
+        args: [ --maxkb=500, --enforce-all ]
+        exclude: '(^frontend/|\.geojson)$'
       - id: check-toml
       - id: check-yaml
       - id: check-case-conflict

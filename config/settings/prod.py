@@ -6,7 +6,12 @@ from ..helpers.env import env
 print("loading production settings")  # noqa: T201
 
 DEBUG = False
+
+# ALLOWED_HOSTS configuration
 ALLOWED_HOSTS = [env.domain_name]
+# If using subdomain cookie domain (e.g., .example.com), add it to ALLOWED_HOSTS
+if env.cookie_domain and env.cookie_domain.startswith("."):
+    ALLOWED_HOSTS.append(env.cookie_domain)
 
 
 # ------------------------------------------------------------------------------
@@ -18,25 +23,22 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
 SECURE_SSL_REDIRECT = True
 
+# Production-specific Cookie Security (overrides base.py defaults)
 # Session Cookie Security
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-secure
 SESSION_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-name
 SESSION_COOKIE_NAME = "__Secure-sessionid"
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-samesite
-SESSION_COOKIE_SAMESITE = "Lax"
 
 # CSRF Cookie Security
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-secure
 CSRF_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-name
 CSRF_COOKIE_NAME = "__Secure-csrftoken"
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-samesite
-CSRF_COOKIE_SAMESITE = "Lax"
+
+# Note: CORS, CSRF domain, and trusted origins are configured in base.py
+# using environment variables. This ensures consistent configuration across
+# all environments (local, staging, production) with only env var differences.
 
 # HSTS (HTTP Strict Transport Security)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
@@ -152,6 +154,11 @@ LOGGING = {
         },
     },
 }
+
+# ------------------------------------------------------------------------------
+# EMAIL CONFIGURATION (Production - Gmail SMTP)
+# ------------------------------------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # ------------------------------------------------------------------------------
 # EXTERNAL INTEGRATIONS

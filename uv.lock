@@ -457,21 +457,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dj-rest-auth"
-version = "7.0.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "djangorestframework" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b7/19/00150c8bedf7b6d4c44ecf7c2be9e58ae2203b42741ca734152d34f549f1/dj-rest-auth-7.0.1.tar.gz", hash = "sha256:3f8c744cbcf05355ff4bcbef0c8a63645da38e29a0fdef3c3332d4aced52fb90", size = 220541, upload-time = "2025-01-04T23:37:38.688Z" }
-
-[package.optional-dependencies]
-with-social = [
-    { name = "django-allauth", extra = ["socialaccount"] },
-]
-
-[[package]]
 name = "django"
 version = "5.2.7"
 source = { registry = "https://pypi.org/simple" }
@@ -496,6 +481,9 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/6f/53/709a7644f8e1f92888c818f5a4cae1c598813ee42bf4e709bf010ba16191/django_allauth-65.12.0.tar.gz", hash = "sha256:a76ec55935354a1455753601a0a814a4ded368242e8969323480a2810b349183", size = 1967199, upload-time = "2025-10-05T09:08:44.476Z" }
 
 [package.optional-dependencies]
+headless-spec = [
+    { name = "pyyaml" },
+]
 socialaccount = [
     { name = "oauthlib" },
     { name = "pyjwt", extra = ["crypto"] },
@@ -830,8 +818,8 @@ dependencies = [
     { name = "argon2-cffi" },
     { name = "boto3" },
     { name = "dj-database-url" },
-    { name = "dj-rest-auth", extra = ["with-social"] },
     { name = "django" },
+    { name = "django-allauth", extra = ["headless-spec", "socialaccount"] },
     { name = "django-constance" },
     { name = "django-cors-headers" },
     { name = "django-filter" },
@@ -906,8 +894,8 @@ requires-dist = [
     { name = "argon2-cffi", specifier = "==25.1.0" },
     { name = "boto3", specifier = "==1.40.45" },
     { name = "dj-database-url", specifier = "==3.0.1" },
-    { name = "dj-rest-auth", extras = ["with-social"], specifier = "==7.0.1" },
     { name = "django", specifier = "==5.2.7" },
+    { name = "django-allauth", extras = ["headless-spec", "socialaccount"], specifier = ">=65.12.0" },
     { name = "django-constance", specifier = "==4.3.2" },
     { name = "django-cors-headers", specifier = "==4.9.0" },
     { name = "django-filter", specifier = "==25.2" },
