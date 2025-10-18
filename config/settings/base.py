@@ -148,7 +148,9 @@ MIDDLEWARE = [
 # ==============================================================================
 # AUTHENTICATION
 # ==============================================================================
-AUTHENTICATION_BACKENDS = ("allauth.account.auth_backends.AuthenticationBackend",)
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",  # For API/customer auth
+]
 AUTH_USER_MODEL = "users.User"
 
 # Password hashers
