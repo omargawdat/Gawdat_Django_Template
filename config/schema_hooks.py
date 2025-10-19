@@ -125,9 +125,16 @@ def merge_allauth_spec(result, generator=None, request=None, public=False, **kwa
             )
 
             # Prefix tags for better organization in Swagger UI
-            # "Signup" -> "Authentication / Signup"
+            # Only add prefix if tag doesn't already start with "Authentication"
             old_tags = op.get("tags") or ["Other"]
-            new_tags = [f"Authentication / {t}" for t in old_tags]
+            new_tags = []
+            for tag in old_tags:
+                if tag.startswith("Authentication"):
+                    # Replace colon with slash for consistency: "Authentication: Account" -> "Authentication / Account"
+                    new_tags.append(tag.replace("Authentication:", "Authentication /"))
+                else:
+                    # Add prefix to non-authentication tags
+                    new_tags.append(f"Authentication / {tag}")
             op["tags"] = new_tags
 
     # Step 3: Transform error schemas to match drf-standardized-errors format

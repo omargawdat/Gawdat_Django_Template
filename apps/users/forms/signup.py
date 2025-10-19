@@ -5,4 +5,4 @@ from django import forms
 
 class CustomSignupForm(forms.Form):
     def signup(self, request, user):
-        pass
+        print("Custom signup form called")  # noqa: T201

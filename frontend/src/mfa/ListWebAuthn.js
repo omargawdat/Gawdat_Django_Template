@@ -26,7 +26,7 @@ function Authenticator (props) {
           </td>
         : <td>{authenticator.name} <Button onClick={() => props.onEdit()}>        Edit</Button>
           </td>}
-      <td>{typeof authenticator.is_passwordless === 'undefined' // pragma: allowlist secret
+      <td>{typeof authenticator.is_passwordless === 'undefined'
         ? 'Type unspecified'
         : (authenticator.is_passwordless ? 'Passkey' : 'Security key')}
       </td>

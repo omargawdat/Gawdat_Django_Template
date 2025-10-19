@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom'
-// import Calculator from './Calculator' // Demo component - removed
+import Calculator from './Calculator'
 import Login from './account/Login'
 import RequestLoginCode from './account/RequestLoginCode'
 import ConfirmLoginCode from './account/ConfirmLoginCode'
@@ -53,11 +53,10 @@ function createRouter (config) {
           path: '/',
           element: <Home />
         },
-        // Calculator route removed - demo component that requires /drf/api/add/ and /ninja/api/add endpoints
-        // {
-        //   path: '/calculator',
-        //   element: <Calculator />
-        // },
+        {
+          path: '/calculator',
+          element: <Calculator />
+        },
         {
           path: '/account/login',
           element: <AnonymousRoute><Login /></AnonymousRoute>

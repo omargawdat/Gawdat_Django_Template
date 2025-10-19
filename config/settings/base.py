@@ -184,8 +184,8 @@ ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 
 # Custom adapters for signup and user data serialization
-# ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
-# ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
+ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
+ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 
 # Headless API configuration (matching demo exactly)
 # HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
