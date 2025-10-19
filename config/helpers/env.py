@@ -38,7 +38,6 @@ class EnvSettings(BaseSettings):
     firebase_credentials_b64: SecretStr
 
     # Google Services
-    google_application_credentials: str
     google_map_api_key: SecretStr
 
     # Payment
@@ -72,9 +71,6 @@ class EnvSettings(BaseSettings):
     # Email
     email_host_user: str
     email_host_password: SecretStr
-
-    # Other
-    api_key: SecretStr
 
 
 env = EnvSettings()
