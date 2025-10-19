@@ -1,8 +1,12 @@
 """Custom signup form for django-allauth headless API."""
 
+import logging
+
 from django import forms
+
+logger = logging.getLogger(__name__)
 
 
 class CustomSignupForm(forms.Form):
     def signup(self, request, user):
-        print("Custom signup form called")  # noqa: T201
+        logger.info("Custom signup form called")

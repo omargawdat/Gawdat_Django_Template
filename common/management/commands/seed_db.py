@@ -46,7 +46,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--count",
             type=int,
-            help="Base count for data quantities (default: 4)",
+            required=True,
+            help="Base count for data quantities",
         )
         parser.add_argument(
             "--no-flush",
