@@ -50,13 +50,27 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # environment variable values (localhost URLs, no cookie domain, etc.)
 # See: dummy.env for local development configuration examples
 
-# CSRF settings for local development with Docker and Traefik
+# CSRF settings for local development (direct frontend-to-backend)
 CSRF_COOKIE_SAMESITE = "Lax"  # Lax for OAuth compatibility
 CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read the CSRF cookie
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:10000",  # Traefik proxy port
-    "http://127.0.0.1:10000",
-]
+# Note: CSRF_TRUSTED_ORIGINS now configured in base.py from env.frontend_allowed_origins
 
 # Session cookie settings for local development
 SESSION_COOKIE_SAMESITE = "Lax"  # Lax for OAuth compatibility
+
+# Disable CSRF for allauth headless API endpoints in local development
+# This is necessary because:
+# 1. Frontend runs on localhost:3000, backend on localhost:8000
+# 2. Different ports = different origins for browser security
+# 3. JavaScript on :3000 cannot read cookies set by :8000
+# 4. Therefore frontend can't send X-CSRFToken header
+# 5. In production, use same domain or proper CSRF handling
+
+# Exempt allauth endpoints from CSRF checking (local development only)
+CSRF_EXEMPT_URLS = [r"^/api/_allauth/"]
+
+# Add CSRF exempt middleware before CSRF middleware
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.middleware.csrf.CsrfViewMiddleware"),
+    "config.middleware.csrf_exempt.CSRFExemptMiddleware",
+)

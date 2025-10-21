@@ -10,6 +10,7 @@ export default function Signup () {
   const [email, setEmail] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
+  const [language, setLanguage] = useState('en')
   const [password2Errors, setPassword2Errors] = useState([])
   const [response, setResponse] = useState({ fetching: false, content: null })
   const config = useConfig()
@@ -22,7 +23,7 @@ export default function Signup () {
     }
     setPassword2Errors([])
     setResponse({ ...response, fetching: true })
-    signUp({ email, password: password1 }).then((content) => {
+    signUp({ email, password: password1, language }).then((content) => {
       setResponse((r) => { return { ...r, content } })
     }).catch((e) => {
       console.error(e)
@@ -49,6 +50,14 @@ export default function Signup () {
       </div>
       <div><label>Password (again): <input value={password2} onChange={(e) => setPassword2(e.target.value)} type='password' required /></label>
         <FormErrors param='password2' errors={password2Errors} />
+      </div>
+      <div><label>Language:
+        <select value={language} onChange={(e) => setLanguage(e.target.value)} required>
+          <option value='en'>English</option>
+          <option value='ar'>Arabic</option>
+        </select>
+      </label>
+        <FormErrors param='language' errors={response.content?.errors} />
       </div>
       <Button disabled={response.fetching} onClick={() => submit()}>Sign Up</Button>
       <a href='/account/signup/passkey'>Sign up using a passkey</a>

@@ -2,17 +2,6 @@ volumes:
   projectname_local_postgres_data: { }
 
 services:
-  proxy:
-    image: traefik:v3.0
-    container_name: projectname_proxy
-    ports:
-      - '10000:10000'
-    volumes:
-      - ./traefik.toml:/etc/traefik/traefik.toml
-    depends_on:
-      - django
-      - frontend
-
   django:
     build:
       context: .
@@ -25,8 +14,8 @@ services:
     volumes:
       - /app/.venv  # Anonymous volume for .venv (must be first)
       - .:/app:z    # Mount source code
-    expose:
-      - '8000'
+    ports:
+      - '8000:8000'
     env_file:
       - .env
     environment:
@@ -42,10 +31,11 @@ services:
     volumes:
       - ./frontend/src:/code/src:z
       - ./frontend/public:/code/public:z
-    expose:
-      - '3000'
+    ports:
+      - '3000:3000'
     environment:
       - CHOKIDAR_USEPOLLING=true  # For hot reload in Docker
+      - REACT_APP_API_URL=http://localhost:8000
 
   postgres:
     image: imresamu/postgis:17-3.5.0-alpine3.20

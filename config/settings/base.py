@@ -181,21 +181,24 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*", "language*"]
 
 # Custom adapters for signup and user data serialization
 ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
 ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "apps.users.adapters.socialaccount.CustomSocialAccountAdapter"
 
 # Headless API configuration (matching demo exactly)
 # HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
 HEADLESS_ONLY = True
+# Build frontend URLs dynamically from environment variable
+# This allows different URLs for local/dev/staging/production deployments
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "/account/verify-email/{key}",
-    "account_reset_password": "/account/password/reset",
-    "account_reset_password_from_key": "/account/password/reset/key/{key}",
-    "account_signup": "/account/signup",
-    "socialaccount_login_error": "/account/provider/callback",
+    "account_confirm_email": f"{env.frontend_default_url}/account/verify-email/{{key}}",
+    "account_reset_password": f"{env.frontend_default_url}/account/password/reset",
+    "account_reset_password_from_key": f"{env.frontend_default_url}/account/password/reset/key/{{key}}",
+    "account_signup": f"{env.frontend_default_url}/account/signup",
+    "socialaccount_login_error": f"{env.frontend_default_url}/account/provider/callback",
 }
 HEADLESS_SERVE_SPECIFICATION = True
 
@@ -226,8 +229,29 @@ X_FRAME_OPTIONS = "DENY"
 # ==============================================================================
 # CORS CONFIGURATION
 # ==============================================================================
-# Allow all origins for testing (matching demo's permissive setup)
-CORS_ALLOW_ALL_ORIGINS = True
+# Allow origins from environment variable (comma-separated)
+# This enables frontend developers to work locally against dev/staging backend
+# Example: "https://app.example.com,http://localhost:3000,http://127.0.0.1:3000"
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in env.frontend_allowed_origins.split(",")
+    if origin.strip()
+]
+# Enable credentials (cookies, authorization headers) in CORS requests
+CORS_ALLOW_CREDENTIALS = True
+
+# ==============================================================================
+# CSRF CONFIGURATION
+# ==============================================================================
+# Trust same origins as CORS for CSRF validation
+# This allows cross-origin POST requests from trusted frontend origins
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+# Cookie domain configuration (for cross-subdomain authentication)
+# Leave empty for localhost development, use ".example.com" for production
+if env.cookie_domain:
+    SESSION_COOKIE_DOMAIN = env.cookie_domain
+    CSRF_COOKIE_DOMAIN = env.cookie_domain
 
 # ==============================================================================
 # ADMIN

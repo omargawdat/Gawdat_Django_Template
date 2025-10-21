@@ -66,6 +66,10 @@ class EnvSettings(BaseSettings):
     frontend_default_url: str
     frontend_allowed_origins: str
 
+    # Cookie Configuration (for cross-domain/subdomain auth)
+    # Leave empty for localhost, use ".example.com" for production subdomains
+    cookie_domain: str = ""
+
     # Other
     api_key: SecretStr
 

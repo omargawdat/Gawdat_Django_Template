@@ -6,7 +6,8 @@ export function init () {
   } else if (document.location.hostname === 'react.demo.allauth.org') {
     setup('browser', 'https://api.react.demo.allauth.org/_allauth/browser/v1', true)
   } else {
-    // Local development setup
-    setup('browser', '/api/_allauth/browser/v1', true)
+    // Local development setup - use full backend URL
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000'
+    setup('browser', `${apiUrl}/api/_allauth/browser/v1`, true)
   }
 }
