@@ -155,6 +155,10 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "DJANGO_JWT_REFRESH_TOKEN_LIFETIME_MINUTES": "43200",
      "TAPS_SECRET_KEY": "taps_secret_dummy_123456",
      "PAYMENT_CONFIRMATION_KEY": "MUST-BE-REPLACED",
+     "PAYMOB_SECRET_KEY": "MUST-BE-REPLACED",
+     "PAYMOB_PUBLIC_KEY": "MUST-BE-REPLACED",
+     "PAYMOB_CARD_PAYMENT_METHOD": "MUST-BE-REPLACED",
+     "PAYMOB_WALLET_PAYMENT_METHOD": "MUST-BE-REPLACED",
 
      "DATABASE_URL": "postgis://user:password@host:5432/dbname",
 
@@ -179,9 +183,7 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "SMS_MISR_SENDER": "MUST-BE-REPLACED",
 
      "EMAIL_HOST_USER": "MUST-BE-REPLACED",
-     "EMAIL_HOST_PASSWORD": "MUST-BE-REPLACED",
-
-     "API_KEY": "MUST-BE-REPLACED"
+     "EMAIL_HOST_PASSWORD": "MUST-BE-REPLACED"
    }
    ```
     4. create app runner, port 5000 include permissions and write the secrets of the apprunner itself
