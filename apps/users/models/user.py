@@ -1,37 +1,45 @@
-from django.contrib.auth.hashers import identify_hasher
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from polymorphic.models import PolymorphicModel
+from phonenumber_field.modelfields import PhoneNumberField
 
 from apps.channel.constants import Language
-from apps.users.model_manager import CustomUserManager
 
 
-class User(PolymorphicModel, AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=30, unique=True)
-    email = models.EmailField(_("Email"), default="", blank=True)
+class User(AbstractUser):
+    first_name = None  # type: ignore[assignment]
+    last_name = None  # type: ignore[assignment]
 
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
+    # Override email to make it unique but optional (for phone-only signup)
+    email = models.EmailField(_("email address"), unique=True, null=True, blank=True)
+
+    phone_number = PhoneNumberField(
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="Should start with country code as (+966)",
+        verbose_name=_("Phone Number"),
+    )
+
+    phone_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Phone Verified"),
+        help_text="Whether the phone number has been verified",
+    )
+
     language = models.CharField(
         max_length=10, choices=Language.choices, default=Language.ARABIC
     )
 
     USERNAME_FIELD = "username"
-    objects = CustomUserManager()
-
-    def save(self, *args, **kwargs):
-        if self.password:
-            try:
-                identify_hasher(self.password)
-            except ValueError:
-                self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.username
+        return (
+            self.email or self.username or str(self.phone_number) or f"User {self.id}"
+        )
+
+    @property
+    def is_profile_complete(self) -> bool:
+        """Check if user has completed profile setup by checking for related profiles."""
+        return hasattr(self, "customer") or hasattr(self, "adminuser")

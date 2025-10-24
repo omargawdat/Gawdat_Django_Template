@@ -17,7 +17,7 @@ class CustomerValidator:
     @staticmethod
     def authenticate(email: str, password: str) -> Customer:
         email = email.strip().lower()
-        customer = Customer.objects.filter(email__iexact=email).first()
+        customer = Customer.objects.filter(user__email__iexact=email).first()
 
         if not customer or not customer.check_password(password):
             raise ValueError("Invalid email or password.")

@@ -3,7 +3,6 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.appInfo.api.info.serializers import AppInfoSerializer
 from apps.appInfo.api.info.serializers import ContactUsSerializer
@@ -68,7 +67,7 @@ class ContactUsCreateView(CreateAPIView):
     queryset = ContactUs.objects.all()
 
     permission_classes = [AllowAny]
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = []
 
     @extend_schema(
         tags=["Communications/ContactUs"],

@@ -40,6 +40,7 @@ def test_all_models_have_factories():
         "socialaccount.socialtoken",
         "socialaccount.socialaccount",
         "sites.site",
+        "usersessions.usersession",
         # apps
         # ignore PopUpTrackingFactory
         "appInfo.popuptracking",

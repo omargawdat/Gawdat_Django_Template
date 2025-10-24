@@ -21,6 +21,7 @@ def test_models_have_test_data():
         "socialaccount.socialtoken",
         "socialaccount.socialaccount",
         "auth.group",
+        "usersessions.usersession",  # Django-allauth user sessions
     }
 
     models_without_data = []

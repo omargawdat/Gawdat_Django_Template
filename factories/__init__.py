@@ -39,6 +39,7 @@ from factories.factories import PopUpBannerFactory
 from factories.factories import PopUpTrackingFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
+from factories.factories import UserFactory
 from factories.factories import WalletFactory
 from factories.factories import WalletTransactionFactory
 
@@ -58,6 +59,7 @@ __all__ = [
     "PopUpTrackingFactory",
     "RegionFactory",
     "SocialAccountFactory",
+    "UserFactory",
     "WalletFactory",
     "WalletTransactionFactory",
 ]

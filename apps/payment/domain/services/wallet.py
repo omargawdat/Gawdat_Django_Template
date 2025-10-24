@@ -7,6 +7,7 @@ from apps.payment.constants import ReferralType
 from apps.payment.constants import WalletTransactionType
 from apps.payment.domain.services.wallet_transaction import WalletTransactionService
 from apps.payment.models.wallet import Wallet
+from apps.users.models import User
 from apps.users.models.customer import Customer
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class WalletService:
     @staticmethod
-    def create_wallet_for_customer(user: Customer, currency: str) -> Wallet:
+    def create_wallet_for_user(user: User, currency: str) -> Wallet:
         wallet = Wallet.objects.create(
             user=user,
             balance=Money(0, currency),
@@ -32,11 +33,11 @@ class WalletService:
         if not inviter_customer or not inviter_customer:
             return
 
-        if invitee_customer.id == inviter_customer.id:
+        if invitee_customer.pk == inviter_customer.pk:
             return
 
-        referrer_wallet = Wallet.objects.get(user=inviter_customer)
-        invitee_wallet = Wallet.objects.get(user=invitee_customer)
+        referrer_wallet = Wallet.objects.get(user=inviter_customer.user)
+        invitee_wallet = Wallet.objects.get(user=invitee_customer.user)
 
         country = inviter_customer.country
 

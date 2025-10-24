@@ -3,12 +3,6 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 
 
-class InvalidOTPException(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = {"otp": _("The provided OTP is invalid or has expired.")}
-    default_code = "invalid_otp"
-
-
 class PhoneNumberUserTypeError(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = {

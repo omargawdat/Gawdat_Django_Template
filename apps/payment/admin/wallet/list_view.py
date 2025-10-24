@@ -17,7 +17,7 @@ class WalletListView:
     list_filter_submit = True
     list_fullwidth = False
     list_horizontal_scrollbar_top = True
-    search_fields = ("user__customer__phone_number",)
+    search_fields = ("user__phone_number",)
     search_help_text = "search by phone number"
 
     inlines = [WalletTransactionInline]
