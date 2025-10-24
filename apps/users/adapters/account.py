@@ -91,7 +91,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     # OTP CODE GENERATION
     # ==============================================================================
 
-    def generate_phone_verification_code(self, phone: str) -> str:
+    def generate_phone_verification_code(self) -> str:
         """Generate OTP code for phone verification."""
         import secrets
         import string
@@ -100,19 +100,10 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
         from config.helpers.env import env
 
-        # Check if this phone should use test OTP
-        should_use_test_otp = False
-
+        # In dev/test environments, always use test OTP
+        # This allows test phone numbers to login without receiving SMS
         if env.is_testing_sms:
-            # In dev/test environments, check if this is a test phone number
-            testing_numbers = config.TESTING_PHONE_NUMBERS.strip().split("\n")
-            testing_numbers = [num.strip() for num in testing_numbers if num.strip()]
-
-            if phone in testing_numbers:
-                should_use_test_otp = True
-                logger.info(f"🔧 Using test OTP code for test phone: {phone}")
-
-        if should_use_test_otp:
+            logger.info("🔧 Using test OTP code (dev/test environment)")
             return config.OTP_TEST_CODE
 
         # Production: generate secure random code
