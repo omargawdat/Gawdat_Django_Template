@@ -10,8 +10,8 @@ class User(AbstractUser):
     first_name = None  # type: ignore[assignment]
     last_name = None  # type: ignore[assignment]
 
-    # Override email to make it unique and required
-    email = models.EmailField(_("email address"), unique=True)
+    # Override email to make it unique but optional (for phone-only signup)
+    email = models.EmailField(_("email address"), unique=True, null=True, blank=True)
 
     phone_number = PhoneNumberField(
         unique=True,
@@ -21,15 +21,30 @@ class User(AbstractUser):
         verbose_name=_("Phone Number"),
     )
 
+    phone_verified = models.BooleanField(
+        default=False,
+        verbose_name=_("Phone Verified"),
+        help_text="Whether the phone number has been verified",
+    )
+
     language = models.CharField(
         max_length=10, choices=Language.choices, default=Language.ARABIC
     )
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        """Override save to handle empty email as NULL."""
+        # Convert empty string to None for email field to maintain uniqueness
+        if self.email == "":
+            self.email = None
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.email
+        return (
+            self.email or self.username or str(self.phone_number) or f"User {self.id}"
+        )
 
     @property
     def is_profile_complete(self) -> bool:

@@ -175,13 +175,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-# Account Settings (matching demo exactly)
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGIN_METHODS = {"email"}
+# Account Settings
+# Email verification is optional - allauth doesn't support mandatory verification for optional email fields
+# Phone verification is mandatory and enforced
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_LOGIN_METHODS = {"email", "phone"}
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*", "language*"]
+#  Use link-based verification for email
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
+# Email and phone are both optional, but form validates "at least one"
+ACCOUNT_SIGNUP_FIELDS = ["email", "phone", "language*"]
+
+# Phone verification settings
+ACCOUNT_PHONE_VERIFICATION_ENABLED = True
+ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
+ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes (matches OTP_EXPIRY_SECONDS)
+ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
+ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
 
 # Custom adapters for signup and user data serialization
 ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"

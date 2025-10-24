@@ -23,6 +23,7 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
             "email",
             "username",
             "phone_number",
+            "phone_verified",
             "language",
             "customer",
         ]

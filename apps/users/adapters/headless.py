@@ -21,14 +21,22 @@ class CustomerProfileData:
 class CustomUserData:
     """Custom user data with nested customer profile for OpenAPI schema."""
 
+    # Required fields (no defaults)
     id: int = field(metadata={"description": "User ID", "example": 1})
-    email: str = field(
-        metadata={"description": "Email address", "example": "user@example.com"}
-    )
     username: str = field(metadata={"description": "Username", "example": "user"})
+
+    # Optional fields (with defaults)
+    email: str | None = field(
+        default=None,
+        metadata={"description": "Email address", "example": "user@example.com"},
+    )
     phone_number: str | None = field(
         default=None,
         metadata={"description": "Phone number", "example": "+966555555555"},
+    )
+    phone_verified: bool = field(
+        default=False,
+        metadata={"description": "Phone verification status", "example": False},
     )
     language: str = field(
         default="ar", metadata={"description": "Preferred language", "example": "ar"}
@@ -67,9 +75,10 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
         # Create and return the dataclass instance
         return CustomUserData(
             id=user.id,
-            email=user.email,
             username=user.username,
+            email=user.email,
             phone_number=str(user.phone_number) if user.phone_number else None,
+            phone_verified=user.phone_verified,
             language=user.language,
             customer=customer_data,
         )
