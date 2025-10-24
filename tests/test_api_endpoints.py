@@ -2,7 +2,10 @@
 Auto-discover and test ALL API endpoints.
 
 Configuration:
-- RETRIEVE_MODELS: Map retrieve endpoints to models
+- RETRIEVE_MODELS: Map retrieve endpoints to models with optional user filtering
+  Format: {"endpoint-name": {"model": ModelClass, "user_field": "field_name"}}
+  - user_field: Filter objects by authenticated user's related field (e.g., "customer")
+  - Set user_field to None for public endpoints (no user filtering)
 - QUERY_PARAMS: Map endpoints needing query parameters
 """
 
@@ -28,7 +31,10 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 RETRIEVE_MODELS: dict[str, Any] = {
-    "address-detail": Address,
+    "address-detail": {
+        "model": Address,
+        "user_field": "customer",  # Filter by customer field
+    },
 }
 
 QUERY_PARAMS: dict[str, dict[str, str]] = {
@@ -93,8 +99,14 @@ class TestAPIEndpoints:
 
     @pytest.fixture(autouse=True)
     def setup(self, api_client, authenticated_api_client) -> None:
+        from apps.users.models.customer import Customer
+
         self.public_client = api_client
         self.auth_client = authenticated_api_client
+        # Get the authenticated user for user-scoped filtering
+        # Customer inherits from User, so customer IS the user
+        customer = Customer.objects.filter(is_verified=True).first()
+        self.auth_user = customer
 
     def test_all_endpoints(self) -> None:
         """Auto-discover and test all API endpoints."""
@@ -137,13 +149,25 @@ class TestAPIEndpoints:
     def _get_retrieve_url(self, endpoint: dict, results: dict) -> str | None:
         """Get URL for retrieve endpoint with actual object pk."""
         name = endpoint["name"]
-        model = RETRIEVE_MODELS.get(name)
+        config = RETRIEVE_MODELS.get(name)
 
-        if not model:
+        if not config:
             results["missing_models"].append(name)
             return None
 
-        obj = model.objects.first()
+        # Extract model and user_field from config
+        model = config["model"]
+        user_field = config.get("user_field")
+
+        # Get queryset - filter by user if user_field specified
+        if user_field:
+            # Get the authenticated user's related object (e.g., user.customer)
+            user_relation = getattr(self.auth_user, user_field)
+            queryset = model.objects.filter(**{user_field: user_relation})
+        else:
+            queryset = model.objects.all()
+
+        obj = queryset.first()
         if not obj:
             results["failed"].append(f"{name}: No {model.__name__} in DB")
             return None
