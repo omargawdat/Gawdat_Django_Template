@@ -34,7 +34,6 @@ api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.location.api.address.urls")),
     path("", include("apps.payment.api.wallet.urls")),
     path("", include("apps.channel.api.notification.urls")),
-    path("", include("apps.channel.api.sms.urls")),
     path("", include("apps.appInfo.api.info.urls")),
     path("", include("apps.payment.api.callback.urls")),
     # Django-allauth headless API

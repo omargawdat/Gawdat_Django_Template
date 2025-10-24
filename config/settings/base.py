@@ -175,24 +175,48 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-# Account Settings
-# Email verification is optional - allauth doesn't support mandatory verification for optional email fields
-# Phone verification is mandatory and enforced
-ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_LOGIN_METHODS = {"email", "phone"}
-ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
-ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-#  Use link-based verification for email
-ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
-# Email and phone are both optional, but form validates "at least one"
-ACCOUNT_SIGNUP_FIELDS = ["email", "phone", "language*"]
+# AUTHENTICATION MODE: Choose one configuration block below
+# Note: Phone and email authentication cannot be used together
+# Uncomment the desired mode and comment out the other
+# ==============================================================================
+
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ OPTION 1: PHONE NUMBER AUTHENTICATION (CURRENTLY ACTIVE)
+# └─────────────────────────────────────────────────────────────────────────────
+ACCOUNT_LOGIN_METHODS = {"phone"}
+ACCOUNT_SIGNUP_FIELDS = ["phone*"]  # phone is required
 
 # Phone verification settings
 ACCOUNT_PHONE_VERIFICATION_ENABLED = True
 ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
-ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes (matches OTP_EXPIRY_SECONDS)
+ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes
 ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
 ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
+
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ OPTION 2: EMAIL AUTHENTICATION (COMMENTED OUT)
+# │ To switch: Comment out Option 1 above, then uncomment all lines below
+# └─────────────────────────────────────────────────────────────────────────────
+# ACCOUNT_LOGIN_METHODS = {"email"}
+# ACCOUNT_SIGNUP_FIELDS = ["email"]  # email is required
+# ACCOUNT_LOGIN_BY_CODE_ENABLED = False  # Password-based login
+#
+# # Phone verification settings (disabled for email-only mode)
+# ACCOUNT_PHONE_VERIFICATION_ENABLED = False
+# ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
+# ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900
+# ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
+# ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
+#
+# # Email verification settings
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Users must verify email before login
+# ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False  # Use link-based verification
+# ACCOUNT_EMAIL_REQUIRED = True
+
+# ==============================================================================
+# COMMON SETTINGS (apply to both modes)
+# ==============================================================================
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 
 # Custom adapters for signup and user data serialization
 ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
@@ -378,15 +402,6 @@ LOGGING = {
         },
     },
 }
-
-# ==============================================================================
-# OTP (ONE-TIME PASSWORD) SETTINGS
-# ==============================================================================
-OTP_EXPIRY_SECONDS = 300
-OTP_LENGTH = 5
-OTP_MAX_ATTEMPTS = 3
-OTP_HOURLY_LIMIT = 5
-OTP_EMAIL_SECONDS = 600
 
 # ==============================================================================
 # GOOGLE MAPS INTEGRATION

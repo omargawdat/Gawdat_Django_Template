@@ -13,10 +13,3 @@ class NotificationType(models.TextChoices):
 class Language(models.TextChoices):
     ENGLISH = "en", "English"
     ARABIC = "ar", "Arabic"
-
-
-class OTPType(models.TextChoices):
-    CUSTOMER_AUTH = "customer_auth", "Customer Authentication"
-    PROVIDER_AUTH = "provider_auth", "Provider Authentication"
-    PASSWORD_RESET = "password_reset", "Password Reset"  # pragma: allowlist secret
-    PHONE_VERIFICATION = "phone_verification", "Phone Verification"

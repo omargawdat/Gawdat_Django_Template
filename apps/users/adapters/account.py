@@ -12,23 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
-    def is_email_verified(self, request, email):
-        """Check if email is verified - enforces verification for email signups."""
-        from allauth.account.models import EmailAddress
-
-        # If no email provided, no verification needed
-        if not email:
-            return True
-
-        # Check if email exists and is verified in EmailAddress model
-        try:
-            email_address = EmailAddress.objects.get(email__iexact=email)
-        except EmailAddress.DoesNotExist:
-            # Email not in system yet - will need verification
-            return False
-        else:
-            return email_address.verified
-
     def save_user(self, request, user, form, commit=True):
         # Use default allauth behavior - handles email, username, and password
         user = super().save_user(request, user, form, commit=commit)
@@ -103,6 +86,42 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             raise forms.ValidationError(f"Invalid phone number: {e}") from e
         else:
             return phone
+
+    # ==============================================================================
+    # OTP CODE GENERATION
+    # ==============================================================================
+
+    def generate_phone_verification_code(self, phone: str) -> str:
+        """Generate OTP code for phone verification."""
+        import secrets
+        import string
+
+        from constance import config
+
+        from config.helpers.env import env
+
+        # Check if this phone should use test OTP
+        should_use_test_otp = False
+
+        if env.is_testing_sms:
+            # In dev/test environments, check if this is a test phone number
+            testing_numbers = config.TESTING_PHONE_NUMBERS.strip().split("\n")
+            testing_numbers = [num.strip() for num in testing_numbers if num.strip()]
+
+            if phone in testing_numbers:
+                should_use_test_otp = True
+                logger.info(f"🔧 Using test OTP code for test phone: {phone}")
+
+        if should_use_test_otp:
+            return config.OTP_TEST_CODE
+
+        # Production: generate secure random code
+        # Length controlled by ACCOUNT_PHONE_VERIFICATION_CODE_LENGTH setting (default: 6)
+        from django.conf import settings
+
+        code_length = getattr(settings, "ACCOUNT_PHONE_VERIFICATION_CODE_LENGTH", 6)
+        code = "".join(secrets.choice(string.digits) for _ in range(code_length))
+        return code
 
     # ==============================================================================
     # SMS SENDING METHODS

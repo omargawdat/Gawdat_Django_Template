@@ -2,7 +2,6 @@ from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from apps.channel.api.notification.serializers import FCMDeviceCreateSerializer
 from apps.channel.constants import Language
 from apps.location.api.country.serializers import CountrySerializer
 from apps.location.models.country import Country
@@ -39,37 +38,6 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
             "country",
             "wallet",
         ]
-
-
-@extend_schema_serializer(
-    examples=[
-        OpenApiExample(
-            "Customer Authentication Example",
-            value={
-                "phone_number": "+966111111111",
-                "otp": "00000",
-                "device": {
-                    "registration_id": "your_registration_id",
-                    "device_id": "your_device_id",
-                    "type": "android",
-                },
-                "language": "en",
-                "country": "SA",
-            },
-            request_only=True,
-        ),
-    ]
-)
-class CustomerCreateSerializer(serializers.Serializer):
-    phone_number = ValidCountryPhoneNumberField()
-    otp = serializers.CharField()
-    device = FCMDeviceCreateSerializer(required=False, allow_null=True)
-    language = serializers.ChoiceField(choices=Language.choices)
-    referral_customer_id = serializers.IntegerField(required=False, allow_null=True)
-    country = serializers.PrimaryKeyRelatedField(
-        queryset=Country.objects.filter(is_active=True),
-        required=True,
-    )
 
 
 @extend_schema_serializer(

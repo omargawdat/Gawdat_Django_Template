@@ -334,12 +334,12 @@ CONSTANCE_CONFIG = {
     "SIDEBAR_ICON": ("images/sidebar_icon.png", "Sidebar icon image", "image_field"),
     "OTP_TEST_CODE": (
         "00000",
-        "Default OTP code",
+        "Test OTP code for development/staging environments",
         "wysiwyg_field",
     ),
     "TESTING_PHONE_NUMBERS": (
         "+966511111111\n+966511111112",
-        "Testing phone numbers",
+        "Phone numbers that will receive test OTP (one per line)",
         "textarea_field",
     ),
     "ENABLE_REGION_VALIDATION": (
@@ -358,7 +358,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "SIDEBAR_ICON",
     ),
     "System Fees": ("FEES_PERCENTAGE",),
-    "OTP Settings": (
+    "Phone Verification": (
         "OTP_TEST_CODE",
         "TESTING_PHONE_NUMBERS",
     ),
