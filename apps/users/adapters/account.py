@@ -53,36 +53,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             return None
 
     # ==============================================================================
-    # PHONE NUMBER FORM & VALIDATION METHODS
-    # ==============================================================================
-
-    # def phone_form_field(self, **kwargs):
-    #     """Return form field for phone number input."""
-    #     # PhoneField already includes E164 validation and proper widget
-    #     return PhoneField(**kwargs)
-
-    # def clean_phone(self, phone: str) -> str:
-    #     """Validate phone number and ensure it's from supported country."""
-    #     from phonenumbers import parse as parse_phone
-
-    #     from apps.users.domain.selectors.user import UserSelector
-
-    #     try:
-    #         phone_obj = parse_phone(phone)
-    #         if not UserSelector.phone_country(phone_obj):
-    #             raise forms.ValidationError(
-    #                 "Phone number must be from a supported country."
-    #             )
-    #     except Exception as e:
-    #         logger.exception("Phone validation failed")
-    #         raise forms.ValidationError(f"Invalid phone number: {e}") from e
-    #     else:
-    #         return phone
-
-    # ==============================================================================
     # OTP CODE GENERATION
     # ==============================================================================
-
     def generate_phone_verification_code(self) -> str:
         """Generate OTP code for phone verification."""
         import secrets

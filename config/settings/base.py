@@ -177,68 +177,42 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-# AUTHENTICATION MODE: Choose one configuration block below
-# Note: Phone and email authentication cannot be used together
-# Uncomment the desired mode and comment out the other
-# ==============================================================================
-
 # ┌─────────────────────────────────────────────────────────────────────────────
-# │ OPTION 1: PHONE NUMBER AUTHENTICATION (CURRENTLY ACTIVE)
+# │ GROUP 1: PHONE AUTHENTICATION (CURRENTLY ACTIVE)
 # └─────────────────────────────────────────────────────────────────────────────
-ACCOUNT_LOGIN_METHODS = {"phone"}
-ACCOUNT_SIGNUP_FIELDS = ["phone"]
-ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-ACCOUNT_PHONE_VERIFICATION_ENABLED = True
-ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
-ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes
-ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
-ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
-
-# ┌─────────────────────────────────────────────────────────────────────────────
-# │ OPTION 2: EMAIL AUTHENTICATION (COMMENTED OUT)
-# │ To switch: Comment out Option 1 above, then uncomment all lines below
-# └─────────────────────────────────────────────────────────────────────────────
-# ACCOUNT_LOGIN_METHODS = {"email"}
-# ACCOUNT_SIGNUP_FIELDS = ["email"]  # email is required
-# ACCOUNT_LOGIN_BY_CODE_ENABLED = False  # Password-based login
-#
-# # Phone verification settings (disabled for email-only mode)
-# ACCOUNT_PHONE_VERIFICATION_ENABLED = False
+# ACCOUNT_LOGIN_METHODS = {"phone"}
+# ACCOUNT_SIGNUP_FIELDS = ["phone"]
+# ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Passwordless OTP-based authentication
+# ACCOUNT_PHONE_VERIFICATION_ENABLED = True
 # ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
-# ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900
+# ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes
 # ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
 # ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
-#
-# # Email verification settings
-# ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Users must verify email before login
-# ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True  # Use link-based verification
-# ACCOUNT_EMAIL_REQUIRED = True
-
-# ==============================================================================
-# COMMON SETTINGS (apply to both modes)
-# ==============================================================================
+# ┌─────────────────────────────────────────────────────────────────────────────
+# │ GROUP 2: EMAIL AUTHENTICATION (COMMENTED OUT)
+# │ To activate: Comment out Group 1 above, then uncomment all lines below
+# └─────────────────────────────────────────────────────────────────────────────
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_LOGIN_BY_CODE_ENABLED = False  # False for password-based authentication
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+# -------------------------------------------------------------------------------
+# COMMON SETTINGS FOR ALL AUTHENTICATION MODES
+# -------------------------------------------------------------------------------
+HEADLESS_ONLY = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
-
-# Custom adapters for signup and user data serialization
+HEADLESS_SERVE_SPECIFICATION = True
 ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
 # SOCIALACCOUNT_ADAPTER = "apps.users.adapters.socialaccount.CustomSocialAccountAdapter"
-# ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"  # Removed - using default allauth signup
-
-# Headless API configuration (matching demo exactly)
-# HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
-HEADLESS_ONLY = True
-# Build frontend URLs dynamically from environment variable
-# This allows different URLs for local/dev/staging/production deployments
+# ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "/account/verify-email/{key}",
+    # "account_confirm_email": "/account/verify-email/{key}",
     "account_reset_password": "/account/password/reset",
     "account_reset_password_from_key": "/account/password/reset/key/{key}",
     "account_signup": "/account/signup",
     "socialaccount_login_error": "/account/provider/callback",
 }
-HEADLESS_SERVE_SPECIFICATION = True
-
-# Social Account Providers (matching demo exactly)
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
