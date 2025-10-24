@@ -104,9 +104,9 @@ class TestAPIEndpoints:
         self.public_client = api_client
         self.auth_client = authenticated_api_client
         # Get the authenticated user for user-scoped filtering
-        # Customer inherits from User, so customer IS the user
+        # Customer has OneToOne relationship with User
         customer = Customer.objects.filter(is_verified=True).first()
-        self.auth_user = customer
+        self.auth_user = customer.user
 
     def test_all_endpoints(self) -> None:
         """Auto-discover and test all API endpoints."""
