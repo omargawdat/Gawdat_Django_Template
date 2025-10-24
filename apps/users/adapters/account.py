@@ -3,8 +3,6 @@
 import logging
 
 from allauth.account.adapter import DefaultAccountAdapter
-from django import forms
-from phonenumber_field.formfields import PhoneNumberField
 
 from apps.users.models.user import User
 
@@ -58,33 +56,28 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     # PHONE NUMBER FORM & VALIDATION METHODS
     # ==============================================================================
 
-    def phone_form_field(self, **kwargs):
-        """Return form field for phone number input."""
-        # Set defaults, allow kwargs to override
-        defaults = {
-            "required": False,
-            "help_text": "Phone number in E164 format (e.g., +966555555555)",
-        }
-        defaults.update(kwargs)
-        return PhoneNumberField(**defaults)
+    # def phone_form_field(self, **kwargs):
+    #     """Return form field for phone number input."""
+    #     # PhoneField already includes E164 validation and proper widget
+    #     return PhoneField(**kwargs)
 
-    def clean_phone(self, phone: str) -> str:
-        """Validate phone number and ensure it's from supported country."""
-        from phonenumbers import parse as parse_phone
+    # def clean_phone(self, phone: str) -> str:
+    #     """Validate phone number and ensure it's from supported country."""
+    #     from phonenumbers import parse as parse_phone
 
-        from apps.users.domain.selectors.user import UserSelector
+    #     from apps.users.domain.selectors.user import UserSelector
 
-        try:
-            phone_obj = parse_phone(phone)
-            if not UserSelector.phone_country(phone_obj):
-                raise forms.ValidationError(  # noqa: TRY301
-                    "Phone number must be from a supported country."
-                )
-        except Exception as e:
-            logger.exception("Phone validation failed")
-            raise forms.ValidationError(f"Invalid phone number: {e}") from e
-        else:
-            return phone
+    #     try:
+    #         phone_obj = parse_phone(phone)
+    #         if not UserSelector.phone_country(phone_obj):
+    #             raise forms.ValidationError(
+    #                 "Phone number must be from a supported country."
+    #             )
+    #     except Exception as e:
+    #         logger.exception("Phone validation failed")
+    #         raise forms.ValidationError(f"Invalid phone number: {e}") from e
+    #     else:
+    #         return phone
 
     # ==============================================================================
     # OTP CODE GENERATION
@@ -138,9 +131,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             if env.is_testing_sms:
                 logger.info(f"📱 PHONE VERIFICATION CODE for {phone}: {code}")
             else:
-                logger.info(f"Verification SMS sent for user_id={user.id}")
+                logger.info(f"Verification SMS sent to {phone} for user {user.id}")
         except Exception:
-            logger.exception(f"Failed to send verification SMS for user_id={user.id}")
+            logger.exception(f"Failed to send verification SMS to {phone}")
             raise
 
     def send_unknown_account_sms(self, phone: str, **kwargs) -> None:
@@ -157,6 +150,6 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                 "but no account exists. Please sign up first."
             )
             SMSUtils.send_bulk_message([phone_obj], message)
-            logger.info("Unknown account SMS sent")
+            logger.info(f"Unknown account SMS sent to {phone}")
         except Exception:
-            logger.exception("Failed to send unknown account SMS")
+            logger.exception(f"Failed to send unknown account SMS to {phone}")

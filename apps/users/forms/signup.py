@@ -56,8 +56,9 @@ class CustomSignupForm(forms.Form):
         """Save language and phone to user instance."""
         logger.info(f"Custom signup form called for user: {user.email or 'no email'}")
 
-        # Save language preference
-        user.language = self.cleaned_data["language"]
+        # Save language preference (use default if not provided)
+        language = self.cleaned_data.get("language") or Language.ARABIC
+        user.language = language
 
         # Save phone if provided
         phone = self.cleaned_data.get("phone")

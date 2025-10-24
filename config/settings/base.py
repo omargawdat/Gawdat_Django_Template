@@ -149,6 +149,8 @@ MIDDLEWARE = [
 # AUTHENTICATION
 # ==============================================================================
 AUTHENTICATION_BACKENDS = [
+    # add django default auth backend
+    "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",  # For API/customer auth
 ]
 AUTH_USER_MODEL = "users.User"
@@ -184,9 +186,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # │ OPTION 1: PHONE NUMBER AUTHENTICATION (CURRENTLY ACTIVE)
 # └─────────────────────────────────────────────────────────────────────────────
 ACCOUNT_LOGIN_METHODS = {"phone"}
-ACCOUNT_SIGNUP_FIELDS = ["phone*"]  # phone is required
-
-# Phone verification settings
+ACCOUNT_SIGNUP_FIELDS = ["phone"]
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_PHONE_VERIFICATION_ENABLED = True
 ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
 ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes
@@ -210,7 +211,7 @@ ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
 #
 # # Email verification settings
 # ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Users must verify email before login
-# ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False  # Use link-based verification
+# ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True  # Use link-based verification
 # ACCOUNT_EMAIL_REQUIRED = True
 
 # ==============================================================================
@@ -219,9 +220,9 @@ ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 
 # Custom adapters for signup and user data serialization
-ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
 ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
-SOCIALACCOUNT_ADAPTER = "apps.users.adapters.socialaccount.CustomSocialAccountAdapter"
+# SOCIALACCOUNT_ADAPTER = "apps.users.adapters.socialaccount.CustomSocialAccountAdapter"
+# ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"  # Removed - using default allauth signup
 
 # Headless API configuration (matching demo exactly)
 # HEADLESS_ADAPTER = "apps.users.adapters.headless.CustomHeadlessAdapter"
@@ -229,11 +230,11 @@ HEADLESS_ONLY = True
 # Build frontend URLs dynamically from environment variable
 # This allows different URLs for local/dev/staging/production deployments
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": f"{env.frontend_default_url}/account/verify-email/{{key}}",
-    "account_reset_password": f"{env.frontend_default_url}/account/password/reset",
-    "account_reset_password_from_key": f"{env.frontend_default_url}/account/password/reset/key/{{key}}",
-    "account_signup": f"{env.frontend_default_url}/account/signup",
-    "socialaccount_login_error": f"{env.frontend_default_url}/account/provider/callback",
+    "account_confirm_email": "/account/verify-email/{key}",
+    "account_reset_password": "/account/password/reset",
+    "account_reset_password_from_key": "/account/password/reset/key/{key}",
+    "account_signup": "/account/signup",
+    "socialaccount_login_error": "/account/provider/callback",
 }
 HEADLESS_SERVE_SPECIFICATION = True
 

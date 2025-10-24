@@ -34,13 +34,6 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
-    def save(self, *args, **kwargs):
-        """Override save to handle empty email as NULL."""
-        # Convert empty string to None for email field to maintain uniqueness
-        if self.email == "":
-            self.email = None
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return (
             self.email or self.username or str(self.phone_number) or f"User {self.id}"
