@@ -17,9 +17,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user = super().save_user(request, user, form, commit=commit)
         logger.info("Custom account adapter save_user called")
         if commit:
-            identifier = user.email or user.phone_number or user.username
             logger.info(
-                f"User created via allauth: {identifier} - Profile completion required"
+                f"User created via allauth: user_id={user.id} - Profile completion required"
             )
 
         return user
@@ -39,14 +38,14 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.phone_number = phone
         user.phone_verified = verified
         user.save(update_fields=["phone_number", "phone_verified"])
-        logger.info(f"Phone set for user {user.id}: {phone}, verified={verified}")
+        logger.info(f"Phone set for user_id={user.id}, verified={verified}")
 
     def set_phone_verified(self, user, phone: str):
         """Mark phone number as verified for user."""
         if str(user.phone_number) == phone:
             user.phone_verified = True
             user.save(update_fields=["phone_verified"])
-            logger.info(f"Phone verified for user {user.id}: {phone}")
+            logger.info(f"Phone verified for user_id={user.id}")
 
     def get_user_by_phone(self, phone: str):
         """Lookup user by phone number."""
@@ -82,7 +81,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                     "Phone number must be from a supported country."
                 )
         except Exception as e:
-            logger.exception(f"Phone validation failed for {phone}")
+            logger.exception("Phone validation failed")
             raise forms.ValidationError(f"Invalid phone number: {e}") from e
         else:
             return phone
@@ -139,9 +138,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             if env.is_testing_sms:
                 logger.info(f"📱 PHONE VERIFICATION CODE for {phone}: {code}")
             else:
-                logger.info(f"Verification SMS sent to {phone} for user {user.id}")
+                logger.info(f"Verification SMS sent for user_id={user.id}")
         except Exception:
-            logger.exception(f"Failed to send verification SMS to {phone}")
+            logger.exception(f"Failed to send verification SMS for user_id={user.id}")
             raise
 
     def send_unknown_account_sms(self, phone: str, **kwargs) -> None:
@@ -158,6 +157,6 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                 "but no account exists. Please sign up first."
             )
             SMSUtils.send_bulk_message([phone_obj], message)
-            logger.info(f"Unknown account SMS sent to {phone}")
+            logger.info("Unknown account SMS sent")
         except Exception:
-            logger.exception(f"Failed to send unknown account SMS to {phone}")
+            logger.exception("Failed to send unknown account SMS")
