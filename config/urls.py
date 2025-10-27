@@ -28,7 +28,6 @@ api_doc_patterns = [
 api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.users.api.user.urls")),
     path("", include("apps.users.api.customer.urls")),
-    path("users/", include("apps.users.api.profile.urls")),  # Profile completion
     path("", include("apps.location.api.country.urls")),
     path("", include("apps.location.api.region.urls")),
     path("", include("apps.location.api.address.urls")),

@@ -1,3 +1,5 @@
+import logging
+
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -9,16 +11,42 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
+from apps.users.api.customer.serializers import CustomerSetupSerializer
 from apps.users.api.customer.serializers import CustomerUpdateSerializer
+from apps.users.api.user.serializers import UserWithProfileSerializer
 from apps.users.domain.services.user import UserServices
 
+logger = logging.getLogger(__name__)
 
-class CustomerUpdateView(APIView):
+
+class CustomerDetailView(APIView):
+    """Get customer profile."""
+
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Account/Profile"],
-        operation_id="UpdateCustomer",
+        tags=["Account/Customer"],
+        operation_id="GetCustomerProfile",
+        description="Retrieve the authenticated customer's complete profile including user auth data.",
+        responses={
+            200: CustomerDetailedSerializer,
+        },
+    )
+    def get(self, request):
+        """Get customer profile with flattened user auth fields."""
+        customer = request.user.customer
+        serializer = CustomerDetailedSerializer(customer, context={"request": request})
+        return Response(serializer.data)
+
+
+class CustomerUpdateView(APIView):
+    """Update customer profile."""
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Account/Customer"],
+        operation_id="UpdateCustomerProfile",
         description="Update the authenticated customer's profile information.",
         parameters=[
             OpenApiParameter(
@@ -39,24 +67,6 @@ class CustomerUpdateView(APIView):
         request={
             "multipart/form-data": CustomerUpdateSerializer,
         },
-        examples=[
-            OpenApiExample(
-                name="Complete Profile Update",
-                description="Update all profile fields including image",
-                value={
-                    "fullName": "Mezo Doe",
-                    "email": "john.doe@example.com",
-                    "birthDate": "2011-01-02",
-                    "primaryAddress": "1",
-                    "gender": "M",
-                    "language": "en",
-                    "image": "default_image.png",
-                    "country": "SA",
-                },
-                request_only=True,
-                media_type="multipart/form-data",
-            )
-        ],
         responses={
             200: CustomerDetailedSerializer,
             400: OpenApiResponse(
@@ -76,6 +86,7 @@ class CustomerUpdateView(APIView):
         },
     )
     def patch(self, request):
+        """Update customer profile (handles both User and Customer fields)."""
         customer = request.user.customer
         serializer = CustomerUpdateSerializer(
             customer, data=request.data, partial=True, context={"request": request}
@@ -87,51 +98,70 @@ class CustomerUpdateView(APIView):
         )
 
 
-class CustomerDetailView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @extend_schema(
-        tags=["Account/Profile"],
-        operation_id="GetCustomerDetails",
-        responses={
-            200: CustomerDetailedSerializer,
-        },
-    )
-    def get(self, request):
-        customer = request.user.customer
-        serializer = CustomerDetailedSerializer(customer, context={"request": request})
-        return Response(serializer.data)
-
-
 class CustomerDeleteView(APIView):
+    """Delete customer account."""
+
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=["Account/Profile"],
-        operation_id="DeleteCustomer",
-        parameters=[
-            OpenApiParameter(
-                name="Accept-Language",  # todo: it should be for all endpoints
-                type=OpenApiTypes.STR,
-                location="header",
-                required=False,
-                description="Language preference for the response",
-                examples=[
-                    OpenApiExample(
-                        name="English (US)",
-                        value="en",
-                        description="English with US locale preference",
-                    ),
-                ],
-            ),
-        ],
+        tags=["Account/Customer"],
+        operation_id="DeleteCustomerAccount",
+        description="Deactivate the authenticated customer's account and logout from all devices.",
         responses={
             204: OpenApiResponse(description="Account successfully deactivated."),
         },
     )
     def delete(self, request):
+        """Deactivate customer account and logout from all devices."""
         customer = request.user.customer
         customer.user.is_active = False
         UserServices.user_logout_all_devices(customer.user)
         customer.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomerSetupView(APIView):
+    """Complete customer profile after signup."""
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["Account/Customer"],
+        operation_id="CompleteCustomerProfile",
+        request=CustomerSetupSerializer,
+        responses={
+            201: UserWithProfileSerializer,
+            400: {"description": "Validation error or profile already completed"},
+        },
+    )
+    def post(self, request):
+        """Complete Customer profile after email verification."""
+        from apps.users.domain.services.customer import CustomerService
+
+        if hasattr(request.user, "customer"):
+            return Response(
+                {"error": "Profile already completed"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = CustomerSetupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Extract device data from nested serializer
+        device_data = serializer.validated_data.get("device") or {}
+
+        # Use CustomerService for business logic
+        user = CustomerService.complete_customer_profile(
+            user=request.user,
+            country=serializer.validated_data["country"],
+            language=serializer.validated_data.get("language"),
+            fcm_token=device_data.get("registration_id"),
+            device_id=device_data.get("device_id"),
+            device_type=device_data.get("type"),
+        )
+
+        response_serializer = UserWithProfileSerializer(user)
+
+        logger.info(f"Customer profile created for user {user.email}")
+
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)

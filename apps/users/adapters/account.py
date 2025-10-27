@@ -4,8 +4,6 @@ import logging
 
 from allauth.account.adapter import DefaultAccountAdapter
 
-from apps.users.models.user import User
-
 logger = logging.getLogger(__name__)
 
 
@@ -20,37 +18,6 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             )
 
         return user
-
-    # ==============================================================================
-    # PHONE NUMBER STORAGE METHODS
-    # ==============================================================================
-
-    def get_phone(self, user):
-        """Get phone number and verification status for user."""
-        if not user.phone_number:
-            return None
-        return (str(user.phone_number), user.phone_verified)
-
-    def set_phone(self, user, phone: str, verified: bool):  # noqa: FBT001
-        """Set phone number and verification status for user."""
-        user.phone_number = phone
-        user.phone_verified = verified
-        user.save(update_fields=["phone_number", "phone_verified"])
-        logger.info(f"Phone set for user_id={user.id}, verified={verified}")
-
-    def set_phone_verified(self, user, phone: str):
-        """Mark phone number as verified for user."""
-        if str(user.phone_number) == phone:
-            user.phone_verified = True
-            user.save(update_fields=["phone_verified"])
-            logger.info(f"Phone verified for user_id={user.id}")
-
-    def get_user_by_phone(self, phone: str):
-        """Lookup user by phone number."""
-        try:
-            return User.objects.get(phone_number=phone)
-        except User.DoesNotExist:
-            return None
 
     # ==============================================================================
     # OTP CODE GENERATION

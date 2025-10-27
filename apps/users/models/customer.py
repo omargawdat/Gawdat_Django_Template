@@ -4,7 +4,6 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 from simple_history.models import HistoricalRecords
 
-from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
 from apps.users.constants import GenderChoices
 
@@ -19,7 +18,6 @@ class CustomerManager(models.Manager):
 
 
 class Customer(models.Model):
-    # Field declarations
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -73,7 +71,7 @@ class Customer(models.Model):
         verbose_name_plural = _("Customers")
 
     def __str__(self):
-        return str(self.phone_number)
+        return self.email or self.username or f"Customer {self.pk}"
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -83,8 +81,6 @@ class Customer(models.Model):
         from apps.users.domain.validators.customer import CustomerValidator
 
         super().clean()
-        # [WHY]: to ensure the country for this phone exists before trying to save
-        CountrySelector.country_by_phone(self.phone_number)
         CustomerValidator.validate_address_belongs_to_customer(
             address=self.primary_address, customer=self
         )
@@ -125,14 +121,6 @@ class Customer(models.Model):
     @property
     def date_joined(self) -> str:
         return self.user.date_joined
-
-    @property
-    def phone_number(self) -> str:
-        return self.user.phone_number
-
-    @phone_number.setter
-    def phone_number(self, value) -> None:
-        self.user.phone_number = value
 
     @property
     def is_profile_completed(self) -> bool:

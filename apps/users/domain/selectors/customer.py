@@ -23,12 +23,5 @@ class CustomerSelector:
         return all(required_fields)
 
     @staticmethod
-    def get_customer_by_phone(*, phone_number):
-        try:
-            return Customer.objects.get(user__phone_number=phone_number)
-        except Customer.DoesNotExist:
-            return None
-
-    @staticmethod
     def is_email_exists(email: str) -> bool:
         return Customer.objects.filter(user__email=email).exists()

@@ -1,10 +1,8 @@
 import logging
 
 from django.contrib.auth.base_user import AbstractBaseUser
-from phonenumbers import PhoneNumber
 
 from apps.channel.constants import Language
-from apps.location.domain.selector.country import CountrySelector
 from apps.users.constants import UserType
 from apps.users.models import User
 
@@ -12,11 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class UserSelector:
-    @staticmethod
-    def phone_country(phone_number: PhoneNumber) -> bool:
-        country = CountrySelector.country_by_phone(phone_number)
-        return bool(country)
-
     @staticmethod
     def group_users_by_type(
         users: list[AbstractBaseUser],

@@ -22,8 +22,6 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "username",
-            "phone_number",
-            "phone_verified",
             "language",
             "customer",
         ]

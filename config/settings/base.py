@@ -178,7 +178,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
 # ┌─────────────────────────────────────────────────────────────────────────────
-# │ GROUP 1: PHONE AUTHENTICATION (CURRENTLY ACTIVE)
+# │ GROUP 1: PHONE AUTHENTICATION
 # └─────────────────────────────────────────────────────────────────────────────
 # ACCOUNT_LOGIN_METHODS = {"phone"}
 # ACCOUNT_SIGNUP_FIELDS = ["phone"]
@@ -189,7 +189,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
 # ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
 # ┌─────────────────────────────────────────────────────────────────────────────
-# │ GROUP 2: EMAIL AUTHENTICATION (COMMENTED OUT)
+# │ GROUP 2: EMAIL AUTHENTICATION
 # │ To activate: Comment out Group 1 above, then uncomment all lines below
 # └─────────────────────────────────────────────────────────────────────────────
 ACCOUNT_LOGIN_METHODS = {"email"}

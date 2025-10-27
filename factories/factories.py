@@ -228,7 +228,6 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
-    phone_number = factory.Sequence(lambda n: f"+96655{n:07d}")
     is_staff = False
     is_active = True
     password = "testpass123"  # pragma: allowlist secret  # noqa: S105
@@ -275,15 +274,10 @@ class CustomerFactory(factory.django.DjangoModelFactory):
     # SubFactory: Automatically creates Country if needed
     country = factory.SubFactory(CountryFactory)
 
-    # Create User with SubFactory including phone_number
+    # Create User with SubFactory
     user = factory.SubFactory(
         "factories.factories.UserFactory",
         email=factory.Sequence(lambda n: f"customer{n}@example.com"),
-        phone_number=factory.LazyAttribute(
-            lambda obj: fake.e164(
-                region_code=obj.factory_parent.country.code, valid=True, possible=True
-            )
-        ),
     )
 
     full_name = factory.Faker("name")
