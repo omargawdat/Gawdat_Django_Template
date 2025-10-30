@@ -47,7 +47,7 @@ if [ "$IS_LOCAL" = "true" ]; then
 else
     python manage.py collectstatic --noinput --clear
 
-    # Set workers based on environment
+    # Set workers based on environment to avoid many db connectiosn
     if [ "$ENVIRONMENT" = "production" ]; then
         WORKERS=3
     else
