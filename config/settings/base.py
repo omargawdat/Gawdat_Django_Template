@@ -176,10 +176,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-# Email Authentication with OTP Verification
+# Passwordless Authentication - Users receive login codes via email
 ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
-ACCOUNT_LOGIN_BY_CODE_ENABLED = False  # False for password-based authentication
+ACCOUNT_SIGNUP_FIELDS = ["email*"]  # No password required
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Enable passwordless login
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 # -------------------------------------------------------------------------------
