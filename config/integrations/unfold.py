@@ -110,6 +110,14 @@ UNFOLD = {
                         ),
                     },
                     {
+                        "title": _("Provider"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:users_provider_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "users.view_provider"
+                        ),
+                    },
+                    {
                         "title": _("Groups"),
                         "icon": "group",
                         "link": reverse_lazy("admin:auth_group_changelist"),

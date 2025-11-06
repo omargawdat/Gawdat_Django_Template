@@ -70,7 +70,7 @@ class BaseCustomerPermissions:
 
 class CustomerAdminPermissions(BaseCustomerPermissions):
     def can_add(self, request, obj=None):
-        return False  # todo: can't add user as is should call the create action from services
+        return False
 
     def can_change(self, request, obj=None):
         return True

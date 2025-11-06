@@ -1,0 +1,15 @@
+class ProviderFields:
+    PASSWORD = "password"  # pragma: allowlist secret # noqa: S105
+    LAST_LOGIN = "last_login"
+    IS_SUPERUSER = "is_superuser"
+    IS_ACTIVE = "is_active"
+    IS_STAFF = "is_staff"
+    DATE_JOINED = "date_joined"
+    GROUPS = "groups"
+    USER_PERMISSIONS = "user_permissions"
+    EMAIL = "email"
+    COMPANY_NAME = "company_name"
+
+    @classmethod
+    def get_field_name(cls, model, field):
+        return model._meta.get_field(field).name

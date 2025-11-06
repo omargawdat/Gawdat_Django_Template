@@ -22,6 +22,4 @@ class CustomerListView:
     search_fields = ["user__email"]
     search_help_text = _("search email...🔍")
     ordering = ("-user__date_joined",)
-    # Note: WalletInline removed - Wallet is linked to User, not Customer
-    # To view wallet, navigate to the User admin or add a link in display methods
     inlines = [AddressInline]
