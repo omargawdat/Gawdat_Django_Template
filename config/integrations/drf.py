@@ -46,6 +46,7 @@ SPECTACULAR_SETTINGS = {
     "ENABLE_DJANGO_DEPLOY_CHECK": True,
     "ENUM_SUFFIX": "Enum",
     "ENUM_NAME_OVERRIDES": {
+        # DRF Standardized Errors
         "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
         "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
@@ -57,6 +58,12 @@ SPECTACULAR_SETTINGS = {
         "ErrorCode415Enum": "drf_standardized_errors.openapi_serializers.ErrorCode415Enum.choices",
         "ErrorCode429Enum": "drf_standardized_errors.openapi_serializers.ErrorCode429Enum.choices",
         "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
+        # App-specific Type fields (to avoid enum naming collisions)
+        "WalletTransactionTypeEnum": "apps.payment.constants.WalletTransactionType",
+        "PaymentTypeEnum": "apps.payment.constants.PaymentType",
+        "NotificationTypeEnum": "apps.channel.constants.NotificationType",
+        "DeviceTypeEnum": "apps.channel.constants.DeviceType",
+        "UserTypeEnum": "apps.users.constants.UserType",
     },
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",

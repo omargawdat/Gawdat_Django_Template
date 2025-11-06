@@ -10,6 +10,14 @@ class NotificationType(models.TextChoices):
     MONEY_ADDED = "money_added", _("Money Added")
 
 
+class DeviceType(models.TextChoices):
+    """FCM device types."""
+
+    IOS = "ios", "iOS"
+    ANDROID = "android", "Android"
+    WEB = "web", "Web"
+
+
 class Language(models.TextChoices):
     ENGLISH = "en", "English"
     ARABIC = "ar", "Arabic"

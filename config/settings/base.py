@@ -182,12 +182,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # Passwordless Authentication - Users receive login codes via email
 ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_SIGNUP_FIELDS = ["email*"]  # No password required
-ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Enable passwordless login
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_SIGNUP_FIELDS = ["email*"]  # No password required (also disables username)
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Enable passwordless login via OTP codes
+ACCOUNT_LOGIN_BY_CODE_REQUIRED = True  # Require login by code (no password alternative)
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Email must be verified before login
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
-ACCOUNT_USERNAME_REQUIRED = False  # No username field in User model
+
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # User model has no username field
+ACCOUNT_PASSWORD_REQUIRED = False  # No password required for signup/login
+
 # -------------------------------------------------------------------------------
 # COMMON SETTINGS FOR ALL AUTHENTICATION MODES
 # -------------------------------------------------------------------------------
