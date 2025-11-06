@@ -24,3 +24,16 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
             "language",
             "customer",
         ]
+
+
+class CheckEmailSerializer(serializers.Serializer):
+    """Check if user exists by email."""
+
+    email = serializers.EmailField(required=True)
+
+
+class EmailExistsResponseSerializer(serializers.Serializer):
+    """Response for email existence check."""
+
+    exists = serializers.BooleanField()
+    email = serializers.EmailField()
