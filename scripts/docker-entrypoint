@@ -46,10 +46,18 @@ if [ "$IS_LOCAL" = "true" ]; then
     exec python manage.py runserver_plus 0.0.0.0:8000
 else
     python manage.py collectstatic --noinput --clear
+
+    # Set workers based on environment to avoid many db connectiosn
+    if [ "$ENVIRONMENT" = "production" ]; then
+        WORKERS=3
+    else
+        WORKERS=1
+    fi
+
     exec gunicorn config.wsgi \
         --bind 0.0.0.0:5000 \
         --chdir=/app \
-        --workers 3 \
+        --workers $WORKERS \
         --threads 2 \
         --worker-class gevent \
         --worker-connections 1000 \
