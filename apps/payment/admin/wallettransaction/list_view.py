@@ -22,8 +22,8 @@ class WalletTransactionListView:
     list_filter_submit = True
     list_fullwidth = False
     list_horizontal_scrollbar_top = True
-    search_fields = ("wallet__user__username",)
-    search_help_text = _("Search by customer phone number")
+    search_fields = ("wallet__user__email",)
+    search_help_text = _("Search by customer email")
 
     def get_ordering(self, request):
         return ()

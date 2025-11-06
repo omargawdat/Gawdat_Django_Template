@@ -37,7 +37,6 @@ def admin_user(db):
     """Create superuser for admin testing"""
     User = get_user_model()
     return User.objects.create_superuser(
-        username="admin",
         email="admin@test.com",
         password=TEST_PASSWORD,
         is_superuser=True,

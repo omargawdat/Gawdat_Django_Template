@@ -32,7 +32,7 @@ class TestCustomerProfileSetup:
         # STEP 1: Create authenticated user (simulating post-allauth signup)
         # ====================================================================
         user = User.objects.create_user(
-            username=self.test_email, email=self.test_email, password=self.test_password
+            email=self.test_email, password=self.test_password
         )
         self.client.force_authenticate(user=user)
 
@@ -101,7 +101,7 @@ class TestCustomerProfileSetup:
         """Test that completing profile twice returns error."""
         # Create and authenticate user
         user = User.objects.create_user(
-            username=self.test_email, email=self.test_email, password=self.test_password
+            email=self.test_email, password=self.test_password
         )
         self.client.force_authenticate(user=user)
 
@@ -144,7 +144,7 @@ class TestCustomerProfileSetup:
     def test_complete_profile_with_invalid_country(self):
         """Test that profile completion fails with invalid country."""
         user = User.objects.create_user(
-            username=self.test_email, email=self.test_email, password=self.test_password
+            email=self.test_email, password=self.test_password
         )
         self.client.force_authenticate(user=user)
 

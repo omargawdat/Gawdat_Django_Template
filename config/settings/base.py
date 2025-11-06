@@ -109,8 +109,8 @@ DJANGO_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.dummy",
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.apple",
     "allauth.headless",
     "allauth.usersessions",
 ]
@@ -177,21 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ==============================================================================
 # DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-# ┌─────────────────────────────────────────────────────────────────────────────
-# │ GROUP 1: PHONE AUTHENTICATION
-# └─────────────────────────────────────────────────────────────────────────────
-# ACCOUNT_LOGIN_METHODS = {"phone"}
-# ACCOUNT_SIGNUP_FIELDS = ["phone"]
-# ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Passwordless OTP-based authentication
-# ACCOUNT_PHONE_VERIFICATION_ENABLED = True
-# ACCOUNT_PHONE_VERIFICATION_MAX_ATTEMPTS = 3
-# ACCOUNT_PHONE_VERIFICATION_TIMEOUT = 900  # 15 minutes
-# ACCOUNT_PHONE_VERIFICATION_SUPPORTS_CHANGE = False
-# ACCOUNT_PHONE_VERIFICATION_SUPPORTS_RESEND = True
-# ┌─────────────────────────────────────────────────────────────────────────────
-# │ GROUP 2: EMAIL AUTHENTICATION
-# │ To activate: Comment out Group 1 above, then uncomment all lines below
-# └─────────────────────────────────────────────────────────────────────────────
+# Email Authentication with OTP Verification
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_LOGIN_BY_CODE_ENABLED = False  # False for password-based authentication
@@ -203,11 +189,9 @@ ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 HEADLESS_ONLY = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 HEADLESS_SERVE_SPECIFICATION = True
-ACCOUNT_ADAPTER = "apps.users.adapters.account.CustomAccountAdapter"
-# SOCIALACCOUNT_ADAPTER = "apps.users.adapters.socialaccount.CustomSocialAccountAdapter"
-# ACCOUNT_SIGNUP_FORM_CLASS = "apps.users.forms.signup.CustomSignupForm"
+
 HEADLESS_FRONTEND_URLS = {
-    # "account_confirm_email": "/account/verify-email/{key}",
+    "account_confirm_email": "/account/verify-email/{key}",
     "account_reset_password": "/account/password/reset",
     "account_reset_password_from_key": "/account/password/reset/key/{key}",
     "account_signup": "/account/signup",
@@ -226,9 +210,17 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {
             "access_type": "online",
         },
-    }
+    },
+    "apple": {
+        "APP": {
+            "client_id": env.apple_oauth2_client_id,
+            "secret": env.apple_oauth2_client_secret.get_secret_value(),
+            "key": env.apple_key_id,
+            "team": env.apple_team_id,
+        },
+        "SCOPE": ["email", "name"],
+    },
 }
-
 
 # ==============================================================================
 # SECURITY

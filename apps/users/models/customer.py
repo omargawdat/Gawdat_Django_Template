@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
@@ -71,7 +73,7 @@ class Customer(models.Model):
         verbose_name_plural = _("Customers")
 
     def __str__(self):
-        return self.email or self.username or f"Customer {self.pk}"
+        return self.email or f"Customer {self.pk}"
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -95,14 +97,6 @@ class Customer(models.Model):
         self.user.email = value
 
     @property
-    def username(self) -> str:
-        return self.user.username
-
-    @username.setter
-    def username(self, value) -> None:
-        self.user.username = value
-
-    @property
     def language(self) -> str:
         return self.user.language
 
@@ -119,7 +113,7 @@ class Customer(models.Model):
         self.user.is_active = value
 
     @property
-    def date_joined(self) -> str:
+    def date_joined(self) -> datetime:
         return self.user.date_joined
 
     @property

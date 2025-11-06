@@ -12,7 +12,7 @@ class EnvSettings(BaseSettings):
 
     # Django
     django_secret_key: SecretStr
-    django_superuser_username: str
+    django_superuser_email: str
     django_superuser_password: SecretStr
     django_admin_url: str
     django_admin_name: str
@@ -39,6 +39,10 @@ class EnvSettings(BaseSettings):
     # OAuth Providers
     google_oauth2_client_id: str
     google_oauth2_client_secret: SecretStr
+    apple_oauth2_client_id: str
+    apple_oauth2_client_secret: SecretStr
+    apple_key_id: str
+    apple_team_id: str
 
     # Payment
     taps_secret_key: SecretStr

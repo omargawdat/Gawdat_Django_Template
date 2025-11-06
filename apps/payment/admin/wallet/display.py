@@ -9,11 +9,11 @@ from apps.payment.models.wallet import Wallet
 class WalletDisplayMixin:
     @display(description=_("Wallet"), header=True)
     def display_header(self, wallet: Wallet):
-        # Get full_name from Customer if exists, otherwise use username
+        # Get full_name from Customer if exists, otherwise use email
         full_name = (
             wallet.user.customer.full_name
             if hasattr(wallet.user, "customer")
-            else wallet.user.username
+            else wallet.user.email
         )
         # Get image from Customer or AdminUser if exists
         image_url = None

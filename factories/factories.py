@@ -11,7 +11,7 @@ Usage:
     CustomerFactory.create_batch(10)
 
     # Tests - override as needed
-    address = AddressFactory(customer__username="john")
+    address = AddressFactory(customer__user__email="john@example.com")
 """
 
 import factory
@@ -226,7 +226,6 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 class UserFactory(factory.django.DjangoModelFactory):
     """Base User factory - for creating plain User instances."""
 
-    username = factory.Sequence(lambda n: f"user_{n}")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     is_staff = False
     is_active = True
@@ -248,7 +247,6 @@ class UserFactory(factory.django.DjangoModelFactory):
 class AdminUserFactory(factory.django.DjangoModelFactory):
     """Admin user - no dependencies"""
 
-    username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.LazyFunction(get_shared_image)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)

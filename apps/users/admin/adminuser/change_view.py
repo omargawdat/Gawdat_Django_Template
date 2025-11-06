@@ -8,7 +8,7 @@ class AdminUserChangeView:
             {
                 "fields": (
                     "image",
-                    "username",
+                    "email",
                     "password",
                     "groups",
                     "user_permissions",

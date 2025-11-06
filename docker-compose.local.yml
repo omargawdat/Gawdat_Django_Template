@@ -21,22 +21,6 @@ services:
     environment:
       DATABASE_URL: 'postgis://postgres:postgres@postgres:5432/mydatabase' # pragma: allowlist secret
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: projectname_frontend
-    depends_on:
-      - django
-    volumes:
-      - ./frontend/src:/code/src:z
-      - ./frontend/public:/code/public:z
-    ports:
-      - '3000:3000'
-    environment:
-      - CHOKIDAR_USEPOLLING=true  # For hot reload in Docker
-      - REACT_APP_API_URL=http://localhost:8000
-
   postgres:
     image: imresamu/postgis:17-3.5.0-alpine3.20
     container_name: projectname_postgres

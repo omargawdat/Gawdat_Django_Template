@@ -3,13 +3,13 @@ from datetime import date
 
 class EmailTemplate:
     @staticmethod
-    def otp(otp_code: int, expires_at: date, username: str = "there!"):
+    def otp(otp_code: int, expires_at: date, name: str = "there!"):
         app_name = "projectname"
         exp_str = expires_at.strftime("%b %d, %Y %H:%M")
 
         html = f"""
        <div style="font-size:14px; line-height:1.6; color:#f0f9ff; margin-top:8px;">
-           Hi <span style="color:#ffd700; font-weight:700;">{username}</span>, we’re excited to have you at
+           Hi <span style="color:#ffd700; font-weight:700;">{name}</span>, we're excited to have you at
            <b>{app_name}</b>. Please use the code below to verify your email and begin your journey.
        </div>
 
@@ -24,7 +24,7 @@ class EmailTemplate:
            This code expires at <strong>{exp_str}</strong>.
        </div>
 
-       """  # noqa RUF001
+       """
 
         return html
 

@@ -15,7 +15,6 @@ class CustomerService:
         *,
         email: str,
         phone_number: str | None = None,
-        username: str,
         password: str | None = None,
     ) -> Customer:
         from apps.payment.domain.services.wallet import WalletService
@@ -27,7 +26,6 @@ class CustomerService:
         # Create user first
         user = User.objects.create(
             email=email,
-            username=username,
             phone_number=phone_number,
         )
         if password:

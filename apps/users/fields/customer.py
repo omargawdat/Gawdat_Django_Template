@@ -2,7 +2,6 @@ class CustomerFields:
     PASSWORD = "password"  #  pragma: allowlist secret # noqa: S105
     LAST_LOGIN = "last_login"
     IS_SUPERUSER = "is_superuser"
-    USERNAME = "username"
     IS_ACTIVE = "is_active"
     IS_STAFF = "is_staff"
     DATE_JOINED = "date_joined"
