@@ -81,7 +81,6 @@ THIRD_PARTY_APPS = [
     "rules",
     "imagekit",
     "rest_framework",
-    "rest_framework.authtoken",
     "rest_framework_gis",
     "corsheaders",
     "drf_spectacular",

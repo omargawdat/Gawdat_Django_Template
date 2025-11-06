@@ -39,10 +39,6 @@ class AdminUserPermissions:
                 visible=(),
                 editable=(),
             ),
-            AdminUserFields.USERNAME: FieldPermissions(
-                visible=(context.is_staff),
-                editable=(context.is_staff),
-            ),
             AdminUserFields.IS_ACTIVE: FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(context.is_staff and context.is_created),

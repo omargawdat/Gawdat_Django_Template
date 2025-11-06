@@ -22,7 +22,7 @@ class ContactUsDisplayMixin:
             display_name = customer.full_name or customer.email
         return [
             display_name,
-            f"{customer.phone_number if customer else ''}",
+            f"{customer.email if customer else ''}",
             f"#{contact_us.pk}",
             "",
         ]
