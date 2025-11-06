@@ -70,8 +70,9 @@ SESSION_COOKIE_SAMESITE = "Lax"  # Lax for OAuth compatibility
 # Exempt allauth endpoints from CSRF checking (local development only)
 CSRF_EXEMPT_URLS = [r"^/api/_allauth/"]
 
-# Add CSRF exempt middleware before CSRF middleware
-MIDDLEWARE.insert(
-    MIDDLEWARE.index("django.middleware.csrf.CsrfViewMiddleware"),
-    "config.middleware.csrf_exempt.CSRFExemptMiddleware",
-)
+# Add CSRF exempt middleware before CSRF middleware (only if CSRF is enabled)
+if not env.disable_csrf and "django.middleware.csrf.CsrfViewMiddleware" in MIDDLEWARE:
+    MIDDLEWARE.insert(
+        MIDDLEWARE.index("django.middleware.csrf.CsrfViewMiddleware"),
+        "config.middleware.csrf_exempt.CSRFExemptMiddleware",
+    )

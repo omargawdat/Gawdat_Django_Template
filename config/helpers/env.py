@@ -17,6 +17,7 @@ class EnvSettings(BaseSettings):
     django_admin_url: str
     django_admin_name: str
     django_admin_email: str
+    disable_csrf: bool = False
 
     # Database
     database_url: str

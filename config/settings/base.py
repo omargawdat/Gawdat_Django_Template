@@ -144,6 +144,10 @@ MIDDLEWARE = [
     "config.middleware.AllauthErrorFormatterMiddleware",
 ]
 
+# Conditionally disable CSRF for development/testing
+if env.disable_csrf:
+    MIDDLEWARE.remove("django.middleware.csrf.CsrfViewMiddleware")
+
 # ==============================================================================
 # AUTHENTICATION
 # ==============================================================================
@@ -182,6 +186,8 @@ ACCOUNT_SIGNUP_FIELDS = ["email*"]  # No password required
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Enable passwordless login
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+ACCOUNT_USERNAME_REQUIRED = False  # No username field in User model
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # User model has no username field
 # -------------------------------------------------------------------------------
 # COMMON SETTINGS FOR ALL AUTHENTICATION MODES
 # -------------------------------------------------------------------------------
