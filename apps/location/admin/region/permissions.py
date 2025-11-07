@@ -1,8 +1,8 @@
 from django.http import HttpRequest
-from django_model_suite.admin import FieldPermissions
 
 from apps.location.models.region import Region
 from common.base.admin import AdminContextLogic
+from common.base.admin import FieldPermissions
 
 
 class BaseRegionPermissions:

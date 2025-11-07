@@ -1,7 +1,7 @@
 from django.http import HttpRequest
-from django_model_suite.admin import FieldPermissions
 
 from apps.users.models.provider import Provider
+from common.base.admin import FieldPermissions
 
 from .context import ProviderContextLogic
 

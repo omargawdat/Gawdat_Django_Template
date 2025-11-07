@@ -1,6 +1,5 @@
-from django_model_suite.admin import BaseTabularInline
-
 from apps.location.models.region import Region
+from common.base.admin import BaseTabularInline
 
 from .permissions import RegionInlinePermissions
 

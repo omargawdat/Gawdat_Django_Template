@@ -101,7 +101,6 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.forms",
-    "django_model_suite",
     "modeltranslation",
     "django.contrib.gis",
     # Django-allauth
