@@ -4,8 +4,6 @@ from django_model_suite.admin import FieldPermissions
 from apps.channel.models.notification import Notification
 from common.base.admin import AdminContextLogic
 
-from ...fields.notification import NotificationFields
-
 
 class BaseNotificationPermissions:
     def get_field_rules(
@@ -14,51 +12,51 @@ class BaseNotificationPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            NotificationFields.NOTIFICATION_TYPE: FieldPermissions(
+            "notification_type": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.TITLE: FieldPermissions(
+            "title": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.TITLE_AR: FieldPermissions(
+            "title_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.TITLE_EN: FieldPermissions(
+            "title_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.MESSAGE_BODY: FieldPermissions(
+            "message_body": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.MESSAGE_BODY_AR: FieldPermissions(
+            "message_body_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.MESSAGE_BODY_EN: FieldPermissions(
+            "message_body_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.CREATED_AT: FieldPermissions(
+            "created_at": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            NotificationFields.USERS: FieldPermissions(
+            "users": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.SEND_SMS: FieldPermissions(
+            "send_sms": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.SEND_FCM: FieldPermissions(
+            "send_fcm": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            NotificationFields.IS_READ: FieldPermissions(
+            "is_read": FieldPermissions(
                 visible=(),
                 editable=(),
             ),

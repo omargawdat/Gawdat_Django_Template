@@ -37,7 +37,6 @@ dependencies = [
     "django-money>=3.5",
     "django-cors-headers>=4.9",
     "dj-database-url>=3.0",
-    "django_model_suite>=0.2",
     "django-simple-history>=3.10",
     "django-modeltranslation>=0.19",
     "django-soft-delete>=1.0",

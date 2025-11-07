@@ -1,7 +1,6 @@
 from django.http import HttpRequest
 from django_model_suite.admin import FieldPermissions
 
-from apps.users.fields.customer import CustomerFields
 from apps.users.models.customer import Customer
 
 from .context import CustomerContextLogic
@@ -13,56 +12,60 @@ class BaseCustomerPermissions:
     ) -> dict:
         context = CustomerContextLogic(request, customer)
         return {
-            CustomerFields.IS_SUPERUSER: FieldPermissions(
+            "is_superuser": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(),
             ),
-            CustomerFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(context.is_staff,),
             ),
-            CustomerFields.DATE_JOINED: FieldPermissions(
+            "date_joined": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
-            CustomerFields.PHONE_NUMBER: FieldPermissions(
+            "phone_number": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff and not context.is_created),
             ),
-            CustomerFields.EMAIL: FieldPermissions(
+            "email": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            CustomerFields.IMAGE: FieldPermissions(
+            "image": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            CustomerFields.FULL_NAME: FieldPermissions(
+            "full_name": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            CustomerFields.GENDER: FieldPermissions(
+            "gender": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            CustomerFields.BIRTH_DATE: FieldPermissions(
+            "birth_date": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            CustomerFields.COUNTRY: FieldPermissions(
+            "country": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
-            CustomerFields.PRIMARY_ADDRESS: FieldPermissions(
+            "primary_address": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
-            CustomerFields.IS_VERIFIED: FieldPermissions(
+            "is_verified": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(),
             ),
-            CustomerFields.INVITER: FieldPermissions(
+            "inviter": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
+                editable=(),
+            ),
+            "user": FieldPermissions(
+                visible=(context.is_staff),
                 editable=(),
             ),
         }

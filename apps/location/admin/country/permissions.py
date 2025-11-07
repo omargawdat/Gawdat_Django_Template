@@ -4,8 +4,6 @@ from apps.location.models.country import Country
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.country import CountryFields
-
 
 class BaseCountryPermissions:
     def get_field_rules(
@@ -14,51 +12,51 @@ class BaseCountryPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            CountryFields.CODE: FieldPermissions(
+            "code": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.NAME: FieldPermissions(
+            "name": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.NAME_AR: FieldPermissions(
+            "name_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.NAME_EN: FieldPermissions(
+            "name_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.CURRENCY: FieldPermissions(
+            "currency": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.FLAG: FieldPermissions(
+            "flag": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            CountryFields.PHONE_CODE: FieldPermissions(
+            "phone_code": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            CountryFields.APP_INSTALL_MONEY_INVITEE: FieldPermissions(
+            "app_install_money_invitee": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            CountryFields.APP_INSTALL_MONEY_INVITER: FieldPermissions(
+            "app_install_money_inviter": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            CountryFields.ORDER_MONEY_INVITEE: FieldPermissions(
+            "order_money_invitee": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            CountryFields.ORDER_MONEY_INVITER: FieldPermissions(
+            "order_money_inviter": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

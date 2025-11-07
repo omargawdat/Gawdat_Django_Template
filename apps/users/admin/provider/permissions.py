@@ -1,7 +1,6 @@
 from django.http import HttpRequest
 from django_model_suite.admin import FieldPermissions
 
-from apps.users.fields.provider import ProviderFields
 from apps.users.models.provider import Provider
 
 from .context import ProviderContextLogic
@@ -13,25 +12,29 @@ class BaseProviderPermissions:
     ) -> dict:
         context = ProviderContextLogic(request, provider)
         return {
-            ProviderFields.IS_SUPERUSER: FieldPermissions(
+            "is_superuser": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(),
             ),
-            ProviderFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(context.is_staff,),
             ),
-            ProviderFields.DATE_JOINED: FieldPermissions(
+            "date_joined": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(),
             ),
-            ProviderFields.EMAIL: FieldPermissions(
+            "email": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            ProviderFields.COMPANY_NAME: FieldPermissions(
+            "company_name": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
+            ),
+            "user": FieldPermissions(
+                visible=(context.is_staff),
+                editable=(),
             ),
         }
 

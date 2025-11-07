@@ -4,8 +4,6 @@ from apps.payment.models.payment import Payment
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.payment import PaymentFields
-
 
 class BasePaymentPermissions:
     def get_field_rules(
@@ -14,43 +12,43 @@ class BasePaymentPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            PaymentFields.CUSTOMER: FieldPermissions(
+            "customer": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PRICE_BEFORE_DISCOUNT_CURRENCY: FieldPermissions(
+            "price_before_discount_currency": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PRICE_BEFORE_DISCOUNT: FieldPermissions(
+            "price_before_discount": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PRICE_AFTER_DISCOUNT_CURRENCY: FieldPermissions(
+            "price_after_discount_currency": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PRICE_AFTER_DISCOUNT: FieldPermissions(
+            "price_after_discount": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PAYMENT_TYPE: FieldPermissions(
+            "payment_type": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.IS_PAID: FieldPermissions(
+            "is_paid": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.PAYMENT_CHARGE_ID: FieldPermissions(
+            "payment_charge_id": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.BANK_TRANSACTION_RESPONSE: FieldPermissions(
+            "bank_transaction_response": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            PaymentFields.CREATED_AT: FieldPermissions(
+            "created_at": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),

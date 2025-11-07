@@ -4,8 +4,6 @@ from apps.appInfo.models.banner_group import BannerGroup
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.banner_group import BannerGroupFields
-
 
 class BaseBannerGroupPermissions:
     def get_field_rules(
@@ -14,23 +12,23 @@ class BaseBannerGroupPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            BannerGroupFields.NAME: FieldPermissions(
+            "name": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            BannerGroupFields.NAME_AR: FieldPermissions(
+            "name_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            BannerGroupFields.NAME_EN: FieldPermissions(
+            "name_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            BannerGroupFields.ORDER: FieldPermissions(
+            "order": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            BannerGroupFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

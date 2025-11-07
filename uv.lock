@@ -644,21 +644,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-model-suite"
-version = "0.2.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "django-filter" },
-    { name = "django-unfold" },
-    { name = "djangorestframework" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/98/aa/e0b09acd6a0ab39064e53ffd09ad508eaf40e9057a2782f706338e55c2d4/django_model_suite-0.2.1.tar.gz", hash = "sha256:c4d908c8bb14fc2eb424ddfbde382de011bff97f2f8f43d3f20315f082bd1926", size = 19818, upload-time = "2025-07-27T18:12:03.919Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/e8/80dc491c98fa52eea5443cdf8c99915e57eac4f714a00ed4bce4b11ff5cd/django_model_suite-0.2.1-py3-none-any.whl", hash = "sha256:438f2f446c0174809de2bf491db07f5dbe3adfd824206692d2050e4817ba806f", size = 28433, upload-time = "2025-07-27T18:12:02.641Z" },
-]
-
-[[package]]
 name = "django-model-utils"
 version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -842,7 +827,6 @@ dependencies = [
     { name = "django-import-export" },
     { name = "django-location-field" },
     { name = "django-map-widgets" },
-    { name = "django-model-suite" },
     { name = "django-model-utils" },
     { name = "django-modeltranslation" },
     { name = "django-money" },
@@ -918,7 +902,6 @@ requires-dist = [
     { name = "django-import-export", specifier = ">=4.3" },
     { name = "django-location-field", specifier = ">=2.7" },
     { name = "django-map-widgets", specifier = ">=0.5" },
-    { name = "django-model-suite", specifier = ">=0.2" },
     { name = "django-model-utils", specifier = ">=5.0" },
     { name = "django-modeltranslation", specifier = ">=0.19" },
     { name = "django-money", specifier = ">=3.5" },

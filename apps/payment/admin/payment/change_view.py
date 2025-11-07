@@ -1,6 +1,3 @@
-from apps.payment.fields.payment import PaymentFields
-
-
 class PaymentChangeView:
     filter_horizontal = ()
     compressed_fields = True
@@ -10,12 +7,12 @@ class PaymentChangeView:
             "Information",
             {
                 "fields": (
-                    PaymentFields.CUSTOMER,
-                    PaymentFields.PRICE_BEFORE_DISCOUNT,
-                    PaymentFields.PRICE_BEFORE_DISCOUNT_CURRENCY,
-                    PaymentFields.PRICE_AFTER_DISCOUNT,
-                    PaymentFields.PRICE_AFTER_DISCOUNT_CURRENCY,
-                    PaymentFields.PAYMENT_TYPE,
+                    "customer",
+                    "price_before_discount",
+                    "price_before_discount_currency",
+                    "price_after_discount",
+                    "price_after_discount_currency",
+                    "payment_type",
                 )
             },
         ),
@@ -23,10 +20,10 @@ class PaymentChangeView:
             "Status & Metadata",
             {
                 "fields": (
-                    PaymentFields.IS_PAID,
-                    PaymentFields.PAYMENT_CHARGE_ID,
-                    PaymentFields.BANK_TRANSACTION_RESPONSE,
-                    PaymentFields.CREATED_AT,
+                    "is_paid",
+                    "payment_charge_id",
+                    "bank_transaction_response",
+                    "created_at",
                 )
             },
         ),

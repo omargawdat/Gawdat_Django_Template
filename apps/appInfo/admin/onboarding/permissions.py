@@ -4,8 +4,6 @@ from apps.appInfo.models.onboarding import Onboarding
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.onboarding import OnboardingFields
-
 
 class BaseOnboardingPermissions:
     def get_field_rules(
@@ -14,51 +12,51 @@ class BaseOnboardingPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            OnboardingFields.TITLE: FieldPermissions(
+            "title": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.TITLE_AR: FieldPermissions(
+            "title_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.TITLE_EN: FieldPermissions(
+            "title_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.IMAGE: FieldPermissions(
+            "image": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.TEXT: FieldPermissions(
+            "text": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.TEXT_AR: FieldPermissions(
+            "text_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.TEXT_EN: FieldPermissions(
+            "text_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.SUB_TEXT: FieldPermissions(
+            "sub_text": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.SUB_TEXT_EN: FieldPermissions(
+            "sub_text_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.SUB_TEXT_AR: FieldPermissions(
+            "sub_text_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.ORDER: FieldPermissions(
+            "order": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            OnboardingFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

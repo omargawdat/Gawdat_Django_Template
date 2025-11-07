@@ -4,8 +4,6 @@ from apps.appInfo.models.popup import PopUpBanner
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.pop_up_banner import PopUpBannerFields
-
 
 class BasePopUpBannerPermissions:
     def get_field_rules(
@@ -14,15 +12,15 @@ class BasePopUpBannerPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            PopUpBannerFields.IMAGE: FieldPermissions(
+            "image": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            PopUpBannerFields.COUNT_PER_USER: FieldPermissions(
+            "count_per_user": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            PopUpBannerFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

@@ -4,8 +4,6 @@ from apps.payment.models.wallet import Wallet
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.wallet import WalletFields
-
 
 class BaseWalletPermissions:
     def get_field_rules(
@@ -14,23 +12,23 @@ class BaseWalletPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            WalletFields.USER: FieldPermissions(
+            "user": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletFields.BALANCE_CURRENCY: FieldPermissions(
+            "balance_currency": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletFields.BALANCE: FieldPermissions(
+            "balance": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletFields.IS_USE_WALLET_IN_PAYMENT: FieldPermissions(
+            "is_use_wallet_in_payment": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletFields.LAST_UPDATE: FieldPermissions(
+            "last_update": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
@@ -42,7 +40,7 @@ class WalletAdminPermissions(BaseWalletPermissions):
         return False
 
     def can_change(self, request, obj=None):
-        return True
+        return False
 
     def can_delete(self, request, obj=None):
         return False
