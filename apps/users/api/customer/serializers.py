@@ -58,7 +58,6 @@ class CustomerDetailedSerializer(CustomerMinimalSerializer):
             "Update Customer Profile",
             value={
                 "full_name": "John Doe",
-                "email": "john.doe@example.com",
                 "gender": "male",
                 "birth_date": "1990-01-01",
                 "primary_address": 1,
@@ -74,7 +73,6 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
         queryset=Country.objects.filter(is_active=True),
         required=False,
     )
-    email = serializers.EmailField(required=False)
     language = serializers.ChoiceField(choices=Language.choices, required=False)
 
     class Meta:
@@ -84,7 +82,6 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
             "image",
             "birth_date",
             "primary_address",
-            "email",
             "gender",
             "language",
             "country",
@@ -92,14 +89,10 @@ class CustomerUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # Handle User fields
-        email = validated_data.pop("email", None)
         language = validated_data.pop("language", None)
 
-        if email:
-            instance.user.email = email
         if language:
             instance.user.language = language
-        if email or language:
             instance.user.save()
 
         # Handle Customer fields

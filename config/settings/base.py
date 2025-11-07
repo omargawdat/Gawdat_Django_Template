@@ -230,6 +230,9 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
+# Custom allauth adapter for consistent user serialization
+HEADLESS_ADAPTER = "config.helpers.allauth_adapter.CustomHeadlessAdapter"
+
 # ==============================================================================
 # SECURITY
 # ==============================================================================

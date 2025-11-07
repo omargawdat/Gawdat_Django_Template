@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
@@ -53,5 +55,13 @@ class Provider(models.Model):
         self.user.is_active = value
 
     @property
-    def date_joined(self):
+    def date_joined(self) -> datetime:
         return self.user.date_joined
+
+    @property
+    def language(self) -> str:
+        return self.user.language
+
+    @language.setter
+    def language(self, value) -> None:
+        self.user.language = value

@@ -1,5 +1,7 @@
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -13,10 +15,17 @@ from rest_framework.views import APIView
 from apps.users.api.customer.serializers import CustomerDetailedSerializer
 from apps.users.api.customer.serializers import CustomerSetupSerializer
 from apps.users.api.customer.serializers import CustomerUpdateSerializer
-from apps.users.api.user.serializers import UserWithProfileSerializer
 from apps.users.domain.services.user import UserServices
 
 logger = logging.getLogger(__name__)
+
+
+def _get_customer_or_404(user):
+    """Get customer profile or raise 404."""
+    try:
+        return user.customer
+    except ObjectDoesNotExist:
+        raise Http404("No customer profile found for this user.") from None
 
 
 class CustomerDetailView(APIView):
@@ -30,11 +39,12 @@ class CustomerDetailView(APIView):
         description="Retrieve the authenticated customer's complete profile including user auth data.",
         responses={
             200: CustomerDetailedSerializer,
+            404: OpenApiResponse(description="Customer profile not found"),
         },
     )
     def get(self, request):
         """Get customer profile with flattened user auth fields."""
-        customer = request.user.customer
+        customer = _get_customer_or_404(request.user)
         serializer = CustomerDetailedSerializer(customer, context={"request": request})
         return Response(serializer.data)
 
@@ -83,11 +93,12 @@ class CustomerUpdateView(APIView):
                     )
                 ],
             ),
+            404: OpenApiResponse(description="Customer profile not found"),
         },
     )
     def patch(self, request):
         """Update customer profile (handles both User and Customer fields)."""
-        customer = request.user.customer
+        customer = _get_customer_or_404(request.user)
         serializer = CustomerUpdateSerializer(
             customer, data=request.data, partial=True, context={"request": request}
         )
@@ -109,11 +120,12 @@ class CustomerDeleteView(APIView):
         description="Deactivate the authenticated customer's account and logout from all devices.",
         responses={
             204: OpenApiResponse(description="Account successfully deactivated."),
+            404: OpenApiResponse(description="Customer profile not found"),
         },
     )
     def delete(self, request):
         """Deactivate customer account and logout from all devices."""
-        customer = request.user.customer
+        customer = _get_customer_or_404(request.user)
         customer.user.is_active = False
         UserServices.user_logout_all_devices(customer.user)
         customer.user.save()
@@ -130,7 +142,7 @@ class CustomerSetupView(APIView):
         operation_id="CompleteCustomerProfile",
         request=CustomerSetupSerializer,
         responses={
-            201: UserWithProfileSerializer,
+            201: CustomerDetailedSerializer,
             400: {"description": "Validation error or profile already completed"},
         },
     )
@@ -160,7 +172,9 @@ class CustomerSetupView(APIView):
             device_type=device_data.get("type"),
         )
 
-        response_serializer = UserWithProfileSerializer(user)
+        response_serializer = CustomerDetailedSerializer(
+            user.customer, context={"request": request}
+        )
 
         logger.info(f"Customer profile created for user {user.email}")
 

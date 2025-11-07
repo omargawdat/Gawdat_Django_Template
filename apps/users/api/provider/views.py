@@ -1,5 +1,7 @@
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
 from drf_spectacular.utils import OpenApiParameter
@@ -13,10 +15,17 @@ from rest_framework.views import APIView
 from apps.users.api.provider.serializers import ProviderDetailedSerializer
 from apps.users.api.provider.serializers import ProviderSetupSerializer
 from apps.users.api.provider.serializers import ProviderUpdateSerializer
-from apps.users.api.user.serializers import UserWithProviderProfileSerializer
 from apps.users.domain.services.user import UserServices
 
 logger = logging.getLogger(__name__)
+
+
+def _get_provider_or_404(user):
+    """Get provider profile or raise 404."""
+    try:
+        return user.provider
+    except ObjectDoesNotExist:
+        raise Http404("No provider profile found for this user.") from None
 
 
 class ProviderDetailView(APIView):
@@ -30,11 +39,12 @@ class ProviderDetailView(APIView):
         description="Retrieve the authenticated provider's complete profile including user auth data.",
         responses={
             200: ProviderDetailedSerializer,
+            404: OpenApiResponse(description="Provider profile not found"),
         },
     )
     def get(self, request):
         """Get provider profile with flattened user auth fields."""
-        provider = request.user.provider
+        provider = _get_provider_or_404(request.user)
         serializer = ProviderDetailedSerializer(provider, context={"request": request})
         return Response(serializer.data)
 
@@ -81,11 +91,12 @@ class ProviderUpdateView(APIView):
                     )
                 ],
             ),
+            404: OpenApiResponse(description="Provider profile not found"),
         },
     )
     def patch(self, request):
         """Update provider profile (handles both User and Provider fields)."""
-        provider = request.user.provider
+        provider = _get_provider_or_404(request.user)
         serializer = ProviderUpdateSerializer(
             provider, data=request.data, partial=True, context={"request": request}
         )
@@ -107,11 +118,12 @@ class ProviderDeleteView(APIView):
         description="Deactivate the authenticated provider's account and logout from all devices.",
         responses={
             204: OpenApiResponse(description="Account successfully deactivated."),
+            404: OpenApiResponse(description="Provider profile not found"),
         },
     )
     def delete(self, request):
         """Deactivate provider account and logout from all devices."""
-        provider = request.user.provider
+        provider = _get_provider_or_404(request.user)
         provider.user.is_active = False
         UserServices.user_logout_all_devices(provider.user)
         provider.user.save()
@@ -128,7 +140,7 @@ class ProviderSetupView(APIView):
         operation_id="CompleteProviderProfile",
         request=ProviderSetupSerializer,
         responses={
-            201: UserWithProviderProfileSerializer,
+            201: ProviderDetailedSerializer,
             400: {"description": "Validation error or profile already completed"},
         },
     )
@@ -158,7 +170,9 @@ class ProviderSetupView(APIView):
             device_type=device_data.get("type"),
         )
 
-        response_serializer = UserWithProviderProfileSerializer(user)
+        response_serializer = ProviderDetailedSerializer(
+            user.provider, context={"request": request}
+        )
 
         logger.info(f"Provider profile created for user {user.email}")
 

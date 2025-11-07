@@ -46,7 +46,6 @@ class ProviderDetailedSerializer(ProviderMinimalSerializer):
             "Update Provider Profile",
             value={
                 "company_name": "ACME Corporation",
-                "email": "contact@acme.com",
                 "language": "en",
             },
             request_only=True,
@@ -56,28 +55,22 @@ class ProviderDetailedSerializer(ProviderMinimalSerializer):
 class ProviderUpdateSerializer(serializers.ModelSerializer):
     """Update provider profile."""
 
-    email = serializers.EmailField(required=False)
     language = serializers.ChoiceField(choices=Language.choices, required=False)
 
     class Meta:
         model = Provider
         fields = [
             "company_name",
-            "email",
             "language",
         ]
 
     def update(self, instance, validated_data):
         """Handle User fields and Provider fields."""
         # Handle User fields
-        email = validated_data.pop("email", None)
         language = validated_data.pop("language", None)
 
-        if email:
-            instance.user.email = email
         if language:
             instance.user.language = language
-        if email or language:
             instance.user.save()
 
         # Handle Provider fields
