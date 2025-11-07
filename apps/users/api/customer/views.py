@@ -4,7 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiExample
-from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -58,22 +57,6 @@ class CustomerUpdateView(APIView):
         tags=["Account/Customer"],
         operation_id="UpdateCustomerProfile",
         description="Update the authenticated customer's profile information.",
-        parameters=[
-            OpenApiParameter(
-                name="Accept-Language",
-                type=OpenApiTypes.STR,
-                location="header",
-                required=False,
-                description="Language preference for the response",
-                examples=[
-                    OpenApiExample(
-                        name="English (US)",
-                        value="en",
-                        description="English with US locale preference",
-                    ),
-                ],
-            ),
-        ],
         request={
             "multipart/form-data": CustomerUpdateSerializer,
         },
