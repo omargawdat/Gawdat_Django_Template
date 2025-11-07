@@ -4,8 +4,6 @@ from apps.appInfo.models.contact_us import ContactUs
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.contact_us import ContactUsFields
-
 
 class BaseContactUsPermissions:
     def get_field_rules(
@@ -14,23 +12,23 @@ class BaseContactUsPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            ContactUsFields.CUSTOMER: FieldPermissions(
+            "customer": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            ContactUsFields.CONTACT_TYPE: FieldPermissions(
+            "contact_type": FieldPermissions(
                 visible=(),
                 editable=(),
             ),
-            ContactUsFields.DESCRIPTION: FieldPermissions(
+            "description": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            ContactUsFields.HAS_CHECKED: FieldPermissions(
+            "has_checked": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            ContactUsFields.CREATED_AT: FieldPermissions(
+            "created_at": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),

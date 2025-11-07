@@ -1,26 +1,14 @@
-from unfold.contrib.filters.admin import RangeNumericFilter
-
-from apps.payment.admin.wallettransaction.inline import WalletTransactionInline
-
-
 class WalletListView:
-    list_display = (
-        "display_header",
-        "display_balance",
-        "display_last_update",
-        "display_is_use_wallet_in_payment",
-    )
+    list_display = ("display_header",)
     list_editable = ()
-    list_filter = ["is_use_wallet_in_payment", ("balance", RangeNumericFilter)]
-    date_hierarchy = "last_update"
+    list_filter = ()
+    date_hierarchy = None
     list_per_page = 50
-    list_filter_submit = True
+    list_filter_submit = False
     list_fullwidth = False
-    list_horizontal_scrollbar_top = True
-    search_fields = ("user__email",)
-    search_help_text = "search by email"
-
-    inlines = [WalletTransactionInline]
+    list_horizontal_scrollbar_top = False
+    search_fields = ()
+    search_help_text = ""
 
     def get_ordering(self, request):
-        return ("-last_update",)
+        return ()

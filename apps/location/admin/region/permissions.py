@@ -1,7 +1,6 @@
 from django.http import HttpRequest
 from django_model_suite.admin import FieldPermissions
 
-from apps.location.fields.region import RegionFields
 from apps.location.models.region import Region
 from common.base.admin import AdminContextLogic
 
@@ -13,23 +12,23 @@ class BaseRegionPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            RegionFields.CODE: FieldPermissions(
+            "code": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            RegionFields.COUNTRY: FieldPermissions(
+            "country": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            RegionFields.GEOMETRY: FieldPermissions(
+            "geometry": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            RegionFields.NAME_AR: FieldPermissions(
+            "name_ar": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            RegionFields.NAME_EN: FieldPermissions(
+            "name_en": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

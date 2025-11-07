@@ -127,6 +127,43 @@ docker compose -f docker-compose.local.yml run --rm django python manage.py migr
 docker compose -f docker-compose.local.yml run --rm django python manage.py createsuperuser
 ```
 
+### Code Generation Commands
+
+This project includes a custom management command to generate admin dashboard boilerplate code:
+
+#### Generate Dashboard (Admin Interface)
+
+```bash
+# Generate all admin dashboard components for a model
+docker compose -f docker-compose.local.yml run --rm django python manage.py generate_dashboard <app_name> <model_name>
+
+# Example: Generate dashboard for Customer model
+docker compose -f docker-compose.local.yml run --rm django python manage.py generate_dashboard users Customer
+
+# Options:
+# --skip-inline    Skip generating inline admin
+```
+
+**What it generates:**
+- `admin/<model_name>/list_view.py` - List view configuration (columns, filters, search)
+- `admin/<model_name>/change_view.py` - Change/detail view configuration
+- `admin/<model_name>/permissions.py` - Permission handling (uses field names directly)
+- `admin/<model_name>/display.py` - Custom display methods
+- `admin/<model_name>/resource.py` - Export/import configuration
+- `admin/<model_name>/inline.py` - Inline admin for related models
+- `admin/<model_name>/admin.py` - Main admin registration
+- `admin/<model_name>/CHECKLIST.md` - Configuration review checklist
+
+**Usage workflow:**
+1. Create your model in `models/` directory
+2. Run migrations
+3. Run `generate_dashboard` command
+4. Review and customize generated files
+5. Follow the CHECKLIST.md for configuration review
+
+**Note:** Field names are used directly as strings in permissions (e.g., `"field_name"`), not through a Fields class.
+```
+
 ## Architecture
 
 ### Project Structure

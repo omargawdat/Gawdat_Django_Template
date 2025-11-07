@@ -4,8 +4,6 @@ from apps.payment.models.wallet_transaction import WalletTransaction
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.wallet_transaction import WalletTransactionFields
-
 
 class BaseWalletTransactionPermissions:
     def get_field_rules(
@@ -14,35 +12,35 @@ class BaseWalletTransactionPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            WalletTransactionFields.WALLET: FieldPermissions(
+            "wallet": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.TRANSACTION_TYPE: FieldPermissions(
+            "transaction_type": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.AMOUNT_CURRENCY: FieldPermissions(
+            "amount_currency": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.AMOUNT: FieldPermissions(
+            "amount": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.CREATED_AT: FieldPermissions(
+            "created_at": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.ACTION_BY: FieldPermissions(
+            "action_by": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.TRANSACTION_NOTE: FieldPermissions(
+            "transaction_note": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),
-            WalletTransactionFields.ATTACHMENT: FieldPermissions(
+            "attachment": FieldPermissions(
                 visible=(normal_admin),
                 editable=(),
             ),

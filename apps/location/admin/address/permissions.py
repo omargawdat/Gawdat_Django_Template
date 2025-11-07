@@ -4,8 +4,6 @@ from apps.location.models.address import Address
 from common.base.admin import AdminContextLogic
 from common.base.admin import FieldPermissions
 
-from ...fields.address import AddressFields
-
 
 class BaseAddressPermissions:
     def get_field_rules(
@@ -14,23 +12,23 @@ class BaseAddressPermissions:
         normal_admin = AdminContextLogic.is_normal_admin(request)
 
         return {
-            AddressFields.CUSTOMER: FieldPermissions(
+            "customer": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            AddressFields.POINT: FieldPermissions(
+            "point": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            AddressFields.DESCRIPTION: FieldPermissions(
+            "description": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            AddressFields.LOCATION_TYPE: FieldPermissions(
+            "location_type": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),
-            AddressFields.MAP_DESCRIPTION: FieldPermissions(
+            "map_description": FieldPermissions(
                 visible=(normal_admin),
                 editable=(normal_admin),
             ),

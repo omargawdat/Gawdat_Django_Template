@@ -3,7 +3,6 @@ from django.http import HttpRequest
 from apps.users.models.admin import AdminUser
 from common.base.admin import FieldPermissions
 
-from ...fields.admin_user import AdminUserFields
 from .context import AdminUserContextLogic
 
 
@@ -27,47 +26,47 @@ class AdminUserPermissions:
         context = AdminUserContextLogic(request, admin_user)
 
         return {
-            AdminUserFields.PASSWORD: FieldPermissions(
+            "password": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.LAST_LOGIN: FieldPermissions(
+            "last_login": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.IS_SUPERUSER: FieldPermissions(
+            "is_superuser": FieldPermissions(
                 visible=(),
                 editable=(),
             ),
-            AdminUserFields.IS_ACTIVE: FieldPermissions(
+            "is_active": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(context.is_staff and context.is_created),
             ),
-            AdminUserFields.IS_STAFF: FieldPermissions(
+            "is_staff": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(),
             ),
-            AdminUserFields.DATE_JOINED: FieldPermissions(
+            "date_joined": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(),
             ),
-            AdminUserFields.GROUPS: FieldPermissions(
+            "groups": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.USER_PERMISSIONS: FieldPermissions(
+            "user_permissions": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.LANGUAGE: FieldPermissions(
+            "language": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.IMAGE: FieldPermissions(
+            "image": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
-            AdminUserFields.CAN_ACCESS_MONEY: FieldPermissions(
+            "can_access_money": FieldPermissions(
                 visible=(context.is_staff),
                 editable=(context.is_staff),
             ),
