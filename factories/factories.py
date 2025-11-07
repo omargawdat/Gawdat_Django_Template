@@ -50,6 +50,7 @@ from apps.users.constants import GenderChoices
 from apps.users.models import User
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
+from apps.users.models.provider import Provider
 
 # Initialize Faker
 fake = Faker()
@@ -323,6 +324,31 @@ class CustomerFactory(factory.django.DjangoModelFactory):
             return
         if extracted is not False:  # Allow explicit skip with False
             ContactUsFactory.create(customer=self)
+
+
+class ProviderFactory(factory.django.DjangoModelFactory):
+    """Provider factory - depends on User."""
+
+    # Create User with SubFactory
+    user = factory.SubFactory(
+        "factories.factories.UserFactory",
+        email=factory.Sequence(lambda n: f"provider{n}@example.com"),
+    )
+
+    company_name = factory.Faker("company")
+
+    class Meta:
+        model = Provider
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def set_password(self, create, extracted, **kwargs):
+        if not create:
+            return
+        # Set password on the user model
+        password = extracted if extracted else "testpass123"  # pragma: allowlist secret
+        self.user.set_password(password)
+        self.user.save(update_fields=["password"])
 
 
 # ============================================================================

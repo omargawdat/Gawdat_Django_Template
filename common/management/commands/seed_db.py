@@ -19,6 +19,7 @@ from factories.factories import NotificationFactory
 from factories.factories import OnboardingFactory
 from factories.factories import PaymentFactory
 from factories.factories import PopUpBannerFactory
+from factories.factories import ProviderFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 
@@ -131,15 +132,16 @@ class Command(BaseCommand):
         # ========================================================================
         # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
-        # TODO: Cannot use bulk - AdminUser uses multi-table inheritance (polymorphic)
         with self._timer(f"Creating {fixed_count} admin users"):
             AdminUserFactory.create_batch(fixed_count)
 
-        # TODO: Cannot use bulk - Customer has post_generation hooks (wallet, addresses, contact_us)
         with self._timer(
             f"Creating {count} customers (+ wallets, addresses, contact_us)"
         ):
             customers = CustomerFactory.create_batch(fixed_count)
+
+        with self._timer(f"Creating {fixed_count} providers"):
+            ProviderFactory.create_batch(fixed_count)
 
         # ========================================================================
         # ADDITIONAL RELATIONSHIPS
