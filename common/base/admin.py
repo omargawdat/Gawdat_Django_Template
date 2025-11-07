@@ -73,7 +73,7 @@ class DynamicAdminFields(ABC):
         return [
             field
             for field in all_fields
-            if field_config.get(field, FieldPermissions()).is_visible()
+            if field not in field_config or field_config[field].is_visible()
         ]
 
     def get_fieldsets(
@@ -106,13 +106,13 @@ class DynamicAdminFields(ABC):
                         f
                         for f in field
                         if isinstance(f, str)
-                        and field_config.get(f, FieldPermissions()).is_visible()
+                        and (f not in field_config or field_config[f].is_visible())
                     ]
                     if nested_visible:
                         visible_fields.append(tuple(nested_visible))
                 elif isinstance(field, str):
                     # Single field (must be a string field name)
-                    if field_config.get(field, FieldPermissions()).is_visible():
+                    if field not in field_config or field_config[field].is_visible():
                         visible_fields.append(field)
                 else:
                     # Unknown type, keep it as-is (e.g., callables, classes)
@@ -146,7 +146,7 @@ class DynamicAdminFields(ABC):
         return tuple(
             field
             for field in base_list_display
-            if field_config.get(field, FieldPermissions()).is_visible()
+            if field not in field_config or field_config[field].is_visible()
         )
 
     def get_list_editable(self, request: HttpRequest) -> tuple[str, ...]:
@@ -156,7 +156,7 @@ class DynamicAdminFields(ABC):
         return tuple(
             field
             for field in list_editable
-            if field_config.get(field, FieldPermissions()).is_editable()
+            if field not in field_config or field_config[field].is_editable()
         )
 
 
