@@ -6,4 +6,11 @@ from apps.location.models.address import Address
 class AddressResource(resources.ModelResource):
     class Meta:
         model = Address
-        fields = []
+        fields = [
+            "id",
+            "customer",
+            "country",
+            "description",
+            "map_description",
+            "location_type",
+        ]
