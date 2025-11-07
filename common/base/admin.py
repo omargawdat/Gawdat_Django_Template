@@ -16,45 +16,15 @@ from config.helpers.env import env
 
 @dataclass
 class FieldPermissions:
-    """
-    Represents permissions for a field in Django admin.
-
-    Attributes:
-        visible: Whether field is visible (bool or tuple of conditions)
-        editable: Whether field is editable (bool or tuple of conditions)
-
-    Example:
-        # Simple boolean
-        FieldPermissions(visible=True, editable=False)
-
-        # Conditional with tuple
-        FieldPermissions(
-            visible=(is_staff, is_created),
-            editable=(is_superuser,)
-        )
-    """
-
     visible: bool | tuple = False
     editable: bool | tuple = False
 
     def is_visible(self) -> bool:
-        """
-        Check if field should be visible.
-
-        Returns:
-            True if visible condition is met, False otherwise
-        """
         if isinstance(self.visible, bool):
             return self.visible
         return any(self.visible) if self.visible else False
 
     def is_editable(self) -> bool:
-        """
-        Check if field should be editable.
-
-        Returns:
-            True if editable condition is met, False otherwise
-        """
         if isinstance(self.editable, bool):
             return self.editable
         return any(self.editable) if self.editable else False
