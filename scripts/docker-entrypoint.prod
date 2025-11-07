@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# Fetch secrets from AWS Secrets Manager
+eval "$(python /app/scripts/fetch_secrets.py)"
+
+# Set Django settings module for production
+export DJANGO_SETTINGS_MODULE="config.settings.prod"
+
+# Collect static files
+python manage.py collectstatic --noinput --clear
+
+# Start gunicorn with production configuration (3 workers)
+exec gunicorn config.wsgi \
+    --bind 0.0.0.0:5000 \
+    --chdir=/app \
+    --workers 3 \
+    --threads 2 \
+    --worker-class gevent \
+    --worker-connections 1000 \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --timeout 60 \
+    --keep-alive 5

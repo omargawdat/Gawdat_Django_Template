@@ -62,9 +62,13 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Set PATH to use .venv
 ENV PATH="${APP_HOME}/.venv/bin:$PATH"
 
-# Copy entrypoint script
+# Copy all entrypoint scripts
 COPY ./scripts/docker-entrypoint /scripts/entrypoint
-RUN sed -i 's/\r$//g' /scripts/entrypoint && chmod +x /scripts/entrypoint
+COPY ./scripts/docker-entrypoint.local /scripts/docker-entrypoint.local
+COPY ./scripts/docker-entrypoint.dev /scripts/docker-entrypoint.dev
+COPY ./scripts/docker-entrypoint.prod /scripts/docker-entrypoint.prod
+RUN sed -i 's/\r$//g' /scripts/entrypoint /scripts/docker-entrypoint.* && \
+    chmod +x /scripts/entrypoint /scripts/docker-entrypoint.*
 
 # Python run stage
 FROM python:3.13-slim-trixie AS python-run-stage
@@ -87,9 +91,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy entrypoint script
+# Copy all entrypoint scripts
 COPY --chown=django:django ./scripts/docker-entrypoint /scripts/entrypoint
-RUN sed -i 's/\r$//g' /scripts/entrypoint && chmod +x /scripts/entrypoint
+COPY --chown=django:django ./scripts/docker-entrypoint.local /scripts/docker-entrypoint.local
+COPY --chown=django:django ./scripts/docker-entrypoint.dev /scripts/docker-entrypoint.dev
+COPY --chown=django:django ./scripts/docker-entrypoint.prod /scripts/docker-entrypoint.prod
+RUN sed -i 's/\r$//g' /scripts/entrypoint /scripts/docker-entrypoint.* && \
+    chmod +x /scripts/entrypoint /scripts/docker-entrypoint.*
 
 # Copy the application from the builder stage
 COPY --from=python-build-stage --chown=django:django ${APP_HOME} ${APP_HOME}

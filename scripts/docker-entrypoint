@@ -4,18 +4,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Fetch secrets from AWS Secrets Manager if not running locally
-if [ "$IS_LOCAL" != "true" ]; then
-    eval "$(python /app/scripts/fetch_secrets.py)"
-fi
-
-# Set Django settings module based on environment
-if [ "$IS_LOCAL" = "true" ]; then
-    export DJANGO_SETTINGS_MODULE="config.settings.local"
-else
-    export DJANGO_SETTINGS_MODULE="config.settings.prod"
-fi
-
 # Wait for PostgreSQL
 # Extract host and port from DATABASE_URL (format: postgis://user:pass@host:port/dbname)  # pragma: allowlist secret
 if [[ "$DATABASE_URL" =~ @([^:]+):([0-9]+)/ ]]; then
@@ -30,39 +18,21 @@ if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
 
-# Run Django migrations
+# Run common Django setup tasks
 python manage.py migrate
 python manage.py loadcountries --download-flags
 python manage.py loadzones
 python manage.py createsu
 python manage.py createcachetable
 
-# Load fixtures in development environment only
-if [ "$ENVIRONMENT" = "development" ]; then
-    python manage.py loadfixtures
-fi
-
+# Dispatch to environment-specific script for final setup and server startup
 if [ "$IS_LOCAL" = "true" ]; then
-    exec python manage.py runserver_plus 0.0.0.0:8000
+    # Local development environment
+    exec /scripts/docker-entrypoint.local
+elif [ "${ENVIRONMENT:-}" = "development" ]; then
+    # Development server environment
+    exec /scripts/docker-entrypoint.dev
 else
-    python manage.py collectstatic --noinput --clear
-
-    # Set workers based on environment to avoid many db connectiosn
-    if [ "$ENVIRONMENT" = "production" ]; then
-        WORKERS=3
-    else
-        WORKERS=1
-    fi
-
-    exec gunicorn config.wsgi \
-        --bind 0.0.0.0:5000 \
-        --chdir=/app \
-        --workers $WORKERS \
-        --threads 2 \
-        --worker-class gevent \
-        --worker-connections 1000 \
-        --max-requests 1000 \
-        --max-requests-jitter 50 \
-        --timeout 60 \
-        --keep-alive 5
+    # Production/staging environment (default)
+    exec /scripts/docker-entrypoint.prod
 fi
