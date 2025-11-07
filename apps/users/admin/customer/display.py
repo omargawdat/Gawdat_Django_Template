@@ -23,7 +23,7 @@ class CustomerDisplayMixin:
     @display(
         label={"True": "success", "False": "danger"},
         description=_("Is Active"),
-        ordering="is_active",
+        ordering="user__is_active",
     )
     def display_is_active_customer(self, customer: Customer) -> str:
         return _("True") if customer.is_active else _("False")

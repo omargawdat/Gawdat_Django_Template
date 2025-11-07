@@ -104,3 +104,67 @@ class TestAdminPages:
                         pytest.fail(
                             f"History page raised exception for {app_label}.{model_name}: {e}"
                         )
+
+    def test_admin_list_sorting(self, admin_client, mock_request):
+        """Test sorting by each column in list_display"""
+        sorting_failures = []
+
+        for model, model_admin in admin.site._registry.items():
+            # Skip if no data exists
+            if not hasattr(model, "objects") or model.objects.count() == 0:
+                continue
+
+            app_label = model._meta.app_label
+            model_name = model._meta.model_name
+
+            # Get list_display fields
+            list_display = model_admin.get_list_display(mock_request)
+            if not list_display:
+                continue
+
+            base_url = reverse(f"admin:{app_label}_{model_name}_changelist")
+
+            # Test sorting by each column (ascending and descending)
+            for idx in range(len(list_display)):
+                field_name = list_display[idx]
+
+                # Test ascending sort
+                try:
+                    response = admin_client.get(base_url, {"o": str(idx)})
+                    if response.status_code != HTTP_200_OK:
+                        sorting_failures.append(
+                            f"{app_label}.{model_name} column {idx} ({field_name}): "
+                            f"Status {response.status_code} (ascending)"
+                        )
+                except Exception as e:
+                    error_msg = str(e).split("\n")[0] if "\n" in str(e) else str(e)
+                    sorting_failures.append(
+                        f"{app_label}.{model_name} column {idx} ({field_name}): "
+                        f"{error_msg} (ascending)"
+                    )
+
+                # Test descending sort
+                try:
+                    response = admin_client.get(base_url, {"o": f"-{idx}"})
+                    if response.status_code != HTTP_200_OK:
+                        sorting_failures.append(
+                            f"{app_label}.{model_name} column {idx} ({field_name}): "
+                            f"Status {response.status_code} (descending)"
+                        )
+                except Exception as e:
+                    error_msg = str(e).split("\n")[0] if "\n" in str(e) else str(e)
+                    sorting_failures.append(
+                        f"{app_label}.{model_name} column {idx} ({field_name}): "
+                        f"{error_msg} (descending)"
+                    )
+
+        # Report all failures at once
+        if sorting_failures:
+            failure_message = (
+                f"\n\n{'=' * 70}\n"
+                f"Sorting failures found in {len(sorting_failures)} column(s):\n"
+                f"{'=' * 70}\n"
+            )
+            for failure in sorting_failures:
+                failure_message += f"  ❌ {failure}\n"
+            pytest.fail(failure_message)
