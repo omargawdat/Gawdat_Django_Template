@@ -98,11 +98,25 @@ class DynamicAdminFields(ABC):
                 filtered_fieldsets.append((name, options))
                 continue
 
-            visible_fields = [
-                field
-                for field in options["fields"]
-                if field_config.get(field, FieldPermissions()).is_visible()
-            ]
+            visible_fields = []
+            for field in options["fields"]:
+                # Handle nested tuples (fields on same row)
+                if isinstance(field, (list, tuple)):
+                    nested_visible = [
+                        f
+                        for f in field
+                        if isinstance(f, str)
+                        and field_config.get(f, FieldPermissions()).is_visible()
+                    ]
+                    if nested_visible:
+                        visible_fields.append(tuple(nested_visible))
+                elif isinstance(field, str):
+                    # Single field (must be a string field name)
+                    if field_config.get(field, FieldPermissions()).is_visible():
+                        visible_fields.append(field)
+                else:
+                    # Unknown type, keep it as-is (e.g., callables, classes)
+                    visible_fields.append(field)
 
             if visible_fields:
                 new_options = options.copy()

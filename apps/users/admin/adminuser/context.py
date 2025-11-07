@@ -22,4 +22,4 @@ class AdminUserContextLogic:
 
     @property
     def is_created(self) -> bool:
-        return self.admin_user
+        return self.admin_user is not None
