@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BasePopUpBannerPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, pop_up_banner: PopUpBanner | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)

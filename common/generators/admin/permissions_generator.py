@@ -38,7 +38,8 @@ from {self.model.__module__} import {model_name}
 
         base_class = f"""
 class Base{model_name}Permissions:
-    def get_field_rules(self, request: HttpRequest, {self.model_name_lower}: Optional[{model_name}] = None) -> Dict:
+    def get_field_config(self, request: HttpRequest, {self.model_name_lower}: Optional[{model_name}] = None) -> Dict:
+        \"\"\"Define field-level permissions configuration.\"\"\"
         super_admin = AdminContextLogic.is_super_admin(request)
         normal_admin = AdminContextLogic.is_normal_admin(request)
         created = AdminContextLogic.is_object_created({self.model_name_lower})

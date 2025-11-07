@@ -20,7 +20,7 @@ class AdminUserPermissions:
     ) -> bool:
         return False
 
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, admin_user: AdminUser | None = None
     ) -> dict:
         context = AdminUserContextLogic(request, admin_user)

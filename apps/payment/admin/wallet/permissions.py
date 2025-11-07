@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BaseWalletPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, wallet: Wallet | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)

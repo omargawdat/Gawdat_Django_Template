@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BaseRegionPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, region: Region | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)

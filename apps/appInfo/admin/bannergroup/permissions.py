@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BaseBannerGroupPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, banner_group: BannerGroup | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)

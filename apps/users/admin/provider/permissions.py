@@ -7,7 +7,7 @@ from .context import ProviderContextLogic
 
 
 class BaseProviderPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, provider: Provider | None = None
     ) -> dict:
         context = ProviderContextLogic(request, provider)

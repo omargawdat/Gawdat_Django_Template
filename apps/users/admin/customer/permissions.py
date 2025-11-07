@@ -7,7 +7,7 @@ from .context import CustomerContextLogic
 
 
 class BaseCustomerPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, customer: Customer | None = None
     ) -> dict:
         context = CustomerContextLogic(request, customer)

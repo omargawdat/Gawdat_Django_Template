@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BasePaymentPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, payment: Payment | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)

@@ -6,7 +6,7 @@ from common.base.admin import FieldPermissions
 
 
 class BaseContactUsPermissions:
-    def get_field_rules(
+    def get_field_config(
         self, request: HttpRequest, contact_us: ContactUs | None = None
     ) -> dict:
         normal_admin = AdminContextLogic.is_normal_admin(request)
