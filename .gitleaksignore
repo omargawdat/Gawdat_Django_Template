@@ -1,0 +1,6 @@
+# Ignore example tokens in API documentation
+docs/PASSWORDLESS_AUTH_API.md:generic-api-key:176
+docs/PASSWORDLESS_AUTH_API.md:generic-api-key:250
+
+# Ignore local development JWT private key
+.env:*:JWT_PRIVATE_KEY

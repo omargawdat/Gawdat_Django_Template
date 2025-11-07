@@ -11,7 +11,7 @@ Usage:
     CustomerFactory.create_batch(10)
 
     # Tests - override as needed
-    address = AddressFactory(customer__username="john")
+    address = AddressFactory(customer__user__email="john@example.com")
 """
 
 import factory
@@ -47,8 +47,10 @@ from apps.payment.models.payment import Payment
 from apps.payment.models.wallet import Wallet
 from apps.payment.models.wallet_transaction import WalletTransaction
 from apps.users.constants import GenderChoices
+from apps.users.models import User
 from apps.users.models.admin import AdminUser
 from apps.users.models.customer import Customer
+from apps.users.models.provider import Provider
 
 # Initialize Faker
 fake = Faker()
@@ -222,10 +224,30 @@ class PopUpBannerFactory(factory.django.DjangoModelFactory):
 # ============================================================================
 
 
+class UserFactory(factory.django.DjangoModelFactory):
+    """Base User factory - for creating plain User instances."""
+
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
+    is_staff = False
+    is_active = True
+    password = "testpass123"  # pragma: allowlist secret  # noqa: S105
+
+    class Meta:
+        model = User
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def hash_password(self, create, extracted, **kwargs):
+        if not create:
+            return
+        # Use pre-hashed password to avoid expensive re-hashing
+        self.password = _SHARED_PASSWORD_HASH
+        self.save(update_fields=["password"])
+
+
 class AdminUserFactory(factory.django.DjangoModelFactory):
     """Admin user - no dependencies"""
 
-    username = factory.Sequence(lambda n: f"admin_{n}")
     email = factory.Sequence(lambda n: f"admin{n}@example.com")
     image = factory.LazyFunction(get_shared_image)
     can_access_money = factory.Faker("boolean", chance_of_getting_true=30)
@@ -246,24 +268,22 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):
-    """Customer factory - depends on Country."""
+    """Customer factory - depends on Country and User."""
 
-    username = factory.Sequence(lambda n: f"user_{n}")
-    email = factory.Sequence(lambda n: f"user{n}@example.com")
+    # SubFactory: Automatically creates Country if needed
+    country = factory.SubFactory(CountryFactory)
+
+    # Create User with SubFactory
+    user = factory.SubFactory(
+        "factories.factories.UserFactory",
+        email=factory.Sequence(lambda n: f"customer{n}@example.com"),
+    )
+
     full_name = factory.Faker("name")
     image = factory.LazyFunction(get_shared_image)
     gender = factory.Iterator([choice[0] for choice in GenderChoices.choices])
     birth_date = factory.Faker("date_of_birth", minimum_age=18, maximum_age=80)
     is_verified = factory.Faker("boolean", chance_of_getting_true=70)
-    password = "testpass123"  # pragma: allowlist secret  # noqa: S105
-
-    # SubFactory: Automatically creates Country if needed
-    country = factory.SubFactory(CountryFactory)
-
-    # Generate phone number based on country
-    phone_number = factory.LazyAttribute(
-        lambda obj: fake.e164(region_code=obj.country.code, valid=True, possible=True)
-    )
 
     class Meta:
         model = Customer
@@ -274,19 +294,20 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         unverified = factory.Trait(is_verified=False)
 
     @factory.post_generation
-    def hash_password(self, create, extracted, **kwargs):
+    def set_password(self, create, extracted, **kwargs):
         if not create:
             return
-        # Use pre-hashed password to avoid expensive re-hashing
-        self.password = _SHARED_PASSWORD_HASH
-        self.save(update_fields=["password"])
+        # Set password on the user model
+        password = extracted if extracted else "testpass123"  # pragma: allowlist secret
+        self.user.set_password(password)
+        self.user.save(update_fields=["password"])
 
     @factory.post_generation
     def create_wallet(self, create, extracted, **kwargs):
         """Auto-create wallet for customer"""
         if not create:
             return
-        WalletFactory.create(user=self)
+        WalletFactory.create(user=self.user)
 
     @factory.post_generation
     def create_addresses(self, create, extracted, **kwargs):
@@ -305,18 +326,47 @@ class CustomerFactory(factory.django.DjangoModelFactory):
             ContactUsFactory.create(customer=self)
 
 
+class ProviderFactory(factory.django.DjangoModelFactory):
+    """Provider factory - depends on User."""
+
+    # Create User with SubFactory
+    user = factory.SubFactory(
+        "factories.factories.UserFactory",
+        email=factory.Sequence(lambda n: f"provider{n}@example.com"),
+    )
+
+    company_name = factory.Faker("company")
+
+    class Meta:
+        model = Provider
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def set_password(self, create, extracted, **kwargs):
+        if not create:
+            return
+        # Set password on the user model
+        password = extracted if extracted else "testpass123"  # pragma: allowlist secret
+        self.user.set_password(password)
+        self.user.save(update_fields=["password"])
+
+
 # ============================================================================
 # DEPENDENT FACTORIES (Use SubFactory for relationships)
 # ============================================================================
 
 
 class WalletFactory(factory.django.DjangoModelFactory):
-    """Wallet factory - depends on Customer."""
+    """Wallet factory - depends on User."""
 
-    # SubFactory: Creates Customer if not provided
-    user = factory.SubFactory(CustomerFactory)
+    # SubFactory: Creates User if not provided
+    user = factory.SubFactory(UserFactory)
 
-    balance = factory.LazyAttribute(lambda obj: Money(100, obj.user.country.currency))
+    balance = factory.LazyAttribute(
+        lambda obj: Money(100, obj.user.customer.country.currency)
+        if hasattr(obj.user, "customer")
+        else Money(100, "USD")
+    )
     is_use_wallet_in_payment = True
 
     class Meta:
@@ -455,7 +505,12 @@ class WalletTransactionFactory(factory.django.DjangoModelFactory):
         [choice[0] for choice in WalletTransactionType.choices]
     )
     amount = factory.LazyAttribute(
-        lambda obj: Money(50, obj.wallet.user.country.currency)
+        lambda obj: Money(
+            50,
+            obj.wallet.user.customer.country.currency
+            if hasattr(obj.wallet.user, "customer")
+            else obj.wallet.balance.currency,
+        )
     )
     action_by = factory.SubFactory(AdminUserFactory)
     transaction_note = factory.Faker("sentence")

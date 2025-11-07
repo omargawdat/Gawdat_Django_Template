@@ -17,10 +17,6 @@ class BaseCustomerPermissions:
                 visible=(context.is_staff),
                 editable=(),
             ),
-            CustomerFields.USERNAME: FieldPermissions(
-                visible=(context.is_staff),
-                editable=(),
-            ),
             CustomerFields.IS_ACTIVE: FieldPermissions(
                 visible=(context.is_staff and context.is_created),
                 editable=(context.is_staff,),
@@ -74,7 +70,7 @@ class BaseCustomerPermissions:
 
 class CustomerAdminPermissions(BaseCustomerPermissions):
     def can_add(self, request, obj=None):
-        return False  # todo: can't add user as is should call the create action from services
+        return False
 
     def can_change(self, request, obj=None):
         return True

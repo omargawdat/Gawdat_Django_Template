@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.channel.constants import DeviceType
 from apps.channel.models.notification import Notification
 
 
@@ -24,7 +25,4 @@ class NotificationDetailedSerializer(NotificationMinimalSerializer):
 class FCMDeviceCreateSerializer(serializers.Serializer):
     registration_id = serializers.CharField()
     device_id = serializers.CharField()
-    type = serializers.ChoiceField(
-        choices=["android", "ios", "web"],
-        default="android",
-    )
+    type = serializers.ChoiceField(choices=DeviceType.choices)

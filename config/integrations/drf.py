@@ -1,12 +1,8 @@
-from datetime import timedelta
-
-from config.helpers.env import env
-
 # REST Framework settings
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "allauth.headless.contrib.rest_framework.authentication.XSessionTokenAuthentication",
     ),
     "DEFAULT_PARSER_CLASSES": (
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
@@ -50,6 +46,7 @@ SPECTACULAR_SETTINGS = {
     "ENABLE_DJANGO_DEPLOY_CHECK": True,
     "ENUM_SUFFIX": "Enum",
     "ENUM_NAME_OVERRIDES": {
+        # DRF Standardized Errors
         "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
         "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
@@ -61,36 +58,18 @@ SPECTACULAR_SETTINGS = {
         "ErrorCode415Enum": "drf_standardized_errors.openapi_serializers.ErrorCode415Enum.choices",
         "ErrorCode429Enum": "drf_standardized_errors.openapi_serializers.ErrorCode429Enum.choices",
         "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
+        # App-specific Type fields (to avoid enum naming collisions)
+        "WalletTransactionTypeEnum": "apps.payment.constants.WalletTransactionType",
+        "PaymentTypeEnum": "apps.payment.constants.PaymentType",
+        "NotificationTypeEnum": "apps.channel.constants.NotificationType",
+        "DeviceTypeEnum": "apps.channel.constants.DeviceType",
+        "UserTypeEnum": "apps.users.constants.UserType",
     },
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums",
+        "config.schema_hooks.merge_allauth_spec",  # Merge django-allauth headless endpoints
     ],
-    "APPEND_COMPONENTS": {
-        "securitySchemes": {
-            "jwtAuth": {
-                "type": "http",
-                "scheme": "bearer",
-                # No bearerFormat specified # todo: as apidog has bug when the bearerFormat is specified it detect the whole schema as jwt
-            }
-        }
-    },
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=env.django_jwt_access_token_lifetime_minutes
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        minutes=env.django_jwt_refresh_token_lifetime_minutes
-    ),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "REUSE_REFRESH_TOKENS": False,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": env.django_secret_key.get_secret_value(),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
+    "EXTERNAL_DOCS": {"description": "allauth", "url": "/_allauth/openapi.html"},
 }

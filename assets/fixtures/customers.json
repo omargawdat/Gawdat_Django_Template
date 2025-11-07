@@ -3,7 +3,6 @@
     "model": "users.user",
     "pk": 1000,
     "fields": {
-      "username": "mezo",
       "email": "mezo@gmail.com",
       "is_active": true,
       "is_staff": false,
@@ -43,7 +42,6 @@
     "model": "users.user",
     "pk": 1001,
     "fields": {
-      "username": "omar1",
       "email": "omar@gmail.com",
       "is_active": true,
       "is_staff": false,
@@ -85,7 +83,6 @@
     "model": "users.user",
     "pk": 1002,
     "fields": {
-      "username": "ahmed_egypt",
       "email": "ahmed@gmail.com",
       "is_active": true,
       "is_staff": false,

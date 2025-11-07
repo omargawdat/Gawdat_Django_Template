@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.payment.api.wallet.serializers import WalletDetailedSerializer
 from apps.payment.api.wallet.serializers import WalletRechargeSerializer
@@ -26,7 +25,6 @@ from apps.payment.models.payment import Payment
 
 
 class WalletRechargeAPIView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = WalletRechargeSerializer
 
@@ -76,7 +74,6 @@ class WalletRechargeAPIView(APIView):
 
 
 class WalletDetailAPI(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -132,7 +129,6 @@ class WalletDetailAPI(APIView):
 
 
 class WalletUpdateView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

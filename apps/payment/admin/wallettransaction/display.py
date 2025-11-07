@@ -13,7 +13,7 @@ class WalletTransactionDisplayMixin:
         """Display header with image if available."""
         return [
             f"Transaction ID: {wallet_transaction.pk}",
-            f"Customer: {wallet_transaction.wallet.user.username}",
+            f"Customer: {wallet_transaction.wallet.user.email}",
             "",
             "O",
             {

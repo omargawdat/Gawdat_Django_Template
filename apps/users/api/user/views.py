@@ -1,72 +1,38 @@
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
-from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.views import TokenRefreshView
 
-from apps.users.api.user.serializers import DeviceLogoutSerializer
-from apps.users.domain.services.user import UserServices
-
-
-@extend_schema(
-    tags=["Authentication/Token"],
-)
-class DocumentedTokenRefreshView(TokenRefreshView):
-    pass
+from apps.users.api.user.serializers import CheckEmailSerializer
+from apps.users.api.user.serializers import EmailExistsResponseSerializer
+from apps.users.models.user import User
 
 
-class LogoutAllDevicesView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+class CheckEmailExistsView(APIView):
+    """Check if a user exists with the given email."""
+
+    permission_classes = [AllowAny]
 
     @extend_schema(
-        tags=["Authentication/Token"],
-        operation_id="logoutAllDevices",
-        description="Log out the current user from all devices by invalidating their refresh tokens.",
-        request=None,
+        tags=["Authentication/Account"],
+        operation_id="CheckEmailExists",
+        description="Check if a user account exists with the provided email address.",
+        request=CheckEmailSerializer,
         responses={
-            204: OpenApiResponse(
-                description="Successfully logged out from all devices"
-            ),
-            401: OpenApiResponse(
-                description="Authentication credentials were not provided or are invalid"
-            ),
+            200: EmailExistsResponseSerializer,
+            400: {"description": "Invalid email format"},
         },
     )
     def post(self, request):
-        user = request.user
-        UserServices.user_logout_all_devices(user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class LogoutDeviceView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    parser_classes = [CamelCaseJSONParser]
-
-    @extend_schema(
-        tags=["Authentication/Token"],
-        operation_id="logoutDevice",
-        request=DeviceLogoutSerializer,
-        responses={
-            204: OpenApiResponse(description="Successfully logged out from the device"),
-            401: OpenApiResponse(
-                description="Authentication credentials were not provided or are invalid"
-            ),
-        },
-    )
-    def post(self, request):
-        serializer = DeviceLogoutSerializer(data=request.data)
+        """Check if user exists by email."""
+        serializer = CheckEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        UserServices.user_logout_specific_device(
-            user=request.user,
-            refresh_token=serializer.validated_data["refresh_token"],
-            registration_id=serializer.validated_data.get("registration_id"),
-        )
+        email = serializer.validated_data["email"]
+        exists = User.objects.filter(email=email).exists()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"exists": exists, "email": email},
+            status=status.HTTP_200_OK,
+        )

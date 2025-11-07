@@ -81,10 +81,7 @@ THIRD_PARTY_APPS = [
     "rules",
     "imagekit",
     "rest_framework",
-    "rest_framework.authtoken",
     "rest_framework_gis",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "drf_spectacular",
     "solo",
@@ -107,14 +104,14 @@ DJANGO_APPS = [
     "django_model_suite",
     "modeltranslation",
     "django.contrib.gis",
+    # Django-allauth
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.apple",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
+    "allauth.headless",
+    "allauth.usersessions",
 ]
 
 # Project applications
@@ -144,14 +141,20 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "djangorestframework_camel_case.middleware.CamelCaseMiddleWare",
+    "config.middleware.AllauthErrorFormatterMiddleware",
 ]
+
+# Conditionally disable CSRF for development/testing
+if env.disable_csrf:
+    MIDDLEWARE.remove("django.middleware.csrf.CsrfViewMiddleware")
 
 # ==============================================================================
 # AUTHENTICATION
 # ==============================================================================
 AUTHENTICATION_BACKENDS = [
+    # add django default auth backend
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",  # For API/customer auth
 ]
 AUTH_USER_MODEL = "users.User"
 
@@ -175,69 +178,93 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ==============================================================================
-# DJANGO-ALLAUTH CONFIGURATION
+# DJANGO-ALLAUTH HEADLESS CONFIGURATION
 # ==============================================================================
-REST_USE_JWT = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_UNIQUE_EMAIL = True
-SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIALACCOUNT_ADAPTER = "config.helpers.oauth_adapter.CustomerSocialAccountAdapter"
+# Passwordless Authentication - Users receive login codes via email
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*"]  # No password required (also disables username)
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True  # Enable passwordless login via OTP codes
+ACCOUNT_LOGIN_BY_CODE_REQUIRED = True  # Require login by code (no password alternative)
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Email must be verified before login
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 
-# OAuth providers
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # User model has no username field
+ACCOUNT_PASSWORD_REQUIRED = False  # No password required for signup/login
+
+# -------------------------------------------------------------------------------
+# COMMON SETTINGS FOR ALL AUTHENTICATION MODES
+# -------------------------------------------------------------------------------
+HEADLESS_ONLY = True
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
+HEADLESS_SERVE_SPECIFICATION = True
+
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "/account/verify-email/{key}",
+    "account_reset_password": "/account/password/reset",
+    "account_reset_password_from_key": "/account/password/reset/key/{key}",
+    "account_signup": "/account/signup",
+    "socialaccount_login_error": "/account/provider/callback",
+}
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
             "client_id": env.google_oauth2_client_id,
             "secret": env.google_oauth2_client_secret.get_secret_value(),
-            "key": "",
         },
-        "SCOPE": ["profile", "email"],
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
         "AUTH_PARAMS": {
             "access_type": "online",
-        },
-        "OAUTH_PKCE_ENABLED": True,
-    },
-    "facebook": {
-        "METHOD": "oauth2",
-        "SCOPE": ["email", "public_profile"],
-        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
-        "FIELDS": ["id", "email", "name", "first_name", "last_name", "picture"],
-        "APP": {
-            "client_id": env.facebook_oauth2_client_id,
-            "secret": env.facebook_oauth2_client_secret.get_secret_value(),
-            "key": "",
         },
     },
     "apple": {
         "APP": {
             "client_id": env.apple_oauth2_client_id,
-            "secret": {
-                "key": env.apple_oauth2_client_secret.get_secret_value(),
-                "key_id": env.key_id,
-                "team_id": env.team_id,
-            },
+            "secret": env.apple_oauth2_client_secret.get_secret_value(),
+            "key": env.apple_key_id,
+            "team": env.apple_team_id,
         },
+        "SCOPE": ["email", "name"],
     },
 }
+
+# Custom allauth adapter for consistent user serialization
+HEADLESS_ADAPTER = "config.helpers.allauth_adapter.CustomHeadlessAdapter"
 
 # ==============================================================================
 # SECURITY
 # ==============================================================================
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
 
-# CORS Configuration
-# https://github.com/adamchainz/django-cors-headers#configuration
-# Override in local.py for development and prod.py for production
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = []
-# Only allow CORS on API endpoints, not admin or other pages
-CORS_URLS_REGEX = r"^/api/.*$"
+# ==============================================================================
+# CORS CONFIGURATION
+# ==============================================================================
+# Allow origins from environment variable (comma-separated)
+# This enables frontend developers to work locally against dev/staging backend
+# Example: "https://app.example.com,http://localhost:3000,http://127.0.0.1:3000"
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in env.frontend_allowed_origins.split(",")
+    if origin.strip()
+]
+# Enable credentials (cookies, authorization headers) in CORS requests
+CORS_ALLOW_CREDENTIALS = True
+
+# ==============================================================================
+# CSRF CONFIGURATION
+# ==============================================================================
+# Trust same origins as CORS for CSRF validation
+# This allows cross-origin POST requests from trusted frontend origins
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+# Cookie domain configuration (for cross-subdomain authentication)
+# Leave empty for localhost development, use ".example.com" for production
+if env.cookie_domain:
+    SESSION_COOKIE_DOMAIN = env.cookie_domain
+    CSRF_COOKIE_DOMAIN = env.cookie_domain
 
 # ==============================================================================
 # ADMIN
@@ -292,7 +319,8 @@ TEMPLATES = [
 # ==============================================================================
 # EMAIL
 # ==============================================================================
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND is configured in local.py/prod.py
+# Base configuration for SMTP (used by production)
 EMAIL_TIMEOUT = 5
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -352,15 +380,6 @@ LOGGING = {
         },
     },
 }
-
-# ==============================================================================
-# OTP (ONE-TIME PASSWORD) SETTINGS
-# ==============================================================================
-OTP_EXPIRY_SECONDS = 300
-OTP_LENGTH = 5
-OTP_MAX_ATTEMPTS = 3
-OTP_HOURLY_LIMIT = 5
-OTP_EMAIL_SECONDS = 600
 
 # ==============================================================================
 # GOOGLE MAPS INTEGRATION

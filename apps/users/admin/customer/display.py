@@ -10,7 +10,7 @@ class CustomerDisplayMixin:
     @display(description=_("Customer"), header=True)
     def display_customer_info(self, customer: Customer):
         return [
-            customer.username,
+            customer.full_name or customer.email,
             _("Email: %s") % customer.email,
             "CO",
             {

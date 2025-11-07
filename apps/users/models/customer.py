@@ -1,26 +1,33 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
-from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 
-from apps.location.domain.selector.country import CountrySelector
 from apps.location.models.country import Country
 from apps.users.constants import GenderChoices
 
 from .user import User
 
 
-class Customer(User):
-    history = HistoricalRecords()
-    phone_number = PhoneNumberField(
-        unique=True,
-        null=True,
-        blank=True,
-        help_text="Should start with country code as (+966)",
-        verbose_name=_("Phone Number"),
+class CustomerManager(models.Manager):
+    """Custom manager that automatically optimizes queries with select_related."""
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("user", "country")
+
+
+class Customer(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="customer",
+        verbose_name=_("User"),
+        primary_key=True,
     )
+    history = HistoricalRecords()
     image = ProcessedImageField(
         upload_to="users/",
         processors=[ResizeToFit(1200, 800)],
@@ -43,7 +50,7 @@ class Customer(User):
         Country,
         on_delete=models.PROTECT,
         verbose_name=_("Country"),
-        related_name="users",
+        related_name="customers",
     )
     primary_address = models.OneToOneField(
         "location.Address",
@@ -58,31 +65,59 @@ class Customer(User):
         null=True, blank=True, db_index=True, verbose_name=_("Referral Customer ID")
     )
 
+    # Custom manager
+    objects = CustomerManager()
+
+    class Meta:
+        verbose_name = _("Customer")
+        verbose_name_plural = _("Customers")
+
     def __str__(self):
-        return str(self.phone_number)
+        return self.email or f"Customer {self.pk}"
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        from apps.users.domain.validators.customer import CustomerValidator
+
+        super().clean()
+        CustomerValidator.validate_address_belongs_to_customer(
+            address=self.primary_address, customer=self
+        )
+
+    # Proxy properties for User fields
+    @property
+    def email(self) -> str:
+        return self.user.email
+
+    @email.setter
+    def email(self, value) -> None:
+        self.user.email = value
+
+    @property
+    def language(self) -> str:
+        return self.user.language
+
+    @language.setter
+    def language(self, value) -> None:
+        self.user.language = value
+
+    @property
+    def is_active(self) -> bool:
+        return self.user.is_active
+
+    @is_active.setter
+    def is_active(self, value) -> None:
+        self.user.is_active = value
+
+    @property
+    def date_joined(self) -> datetime:
+        return self.user.date_joined
 
     @property
     def is_profile_completed(self) -> bool:
         from apps.users.domain.selectors.customer import CustomerSelector
 
         return CustomerSelector.is_profile_completed(self)
-
-    def clean(self):
-        from apps.users.domain.validators.customer import CustomerValidator
-
-        super().clean()
-        # [WHY]: to ensure the country for this phone exists before trying to save
-        CountrySelector.country_by_phone(self.phone_number)
-
-        # todo: can user change the default country?
-        # if self.pk:
-        #     CountryValidator.validate_match_country_phone(
-        #         phone_number=self.phone_number, country=self.country
-        #     )
-        CustomerValidator.validate_address_belongs_to_customer(
-            address=self.primary_address, customer=self
-        )
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)

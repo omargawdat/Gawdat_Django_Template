@@ -19,6 +19,7 @@ from factories.factories import NotificationFactory
 from factories.factories import OnboardingFactory
 from factories.factories import PaymentFactory
 from factories.factories import PopUpBannerFactory
+from factories.factories import ProviderFactory
 from factories.factories import RegionFactory
 from factories.factories import SocialAccountFactory
 
@@ -46,7 +47,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--count",
             type=int,
-            help="Base count for data quantities (default: 4)",
+            required=True,
+            help="Base count for data quantities",
         )
         parser.add_argument(
             "--no-flush",
@@ -130,15 +132,16 @@ class Command(BaseCommand):
         # ========================================================================
         # USER MODELS (auto-creates wallet, addresses, contact_us)
         # ========================================================================
-        # TODO: Cannot use bulk - AdminUser uses multi-table inheritance (polymorphic)
         with self._timer(f"Creating {fixed_count} admin users"):
             AdminUserFactory.create_batch(fixed_count)
 
-        # TODO: Cannot use bulk - Customer has post_generation hooks (wallet, addresses, contact_us)
         with self._timer(
             f"Creating {count} customers (+ wallets, addresses, contact_us)"
         ):
             customers = CustomerFactory.create_batch(fixed_count)
+
+        with self._timer(f"Creating {fixed_count} providers"):
+            ProviderFactory.create_batch(fixed_count)
 
         # ========================================================================
         # ADDITIONAL RELATIONSHIPS
@@ -148,10 +151,14 @@ class Command(BaseCommand):
 
         with self._timer(f"Creating {fixed_count} notifications with M2M users (bulk)"):
             notifications = NotificationFactory.create_batch_bulk(fixed_count)
+            # Get User instances from customers for notifications
+            customer_users = [customer.user for customer in customers]
             for notification in notifications:
-                notification.users.add(
-                    *random.sample(customers, k=min(3, len(customers)))
+                # Randomly assign users to each notification
+                selected_users = random.sample(
+                    customer_users, k=min(3, len(customer_users))
                 )
+                notification.users.add(*selected_users)
 
         # ========================================================================
         # PAYMENT MODELS

@@ -7,8 +7,8 @@ class AdminUserListView:
     list_filter_submit = False
     list_fullwidth = False
     list_horizontal_scrollbar_top = False
-    search_fields = ("username",)
-    search_help_text = "Search by username"
+    search_fields = ("email",)
+    search_help_text = "Search by email"
 
     def get_ordering(self, request):
         return ()

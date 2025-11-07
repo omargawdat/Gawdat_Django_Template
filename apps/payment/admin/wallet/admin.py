@@ -65,7 +65,7 @@ class WalletAdmin(
         context = {
             "form": form,
             "phone_number": wallet.user.phone_number,
-            "username": wallet.user.username,
+            "email": wallet.user.email,
             "balance": wallet.balance,
             "title": _("Process Transaction"),
             **self.admin_site.each_context(request),

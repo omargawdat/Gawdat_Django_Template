@@ -27,17 +27,17 @@ api_doc_patterns = [
 
 api_app_patterns: list[URLPattern | URLResolver] = [
     path("", include("apps.users.api.user.urls")),
-    path("", include("apps.users.api.email.urls")),
     path("", include("apps.users.api.customer.urls")),
-    path("", include("apps.users.api.oauth.urls")),
+    path("", include("apps.users.api.provider.urls")),
     path("", include("apps.location.api.country.urls")),
     path("", include("apps.location.api.region.urls")),
     path("", include("apps.location.api.address.urls")),
     path("", include("apps.payment.api.wallet.urls")),
     path("", include("apps.channel.api.notification.urls")),
-    path("", include("apps.channel.api.sms.urls")),
     path("", include("apps.appInfo.api.info.urls")),
     path("", include("apps.payment.api.callback.urls")),
+    # Django-allauth headless API
+    path("_allauth/", include("allauth.headless.urls")),
 ]
 
 api_patterns = [
@@ -51,6 +51,8 @@ api_patterns = [
 urlpatterns = [
     *core_patterns,
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    # Django-allauth traditional URLs (for OAuth callbacks)
+    path("accounts/", include("allauth.urls")),
     path("api/", include(api_patterns)),
     path("", include("common.views.urls"), name="terms_and_policy"),
 ]

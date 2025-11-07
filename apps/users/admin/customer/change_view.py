@@ -6,14 +6,15 @@ class CustomerChangeView:
     compressed_fields = True
     autocomplete_fields = ()
 
+    # User-related fields are readonly (they're on the User model, not Customer)
+    readonly_fields = ("email", "date_joined", "is_active")
+
     fieldsets = (
         (
             _("Customer Information👨‍🦰"),
             {
                 "fields": (
                     "full_name",
-                    "username",
-                    "phone_number",
                     "email",
                     "image",
                     "gender",

@@ -44,7 +44,7 @@
                             <div class="customer-details">
                                 <div class="customer-name">
                                     {% if contact.customer %}
-                                    {{ contact.customer.full_name|default:contact.customer.username|default:"Unknown Customer" }}
+                                    {{ contact.customer.full_name|default:contact.customer.email|default:"Unknown Customer" }}
                                     {% else %}
                                     {% trans "Anonymous" %}
                                     {% endif %}

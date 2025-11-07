@@ -1,7 +1,5 @@
-from typing import Annotated
 from typing import Literal
 
-from pydantic import Field
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
@@ -14,13 +12,12 @@ class EnvSettings(BaseSettings):
 
     # Django
     django_secret_key: SecretStr
-    django_superuser_username: str
+    django_superuser_email: str
     django_superuser_password: SecretStr
     django_admin_url: str
     django_admin_name: str
     django_admin_email: str
-    django_jwt_access_token_lifetime_minutes: Annotated[int, Field(gt=0)]
-    django_jwt_refresh_token_lifetime_minutes: Annotated[int, Field(gt=0)]
+    disable_csrf: bool = False
 
     # Database
     database_url: str
@@ -40,6 +37,14 @@ class EnvSettings(BaseSettings):
     # Google Services
     google_map_api_key: SecretStr
 
+    # OAuth Providers
+    google_oauth2_client_id: str
+    google_oauth2_client_secret: SecretStr
+    apple_oauth2_client_id: str
+    apple_oauth2_client_secret: SecretStr
+    apple_key_id: str
+    apple_team_id: str
+
     # Payment
     taps_secret_key: SecretStr
     payment_confirmation_key: SecretStr
@@ -58,19 +63,20 @@ class EnvSettings(BaseSettings):
     sms_misr_password: SecretStr
     sms_misr_sender: str
 
-    # OAuth
-    google_oauth2_client_id: str
-    google_oauth2_client_secret: SecretStr
-    facebook_oauth2_client_id: str
-    facebook_oauth2_client_secret: SecretStr
-    apple_oauth2_client_id: str
-    apple_oauth2_client_secret: SecretStr
-    key_id: str
-    team_id: str
-
     # Email
     email_host_user: str
     email_host_password: SecretStr
+
+    # Frontend Configuration
+    frontend_default_url: str
+    frontend_allowed_origins: str
+
+    # Cookie Configuration (for cross-domain/subdomain auth)
+    # Leave empty for localhost, use ".example.com" for production subdomains
+    cookie_domain: str = ""
+
+    # Other
+    api_key: SecretStr
 
 
 env = EnvSettings()

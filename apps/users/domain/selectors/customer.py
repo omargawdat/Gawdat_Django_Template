@@ -9,7 +9,7 @@ class CustomerSelector:
     @staticmethod
     def last_week_new_customer_count():
         return Customer.objects.filter(
-            date_joined__gte=timezone.now() - timedelta(days=7)
+            user__date_joined__gte=timezone.now() - timedelta(days=7)
         ).count()
 
     @staticmethod
@@ -23,12 +23,5 @@ class CustomerSelector:
         return all(required_fields)
 
     @staticmethod
-    def get_customer_by_phone(*, phone_number):
-        try:
-            return Customer.objects.get(phone_number=phone_number)
-        except Customer.DoesNotExist:
-            return None
-
-    @staticmethod
     def is_email_exists(email: str) -> bool:
-        return Customer.objects.filter(email=email).exists()
+        return Customer.objects.filter(user__email=email).exists()

@@ -32,12 +32,13 @@ class PaymentService:
 
         domain_name = env.domain_name
         domain_url = f"https://{domain_name}"
+        customer_name = customer.full_name or customer.email
         charge_response = payment_gateway.create_charge(
             amount=amount_to_be_paid.amount,
             currency=currency,
             phone_number=customer.phone_number,
-            first_name=customer.username,
-            last_name=customer.username,
+            first_name=customer_name,
+            last_name=customer_name,
             order_id=str(payment.id),
             callback_url=f"{domain_url}/api/bank-callback-checkout/",
             redirect_url=f"{domain_url}/api/redirect_url/",

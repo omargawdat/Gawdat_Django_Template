@@ -37,7 +37,6 @@ def admin_user(db):
     """Create superuser for admin testing"""
     User = get_user_model()
     return User.objects.create_superuser(
-        username="admin",
         email="admin@test.com",
         password=TEST_PASSWORD,
         is_superuser=True,
@@ -85,5 +84,6 @@ def authenticated_api_client(db):
         customer = CustomerFactory.create(is_verified=True)
 
     client = APIClient()
-    client.force_authenticate(user=customer)
+    # Authenticate with User object, not Customer
+    client.force_authenticate(user=customer.user)
     return client

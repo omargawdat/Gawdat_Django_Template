@@ -17,9 +17,12 @@ class ContactUsDisplayMixin:
     def display_header(self, contact_us: ContactUs):
         """Display header with image if available."""
         customer: Customer = contact_us.customer
+        display_name = "Anonymous"
+        if customer:
+            display_name = customer.full_name or customer.email
         return [
-            f"{customer.username if customer else 'Anonymous'}",
-            f"{customer.phone_number if customer else ''}",
+            display_name,
+            f"{customer.email if customer else ''}",
             f"#{contact_us.pk}",
             "",
         ]
