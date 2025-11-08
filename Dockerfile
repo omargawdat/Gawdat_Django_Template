@@ -25,13 +25,14 @@ ENV UV_COMPILE_BYTECODE=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # Install build dependencies and UV in a single layer
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     libpq-dev \
     libgdal-dev \
     gettext \
     curl \
-    && rm -rf /var/lib/apt/lists/* \
     && curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh \
     && ln -s /root/.local/bin/uv /usr/local/bin/uv
 
@@ -98,13 +99,14 @@ RUN groupadd -r django && \
 
 # Install ONLY runtime dependencies (minimal surface area)
 # Remove build tools to reduce image size and attack surface
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install --no-install-recommends -y \
     libpq5 \
     libgdal36 \
     gettext \
     wait-for-it \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 # Copy application and dependencies from build stage
 # Use --chown to set ownership during copy (more efficient)
@@ -129,6 +131,3 @@ USER django
 
 # Set entrypoint
 ENTRYPOINT ["/scripts/entrypoint"]
-
-# Default command (can be overridden)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

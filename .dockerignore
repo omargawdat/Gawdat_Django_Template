@@ -9,6 +9,10 @@
 .travis.yml
 .pre-commit-config.yaml
 
+# Infrastructure
+terraform/
+justfile
+
 # IDEs
 .idea
 .vscode
@@ -19,6 +23,7 @@
 docs/
 *.md
 !README.md
+schema.yml
 
 # Python
 venv/
@@ -61,6 +66,7 @@ db.sqlite3
 db.sqlite3-journal
 /media
 /staticfiles
+assets/staticfiles/
 
 # Environment variables
 .env
