@@ -107,6 +107,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libgdal36 \
     gettext \
     wait-for-it \
+    git \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 # Copy application and dependencies from build stage

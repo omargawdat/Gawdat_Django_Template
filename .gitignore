@@ -150,6 +150,9 @@ dump.rdb
 
 # Environments
 .env
+.env.*
+*.env.bak
+.env.bak
 
 my_awesome_project
 
