@@ -19,6 +19,7 @@ services:
     env_file:
       - .env
     environment:
+      DJANGO_SETTINGS_MODULE: 'config.settings.local'
       DATABASE_URL: 'postgis://postgres:postgres@postgres:5432/mydatabase' # pragma: allowlist secret
 
   postgres:

@@ -33,6 +33,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libgdal-dev \
     gettext \
     curl \
+    git \
     && curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh \
     && ln -s /root/.local/bin/uv /usr/local/bin/uv
 
