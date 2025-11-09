@@ -215,7 +215,7 @@ UNFOLD = {
                         "icon": "category",
                         "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "channel.view_bannergroup"
+                            "appInfo.view_bannergroup"
                         ),
                     },
                     {
@@ -223,7 +223,7 @@ UNFOLD = {
                         "icon": "photo",
                         "link": reverse_lazy("admin:appInfo_banner_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "channel.view_banner"
+                            "appInfo.view_banner"
                         ),
                     },
                     {
@@ -231,7 +231,7 @@ UNFOLD = {
                         "icon": "campaign",
                         "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "channel.view_popupbanner"
+                            "appInfo.view_popupbanner"
                         ),
                     },
                 ],
@@ -278,7 +278,7 @@ UNFOLD = {
                         "icon": "settings",
                         "link": reverse_lazy("admin:constance_config_changelist"),
                         "permission": lambda request: request.user.has_perm(
-                            "constance.view_constance"
+                            "constance.view_config"
                         ),
                     },
                 ],
