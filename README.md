@@ -61,11 +61,12 @@ brew install uv just docker
    ```
 
 4. Access the application:
-   - **Admin Panel**: http://localhost:8000/admin
-   - **API**: http://localhost:8000/api
-   - **API Docs**: http://localhost:8000/api/schema/swagger-ui
+    - **Admin Panel**: http://localhost:8000/admin
+    - **API**: http://localhost:8000/api
+    - **API Docs**: http://localhost:8000/api/schema/swagger-ui
 
 **Common commands:**
+
 ```bash
 just up              # Start services
 just down            # Stop services
@@ -81,9 +82,11 @@ Run `just` to see all available commands.
 
 ### 3. Pre-commit Hooks
 
-Pre-commit hooks are **automatically installed** when you run `just install`. They maintain code quality by running checks before each commit.
+Pre-commit hooks are **automatically installed** when you run `just install`. They maintain code quality by running
+checks before each commit.
 
 **How it works:**
+
 - Hooks are installed automatically during project setup
 - Run automatically on `git commit`
 - Tools (ruff, mypy, etc.) are managed per-project via `uv tool run`
@@ -91,6 +94,7 @@ Pre-commit hooks are **automatically installed** when you run `just install`. Th
 - No conflicts between different projects with different tool versions
 
 **Manual commands:**
+
 ```bash
 # Run all hooks manually
 uv tool run pre-commit run --all-files
@@ -104,14 +108,17 @@ uv tool run pre-commit autoupdate
 
 ### 3.1 Security Scanning (GitHub Dependabot)
 
-Instead of local security scanning tools, this project uses **GitHub Dependabot** for vulnerability detection and automated fixes.
+Instead of local security scanning tools, this project uses **GitHub Dependabot** for vulnerability detection and
+automated fixes.
 
 **Setup (one-time):**
+
 1. Go to your GitHub repo → **Settings** → **Security** → **Code security and analysis**
 2. Enable **Dependabot alerts**
 3. Enable **Dependabot security updates**
 
 **Benefits:**
+
 - ✅ Automatic vulnerability scanning of `uv.lock`
 - ✅ Automatic PRs to fix vulnerable dependencies
 - ✅ No local tools needed
@@ -157,7 +164,7 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "SENTRY_SDK_DSN": "REPLACE-WHEN-NEEDED",
 
      "S3_BUCKET_NAME": "MUST-BE-REPLACED",
-     "AWS_REGION_NAME": "us-east-1",
+     "AWS_REGION_NAME": "MUST-BE-REPLACED",
 
      "FIREBASE_CREDENTIALS_B64": "REPLACE-WHEN-NEEDED",
 
