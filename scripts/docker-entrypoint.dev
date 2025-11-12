@@ -4,9 +4,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Set Django settings module for production/development
-export DJANGO_SETTINGS_MODULE="config.settings.prod"
-
 # Load fixtures with error handling for development environment
 python manage.py loadfixtures --continue-on-error
 

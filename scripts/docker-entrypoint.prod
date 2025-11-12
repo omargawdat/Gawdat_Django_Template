@@ -4,9 +4,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Set Django settings module for production
-export DJANGO_SETTINGS_MODULE="config.settings.prod"
-
 # Collect static files
 python manage.py collectstatic --noinput --clear
 
