@@ -1,5 +1,4 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -9,7 +8,6 @@ from apps.appInfo.api.info.serializers import AppInfoSerializer
 from apps.appInfo.api.info.serializers import ContactUsSerializer
 from apps.appInfo.api.info.serializers import FAQSerializer
 from apps.appInfo.api.info.serializers import SocialAccountsSerializer
-from apps.appInfo.domain.services.faq_test import FAQTestService
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
@@ -87,37 +85,3 @@ class ContactUsCreateView(CreateAPIView):
             serializer.save(customer=self.request.user)
         else:
             serializer.save(customer=None)
-
-
-class FAQAtomicTestView(APIView):
-    """Test endpoint to verify ATOMIC_REQUESTS rollback behavior."""
-
-    authentication_classes = []
-    permission_classes = [AllowAny]
-
-    @extend_schema(
-        tags=["AppInfo/FAQ"],
-        operation_id="TestAtomicRequests",
-        description=(
-            "Test endpoint that demonstrates ATOMIC_REQUESTS transaction rollback. "
-            "This endpoint creates 3 FAQs through nested method calls, with the 3rd "
-            "intentionally failing due to duplicate order constraint. All changes should "
-            "be rolled back automatically."
-        ),
-        responses={
-            200: {"description": "Success (should not reach here)"},
-            500: {"description": "IntegrityError - all database changes rolled back"},
-        },
-    )
-    def post(self, request, *args, **kwargs):
-        """Test ATOMIC_REQUESTS by creating FAQs that will fail on step 3."""
-        # This will create 3 FAQs through nested calls
-        # Step 3 will fail with IntegrityError (duplicate order)
-        # ATOMIC_REQUESTS should rollback ALL changes
-        FAQTestService.create_faq_step_1()
-
-        # If we reach here, the test failed (no error was raised)
-        return Response(
-            {"message": "All FAQs created successfully (unexpected!)"},
-            status=status.HTTP_200_OK,
-        )
