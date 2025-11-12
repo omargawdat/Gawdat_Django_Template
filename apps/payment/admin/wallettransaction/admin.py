@@ -1,6 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ExportActionModelAdmin
-from import_export.formats.base_formats import CSV
+from import_export.formats.base_formats import XLSX
 from unfold.contrib.import_export.forms import ExportForm
 
 from apps.payment.models.wallet_transaction import WalletTransaction
@@ -24,4 +24,4 @@ class WalletTransactionAdmin(
 ):
     resource_class = WalletTransactionResource
     export_form_class = ExportForm
-    formats = [CSV]
+    formats = [XLSX]

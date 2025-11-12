@@ -18,7 +18,7 @@ class AdminGenerator(BaseGenerator):
 
         content = f"""from django.contrib import admin
 from import_export.admin import ExportActionModelAdmin
-from import_export.formats.base_formats import CSV
+from import_export.formats.base_formats import XLSX
 from unfold.contrib.import_export.forms import ExportForm
 from .list_view import {model_name}ListView
 from .change_view import {model_name}ChangeView
@@ -38,6 +38,6 @@ class {model_name}Admin(
 ):
     resource_class = {model_name}Resource
     export_form_class = ExportForm
-    formats = [CSV]
+    formats = [XLSX]
 """
         self.write_file("admin.py", content)
