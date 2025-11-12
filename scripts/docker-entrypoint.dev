@@ -4,9 +4,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Fetch secrets from AWS Secrets Manager
-eval "$(python /app/scripts/fetch_secrets.py)"
-
 # Set Django settings module for production/development
 export DJANGO_SETTINGS_MODULE="config.settings.prod"
 
