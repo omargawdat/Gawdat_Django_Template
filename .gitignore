@@ -153,6 +153,7 @@ dump.rdb
 .env.*
 *.env.bak
 .env.bak
+.venv
 
 my_awesome_project
 
