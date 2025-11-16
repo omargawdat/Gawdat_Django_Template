@@ -271,6 +271,12 @@ if env.cookie_domain:
 ADMIN_URL = env.django_admin_url
 BASE_MODEL_ADMIN_PATH = "common.base.admin"
 
+# https://docs.djangoproject.com/en/dev/ref/settings/#admins
+ADMINS = [("Admin", "admin@example.com")]
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#managers
+MANAGERS = ADMINS
+
 # ==============================================================================
 # STATIC FILES
 # ==============================================================================

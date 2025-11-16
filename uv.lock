@@ -906,7 +906,7 @@ requires-dist = [
     { name = "djangorestframework-camel-case", specifier = ">=1.4" },
     { name = "djangorestframework-gis", specifier = ">=1.2" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.5" },
-    { name = "drf-spectacular", git = "https://github.com/tfranzel/drf-spectacular.git?rev=02971bd89e25e0a3cda5f94400ab497f20112f7d" },
+    { name = "drf-spectacular", specifier = ">=0.29.0" },
     { name = "drf-standardized-errors", extras = ["openapi"], specifier = ">=0.15" },
     { name = "faker-e164", specifier = ">=0.1" },
     { name = "fcm-django", specifier = ">=2.3" },
@@ -1059,7 +1059,7 @@ wheels = [
 [[package]]
 name = "drf-spectacular"
 version = "0.29.0"
-source = { git = "https://github.com/tfranzel/drf-spectacular.git?rev=02971bd89e25e0a3cda5f94400ab497f20112f7d#02971bd89e25e0a3cda5f94400ab497f20112f7d" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "djangorestframework" },
@@ -1067,6 +1067,10 @@ dependencies = [
     { name = "jsonschema" },
     { name = "pyyaml" },
     { name = "uritemplate" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5e/0e/a4f50d83e76cbe797eda88fc0083c8ca970cfa362b5586359ef06ec6f70a/drf_spectacular-0.29.0.tar.gz", hash = "sha256:0a069339ea390ce7f14a75e8b5af4a0860a46e833fd4af027411a3e94fc1a0cc", size = 241722, upload-time = "2025-11-02T03:40:26.348Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/d9/502c56fc3ca960075d00956283f1c44e8cafe433dada03f9ed2821f3073b/drf_spectacular-0.29.0-py3-none-any.whl", hash = "sha256:d1ee7c9535d89848affb4427347f7c4a22c5d22530b8842ef133d7b72e19b41a", size = 105433, upload-time = "2025-11-02T03:40:24.823Z" },
 ]
 
 [[package]]

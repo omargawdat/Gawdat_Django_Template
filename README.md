@@ -61,11 +61,12 @@ brew install uv just docker
    ```
 
 4. Access the application:
-   - **Admin Panel**: http://localhost:8000/admin
-   - **API**: http://localhost:8000/api
-   - **API Docs**: http://localhost:8000/api/schema/swagger-ui
+    - **Admin Panel**: http://localhost:8000/admin
+    - **API**: http://localhost:8000/api
+    - **API Docs**: http://localhost:8000/api/schema/swagger-ui
 
 **Common commands:**
+
 ```bash
 just up              # Start services
 just down            # Stop services
@@ -81,9 +82,11 @@ Run `just` to see all available commands.
 
 ### 3. Pre-commit Hooks
 
-Pre-commit hooks are **automatically installed** when you run `just install`. They maintain code quality by running checks before each commit.
+Pre-commit hooks are **automatically installed** when you run `just install`. They maintain code quality by running
+checks before each commit.
 
 **How it works:**
+
 - Hooks are installed automatically during project setup
 - Run automatically on `git commit`
 - Tools (ruff, mypy, etc.) are managed per-project via `uv tool run`
@@ -91,6 +94,7 @@ Pre-commit hooks are **automatically installed** when you run `just install`. Th
 - No conflicts between different projects with different tool versions
 
 **Manual commands:**
+
 ```bash
 # Run all hooks manually
 uv tool run pre-commit run --all-files
@@ -104,14 +108,17 @@ uv tool run pre-commit autoupdate
 
 ### 3.1 Security Scanning (GitHub Dependabot)
 
-Instead of local security scanning tools, this project uses **GitHub Dependabot** for vulnerability detection and automated fixes.
+Instead of local security scanning tools, this project uses **GitHub Dependabot** for vulnerability detection and
+automated fixes.
 
 **Setup (one-time):**
+
 1. Go to your GitHub repo → **Settings** → **Security** → **Code security and analysis**
 2. Enable **Dependabot alerts**
 3. Enable **Dependabot security updates**
 
 **Benefits:**
+
 - ✅ Automatic vulnerability scanning of `uv.lock`
 - ✅ Automatic PRs to fix vulnerable dependencies
 - ✅ No local tools needed
@@ -146,42 +153,53 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
    ```json
    {
      "DJANGO_SECRET_KEY": "MUST-BE-REPLACED",
-     "DJANGO_SUPERUSER_USERNAME": "MUST-BE-REPLACED",
+     "DJANGO_SUPERUSER_EMAIL": "MUST-BE-REPLACED",
      "DJANGO_SUPERUSER_PASSWORD": "MUST-BE-REPLACED",
-     "DJANGO_ADMIN_NAME": "MUST-BE-REPLACED",
-     "DJANGO_ADMIN_EMAIL": "MUST-BE-REPLACED",
      "DJANGO_ADMIN_URL": "admin/",
-     "TAPS_SECRET_KEY": "taps_secret_dummy_123456",
-     "PAYMENT_CONFIRMATION_KEY": "MUST-BE-REPLACED",
-     "PAYMOB_SECRET_KEY": "MUST-BE-REPLACED",
-     "PAYMOB_PUBLIC_KEY": "MUST-BE-REPLACED",
-     "PAYMOB_CARD_PAYMENT_METHOD": "MUST-BE-REPLACED",
-     "PAYMOB_WALLET_PAYMENT_METHOD": "MUST-BE-REPLACED",
 
      "DATABASE_URL": "postgis://user:password@host:5432/dbname",
 
      "DOMAIN_NAME": "MUST-BE-REPLACED",
      "ENVIRONMENT": "development",
-     "SENTRY_SDK_DSN": "MUST-BE-REPLACED",
+     "SENTRY_SDK_DSN": "REPLACE-WHEN-NEEDED",
 
-     "AWS_REGION_NAME": "us-east-1",
      "S3_BUCKET_NAME": "MUST-BE-REPLACED",
+     "AWS_REGION_NAME": "MUST-BE-REPLACED",
 
-     "FIREBASE_CREDENTIALS_B64": "MUST-BE-REPLACED",
+     "FIREBASE_CREDENTIALS_B64": "REPLACE-WHEN-NEEDED",
 
-     "GOOGLE_MAP_API_KEY": "MUST-BE-REPLACED",
+     "GOOGLE_MAP_API_KEY": "REPLACE-WHEN-NEEDED",
 
-     "TAPS_SECRET_KEY": "MUST-BE-REPLACED",
+     "GOOGLE_OAUTH2_CLIENT_ID": "REPLACE-WHEN-NEEDED",
+     "GOOGLE_OAUTH2_CLIENT_SECRET": "REPLACE-WHEN-NEEDED",
 
-     "IS_TESTING_SMS": "true",
-     "OUR_SMS_API_KEY": "MUST-BE-REPLACED",
-     "OUR_SMS_SENDER_NAME": "YourApp",
-     "SMS_MISR_USERNAME": "MUST-BE-REPLACED",
-     "SMS_MISR_PASSWORD": "MUST-BE-REPLACED",
-     "SMS_MISR_SENDER": "MUST-BE-REPLACED",
+     "APPLE_OAUTH2_CLIENT_ID": "REPLACE-WHEN-NEEDED",
+     "APPLE_OAUTH2_CLIENT_SECRET": "REPLACE-WHEN-NEEDED",
+     "APPLE_KEY_ID": "REPLACE-WHEN-NEEDED",
+     "APPLE_TEAM_ID": "REPLACE-WHEN-NEEDED",
 
-     "EMAIL_HOST_USER": "MUST-BE-REPLACED",
-     "EMAIL_HOST_PASSWORD": "MUST-BE-REPLACED"
+     "TAPS_SECRET_KEY": "REPLACE-WHEN-NEEDED",
+     "PAYMENT_CONFIRMATION_KEY": "REPLACE-WHEN-NEEDED",
+
+     "PAYMOB_SECRET_KEY": "REPLACE-WHEN-NEEDED",
+     "PAYMOB_PUBLIC_KEY": "REPLACE-WHEN-NEEDED",
+     "PAYMOB_CARD_PAYMENT_METHOD": "REPLACE-WHEN-NEEDED",
+     "PAYMOB_WALLET_PAYMENT_METHOD": "REPLACE-WHEN-NEEDED",
+
+     "IS_TESTING_SMS": "True",
+     "OUR_SMS_SENDER_NAME": "REPLACE-WHEN-NEEDED",
+     "OUR_SMS_API_KEY": "REPLACE-WHEN-NEEDED",
+     "SMS_MISR_USERNAME": "REPLACE-WHEN-NEEDED",
+     "SMS_MISR_PASSWORD": "REPLACE-WHEN-NEEDED",
+     "SMS_MISR_SENDER": "REPLACE-WHEN-NEEDED",
+
+     "EMAIL_HOST_USER": "REPLACE-WHEN-NEEDED",
+     "EMAIL_HOST_PASSWORD": "REPLACE-WHEN-NEEDED",
+
+     "FRONTEND_DEFAULT_URL": "MUST-BE-REPLACED",
+     "FRONTEND_ALLOWED_ORIGINS": "MUST-BE-REPLACED",
+     "COOKIE_DOMAIN": "",
+     "DISABLE_CSRF": "True"
    }
    ```
     4. create app runner, port 5000 include permissions and write the secrets of the apprunner itself

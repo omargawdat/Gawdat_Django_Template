@@ -2,7 +2,6 @@ from django.urls import path
 
 from apps.appInfo.api.info.views import AppInfoAPIView
 from apps.appInfo.api.info.views import ContactUsCreateView
-from apps.appInfo.api.info.views import FAQAtomicTestView
 from apps.appInfo.api.info.views import FAQListView
 from apps.appInfo.api.info.views import OnboardingAPIView
 from apps.appInfo.api.info.views import SocialAccountsAPIView
@@ -14,4 +13,5 @@ urlpatterns = [
     path("contact-us/", ContactUsCreateView.as_view(), name="contact-us"),
     path("test-atomic/", FAQAtomicTestView.as_view(), name="test-atomic"),
     path("onboarding/", OnboardingAPIView.as_view(), name="onboarding"),
+
 ]

@@ -15,8 +15,6 @@ class EnvSettings(BaseSettings):
     django_superuser_email: str
     django_superuser_password: SecretStr
     django_admin_url: str
-    django_admin_name: str
-    django_admin_email: str
     disable_csrf: bool = False
 
     # Database
@@ -74,9 +72,6 @@ class EnvSettings(BaseSettings):
     # Cookie Configuration (for cross-domain/subdomain auth)
     # Leave empty for localhost, use ".example.com" for production subdomains
     cookie_domain: str = ""
-
-    # Other
-    api_key: SecretStr
 
 
 env = EnvSettings()

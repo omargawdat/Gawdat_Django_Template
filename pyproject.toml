@@ -47,7 +47,7 @@ dependencies = [
     "djangorestframework>=3.16",
     "djangorestframework-gis>=1.2",
     "djangorestframework-simplejwt>=5.5",
-    "drf-spectacular @ git+https://github.com/tfranzel/drf-spectacular.git@02971bd89e25e0a3cda5f94400ab497f20112f7d",
+    "drf-spectacular>=0.29.0",
     "drf-standardized-errors[openapi]>=0.15",
     "djangorestframework-camel-case>=1.4",
     "django-allauth[headless-spec,socialaccount]>=65.12",
@@ -107,16 +107,6 @@ markers = [
     "integration: tests requiring DB/external services",
 ]
 
-# Key options:
-# -v         : Verbose - show test names (what's being tested)
-# --tb=short : Concise traceback (not overwhelming)
-# -x         : Stop on first failure (fix one issue at a time)
-#
-# Override when needed:
-#   pytest -q           (quiet - less detail)
-#   pytest -vv          (very verbose - more details)
-#   pytest --tb=line    (one line per failure)
-#   pytest --lf         (rerun last failed only)
 
 # ==== Coverage ====
 [tool.coverage.run]
