@@ -175,3 +175,5 @@ frontend/yarn-error.log*
 
 
 reference_project
+.venv
+.ruff_cache/

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
+from apps.appInfo.models.onboarding import Onboarding
 from apps.appInfo.models.social import SocialAccount
 
 
@@ -28,3 +29,9 @@ class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactUs
         fields = ["contact_type", "description"]
+
+
+class OnBoardingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Onboarding
+        fields = ["id", "title", "sub_text", "image"]
