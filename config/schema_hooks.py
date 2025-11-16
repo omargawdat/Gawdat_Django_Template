@@ -6,11 +6,11 @@ error response schemas to match drf-standardized-errors format.
 """
 
 import hashlib
-
-from django.test import Client
+import logging
 
 HTTP_METHODS = {"get", "post", "put", "patch", "delete", "options", "head", "trace"}
-HTTP_OK = 200  # HTTP 200 OK status code
+
+logger = logging.getLogger(__name__)
 
 
 def _transform_error_item_properties(item_props: dict) -> dict:
@@ -92,22 +92,21 @@ def merge_allauth_spec(result, generator=None, request=None, public=False, **kwa
     Merge Django-Allauth Headless OpenAPI specification into main schema.
 
     This hook:
-    1. Fetches allauth's OpenAPI spec
+    1. Fetches allauth's OpenAPI spec via direct import
     2. Adds operation IDs to allauth endpoints
     3. Prefixes allauth tags with "Authentication /"
     4. Transforms error response schemas to drf-standardized-errors format
     5. Merges paths and components into main schema
     6. Adds top-level "Authentication" tag
     """
-    # Step 1: Fetch allauth's OpenAPI schema
-    c = Client()
-    resp = c.get("/api/_allauth/openapi.json")
+    # Step 1: Fetch allauth's OpenAPI schema via direct import
+    try:
+        from allauth.headless.spec.internal.schema import get_schema
 
-    # If allauth schema is not available, return original schema
-    if resp.status_code != HTTP_OK:
+        ext = get_schema()
+    except Exception as e:
+        logger.warning(f"Failed to import allauth OpenAPI spec: {e}")
         return result
-
-    ext = resp.json()
 
     # Step 2: Process allauth paths and operations
     for path, item in (ext.get("paths") or {}).items():

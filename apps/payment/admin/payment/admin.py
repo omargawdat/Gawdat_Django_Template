@@ -1,5 +1,5 @@
 from django.contrib import admin
-from import_export.formats.base_formats import CSV
+from import_export.formats.base_formats import XLSX
 from unfold.contrib.import_export.forms import ExportForm
 
 from apps.payment.models.payment import Payment
@@ -22,4 +22,4 @@ class PaymentAdmin(
 ):
     resource_class = PaymentResource
     export_form_class = ExportForm
-    formats = [CSV]
+    formats = [XLSX]

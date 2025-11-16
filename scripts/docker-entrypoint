@@ -4,6 +4,18 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# Fetch secrets from AWS Secrets Manager if not running locally
+if [ "$IS_LOCAL" != "true" ]; then
+    eval "$(python /app/scripts/fetch_secrets.py)"
+fi
+
+# Set Django settings module based on environment
+if [ "$IS_LOCAL" = "true" ]; then
+    export DJANGO_SETTINGS_MODULE="config.settings.local"
+else
+    export DJANGO_SETTINGS_MODULE="config.settings.prod"
+fi
+
 # Wait for PostgreSQL
 # Extract host and port from DATABASE_URL (format: postgis://user:pass@host:port/dbname)  # pragma: allowlist secret
 if [[ "$DATABASE_URL" =~ @([^:]+):([0-9]+)/ ]]; then
