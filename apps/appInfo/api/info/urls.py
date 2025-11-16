@@ -11,7 +11,5 @@ urlpatterns = [
     path("info/", AppInfoAPIView.as_view(), name="app-info"),
     path("faqs/", FAQListView.as_view(), name="faqs"),
     path("contact-us/", ContactUsCreateView.as_view(), name="contact-us"),
-    path("test-atomic/", FAQAtomicTestView.as_view(), name="test-atomic"),
     path("onboarding/", OnboardingAPIView.as_view(), name="onboarding"),
-
 ]
