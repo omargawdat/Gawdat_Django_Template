@@ -100,8 +100,8 @@ class FAQAtomicTestView(APIView):
         operation_id="TestAtomicRequests",
         description=(
             "Test endpoint that demonstrates ATOMIC_REQUESTS transaction rollback. "
-            "This endpoint creates 3 FAQs through nested method calls, with the 3rd "
-            "intentionally failing due to duplicate order constraint. All changes should "
+            "This endpoint creates 3 FAQs through nested method calls, with the 3rd. "
+            "intentionally failing due to duplicate order constraint. All changes should. "
             "be rolled back automatically."
         ),
         responses={
