@@ -38,6 +38,8 @@ USE_I18N = True
 USE_TZ = True
 LOCALE_PATHS = [str(ASSETS_DIR / "locale")]
 
+FORMS_URLFIELD_ASSUME_HTTPS = True
+
 # Location-specific settings
 SUPPORTED_COUNTRY_CODES = ["EG", "SA", "AE", "KW", "QA", "OM", "BH", "JO", "LB"]
 
