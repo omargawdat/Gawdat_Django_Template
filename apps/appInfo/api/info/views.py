@@ -1,4 +1,5 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,10 +8,12 @@ from rest_framework.views import APIView
 from apps.appInfo.api.info.serializers import AppInfoSerializer
 from apps.appInfo.api.info.serializers import ContactUsSerializer
 from apps.appInfo.api.info.serializers import FAQSerializer
+from apps.appInfo.api.info.serializers import OnBoardingSerializer
 from apps.appInfo.api.info.serializers import SocialAccountsSerializer
 from apps.appInfo.models.app_info import AppInfo
 from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
+from apps.appInfo.models.onboarding import Onboarding
 from apps.appInfo.models.social import SocialAccount
 
 
@@ -85,3 +88,21 @@ class ContactUsCreateView(CreateAPIView):
             serializer.save(customer=self.request.user)
         else:
             serializer.save(customer=None)
+
+
+class OnboardingAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @extend_schema(
+        tags=["AppInfo/Onboarding"],
+        operation_id="listOnboarding",
+        responses={200: OnBoardingSerializer(many=True)},
+        description="Retrieve active onboarding screens",
+    )
+    def get(self, request):
+        onboardings = Onboarding.objects.filter(is_active=True)
+        onboarding_serializer = OnBoardingSerializer(
+            onboardings, many=True, context={"request": request}
+        ).data
+        return Response(onboarding_serializer, status=status.HTTP_200_OK)
