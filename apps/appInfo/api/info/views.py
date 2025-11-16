@@ -99,7 +99,7 @@ class OnboardingAPIView(APIView):
         tags=["AppInfo/Onboarding"],
         operation_id="listOnboarding",
         responses={200: OnBoardingSerializer(many=True)},
-        description="Retrieve active onboarding screens.",
+        description="Retrieve active onboarding screens",
     )
     def get(self, request):
         onboardings = Onboarding.objects.filter(is_active=True)
