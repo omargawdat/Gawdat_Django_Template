@@ -15,6 +15,7 @@ from apps.appInfo.models.contact_us import ContactUs
 from apps.appInfo.models.faq import FAQ
 from apps.appInfo.models.onboarding import Onboarding
 from apps.appInfo.models.social import SocialAccount
+from apps.appInfo.other.constants import ContactCategory
 
 
 class SocialAccountsAPIView(APIView):
@@ -88,6 +89,28 @@ class ContactUsCreateView(CreateAPIView):
             serializer.save(customer=self.request.user)
         else:
             serializer.save(customer=None)
+
+
+class ContactUsTypesListAPIView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    @extend_schema(
+        tags=["Communications/ContactUs"],
+        operation_id="listContactUsTypes",
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "contact_types": {"type": "array", "items": {"type": "string"}}
+                },
+            }
+        },
+        description="Retrieve available contact us category types.",
+    )
+    def get(self, request):
+        contact_types = list(ContactCategory)
+        return Response({"contact_types": contact_types}, status=status.HTTP_200_OK)
 
 
 class OnboardingAPIView(APIView):
