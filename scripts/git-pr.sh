@@ -3,23 +3,31 @@ set -euo pipefail
 
 REMOTE="origin"
 NO_VERIFY=false
+BRANCH_NAME=""
 
 usage() {
   cat <<EOF
-Usage: $0 [--no-verify]
+Usage: $0 [branch-name] [--no-verify]
 
+  branch-name     optional branch name (only when on main, will prompt if not provided)
   --no-verify     skip pre-push hooks validation
+
+Examples:
+  $0                    # On main: prompts for branch name
+  $0 fix/cors           # On main: creates branch named 'fix/cors'
+  $0 --no-verify        # Skip hooks, prompt for branch name
+  $0 fix/cors --no-verify  # Create 'fix/cors' branch, skip hooks
 EOF
   exit 1
 }
 
-# 0. Parse flags
+# 0. Parse flags and arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --no-verify)    NO_VERIFY=true; shift ;;
     -h|--help)      usage         ;;
     -*              ) echo "Unknown option: $1" >&2; usage ;;
-    *               ) usage      ;;
+    *               ) BRANCH_NAME="$1"; shift ;;
   esac
 done
 
@@ -54,11 +62,8 @@ if [[ "$ON_MAIN" == false ]]; then
 
   # Push the feature branch
   echo "→ Pushing '$current_branch' to '$REMOTE'…"
-  if [[ "$NO_VERIFY" == true ]]; then
-    git push --no-verify -u "$REMOTE" "$current_branch"
-  else
-    git push -u "$REMOTE" "$current_branch"
-  fi
+  # Always use --no-verify here since we already validated with --dry-run above
+  git push --no-verify -u "$REMOTE" "$current_branch"
 
   # Create the PR
   echo "→ Creating pull request for '$current_branch'…"
@@ -104,12 +109,22 @@ if [[ "$NO_VERIFY" == false ]]; then
   echo "✓ Pre-push validation passed."
 fi
 
-# 5. Prompt for a new branch name
-read -rp "Enter new branch name: " branch
-while git show-ref --verify --quiet "refs/heads/$branch"; do
-  echo "Branch '$branch' already exists."
-  read -rp "Enter a different branch name: " branch
-done
+# 5. Get or prompt for a new branch name
+if [[ -n "$BRANCH_NAME" ]]; then
+  branch="$BRANCH_NAME"
+  # Check if branch already exists
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    echo "❌ Branch '$branch' already exists." >&2
+    exit 1
+  fi
+else
+  # Prompt for branch name
+  read -rp "Enter new branch name: " branch
+  while git show-ref --verify --quiet "refs/heads/$branch"; do
+    echo "Branch '$branch' already exists."
+    read -rp "Enter a different branch name: " branch
+  done
+fi
 
 # 6. Create the feature branch with your commits
 echo "→ Creating branch '$branch' with your commits…"
@@ -123,11 +138,8 @@ git reset --hard "$REMOTE/main"
 # 8. Push the feature branch
 echo "→ Pushing '$branch' to '$REMOTE'…"
 git checkout "$branch"
-if [[ "$NO_VERIFY" == true ]]; then
-  git push --no-verify -u "$REMOTE" "$branch"
-else
-  git push -u "$REMOTE" "$branch"
-fi
+# Always use --no-verify here since we already validated with --dry-run above
+git push --no-verify -u "$REMOTE" "$branch"
 
 # 9. Create the PR
 echo "→ Creating pull request for '$branch'…"
