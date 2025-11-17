@@ -2,14 +2,13 @@
 set -euo pipefail
 
 REMOTE="origin"
-MERGE_PR=false
+NO_VERIFY=false
 
 usage() {
   cat <<EOF
-Usage: $0 [--merge|-m]
+Usage: $0 [--no-verify]
 
-  --merge, -m   after creating the PR, squash-merge it, delete the branch,
-                switch back to main and pull the updates
+  --no-verify     skip pre-push hooks validation
 EOF
   exit 1
 }
@@ -17,18 +16,18 @@ EOF
 # 0. Parse flags
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -m|--merge) MERGE_PR=true; shift ;;
-    -h|--help)  usage         ;;
-    -*          ) echo "Unknown option: $1" >&2; usage ;;
-    *           ) usage      ;;
+    --no-verify)    NO_VERIFY=true; shift ;;
+    -h|--help)      usage         ;;
+    -*              ) echo "Unknown option: $1" >&2; usage ;;
+    *               ) usage      ;;
   esac
 done
 
-# 1. Ensure we're on main
+# 1. Detect current branch and determine flow
 current_branch=$(git symbolic-ref --short HEAD)
-if [[ "$current_branch" != "main" ]]; then
-  echo "❌ Please switch to 'main' first (you’re on '$current_branch')." >&2
-  exit 1
+ON_MAIN=false
+if [[ "$current_branch" == "main" ]]; then
+  ON_MAIN=true
 fi
 
 # 2. Ensure no uncommitted changes
@@ -37,7 +36,49 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
-# 3. Ensure local main isn’t behind origin/main (no fetching)
+# ============================================================================
+# FEATURE BRANCH FLOW: If on a feature branch, push and create PR
+# ============================================================================
+if [[ "$ON_MAIN" == false ]]; then
+  echo "→ On feature branch '$current_branch'. Pushing and creating PR…"
+
+  # Run pre-push validation if needed
+  if [[ "$NO_VERIFY" == false ]]; then
+    echo "→ Running pre-push validation…"
+    if ! git push --dry-run "$REMOTE" "$current_branch" 2>/dev/null; then
+      echo "❌ Pre-push validation failed. Please fix the issues and try again." >&2
+      exit 1
+    fi
+    echo "✓ Pre-push validation passed."
+  fi
+
+  # Push the feature branch
+  echo "→ Pushing '$current_branch' to '$REMOTE'…"
+  if [[ "$NO_VERIFY" == true ]]; then
+    git push --no-verify -u "$REMOTE" "$current_branch"
+  else
+    git push -u "$REMOTE" "$current_branch"
+  fi
+
+  # Create the PR
+  echo "→ Creating pull request for '$current_branch'…"
+  pr_url=$(gh pr create --base main --head "$current_branch" --fill)
+  pr_number=${pr_url##*/}
+  pr_number="${pr_number//[![:ascii:]]/}"
+  echo "→ Created PR #${pr_number}."
+
+  # Open PR in browser
+  echo "→ Opening PR in browser…"
+  gh pr view "${pr_number}" --web
+
+  exit 0
+fi
+
+# ============================================================================
+# MAIN BRANCH FLOW: Create new branch, move commits, create PR
+# ============================================================================
+
+# 3. Ensure local main isn't behind origin/main (no fetching)
 behind_count=$(git rev-list --count main.."$REMOTE"/main)
 if (( behind_count > 0 )); then
   echo "❌ Your local 'main' is behind '$REMOTE/main' by $behind_count commit(s)."
@@ -52,6 +93,16 @@ if (( ahead_count == 0 )); then
   exit 0
 fi
 echo "→ Found $ahead_count local commit(s) on 'main'."
+
+# 4.5. Run pre-push validation early (before any destructive operations)
+if [[ "$NO_VERIFY" == false ]]; then
+  echo "→ Running pre-push validation…"
+  if ! git push --dry-run "$REMOTE" main 2>/dev/null; then
+    echo "❌ Pre-push validation failed. Please fix the issues and try again." >&2
+    exit 1
+  fi
+  echo "✓ Pre-push validation passed."
+fi
 
 # 5. Prompt for a new branch name
 read -rp "Enter new branch name: " branch
@@ -71,7 +122,12 @@ git reset --hard "$REMOTE/main"
 
 # 8. Push the feature branch
 echo "→ Pushing '$branch' to '$REMOTE'…"
-git push -u "$REMOTE" "$branch"
+git checkout "$branch"
+if [[ "$NO_VERIFY" == true ]]; then
+  git push --no-verify -u "$REMOTE" "$branch"
+else
+  git push -u "$REMOTE" "$branch"
+fi
 
 # 9. Create the PR
 echo "→ Creating pull request for '$branch'…"
@@ -80,11 +136,6 @@ pr_number=${pr_url##*/}
 pr_number="${pr_number//[![:ascii:]]/}"
 echo "→ Created PR #${pr_number}."
 
-# 10. If --merge, squash-merge & clean up
-if [[ "$MERGE_PR" == true ]]; then
-  echo "→ Squash-merging PR #${pr_number} with auto-merge…"
-  gh pr merge "${pr_number}" --squash --delete-branch --admin
-else
-  echo "→ Leaving you on feature branch '$branch'."
-  git checkout "$branch"
-fi
+# 10. Open PR in browser
+echo "→ Opening PR in browser…"
+gh pr view "${pr_number}" --web

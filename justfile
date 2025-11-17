@@ -166,3 +166,18 @@ audit:
     @echo "🔍 Checking for outdated packages..."
     @echo "💡 For vulnerability scanning, enable GitHub Dependabot in repo settings"
     @uv tree --outdated
+
+# ============================================================================
+# 🔀 Git & PR Workflow
+# ============================================================================
+
+# Create or push PR with optional flags (e.g., just pr --no-verify)
+pr *FLAGS:
+    ./scripts/git-pr.sh {{FLAGS}}
+
+# Create new branch from updated main
+branch name:
+    git checkout main
+    git fetch origin main
+    git pull origin main
+    git checkout -b {{name}}
