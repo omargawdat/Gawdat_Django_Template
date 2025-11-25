@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.hashers import make_password
 
 from apps.users.models.admin import AdminUser
 from common.base.admin import BaseModelAdmin
@@ -20,3 +21,8 @@ class AdminUserAdmin(
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.filter(is_superuser=False)
+
+    def save_model(self, request, obj, form, change):
+        if "password" in form.changed_data:
+            obj.password = make_password(obj.password)
+        super().save_model(request, obj, form, change)
