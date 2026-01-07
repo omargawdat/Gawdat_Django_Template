@@ -1,247 +1,449 @@
+/* Healthcare Dashboard KPI Cards - Modern Glassmorphism Design */
+.kpi-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Base Card - Glassmorphism Effect */
+.kpi-card {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.kpi-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Accent Line at Top */
+.kpi-accent-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+  transition: height 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kpi-card:hover .kpi-accent-line {
+  height: 4px;
+}
+
+/* Clients Card - Teal Theme */
+.kpi-card-clients {
+  border-color: rgba(20, 184, 166, 0.15);
+}
+
+.kpi-card-clients:hover {
+  border-color: rgba(20, 184, 166, 0.3);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(20, 184, 166, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.kpi-card-clients .kpi-accent-line {
+  background: linear-gradient(90deg, #0d9488, #14b8a6, #2dd4bf);
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.4);
+}
+
+.kpi-card-clients .kpi-card-icon {
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+.kpi-card-clients .kpi-card-value {
+  color: #2dd4bf;
+}
+
+.kpi-card-clients .indicator-dot {
+  background: #14b8a6;
+  box-shadow: 0 0 8px rgba(20, 184, 166, 0.6);
+}
+
+/* Revenue Card - Emerald Theme */
+.kpi-card-revenue {
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.kpi-card-revenue:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.kpi-card-revenue .kpi-accent-line {
+  background: linear-gradient(90deg, #059669, #10b981, #34d399);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.kpi-card-revenue .kpi-card-icon {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.kpi-card-revenue .kpi-card-value {
+  color: #34d399;
+}
+
+.kpi-card-revenue .indicator-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+/* Sessions Card - Indigo Theme */
+.kpi-card-sessions {
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.kpi-card-sessions:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(99, 102, 241, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.kpi-card-sessions .kpi-accent-line {
+  background: linear-gradient(90deg, #4f46e5, #6366f1, #818cf8);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+.kpi-card-sessions .kpi-card-icon {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.kpi-card-sessions .kpi-card-value {
+  color: #818cf8;
+}
+
+.kpi-card-sessions .indicator-dot {
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+
+/* Icon Styling */
+.kpi-card-icon {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.kpi-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.kpi-card:hover .kpi-card-icon {
+  transform: scale(1.08);
+}
+
+/* Header Section */
+.kpi-card-header {
+  margin-bottom: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.kpi-card-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.label-icon {
+  font-size: 0.875rem;
+}
+
+.label-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #94a3b8;
+  transition: color 0.3s ease;
+}
+
+.kpi-card:hover .label-text {
+  color: #cbd5e1;
+}
+
+.kpi-card-subtitle {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  margin-left: 1.5rem;
+}
+
+/* Value Display */
+.kpi-card-value {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.value-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.kpi-card:hover .value-number {
+  transform: scale(1.02);
+}
+
+/* Footer Section */
+.kpi-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.kpi-card-description {
+  font-size: 0.7rem;
+  color: #64748b;
+  line-height: 1.4;
+  max-width: 65%;
+}
+
+/* Indicator Badge */
+.kpi-card-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #94a3b8;
+  padding: 0.35rem 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.kpi-card:hover .kpi-card-indicator {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-card {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card:nth-child(2) { animation-delay: 0.2s; }
+.kpi-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .kpi-cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .kpi-card {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    border-radius: 16px;
-    padding: 2.5rem;
-    color: white;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    min-height: 180px;
-    animation: fadeInUp 0.6s ease-out;
+    padding: 1.25rem;
+    min-height: 160px;
   }
 
-  .kpi-card::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    height: 4px;
-    background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #b45309);
-    background-size: 200% 100%;
-    border-radius: 16px 16px 0 0;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    animation: gradientShift 3s ease infinite;
-  }
-
-  .kpi-card:hover::after {
-    opacity: 1;
-  }
-
-  .kpi-card:nth-child(1) {
-    animation-delay: 0.1s;
-  }
-
-  .kpi-card:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  .kpi-card:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  .kpi-card:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(251, 191, 36, 0.3);
-  }
-
-  .kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: transparent;
-    opacity: 0;
-    transition: all 0.4s ease;
-  }
-
-  .kpi-card:hover::before {
-    opacity: 0;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse {
-
-    0%,
-    100% {
-      opacity: 0.2;
-    }
-
-    50% {
-      opacity: 0.4;
-    }
-  }
-
-  @keyframes gradientShift {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  @keyframes glow {
-
-    0%,
-    100% {
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-    }
-
-    50% {
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(251, 191, 36, 0.4);
-    }
-  }
-
-  .kpi-card-title {
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.8;
-    margin-bottom: 1rem;
-    color: #d1d5db;
-    transition: all 0.3s ease;
-    position: relative;
-  }
-
-  .kpi-card:hover .kpi-card-title {
-    opacity: 1;
-    color: #f8fafc;
-    transform: translateY(-2px);
-  }
-
-  .kpi-card-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-    color: #ffffff;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
-  }
-
-  .kpi-card:hover .kpi-card-value {
-    animation: glow 2s ease-in-out infinite;
-    transform: scale(1.05);
+  .value-number {
+    font-size: 1.875rem;
   }
 
   .kpi-card-icon {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-size: 2rem;
-    opacity: 0.2;
-    animation: pulse 2s infinite;
-    transition: all 0.3s ease;
+    width: 42px;
+    height: 42px;
   }
 
-  .kpi-card:hover .kpi-card-icon {
-    opacity: 0.5;
-    transform: scale(1.1);
+  .kpi-card-icon svg {
+    width: 20px;
+    height: 20px;
   }
 
-  .kpi-card-change {
-    font-size: 0.875rem;
-    opacity: 0.8;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #9ca3af;
-    margin-top: 0.5rem;
-  }
-
-  .kpi-card-change-positive {
-    color: #10b981;
-  }
-
-  .kpi-card-change-negative {
-    color: #ef4444;
-  }
-
-  .kpi-card-subtitle {
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin-bottom: 0.75rem;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0.5px;
-  }
-
-  .kpi-card-metric {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 1rem;
-  }
-
-  .kpi-card-trend {
-    font-size: 0.75rem;
-    color: #60a5fa;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(96, 165, 250, 0.1);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid rgba(96, 165, 250, 0.2);
+  .kpi-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .kpi-card-description {
-    font-size: 0.8rem;
-    color: #9ca3af;
-    margin-top: 0.75rem;
-    line-height: 1.4;
-    opacity: 0.9;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-card {
+    padding: 1rem;
   }
 
-  @media (max-width: 768px) {
-    .kpi-cards-container {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .kpi-card {
-      padding: 2rem;
-      min-height: 160px;
-    }
-
-    .kpi-card-value {
-      font-size: 2.25rem;
-    }
-
-    .kpi-card-title {
-      font-size: 0.9rem;
-    }
+  .value-number {
+    font-size: 1.625rem;
   }
+
+  .label-text {
+    font-size: 0.7rem;
+  }
+}
+
+/* ========================================
+   Light Mode Overrides
+   ======================================== */
+html:not(.dark) .kpi-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #1e293b;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html:not(.dark) .kpi-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Card-specific light mode borders */
+html:not(.dark) .kpi-card-clients {
+  border-color: rgba(20, 184, 166, 0.2);
+}
+
+html:not(.dark) .kpi-card-clients:hover {
+  border-color: rgba(20, 184, 166, 0.35);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(20, 184, 166, 0.08);
+}
+
+html:not(.dark) .kpi-card-revenue {
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+html:not(.dark) .kpi-card-revenue:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(16, 185, 129, 0.08);
+}
+
+html:not(.dark) .kpi-card-sessions {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+html:not(.dark) .kpi-card-sessions:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(99, 102, 241, 0.08);
+}
+
+/* Text colors for light mode */
+html:not(.dark) .label-text {
+  color: #64748b;
+}
+
+html:not(.dark) .kpi-card:hover .label-text {
+  color: #475569;
+}
+
+html:not(.dark) .kpi-card-subtitle {
+  color: #94a3b8;
+}
+
+html:not(.dark) .kpi-card-description {
+  color: #64748b;
+}
+
+html:not(.dark) .kpi-card-indicator {
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+html:not(.dark) .kpi-card:hover .kpi-card-indicator {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+html:not(.dark) .kpi-card-footer {
+  border-top-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Icon backgrounds for light mode */
+html:not(.dark) .kpi-card-clients .kpi-card-icon {
+  background: rgba(20, 184, 166, 0.1);
+  border-color: rgba(20, 184, 166, 0.25);
+}
+
+html:not(.dark) .kpi-card-revenue .kpi-card-icon {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+html:not(.dark) .kpi-card-sessions .kpi-card-icon {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.25);
+}
