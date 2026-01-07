@@ -1,33 +1,96 @@
-/* Combined Chart Controls Styling - Dark Elegant Theme */
-.combined-chart-section.payments-orders-chart-section {
-  background: #0f172a !important;
-  border-radius: 20px !important;
-  padding: 1.5rem !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+/* Analytics Chart Section - Modern Glassmorphism Design */
+.analytics-chart-section {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   margin-bottom: 2rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.payments-orders-chart-header {
+.analytics-chart-section:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Accent Line at Top */
+.chart-accent-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #6366f1, #10b981);
+  background-size: 200% 100%;
+  animation: gradientShift 4s ease infinite;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Header Section */
+.analytics-chart-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
-.payments-orders-chart-title-section h2 {
-  color: #f1f5f9 !important;
-  font-weight: 700;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+.analytics-chart-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.payments-orders-chart-title-section p {
-  color: #cbd5e1 !important;
+.chart-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.chart-label-icon {
   font-size: 0.875rem;
 }
 
+.chart-label-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #94a3b8;
+}
+
+.chart-main-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.chart-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Period Toggle Buttons */
 .period-toggle-section {
   display: flex;
   align-items: center;
@@ -35,63 +98,60 @@
 
 .period-buttons {
   display: flex;
-  gap: 0.5rem;
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 8px;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
   padding: 0.25rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .period-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
-  color: #e2e8f0;
+  color: #94a3b8;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  min-width: 80px;
-  justify-content: center;
 }
 
 .period-btn:hover {
-  background: rgba(71, 85, 105, 0.3);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
 }
 
 .period-btn.active {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  background: rgba(255, 255, 255, 0.1);
   color: #f8fafc;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .period-icon {
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 
 .period-text {
   font-weight: 600;
 }
 
+/* Chart Controls */
 .chart-controls {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .control-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
@@ -99,111 +159,167 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid rgba(148, 163, 184, 0.2);
-  border-radius: 8px;
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
-  color: #e2e8f0;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #94a3b8;
   font-weight: 500;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  min-width: 120px;
-  justify-content: center;
   position: relative;
   overflow: hidden;
 }
 
-.control-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s;
-}
-
-.control-btn:hover::before {
-  left: 100%;
-}
-
 .control-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(34, 197, 94, 0.15);
 }
 
 .control-btn.active {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%);
   color: white;
-  border-color: #94a3b8;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(71, 85, 105, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Payments Button Active State */
 .control-btn.payments-btn.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #047857;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
 }
 
-.control-btn.orders-btn.active {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  border-color: #4338ca;
+.control-btn.payments-btn.active .control-indicator {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+/* Sessions Button Active State */
+.control-btn.sessions-btn.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0.15) 100%);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+
+.control-btn.sessions-btn.active .control-indicator {
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+
+.control-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #64748b;
+  transition: all 0.3s ease;
+}
+
+.control-btn.active .control-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .control-icon {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .control-text {
   font-weight: 600;
 }
 
-/* Chart Container Styling */
-.payments-orders-chart-container.dark-theme {
-  position: relative !important;
-  height: 400px !important;
-  background: #0f172a !important;
-  border-radius: 16px !important;
-  padding: 2rem !important;
-  border: 2px solid rgba(148, 163, 184, 0.15) !important;
-  backdrop-filter: blur(15px) !important;
-  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.4), 0 8px 16px rgba(15, 23, 42, 0.2) !important;
-  overflow: hidden !important;
-}
-
-.payments-orders-chart-container canvas {
-  background-color: #0f172a !important;
-}
-
-.payments-orders-chart-container.dark-theme::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(51, 65, 85, 0.1) 0%, rgba(71, 85, 105, 0.15) 100%);
-  z-index: 0;
-}
-
-#paymentsOrdersChart {
-  background-color: #0f172a !important;
+/* Chart Container */
+.analytics-chart-container {
+  position: relative;
+  height: 380px;
+  background: rgba(15, 23, 42, 0.5);
   border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ========================================
+   Payments Orders Chart Section
+   ======================================== */
+
+/* Header Section */
+.payments-orders-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.payments-orders-chart-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.payments-orders-chart-title-section h2 {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.payments-orders-chart-title-section p {
+  margin: 0;
+}
+
+/* Chart Container */
+.payments-orders-chart-container {
+  position: relative;
+  height: 380px;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.analytics-chart-container canvas {
   position: relative;
   z-index: 1;
 }
 
+#paymentsSessionsChart {
+  border-radius: 8px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .analytics-chart-header,
   .payments-orders-chart-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
+  .analytics-chart-title-section,
+  .payments-orders-chart-title-section {
+    align-items: center;
+  }
+
+  .payments-orders-chart-title-section h2 {
+    white-space: normal;
+    text-align: center;
+  }
+
   .period-toggle-section {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .control-buttons {
@@ -212,13 +328,25 @@
   }
 
   .control-btn {
-    min-width: 200px;
+    min-width: 180px;
+    justify-content: center;
+  }
+
+  .analytics-chart-container,
+  .payments-orders-chart-container {
+    height: 320px;
+    padding: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .chart-controls {
+  .analytics-chart-section,
+  .payments-orders-chart-section {
     padding: 1rem;
+  }
+
+  .chart-controls {
+    padding: 0.75rem;
   }
 
   .period-buttons {
@@ -227,6 +355,118 @@
 
   .period-btn {
     flex: 1;
+    justify-content: center;
     min-width: auto;
   }
+
+  .analytics-chart-container,
+  .payments-orders-chart-container {
+    height: 280px;
+  }
+}
+
+/* ========================================
+   Light Mode Overrides
+   ======================================== */
+html:not(.dark) .analytics-chart-section {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html:not(.dark) .analytics-chart-section:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Header text colors */
+html:not(.dark) .chart-label-text {
+  color: #64748b;
+}
+
+html:not(.dark) .chart-main-title {
+  color: #1e293b;
+}
+
+html:not(.dark) .chart-subtitle {
+  color: #64748b;
+}
+
+/* Period buttons */
+html:not(.dark) .period-buttons {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .period-btn {
+  color: #64748b;
+}
+
+html:not(.dark) .period-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #334155;
+}
+
+html:not(.dark) .period-btn.active {
+  background: rgba(0, 0, 0, 0.08);
+  color: #1e293b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Chart controls */
+html:not(.dark) .chart-controls {
+  background: rgba(248, 250, 252, 0.9);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+html:not(.dark) .control-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+  color: #64748b;
+}
+
+html:not(.dark) .control-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #334155;
+}
+
+html:not(.dark) .control-btn.active {
+  color: #1e293b;
+}
+
+html:not(.dark) .control-btn.payments-btn.active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+html:not(.dark) .control-btn.sessions-btn.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+}
+
+html:not(.dark) .control-indicator {
+  background: #94a3b8;
+}
+
+/* Chart container */
+html:not(.dark) .analytics-chart-container,
+html:not(.dark) .payments-orders-chart-container {
+  background: rgba(248, 250, 252, 0.9);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Payments Orders Title Section Light Mode */
+html:not(.dark) .payments-orders-chart-title-section h2 {
+  color: #1e293b;
+}
+
+html:not(.dark) .payments-orders-chart-title-section p {
+  color: #64748b;
 }
