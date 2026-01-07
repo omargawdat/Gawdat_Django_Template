@@ -33,8 +33,12 @@
           <span class="control-text">Payments</span>
         </button>
         <button id="ordersBtn" class="control-btn orders-btn" data-dataset="orders">
-          <span class="control-icon">�</span>
+          <span class="control-icon">📦</span>
           <span class="control-text">Orders</span>
+        </button>
+        <button id="customersBtn" class="control-btn customers-btn" data-dataset="customers">
+          <span class="control-icon">👥</span>
+          <span class="control-text">Customers</span>
         </button>
       </div>
     </div>
@@ -80,6 +84,11 @@ class PaymentsOrdersAnalyticsChart {
       gradient.addColorStop(0, 'rgba(16,185,129,0.5)');
       gradient.addColorStop(0.5, 'rgba(5,150,105,0.15)');
       gradient.addColorStop(1, 'rgba(16,185,129,0.05)');
+    } else if (color === '#f59e0b') {
+      // Amber gradient for customers
+      gradient.addColorStop(0, 'rgba(245,158,11,0.5)');
+      gradient.addColorStop(0.5, 'rgba(217,119,6,0.15)');
+      gradient.addColorStop(1, 'rgba(245,158,11,0.05)');
     } else {
       // Indigo gradient for orders
       gradient.addColorStop(0, 'rgba(99,102,241,0.5)');
@@ -93,19 +102,23 @@ class PaymentsOrdersAnalyticsChart {
     const title = document.getElementById('paymentsOrdersChartTitle');
     const subtitle = document.getElementById('chart-subtitle');
 
-    const dataTypeEmoji = this.currentDataType === 'payments' ? '💰' : '�';
-    const dataTypeText = this.currentDataType === 'payments' ? 'Payments' : 'Orders';
-    const timePeriodText = this.currentTimePeriod === 'monthly' ? 'Monthly' : 'Yearly';
+    const dataTypeConfig = {
+      payments: { emoji: '💰', text: 'Payments', monthlyDesc: 'financial performance', yearlyDesc: 'revenue growth' },
+      orders: { emoji: '📦', text: 'Orders', monthlyDesc: 'order tracking', yearlyDesc: 'order volume' },
+      customers: { emoji: '👥', text: 'Customers', monthlyDesc: 'customer acquisition', yearlyDesc: 'customer growth' }
+    };
+
+    const config = dataTypeConfig[this.currentDataType];
 
     if (title) {
-      title.textContent = `${dataTypeEmoji} ${dataTypeText} Analytics`;
+      title.textContent = `${config.emoji} ${config.text} Analytics`;
     }
 
     if (subtitle) {
       if (this.currentTimePeriod === 'monthly') {
-        subtitle.textContent = `Monthly insights for ${this.currentDataType === 'payments' ? 'financial performance' : 'order tracking'}`;
+        subtitle.textContent = `Monthly insights for ${config.monthlyDesc}`;
       } else {
-        subtitle.textContent = `Yearly trends for ${this.currentDataType === 'payments' ? 'revenue growth' : 'order volume'}`;
+        subtitle.textContent = `Yearly trends for ${config.yearlyDesc}`;
       }
     }
   }
@@ -125,10 +138,13 @@ class PaymentsOrdersAnalyticsChart {
 
     // Update labels based on period
     const isMonthly = this.currentTimePeriod === 'monthly';
-    const dataLabel = this.currentDataType === 'payments'
-      ? (isMonthly ? 'Monthly Payments' : 'Yearly Revenue')
-      : (isMonthly ? 'Monthly Orders' : 'Yearly Orders');
-    const xAxisTitle = isMonthly ? 'Month' : 'Year';
+    const dataLabels = {
+      payments: isMonthly ? 'Monthly Payments' : 'Yearly Revenue',
+      orders: isMonthly ? 'Monthly Orders' : 'Yearly Orders',
+      customers: isMonthly ? 'Monthly Signups' : 'Yearly Growth'
+    };
+    const dataLabel = dataLabels[this.currentDataType];
+    const xAxisTitle = isMonthly ? 'Day' : 'Month';
 
     const config = {
       type: 'line',
@@ -173,15 +189,16 @@ class PaymentsOrdersAnalyticsChart {
             },
             callbacks: {
               title: (context) => {
-                const unit = this.currentTimePeriod === 'monthly' ? '📅 Month' : '📊 Year';
+                const unit = this.currentTimePeriod === 'monthly' ? '📅 Day' : '📊 Month';
                 return `${unit}: ${context[0].label}`;
               },
               label: (context) => {
-                if (this.currentDataType === 'payments') {
-                  return `💰 Revenue: $${context.parsed.y.toLocaleString()}`;
-                } else {
-                  return `� Orders: ${context.parsed.y}`;
-                }
+                const tooltipLabels = {
+                  payments: `💰 Revenue: $${context.parsed.y.toLocaleString()}`,
+                  orders: `📦 Orders: ${context.parsed.y}`,
+                  customers: `👥 New Customers: ${context.parsed.y}`
+                };
+                return tooltipLabels[this.currentDataType];
               }
             }
           }
@@ -213,7 +230,7 @@ class PaymentsOrdersAnalyticsChart {
             },
             title: {
               display: true,
-              text: this.currentDataType === 'payments' ? 'Revenue ($)' : 'Number of Orders',
+              text: { payments: 'Revenue ($)', orders: 'Number of Orders', customers: 'New Customers' }[this.currentDataType],
               color: '#f8fafc',
               font: {
                 size: 14,
@@ -312,6 +329,11 @@ class PaymentsOrdersAnalyticsChart {
     // Orders toggle button
     document.getElementById('ordersBtn')?.addEventListener('click', () => {
       this.switchDataset('orders');
+    });
+
+    // Customers toggle button
+    document.getElementById('customersBtn')?.addEventListener('click', () => {
+      this.switchDataset('customers');
     });
   }
 

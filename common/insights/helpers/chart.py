@@ -31,13 +31,16 @@ class ChartHelper:
 
     @staticmethod
     def format_line_chart_data() -> dict[str, dict[str, dict[str, list]]]:
-        """Generate chart data using real payment data from database"""
-
+        """Generate chart data using real payment and customer data from database."""
         # Get real payment data
         monthly_data = InsightSelector.get_monthly_payment_data()
         yearly_data = InsightSelector.get_yearly_payment_data()
 
-        payments_sessions_data = {
+        # Get customer growth data
+        monthly_customer_data = InsightSelector.get_monthly_customer_data()
+        yearly_customer_data = InsightSelector.get_yearly_customer_data()
+
+        chart_data = {
             "payments": {
                 "monthly": {
                     "labels": monthly_data["labels"],
@@ -90,5 +93,31 @@ class ChartHelper:
                     ],
                 },
             },
+            "customers": {
+                "monthly": {
+                    "labels": monthly_customer_data["labels"],
+                    "datasets": [
+                        {
+                            "type": "line",
+                            "data": monthly_customer_data["counts"],
+                            "borderColor": "#f59e0b",
+                            "pointBorderColor": "#f59e0b",
+                            "pointBackgroundColor": "#f59e0b",
+                        }
+                    ],
+                },
+                "yearly": {
+                    "labels": yearly_customer_data["labels"],
+                    "datasets": [
+                        {
+                            "type": "line",
+                            "data": yearly_customer_data["counts"],
+                            "borderColor": "#f59e0b",
+                            "pointBorderColor": "#f59e0b",
+                            "pointBackgroundColor": "#f59e0b",
+                        }
+                    ],
+                },
+            },
         }
-        return payments_sessions_data
+        return chart_data
