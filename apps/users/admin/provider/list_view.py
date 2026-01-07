@@ -1,6 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from unfold.contrib.filters.admin import RangeDateFilter
 
+from .sections import ProviderWalletTransactionSection
+
 
 class ProviderListView:
     list_display = (
@@ -19,3 +21,4 @@ class ProviderListView:
     search_fields = ["user__email", "company_name"]
     search_help_text = _("search email or company name...🔍")
     ordering = ("-user__date_joined",)
+    list_sections = [ProviderWalletTransactionSection]
