@@ -1,0 +1,172 @@
+{% extends "admin/change_list.html" %}
+{% load unfold admin_urls i18n %}
+
+{% block actions-items %}{% endblock %}
+
+{% block filters %}
+  <div class="flex gap-2 lg:ml-auto">
+    {% if cl.has_filters %}
+      <a class="{% if cl.has_active_filters %}bg-primary-600 border-primary-600 text-white{% else %}bg-white border-base-200 hover:text-primary-600 dark:bg-base-900 dark:border-base-700 dark:hover:text-primary-500{% endif %} border cursor-pointer flex font-medium gap-2 group items-center px-3 py-2 rounded-default shadow-xs text-sm" x-on:click="filterOpen = true" x-on:keydown.escape.window="filterOpen = false">
+        {% trans "Filters" %}
+        <span class="material-symbols-outlined md-18 ml-auto">filter_list</span>
+      </a>
+    {% endif %}
+
+    {% if has_export_permission %}
+      {% url opts|admin_urlname:'export' as export_link %}
+      <a href="{{ export_link }}{{ cl.get_query_string }}" class="bg-white border-base-200 hover:text-primary-600 dark:bg-base-900 dark:border-base-700 dark:hover:text-primary-500 border cursor-pointer flex font-medium gap-2 group items-center px-3 py-2 rounded-default shadow-xs text-sm">
+        <span class="material-symbols-outlined md-18">download</span>
+        {% trans "Export" %}
+      </a>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    /* Fix empty space above search/filter */
+    #content-main > .flex {
+      margin-top: 0 !important;
+    }
+    .object-tools {
+      margin-bottom: 0.5rem !important;
+    }
+    /* Make search input expand properly */
+    #changelist .result-list-wrapper > div:first-child > div:first-of-type {
+      margin-bottom: 1rem;
+    }
+    /* Reduce excessive padding on search container */
+    @media (min-width: 1024px) {
+      #changelist .result-list-wrapper > div:first-child > div:first-of-type {
+        padding-bottom: 0.75rem !important;
+        margin-bottom: -0.5rem !important;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block result_list %}
+  <style>
+    .insight-card {
+      position: relative;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+    }
+    .dark .insight-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-color: #334155;
+    }
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent-gradient);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .insight-card:hover::before {
+      transform: scaleX(1);
+    }
+    .insight-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
+    }
+    .dark .insight-card:hover {
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+      border-color: #475569;
+    }
+    .insight-card:nth-child(1) { --accent-gradient: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .insight-card:nth-child(2) { --accent-gradient: linear-gradient(90deg, #10b981, #34d399); }
+    .insight-card:nth-child(3) { --accent-gradient: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .insight-card:nth-child(4) { --accent-gradient: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .insight-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .insight-card:nth-child(1) .insight-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .insight-card:nth-child(2) .insight-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .insight-card:nth-child(3) .insight-icon { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .insight-card:nth-child(4) .insight-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+    .insight-value {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .dark .insight-value { color: #f1f5f9; }
+
+    .insight-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .dark .insight-title { color: #94a3b8; }
+
+    .insight-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-top: 10px;
+    }
+    .dark .insight-desc {
+      color: #64748b;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .insight-card {
+      animation: slideIn 0.5s ease-out backwards;
+    }
+    .insight-card:nth-child(1) { animation-delay: 0.05s; }
+    .insight-card:nth-child(2) { animation-delay: 0.1s; }
+    .insight-card:nth-child(3) { animation-delay: 0.15s; }
+    .insight-card:nth-child(4) { animation-delay: 0.2s; }
+  </style>
+
+  <div class="mb-6 lg:mt-4">
+    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+      {% for c in customer_cards %}
+        <div class="insight-card">
+          <div class="insight-icon">
+            {% if forloop.counter == 1 %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            {% elif forloop.counter == 2 %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            {% elif forloop.counter == 3 %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            {% endif %}
+          </div>
+          <div class="insight-title">{{ c.title }}</div>
+          <div class="insight-value">{{ c.value }}</div>
+          <div class="insight-desc">{{ c.description }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {{ block.super }}
+{% endblock %}

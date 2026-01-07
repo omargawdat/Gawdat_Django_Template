@@ -14,7 +14,7 @@ class CustomerListView:
     )
     list_editable = ()
     list_filter = (("user__date_joined", RangeDateFilter), "user__is_active", "country")
-    date_hierarchy = "user__date_joined"
+    date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
     list_fullwidth = False
