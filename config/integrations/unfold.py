@@ -89,7 +89,7 @@ UNFOLD = {
         "show_all_applications": True,
         "navigation": [
             {
-                "title": _("Users 👥"),
+                "title": _("Customers & Providers 👥"),
                 "separator": True,
                 "items": [
                     {
@@ -102,35 +102,65 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("Admin"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:users_adminuser_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "users.view_adminuser"
-                        ),
-                    },
-                    {
                         "title": _("Provider"),
-                        "icon": "person",
+                        "icon": "storefront",
                         "link": reverse_lazy("admin:users_provider_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "users.view_provider"
                         ),
                     },
-                    {
-                        "title": _("Groups"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:auth_group_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "auth.view_group"
-                        ),
-                    },
+                ],
+            },
+            {
+                "title": _("Communication 📢"),
+                "separator": True,
+                "items": [
                     {
                         "title": _("Notification"),
                         "icon": "notifications",
                         "link": reverse_lazy("admin:channel_notification_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "channel.view_notification"
+                        ),
+                    },
+                    {
+                        "title": _("Onboarding"),
+                        "icon": "rocket_launch",
+                        "link": reverse_lazy("admin:appInfo_onboarding_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_onboarding"
+                        ),
+                    },
+                    {
+                        "title": _("Banner Group"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_bannergroup"
+                        ),
+                    },
+                    {
+                        "title": _("Banner"),
+                        "icon": "photo",
+                        "link": reverse_lazy("admin:appInfo_banner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_banner"
+                        ),
+                    },
+                    {
+                        "title": _("PopUp Banner"),
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_popupbanner"
+                        ),
+                    },
+                    {
+                        "title": _("Contact Us"),
+                        "icon": "call",
+                        "link": reverse_lazy("admin:appInfo_contactus_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "appInfo.view_contactus"
                         ),
                     },
                 ],
@@ -170,10 +200,9 @@ UNFOLD = {
             {
                 "title": _("Location 📍"),
                 "separator": True,
-                # "collapsible": True,
                 "items": [
                     {
-                        "title": _("country"),
+                        "title": _("Country"),
                         "icon": "public",
                         "link": reverse_lazy("admin:location_country_changelist"),
                         "permission": lambda request: request.user.has_perm(
@@ -181,7 +210,7 @@ UNFOLD = {
                         ),
                     },
                     {
-                        "title": _("region"),
+                        "title": _("Region"),
                         "icon": "map",
                         "link": reverse_lazy("admin:location_region_changelist"),
                         "permission": lambda request: request.user.has_perm(
@@ -190,7 +219,7 @@ UNFOLD = {
                     },
                     {
                         "title": _("Address"),
-                        "icon": "map",
+                        "icon": "location_on",
                         "link": reverse_lazy("admin:location_address_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "location.view_address"
@@ -199,59 +228,13 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Application Content 📱"),
-                "separator": True,
-                "items": [
-                    {
-                        "title": _("Onboarding"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:appInfo_onboarding_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_onboarding"
-                        ),
-                    },
-                    {
-                        "title": _("Banner Group"),
-                        "icon": "category",
-                        "link": reverse_lazy("admin:appInfo_bannergroup_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_bannergroup"
-                        ),
-                    },
-                    {
-                        "title": _("Banner"),
-                        "icon": "photo",
-                        "link": reverse_lazy("admin:appInfo_banner_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_banner"
-                        ),
-                    },
-                    {
-                        "title": _("PopUp Banner"),
-                        "icon": "campaign",
-                        "link": reverse_lazy("admin:appInfo_popupbanner_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_popupbanner"
-                        ),
-                    },
-                ],
-            },
-            {
-                "title": _("Configuration ⓘ"),
+                "title": _("Configuration ⚙️"),
                 "separator": True,
                 "collapsible": False,
                 "items": [
                     {
-                        "title": _("Contact Us"),
-                        "icon": "call",
-                        "link": reverse_lazy("admin:appInfo_contactus_changelist"),
-                        "permission": lambda request: request.user.has_perm(
-                            "appInfo.view_contactus"
-                        ),
-                    },
-                    {
                         "title": _("Social Accounts"),
-                        "icon": "group",
+                        "icon": "share",
                         "link": reverse_lazy("admin:appInfo_socialaccount_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "appInfo.view_socialaccount"
@@ -267,7 +250,7 @@ UNFOLD = {
                     },
                     {
                         "title": _("App Info"),
-                        "icon": "public",
+                        "icon": "info",
                         "link": reverse_lazy("admin:appInfo_appinfo_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "appInfo.view_appinfo"
@@ -279,6 +262,28 @@ UNFOLD = {
                         "link": reverse_lazy("admin:constance_config_changelist"),
                         "permission": lambda request: request.user.has_perm(
                             "constance.view_config"
+                        ),
+                    },
+                ],
+            },
+            {
+                "title": _("Administration 🔐"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Admins"),
+                        "icon": "admin_panel_settings",
+                        "link": reverse_lazy("admin:users_adminuser_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "users.view_adminuser"
+                        ),
+                    },
+                    {
+                        "title": _("Groups"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "permission": lambda request: request.user.has_perm(
+                            "auth.view_group"
                         ),
                     },
                 ],
