@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from import_export.admin import ExportActionModelAdmin
+from import_export.formats.base_formats import XLSX
+from unfold.contrib.import_export.forms import ExportForm
 
+from apps.users.admin.provider.resource import ProviderResource
 from apps.users.domain.selectors.provider import ProviderSelector
 from apps.users.models.provider import Provider
 from common.base.admin import BaseModelAdmin
@@ -17,9 +21,14 @@ class ProviderAdmin(
     ProviderListView,
     ProviderChangeView,
     ProviderAdminPermissions,
+    ExportActionModelAdmin,
     BaseModelAdmin,
 ):
+    resource_class = ProviderResource
+    export_form_class = ExportForm
+    formats = [XLSX]
     change_list_template = "admin/users/provider/change_list.html"
+    import_export_change_list_template = "admin/users/provider/change_list.html"
 
     def changelist_view(self, request, extra_context=None):
         avg_orders = ProviderSelector.get_avg_orders_per_provider()

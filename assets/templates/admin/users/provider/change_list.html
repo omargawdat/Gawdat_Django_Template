@@ -1,6 +1,8 @@
 {% extends "admin/change_list.html" %}
 {% load unfold admin_urls i18n %}
 
+{% block actions-items %}{% endblock %}
+
 {% block filters %}
   <div class="flex gap-2 lg:ml-auto">
     {% if cl.has_filters %}
@@ -40,10 +42,6 @@
         padding-bottom: 0.75rem !important;
         margin-bottom: -0.5rem !important;
       }
-    }
-    /* Hide export button in top action items area */
-    #tabs-wrapper a[href*="export"] {
-      display: none !important;
     }
   </style>
 {% endblock %}
