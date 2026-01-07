@@ -18,7 +18,7 @@ class BaseCustomerPermissions:
             ),
             "is_active": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
-                editable=(context.is_staff,),
+                editable=(),
             ),
             "date_joined": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
@@ -26,27 +26,27 @@ class BaseCustomerPermissions:
             ),
             "phone_number": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff and not context.is_created),
+                editable=(),
             ),
             "email": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "image": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "full_name": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "gender": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "birth_date": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "country": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
