@@ -1,3 +1,4 @@
+from django.db import models
 from django.utils import timezone
 from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
@@ -31,3 +32,10 @@ class CustomerDisplayMixin:
     @display(description=_("Date joined ago"), label="info")
     def display_date_joined_time(self, customer: Customer):
         return f"{timesince(customer.date_joined, timezone.now())}"
+
+    @display(description=_("Total Spend"), label="info", ordering="payments")
+    def display_total_spend(self, customer: Customer):
+        total_spend = customer.payments.aggregate(
+            total_spend_money=models.Sum("price_after_discount")
+        )["total_spend_money"]
+        return f"{total_spend or 0} SAR"

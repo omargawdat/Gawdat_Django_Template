@@ -10,7 +10,7 @@ class CustomerListView:
     list_display = (
         "display_customer_info",
         "primary_address",
-        "gender",
+        "display_total_spend",
         "display_is_active_customer",
         "display_date_joined_time",
     )
