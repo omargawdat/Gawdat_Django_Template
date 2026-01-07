@@ -17,7 +17,7 @@ class WalletTransactionListView:
         "action_by",
         "transaction_type",
     ]
-    date_hierarchy = "created_at"
+    date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
     list_fullwidth = False
