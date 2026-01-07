@@ -3,6 +3,8 @@ from unfold.contrib.filters.admin import RangeDateFilter
 
 from apps.location.admin.address.inline import AddressInline
 
+from .sections import ClientTableSection
+
 
 class CustomerListView:
     list_display = (
@@ -23,3 +25,4 @@ class CustomerListView:
     search_help_text = _("search email...🔍")
     ordering = ("-user__date_joined",)
     inlines = [AddressInline]
+    list_sections = [ClientTableSection]
