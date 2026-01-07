@@ -55,7 +55,7 @@ class InsightSelector:
 
     @staticmethod
     def get_unchecked_contacts(limit: int = 10) -> list[ContactUs]:
-        return ContactUs.objects.filter(has_checked=False)
+        return ContactUs.objects.filter(has_checked=False)[:limit]
 
     @staticmethod
     def get_social_accounts() -> SocialAccount:
