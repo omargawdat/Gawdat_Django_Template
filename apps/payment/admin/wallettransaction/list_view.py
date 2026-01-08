@@ -6,8 +6,8 @@ from unfold.contrib.filters.admin import RangeNumericFilter
 class WalletTransactionListView:
     list_display = (
         "display_header",
-        "display_transaction_type",
         "display_amount",
+        "display_transaction_type",
         "display_created_time",
     )
     list_editable = ()

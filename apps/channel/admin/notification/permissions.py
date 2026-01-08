@@ -71,7 +71,7 @@ class NotificationAdminPermissions(BaseNotificationPermissions):
         return False
 
     def can_delete(self, request, obj=None):
-        return True
+        return False
 
 
 class NotificationInlinePermissions(BaseNotificationPermissions):
