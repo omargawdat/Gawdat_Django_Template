@@ -21,8 +21,8 @@ class CustomerListView:
     list_filter_submit = True
     list_fullwidth = False
     list_horizontal_scrollbar_top = True
-    search_fields = ["user__email"]
-    search_help_text = _("search email...🔍")
+    search_fields = ["user__email", "full_name"]
+    search_help_text = _("search by email or full name...🔍")
     ordering = ("-user__date_joined",)
     inlines = [AddressInline]
     list_sections = [ClientTableSection]

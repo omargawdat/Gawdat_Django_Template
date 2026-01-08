@@ -105,6 +105,7 @@ UNFOLD = {
                         "title": _("Provider"),
                         "icon": "storefront",
                         "link": reverse_lazy("admin:users_provider_changelist"),
+                        "badge": "config.integrations.unfold.badge_providers_week_count",
                         "permission": lambda request: request.user.has_perm(
                             "users.view_provider"
                         ),
@@ -397,6 +398,13 @@ def badge_customers_week_count(request):
 
     count = CustomerSelector.last_week_new_customer_count()
     return f"🙋🏻‍♂️: {count}" if count else ""
+
+
+def badge_providers_week_count(request):
+    from apps.users.domain.selectors.provider import ProviderSelector
+
+    count = ProviderSelector.last_week_new_provider_count()
+    return f"🏪: {count}" if count else ""
 
 
 def get_site_icon(request):
