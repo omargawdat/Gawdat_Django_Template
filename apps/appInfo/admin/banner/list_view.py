@@ -1,3 +1,6 @@
+from unfold.contrib.filters.admin import AutocompleteSelectMultipleFilter
+
+
 class BannerListView:
     list_display = (
         "display_header",
@@ -5,7 +8,10 @@ class BannerListView:
         "is_active",
     )
     list_editable = ("is_active",)
-    list_filter = ()
+    list_filter = (
+        "is_active",
+        ("group", AutocompleteSelectMultipleFilter),
+    )
     date_hierarchy = None
     list_per_page = 50
     list_filter_submit = False

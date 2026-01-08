@@ -8,14 +8,10 @@ class OnboardingChangeView:
     fieldsets = (
         (
             _("Main Information"),
-            {"fields": ("title", "order", "is_active")},
+            {"fields": ("image", "title", "order", "is_active")},
         ),
         (
             _("Content"),
             {"fields": ("text", "sub_text")},
-        ),
-        (
-            _("Media"),
-            {"fields": ("image",)},
         ),
     )
