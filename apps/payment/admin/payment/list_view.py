@@ -6,7 +6,7 @@ from unfold.contrib.filters.admin import RangeNumericFilter
 class PaymentListView:
     list_display = (
         "display_header",
-        "display_payment_price",
+        "display_price",
         "display_payment_type",
         "is_paid",
         "display_created_at_time",
