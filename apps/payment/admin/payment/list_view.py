@@ -6,8 +6,8 @@ from unfold.contrib.filters.admin import RangeNumericFilter
 class PaymentListView:
     list_display = (
         "display_header",
-        "display_payment_type",
         "display_payment_price",
+        "display_payment_type",
         "is_paid",
         "display_created_at_time",
     )
@@ -15,8 +15,9 @@ class PaymentListView:
     list_editable = ()
     list_filter = (
         "is_paid",
-        ("price_after_discount", RangeNumericFilter),
         ("created_at", RangeDateFilter),
+        ("price_after_discount", RangeNumericFilter),
+        ("price_before_discount", RangeNumericFilter),
     )
     date_hierarchy = None
     list_per_page = 50
