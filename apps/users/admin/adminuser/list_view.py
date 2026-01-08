@@ -1,3 +1,6 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class AdminUserListView:
     list_display = ("display_header", "display_date_joined_time", "is_active")
     list_editable = ("is_active",)
@@ -8,7 +11,7 @@ class AdminUserListView:
     list_fullwidth = False
     list_horizontal_scrollbar_top = False
     search_fields = ("email",)
-    search_help_text = "Search by email"
+    search_help_text = _("Search by email...")
 
     def get_ordering(self, request):
         return ()

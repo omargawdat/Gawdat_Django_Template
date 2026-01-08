@@ -1,14 +1,15 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class FAQ(models.Model):
-    question = models.CharField(max_length=255)
-    answer = models.TextField()
-    order = models.PositiveIntegerField(unique=True, default=0)
+    question = models.CharField(max_length=255, verbose_name=_("Question"))
+    answer = models.TextField(verbose_name=_("Answer"))
+    order = models.PositiveIntegerField(unique=True, default=0, verbose_name=_("Order"))
 
     class Meta:
-        verbose_name = "FAQ"
-        verbose_name_plural = "FAQs"
+        verbose_name = _("FAQ")
+        verbose_name_plural = _("FAQs")
         ordering = ["order"]
 
     def __str__(self):

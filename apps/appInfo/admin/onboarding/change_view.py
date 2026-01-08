@@ -1,18 +1,21 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class OnboardingChangeView:
     filter_horizontal = ()
     compressed_fields = True
     autocomplete_fields = ()
     fieldsets = (
         (
-            "Main Information",
+            _("Main Information"),
             {"fields": ("title", "order", "is_active")},
         ),
         (
-            "Content",
+            _("Content"),
             {"fields": ("text", "sub_text")},
         ),
         (
-            "Media",
+            _("Media"),
             {"fields": ("image",)},
         ),
     )

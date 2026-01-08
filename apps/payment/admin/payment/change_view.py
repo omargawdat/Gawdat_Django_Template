@@ -1,10 +1,13 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class PaymentChangeView:
     filter_horizontal = ()
     compressed_fields = True
     autocomplete_fields = ()
     fieldsets = (
         (
-            "Information",
+            _("Information"),
             {
                 "fields": (
                     "customer",
@@ -17,7 +20,7 @@ class PaymentChangeView:
             },
         ),
         (
-            "Status & Metadata",
+            _("Status & Metadata"),
             {
                 "fields": (
                     "is_paid",

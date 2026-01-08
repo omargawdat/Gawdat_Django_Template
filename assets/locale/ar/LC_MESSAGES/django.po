@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-04 12:13+0300\n"
+"POT-Creation-Date: 2026-01-08 12:38+0300\n"
 "PO-Revision-Date: 2025-05-04 12:30+0300\n"
 "Last-Translator: Ahmed Hassan <ahmed@example.com>\n"
 "Language-Team: Arabic <LL@li.org>\n"
@@ -18,23 +18,84 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: apps/appInfo/admin/appinfo/change_view.py:12
+#: apps/appInfo/admin/appinfo/admin.py:17
 msgid "Organizational Overview"
 msgstr "نظرة عامة تنظيمية"
 
-#: apps/appInfo/admin/appinfo/change_view.py:18
+#: apps/appInfo/admin/appinfo/admin.py:23
 msgid "Terms"
 msgstr "الشروط"
 
-#: apps/appInfo/admin/appinfo/change_view.py:24
+#: apps/appInfo/admin/appinfo/admin.py:29
 msgid "Policy"
 msgstr "السياسة"
+
+#: apps/appInfo/admin/banner/change_view.py:10 apps/appInfo/models/banner.py:25
+#: apps/appInfo/models/popup.py:30 config/integrations/unfold.py:143
+msgid "Banner"
+msgstr "البانر"
+
+#: apps/appInfo/admin/banner/display.py:8
+#, fuzzy
+#| msgid "Banner"
+msgid "banner"
+msgstr "البانر"
+
+#: apps/appInfo/admin/bannergroup/change_view.py:9
+#: apps/appInfo/admin/contactus/change_view.py:10
+#: apps/appInfo/admin/popupbanner/change_view.py:8
+#: apps/payment/admin/payment/change_view.py:10
+#: apps/payment/admin/wallet/change_view.py:12
+#, fuzzy
+#| msgid "App Information"
+msgid "Information"
+msgstr "معلومات التطبيق"
+
+#: apps/appInfo/admin/bannergroup/display.py:8
+#, fuzzy
+#| msgid "Groups"
+msgid "Group"
+msgstr "المجموعات"
+
+#: apps/appInfo/admin/bannergroup/list_view.py:14
+#, fuzzy
+#| msgid "Search by group name...🔍"
+msgid "Search by group name..."
+msgstr "البحث باسم المجموعة...🔍"
+
+#: apps/appInfo/admin/contactus/display.py:35
+#: apps/appInfo/models/contact_us.py:19
+#, fuzzy
+#| msgid "Transaction Type"
+msgid "Contact Type"
+msgstr "نوع المعاملة"
+
+#: apps/appInfo/admin/contactus/list_view.py:19
+#, fuzzy
+#| msgid "Search by customer phone number"
+msgid "Search by customer email..."
+msgstr "البحث برقم هاتف العميل"
 
 #: apps/appInfo/admin/faq/chanage_view.py:10
 msgid "FAQ Details"
 msgstr "تفاصيل الأسئلة الشائعة"
 
+#: apps/appInfo/admin/onboarding/change_view.py:10
+#, fuzzy
+#| msgid "Region Information"
+msgid "Main Information"
+msgstr "معلومات المنطقة"
+
+#: apps/appInfo/admin/onboarding/change_view.py:14
+msgid "Content"
+msgstr ""
+
+#: apps/appInfo/admin/onboarding/change_view.py:18
+msgid "Media"
+msgstr ""
+
 #: apps/appInfo/admin/socialaccount/change_view.py:10
+#: assets/templates/admin/components/social.html:30
 msgid "Contact Information"
 msgstr "معلومات الاتصال"
 
@@ -43,6 +104,7 @@ msgid "Primary contact details for the organization."
 msgstr "تفاصيل الاتصال الأساسية للمنظمة."
 
 #: apps/appInfo/admin/socialaccount/change_view.py:17
+#: assets/templates/admin/components/social.html:14
 msgid "Social Media Links"
 msgstr "روابط وسائل التواصل الاجتماعي"
 
@@ -50,12 +112,12 @@ msgstr "روابط وسائل التواصل الاجتماعي"
 msgid "Links to social media profiles."
 msgstr "روابط إلى حسابات وسائل التواصل الاجتماعي."
 
-#: apps/appInfo/admin/socialaccount/change_view.py:25
+#: apps/appInfo/admin/socialaccount/change_view.py:24
 #: apps/appInfo/models/social.py:25
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
-#: apps/appInfo/admin/socialaccount/change_view.py:28
+#: apps/appInfo/admin/socialaccount/change_view.py:27
 msgid "Official website URL."
 msgstr "عنوان الموقع الرسمي."
 
@@ -91,11 +153,166 @@ msgstr "معلومات التطبيق"
 msgid "App Information"
 msgstr "معلومات التطبيق"
 
-#: apps/appInfo/models/social.py:11 apps/users/models/customer.py:22
+#: apps/appInfo/models/banner.py:14 apps/appInfo/models/popup.py:15
+msgid "Image Banner"
+msgstr "صورة بانر"
+
+#: apps/appInfo/models/banner.py:20 apps/appInfo/models/banner_group.py:13
+#: apps/appInfo/models/banner_group.py:14 config/integrations/unfold.py:135
+#, fuzzy
+#| msgid "Banner"
+msgid "Banner Group"
+msgstr "البانر"
+
+#: apps/appInfo/models/banner.py:22 apps/appInfo/models/banner_group.py:10
+#: apps/appInfo/models/onboarding.py:27 apps/appInfo/models/popup.py:23
+#: apps/location/admin/country/display.py:21
+#: apps/location/admin/region/display.py:17 apps/location/models/country.py:17
+#: apps/users/admin/adminuser/display.py:23
+#: apps/users/admin/customer/display.py:26
+#: apps/users/admin/provider/display.py:21
+msgid "Is Active"
+msgstr "نشط"
+
+#: apps/appInfo/models/banner.py:26 apps/appInfo/models/popup.py:31
+#, fuzzy
+#| msgid "Banner"
+msgid "Banners"
+msgstr "البانر"
+
+#: apps/appInfo/models/banner_group.py:6
+#, fuzzy
+#| msgid "Full Name"
+msgid "Group Name"
+msgstr "الاسم الكامل"
+
+#: apps/appInfo/models/banner_group.py:8 apps/appInfo/models/faq.py:8
+#: apps/appInfo/models/onboarding.py:26
+msgid "Order"
+msgstr ""
+
+#: apps/appInfo/models/banner_group.py:8
+msgid "Group Ordering Level"
+msgstr ""
+
+#: apps/appInfo/models/contact_us.py:13 apps/appInfo/models/popup.py:39
+#: apps/location/models/address.py:16 apps/payment/admin/wallet/display.py:10
+#: apps/payment/models/payment.py:15 apps/users/admin/customer/display.py:11
+#: apps/users/constants.py:12 apps/users/models/customer.py:72
+#: config/integrations/unfold.py:96
+msgid "Customer"
+msgstr "العميل"
+
+#: apps/appInfo/models/contact_us.py:14
+msgid "Select the customer who is making this contact."
+msgstr ""
+
+#: apps/appInfo/models/contact_us.py:22 apps/location/models/address.py:25
+msgid "Description"
+msgstr "الوصف"
+
+#: apps/appInfo/models/contact_us.py:23
+msgid "Please provide a detailed description of your issue or inquiry."
+msgstr ""
+
+#: apps/appInfo/models/contact_us.py:25
+msgid "Has Checked"
+msgstr ""
+
+#: apps/appInfo/models/contact_us.py:26 apps/channel/models/notification.py:22
+#: apps/payment/models/wallet_transaction.py:41
+#: apps/users/admin/customer/sections.py:40
+#: apps/users/admin/provider/sections.py:51
+msgid "Created At"
+msgstr "تاريخ الإنشاء"
+
+#: apps/appInfo/models/faq.py:6
+#, fuzzy
+#| msgid "Description"
+msgid "Question"
+msgstr "الوصف"
+
+#: apps/appInfo/models/faq.py:7
+msgid "Answer"
+msgstr ""
+
+#: apps/appInfo/models/faq.py:11
+#, fuzzy
+#| msgid "FAQs"
+msgid "FAQ"
+msgstr "الأسئلة الشائعة"
+
+#: apps/appInfo/models/faq.py:12 config/integrations/unfold.py:244
+msgid "FAQs"
+msgstr "الأسئلة الشائعة"
+
+#: apps/appInfo/models/onboarding.py:13 apps/users/models/admin.py:14
+#: apps/users/models/customer.py:37
+msgid "Image"
+msgstr "صورة"
+
+#: apps/appInfo/models/onboarding.py:16
+msgid "Text"
+msgstr ""
+
+#: apps/appInfo/models/onboarding.py:18
+msgid "You can only wirte 75 characters."
+msgstr ""
+
+#: apps/appInfo/models/onboarding.py:21
+msgid "Sub Text"
+msgstr ""
+
+#: apps/appInfo/models/onboarding.py:24
+msgid "You can only wirte 50 characters."
+msgstr ""
+
+#: apps/appInfo/models/onboarding.py:30 apps/appInfo/models/onboarding.py:31
+#: config/integrations/unfold.py:127
+msgid "Onboarding"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:18
+msgid "Display count per user"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:19
+msgid "Number of times this banner will be shown to each user"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:24
+msgid "Whether this popup banner is active and can be displayed"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:45
+#, fuzzy
+#| msgid "Banner"
+msgid "Popup Banner"
+msgstr "البانر"
+
+#: apps/appInfo/models/popup.py:48
+msgid "View Count"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:49
+msgid "Number of times this user has viewed this banner"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:53
+msgid "Popup Tracking"
+msgstr ""
+
+#: apps/appInfo/models/popup.py:54
+msgid "Popup Trackings"
+msgstr ""
+
+#: apps/appInfo/models/social.py:11
+#: assets/templates/admin/components/social.html:39
+#: assets/templates/admin/wallet/process_transaction_form.html:29
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: apps/appInfo/models/social.py:17 apps/users/models/customer.py:20
+#: apps/appInfo/models/social.py:17
 #: assets/templates/admin/wallet/process_transaction_form.html:25
 msgid "Phone Number"
 msgstr "رقم الهاتف"
@@ -124,20 +341,6 @@ msgstr "وسائل التواصل الاجتماعي"
 msgid "Social Media Configuration"
 msgstr "تهيئة وسائل التواصل الاجتماعي"
 
-#: apps/appInfo/models/system_config.py:11
-msgid "Cancellation Fees"
-msgstr "رسوم الإلغاء"
-
-#: apps/appInfo/models/system_config.py:12
-msgid "cancellation feed."
-msgstr "رسوم الإلغاء."
-
-#: apps/appInfo/models/system_config.py:16
-#: apps/appInfo/models/system_config.py:17
-#: apps/appInfo/models/system_config.py:20 config/integrations/unfold.py:239
-msgid "System Configuration"
-msgstr "تهيئة النظام"
-
 #: apps/appInfo/other/constants.py:6
 msgid "General"
 msgstr "عام"
@@ -151,6 +354,7 @@ msgid "Feedback"
 msgstr "ملاحظات"
 
 #: apps/appInfo/other/constants.py:9 apps/channel/constants.py:7
+#: apps/payment/constants.py:40
 msgid "Other"
 msgstr "أخرى"
 
@@ -158,19 +362,37 @@ msgstr "أخرى"
 msgid "Complaint"
 msgstr "شكوى"
 
-#: apps/channel/admin/notification/change_view.py:11
-#: config/integrations/unfold.py:158
+#: apps/channel/admin/notification/change_view.py:14
+#: apps/channel/admin/notification/change_view.py:15
+#: apps/users/models/customer.py:73
+#, fuzzy
+#| msgid "Customer"
+msgid "Customers"
+msgstr "العميل"
+
+#: apps/channel/admin/notification/change_view.py:21
+#: apps/channel/admin/notification/change_view.py:22
+#: apps/users/models/provider.py:35
+msgid "Providers"
+msgstr ""
+
+#: apps/channel/admin/notification/change_view.py:77
 msgid "Notification 📢"
 msgstr "إشعار 📢"
 
-#: apps/channel/admin/notification/change_view.py:17
-#: config/integrations/unfold.py:89
-msgid "Users 👥"
+#: apps/channel/admin/notification/change_view.py:83
+#, fuzzy
+#| msgid "Users 👥"
+msgid "Customers 👥"
 msgstr "المستخدمون 👥"
 
-#: apps/channel/admin/notification/change_view.py:23
-msgid "Choices"
-msgstr "خيارات"
+#: apps/channel/admin/notification/change_view.py:89
+msgid "Providers 🏢"
+msgstr ""
+
+#: apps/channel/admin/notification/change_view.py:95
+msgid "Delivery Options 📬"
+msgstr ""
 
 #: apps/channel/admin/notification/display.py:12
 msgid "Notification ID"
@@ -181,11 +403,12 @@ msgid "O"
 msgstr "O"
 
 #: apps/channel/admin/notification/display.py:28
-#: apps/channel/models/notification.py:13
+#: apps/channel/models/notification.py:14
 msgid "Notification Type"
 msgstr "نوع الإشعار"
 
 #: apps/channel/admin/notification/display.py:36
+#: apps/payment/admin/payment/display.py:35
 #: apps/payment/admin/wallettransaction/display.py:26
 msgid "Created ago"
 msgstr "تم الإنشاء منذ"
@@ -194,7 +417,12 @@ msgstr "تم الإنشاء منذ"
 msgid "info"
 msgstr "معلومات"
 
-#: apps/channel/admin/notification/list_view.py:25
+#: apps/channel/admin/notification/display.py:40
+#: apps/channel/models/notification.py:21
+msgid "Is Read"
+msgstr ""
+
+#: apps/channel/admin/notification/list_view.py:26
 msgid "Search By Notification ID...🔍"
 msgstr "البحث بواسطة معرّف الإشعار...🔍"
 
@@ -202,29 +430,40 @@ msgstr "البحث بواسطة معرّف الإشعار...🔍"
 msgid "Product Ordered"
 msgstr "تم طلب المنتج"
 
-#: apps/channel/errors.py:8
-msgid "Hourly OTP limit exceeded. Please try again later."
-msgstr "تم تجاوز حد رمز التحقق لكل ساعة. يرجى المحاولة لاحقًا."
+#: apps/channel/constants.py:8
+msgid "Referral App Install"
+msgstr ""
 
-#: apps/channel/errors.py:10
-msgid "Failed to send verification code"
-msgstr "فشل في إرسال رمز التحقق"
+#: apps/channel/constants.py:9
+msgid "Referral First Order"
+msgstr ""
 
-#: apps/channel/errors.py:11
-msgid "Error sending code"
-msgstr "خطأ في إرسال الرمز"
+#: apps/channel/constants.py:10
+#: apps/payment/admin/wallettransaction/admin.py:48
+msgid "Money Added"
+msgstr ""
 
-#: apps/channel/errors.py:12
-msgid "Verification code expired or not found"
-msgstr "انتهت صلاحية رمز التحقق أو لم يتم العثور عليه"
+#: apps/channel/constants.py:16
+msgid "iOS"
+msgstr ""
 
-#: apps/channel/errors.py:14
-msgid "Maximum verification attempts exceeded"
-msgstr "تم تجاوز الحد الأقصى لمحاولات التحقق"
+#: apps/channel/constants.py:17
+msgid "Android"
+msgstr ""
 
-#: apps/channel/errors.py:16
-msgid "Invalid verification code"
-msgstr "رمز التحقق غير صالح"
+#: apps/channel/constants.py:18
+#, fuzzy
+#| msgid "Website"
+msgid "Web"
+msgstr "الموقع الإلكتروني"
+
+#: apps/channel/constants.py:22 config/settings/base.py:35
+msgid "English"
+msgstr "الإنجليزية"
+
+#: apps/channel/constants.py:23 config/settings/base.py:34
+msgid "Arabic"
+msgstr "العربية"
 
 #: apps/channel/models/notification.py:9
 msgid "Users"
@@ -238,27 +477,23 @@ msgstr "العنوان"
 msgid "Message Body"
 msgstr "محتوى الرسالة"
 
-#: apps/channel/models/notification.py:17
+#: apps/channel/models/notification.py:18
 msgid "Send SMS"
 msgstr "إرسال رسالة نصية"
 
-#: apps/channel/models/notification.py:18
+#: apps/channel/models/notification.py:19
 msgid "Send FCM"
 msgstr "إرسال FCM"
 
-#: apps/channel/models/notification.py:19
+#: apps/channel/models/notification.py:20
 msgid "Object ID"
 msgstr "معرّف الكائن"
 
-#: apps/channel/models/notification.py:20
-msgid "Created At"
-msgstr "تاريخ الإنشاء"
-
-#: apps/channel/models/notification.py:23 config/integrations/unfold.py:162
+#: apps/channel/models/notification.py:25 config/integrations/unfold.py:119
 msgid "Notification"
 msgstr "إشعار"
 
-#: apps/channel/models/notification.py:24
+#: apps/channel/models/notification.py:26
 msgid "Notifications"
 msgstr "الإشعارات"
 
@@ -273,12 +508,51 @@ msgstr "شكرًا لطلبك {product}! طلبك رقم {order_id} قيد ال�
 msgid "New order #{order_id} for {product} is awaiting your confirmation."
 msgstr "طلب جديد رقم {order_id} لـ {product} في انتظار تأكيدك."
 
+#: apps/channel/template_message.py:17
+#, python-brace-format
+msgid ""
+"Congratulations! You've earned {amount} for successfully referring a friend "
+"to our app. The money has been added to your wallet."
+msgstr ""
+
+#: apps/channel/template_message.py:20
+#, python-brace-format
+msgid ""
+"A new customer has joined through your referral! You've earned {amount} "
+"which has been added to your wallet."
+msgstr ""
+
+#: apps/channel/template_message.py:25
+#, python-brace-format
+msgid ""
+"Great news! Your referred friend has placed their first order. You've earned "
+"{amount} as a referral bonus!"
+msgstr ""
+
+#: apps/channel/template_message.py:28
+#, python-brace-format
+msgid ""
+"Your referred customer has completed their first order! You've been rewarded "
+"{amount} for the successful referral."
+msgstr ""
+
+#: apps/location/admin/address/change_view.py:10
+#, fuzzy
+#| msgid "Customer"
+msgid "Customer Address"
+msgstr "العميل"
+
 #: apps/location/admin/country/change_view.py:10
 msgid "Country Information"
 msgstr "معلومات الدولة"
 
-#: apps/location/admin/country/display.py:8 apps/location/models/country.py:27
-#: apps/location/models/region.py:13 apps/users/models/customer.py:44
+#: apps/location/admin/country/change_view.py:23
+msgid "Referral Program"
+msgstr ""
+
+#: apps/location/admin/country/display.py:8 apps/location/models/address.py:22
+#: apps/location/models/country.py:44 apps/location/models/region.py:9
+#: apps/users/models/customer.py:52 config/integrations/unfold.py:205
 msgid "Country"
 msgstr "الدولة"
 
@@ -286,22 +560,17 @@ msgstr "الدولة"
 msgid "Currency: {}"
 msgstr "العملة: {}"
 
-#: apps/location/admin/country/display.py:21
-#: apps/location/admin/region/display.py:17 apps/location/models/country.py:23
-#: apps/users/admin/adminuser/display.py:23
-#: apps/users/admin/customer/display.py:25
-msgid "Is Active"
-msgstr "نشط"
-
-#: apps/location/admin/country/list_view.py:20
-msgid "Search by name..."
+#: apps/location/admin/country/list_view.py:19
+#, fuzzy
+#| msgid "Search by name..."
+msgid "Search by code..."
 msgstr "البحث بالاسم..."
 
 #: apps/location/admin/region/change_view.py:8
 msgid "Region Information"
 msgstr "معلومات المنطقة"
 
-#: apps/location/admin/region/display.py:8 config/integrations/unfold.py:185
+#: apps/location/admin/region/display.py:8
 msgid "region"
 msgstr "منطقة"
 
@@ -309,145 +578,119 @@ msgstr "منطقة"
 msgid "Search By Name..."
 msgstr "البحث بالاسم..."
 
-#: apps/location/api/common/exceptions.py:8
+#: apps/location/api/exceptions.py:8
 msgid "The provided location is not in a supported region."
 msgstr "الموقع المقدم ليس في منطقة مدعومة."
 
-#: apps/location/api/common/exceptions.py:15
+#: apps/location/api/exceptions.py:15
 msgid "The region of the provided location does not match the user's country."
 msgstr "منطقة الموقع المقدم لا تتطابق مع دولة المستخدم."
 
+#: apps/location/api/exceptions.py:23
+#, fuzzy
+#| msgid "The provided location is not in a supported region."
+msgid "The provided location is in a country that is not currently active."
+msgstr "الموقع المقدم ليس في منطقة مدعومة."
+
 #: apps/location/constants.py:6
-msgid "Egypt"
-msgstr "مصر"
-
-#: apps/location/constants.py:7
-msgid "Saudi Arabia"
-msgstr "المملكة العربية السعودية"
-
-#: apps/location/constants.py:8
-msgid "United Arab Emirates"
-msgstr "الإمارات العربية المتحدة"
-
-#: apps/location/constants.py:9
-msgid "Kuwait"
-msgstr "الكويت"
-
-#: apps/location/constants.py:10
-msgid "Qatar"
-msgstr "قطر"
-
-#: apps/location/constants.py:11
-msgid "Oman"
-msgstr "عُمان"
-
-#: apps/location/constants.py:12
-msgid "Bahrain"
-msgstr "البحرين"
-
-#: apps/location/constants.py:17
-msgid "Egyptian Pound"
-msgstr "الجنيه المصري"
-
-#: apps/location/constants.py:18
-msgid "Saudi Riyal"
-msgstr "الريال السعودي"
-
-#: apps/location/constants.py:19
-msgid "Emirati Dirham"
-msgstr "الدرهم الإماراتي"
-
-#: apps/location/constants.py:20
-msgid "Kuwaiti Dinar"
-msgstr "الدينار الكويتي"
-
-#: apps/location/constants.py:21
-msgid "Qatari Riyal"
-msgstr "الريال القطري"
-
-#: apps/location/constants.py:22
-msgid "Omani Rial"
-msgstr "الريال العُماني"
-
-#: apps/location/constants.py:23
-msgid "Bahraini Dinar"
-msgstr "الدينار البحريني"
-
-#: apps/location/constants.py:27
 msgid "Home"
 msgstr "المنزل"
 
-#: apps/location/constants.py:28
+#: apps/location/constants.py:7
 msgid "Work"
 msgstr "العمل"
 
-#: apps/location/domain/selector/country.py:28
+#: apps/location/domain/selector/country.py:27
 msgid "Country code not found for phone"
 msgstr "لم يتم العثور على رمز الدولة للهاتف"
 
-#: apps/location/models/address.py:15 apps/users/admin/customer/display.py:10
-#: config/integrations/unfold.py:93
-msgid "Customer"
-msgstr "العميل"
-
-#: apps/location/models/address.py:17
+#: apps/location/models/address.py:24
 msgid "Location Point"
 msgstr "نقطة الموقع"
 
-#: apps/location/models/address.py:18
-msgid "Description"
-msgstr "الوصف"
-
-#: apps/location/models/address.py:20
+#: apps/location/models/address.py:27
 msgid "Map Description"
 msgstr "وصف الخريطة"
 
-#: apps/location/models/address.py:21
+#: apps/location/models/address.py:28
 msgid "Description for the map view"
 msgstr "وصف لعرض الخريطة"
 
-#: apps/location/models/address.py:27
+#: apps/location/models/address.py:34
 msgid "Location Type"
 msgstr "نوع الموقع"
 
-#: apps/location/models/address.py:31
+#: apps/location/models/address.py:38
+#, fuzzy
+#| msgid "Image"
+msgid "Map Image"
+msgstr "صورة"
+
+#: apps/location/models/address.py:39
+msgid "Image of the location on the map"
+msgstr ""
+
+#: apps/location/models/address.py:45 config/integrations/unfold.py:221
 msgid "Address"
 msgstr "العنوان"
 
-#: apps/location/models/address.py:32
+#: apps/location/models/address.py:46
 msgid "Addresses"
 msgstr "العناوين"
 
-#: apps/location/models/country.py:13 apps/location/models/region.py:9
+#: apps/location/models/country.py:14 apps/location/models/region.py:12
 msgid "Code"
 msgstr "الرمز"
 
-#: apps/location/models/country.py:17 apps/location/models/region.py:11
-#: apps/products/models/brand.py:8
-msgid "Name"
-msgstr "الاسم"
-
-#: apps/location/models/country.py:20
-msgid "Currency"
-msgstr "العملة"
-
-#: apps/location/models/country.py:22
+#: apps/location/models/country.py:16
 msgid "Flag"
 msgstr "العلم"
 
-#: apps/location/models/country.py:24
-msgid "Number Code"
-msgstr "الرمز الرقمي"
+#: apps/location/models/country.py:21
+msgid "App Install Money - Inviter"
+msgstr ""
+
+#: apps/location/models/country.py:22
+msgid "Money awarded to inviter when invitee installs the app."
+msgstr ""
+
+#: apps/location/models/country.py:27
+msgid "App Install Money - Invitee"
+msgstr ""
 
 #: apps/location/models/country.py:28
+msgid "Money awarded to invitee when they install the app."
+msgstr ""
+
+#: apps/location/models/country.py:33
+msgid "Order Money - Inviter"
+msgstr ""
+
+#: apps/location/models/country.py:34
+msgid "Money awarded to inviter when invitee places first order."
+msgstr ""
+
+#: apps/location/models/country.py:39
+msgid "Order Money - Invitee"
+msgstr ""
+
+#: apps/location/models/country.py:40
+msgid "Money awarded to invitee when they place first order."
+msgstr ""
+
+#: apps/location/models/country.py:45
 msgid "Countries"
 msgstr "الدول"
+
+#: apps/location/models/region.py:14
+msgid "Name"
+msgstr "الاسم"
 
 #: apps/location/models/region.py:15
 msgid "Geometry"
 msgstr "الهندسة"
 
-#: apps/location/models/region.py:21
+#: apps/location/models/region.py:21 config/integrations/unfold.py:213
 msgid "Region"
 msgstr "المنطقة"
 
@@ -455,51 +698,187 @@ msgstr "المنطقة"
 msgid "Regions"
 msgstr "المناطق"
 
-#: apps/payment/admin/wallet/admin.py:43 apps/payment/admin/wallet/admin.py:70
-#: assets/templates/admin/wallet/process_transaction_form.html:65
-msgid "Process Transaction"
-msgstr "معالجة المعاملة"
+#: apps/payment/admin/payment/admin.py:41
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payments Today"
+msgstr "الدفع 💳"
 
-#: apps/payment/admin/wallet/display.py:10 config/integrations/unfold.py:138
-msgid "Wallet"
+#: apps/payment/admin/payment/admin.py:43
+msgid "Number of payments processed today"
+msgstr ""
+
+#: apps/payment/admin/payment/admin.py:46
+msgid "Success Rate"
+msgstr ""
+
+#: apps/payment/admin/payment/admin.py:48
+msgid "Percentage of successful payments"
+msgstr ""
+
+#: apps/payment/admin/payment/admin.py:51 apps/payment/admin/wallet/admin.py:51
+#, fuzzy
+#| msgid "Wallet"
+msgid "Wallet Usage"
 msgstr "المحفظة"
 
-#: apps/payment/admin/wallet/display.py:19
+#: apps/payment/admin/payment/admin.py:53
+msgid "Percentage of payments using wallet"
+msgstr ""
+
+#: apps/payment/admin/payment/admin.py:56
+msgid "Revenue Today"
+msgstr ""
+
+#: apps/payment/admin/payment/admin.py:58
+msgid "Total revenue from paid payments today"
+msgstr ""
+
+#: apps/payment/admin/payment/change_view.py:23
+msgid "Status & Metadata"
+msgstr ""
+
+#: apps/payment/admin/payment/display.py:20
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payment Method"
+msgstr "الدفع 💳"
+
+#: apps/payment/admin/payment/display.py:30
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payment Price"
+msgstr "الدفع 💳"
+
+#: apps/payment/admin/payment/list_view.py:27
+#: apps/payment/admin/wallet/list_view.py:19
+#, fuzzy
+#| msgid "Search by name..."
+msgid "Search by customer name..."
+msgstr "البحث بالاسم..."
+
+#: apps/payment/admin/wallet/admin.py:41
+#, fuzzy
+#| msgid "Balance"
+msgid "Total Balance"
+msgstr "الرصيد"
+
+#: apps/payment/admin/wallet/admin.py:43
+msgid "Sum of all wallet balances"
+msgstr ""
+
+#: apps/payment/admin/wallet/admin.py:46
+#, fuzzy
+#| msgid "Balance"
+msgid "Avg Balance"
+msgstr "الرصيد"
+
+#: apps/payment/admin/wallet/admin.py:48
+msgid "Average balance per wallet"
+msgstr ""
+
+#: apps/payment/admin/wallet/admin.py:53
+msgid "Wallets enabled for payments"
+msgstr ""
+
+#: apps/payment/admin/wallet/admin.py:56
+#, fuzzy
+#| msgid "Wallet"
+msgid "Active Wallets"
+msgstr "المحفظة"
+
+#: apps/payment/admin/wallet/admin.py:58
+msgid "Wallets with balance > 0"
+msgstr ""
+
+#: apps/payment/admin/wallet/display.py:24 apps/payment/models/wallet.py:16
 msgid "Balance"
 msgstr "الرصيد"
 
-#: apps/payment/admin/wallet/display.py:25
-msgid "Is Use Wallet In Payment?"
-msgstr "استخدام المحفظة في الدفع؟"
-
-#: apps/payment/admin/wallet/display.py:30
+#: apps/payment/admin/wallet/display.py:28
 msgid "Last Update ago"
 msgstr "آخر تحديث منذ"
 
-#: apps/payment/admin/wallet/process_transaction_form.py:15
+#: apps/payment/admin/wallettransaction/admin.py:43
+#, fuzzy
+#| msgid "Transaction Type"
+msgid "Transactions Today"
+msgstr "نوع المعاملة"
+
+#: apps/payment/admin/wallettransaction/admin.py:45
+msgid "Total transactions created today"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/admin.py:50
+msgid "Credits added to wallets today"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/admin.py:53
+msgid "Money Deducted"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/admin.py:55
+msgid "Debits from wallets today"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/admin.py:58
+msgid "Net Change"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/admin.py:60
+msgid "Net wallet balance change today"
+msgstr ""
+
+#: apps/payment/admin/wallettransaction/change_view.py:9
+#, fuzzy
+#| msgid "User Information"
+msgid "Basic Information"
+msgstr "معلومات المستخدم"
+
+#: apps/payment/admin/wallettransaction/change_view.py:10
+#, fuzzy
+#| msgid "FAQ Details"
+msgid "Financial Details"
+msgstr "تفاصيل الأسئلة الشائعة"
+
+#: apps/payment/admin/wallettransaction/change_view.py:11
+#, fuzzy
+#| msgid "Application Information"
+msgid "Additional Information"
+msgstr "معلومات التطبيق"
+
+#: apps/payment/admin/wallettransaction/display.py:11
+#: apps/payment/models/wallet_transaction.py:44
+#: config/integrations/unfold.py:189
+msgid "Wallet Transaction"
+msgstr "معاملة المحفظة"
+
+#: apps/payment/admin/wallettransaction/display.py:15
+#, fuzzy, python-format
+#| msgid "Transaction Type"
+msgid "Transaction ID: %s"
+msgstr "نوع المعاملة"
+
+#: apps/payment/admin/wallettransaction/display.py:16
+#, fuzzy, python-format
+#| msgid "Customer"
+msgid "Customer: %s"
+msgstr "العميل"
+
 #: apps/payment/admin/wallettransaction/display.py:31
+#: apps/payment/models/wallet_transaction.py:22
 msgid "Transaction Type"
 msgstr "نوع المعاملة"
 
-#: apps/payment/admin/wallet/process_transaction_form.py:20
 #: apps/payment/admin/wallettransaction/display.py:47
+#: apps/payment/models/wallet_transaction.py:24
 msgid "Amount"
 msgstr "المبلغ"
 
-#: apps/payment/admin/wallet/process_transaction_form.py:25
-msgid "negative to deduct - positive to add."
-msgstr "سالب للخصم - موجب للإضافة."
-
-#: apps/payment/admin/wallet/process_transaction_form.py:28
-msgid "Transaction Note"
-msgstr "ملاحظة المعاملة"
-
-#: apps/payment/admin/wallet/process_transaction_form.py:33
-msgid "Attachment"
-msgstr "مرفق"
-
-#: apps/payment/admin/wallettransaction/list_view.py:24
-msgid "Search by customer phone number"
+#: apps/payment/admin/wallettransaction/list_view.py:26
+#, fuzzy
+#| msgid "Search by customer phone number"
+msgid "Search by customer email"
 msgstr "البحث برقم هاتف العميل"
 
 #: apps/payment/constants.py:6
@@ -534,49 +913,154 @@ msgstr "مشاركة"
 msgid "Cash Receive"
 msgstr "استلام نقدي"
 
-#: apps/payment/models/wallet_transaction.py:28
-#: config/integrations/unfold.py:146
-msgid "Wallet Transaction"
-msgstr "معاملة المحفظة"
+#: apps/payment/constants.py:14
+msgid "Referral"
+msgstr ""
 
-#: apps/payment/models/wallet_transaction.py:29
+#: apps/payment/constants.py:17
+msgid "Referral - App Install (Inviter)"
+msgstr ""
+
+#: apps/payment/constants.py:21
+msgid "Referral - App Install (Invitee)"
+msgstr ""
+
+#: apps/payment/constants.py:25
+msgid "Referral - First Order (Inviter)"
+msgstr ""
+
+#: apps/payment/constants.py:29
+msgid "Referral - First Order (Invitee)"
+msgstr ""
+
+#: apps/payment/constants.py:34
+#, fuzzy
+#| msgid "App Info"
+msgid "App Install"
+msgstr "معلومات التطبيق"
+
+#: apps/payment/constants.py:35
+#, fuzzy
+#| msgid "Product Ordered"
+msgid "First Order"
+msgstr "تم طلب المنتج"
+
+#: apps/payment/constants.py:39
+#, fuzzy
+#| msgid "Wallet"
+msgid "Charge Wallet"
+msgstr "المحفظة"
+
+#: apps/payment/models/payment.py:20
+msgid "Price before discount"
+msgstr ""
+
+#: apps/payment/models/payment.py:25
+msgid "Price after discount"
+msgstr ""
+
+#: apps/payment/models/payment.py:30
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payment type"
+msgstr "الدفع 💳"
+
+#: apps/payment/models/payment.py:32
+msgid "Is paid"
+msgstr ""
+
+#: apps/payment/models/payment.py:36
+msgid "Payment Reference"
+msgstr ""
+
+#: apps/payment/models/payment.py:37
+msgid "Reference ID from the payment gateway"
+msgstr ""
+
+#: apps/payment/models/payment.py:42
+#, fuzzy
+#| msgid "Transaction Type"
+msgid "Bank Transaction Response"
+msgstr "نوع المعاملة"
+
+#: apps/payment/models/payment.py:43
+msgid "Full response from the bank"
+msgstr ""
+
+#: apps/payment/models/payment.py:45
+#, fuzzy
+#| msgid "Created At"
+msgid "Created at"
+msgstr "تاريخ الإنشاء"
+
+#: apps/payment/models/payment.py:49 config/integrations/unfold.py:173
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payment"
+msgstr "الدفع 💳"
+
+#: apps/payment/models/payment.py:50
+#, fuzzy
+#| msgid "Payment 💳"
+msgid "Payments"
+msgstr "الدفع 💳"
+
+#: apps/payment/models/wallet.py:14 apps/users/models/customer.py:27
+#: apps/users/models/provider.py:22
+#, fuzzy
+#| msgid "Users"
+msgid "User"
+msgstr "المستخدمون"
+
+#: apps/payment/models/wallet.py:18
+#, fuzzy
+#| msgid "Is Use Wallet In Payment?"
+msgid "Use Wallet in Payment"
+msgstr "استخدام المحفظة في الدفع؟"
+
+#: apps/payment/models/wallet.py:20
+#, fuzzy
+#| msgid "Last Update ago"
+msgid "Last Update"
+msgstr "آخر تحديث منذ"
+
+#: apps/payment/models/wallet.py:24
+#: apps/payment/models/wallet_transaction.py:17
+#: config/integrations/unfold.py:181
+msgid "Wallet"
+msgstr "المحفظة"
+
+#: apps/payment/models/wallet.py:25
+#, fuzzy
+#| msgid "Wallet"
+msgid "Wallets"
+msgstr "المحفظة"
+
+#: apps/payment/models/wallet_transaction.py:30
+#, fuzzy
+#| msgid "Location Type"
+msgid "Action By"
+msgstr "نوع الموقع"
+
+#: apps/payment/models/wallet_transaction.py:33
+msgid "Transaction Note"
+msgstr "ملاحظة المعاملة"
+
+#: apps/payment/models/wallet_transaction.py:39
+msgid "Attachment"
+msgstr "مرفق"
+
+#: apps/payment/models/wallet_transaction.py:45
 msgid "Wallet Transactions"
 msgstr "معاملات المحفظة"
 
-#: apps/products/admin/category/display.py:22
-msgid "Total Products"
-msgstr "إجمالي المنتجات"
+#: apps/users/admin/adminuser/change_view.py:10
+#, fuzzy
+#| msgid "Admin"
+msgid "Admin Info"
+msgstr "المشرف"
 
-#: apps/products/admin/product/list_view.py:14
-msgid "Search by name"
-msgstr "البحث بالاسم"
-
-#: apps/products/constants.py:6
-msgid "Main Banner"
-msgstr "بانر رئيسي"
-
-#: apps/products/constants.py:7
-msgid "Side Banner"
-msgstr "بانر جانبي"
-
-#: apps/products/models/banner.py:14
-msgid "Image Banner"
-msgstr "صورة بانر"
-
-#: apps/products/models/brand.py:13
-msgid "Logo"
-msgstr "الشعار"
-
-#: apps/products/models/category.py:13 apps/products/models/product.py:21
-#: apps/users/models/admin.py:14 apps/users/models/customer.py:29
-msgid "Image"
-msgstr "صورة"
-
-#: apps/products/models/product.py:16
-msgid "Price"
-msgstr "السعر"
-
-#: apps/users/admin/adminuser/display.py:10 config/integrations/unfold.py:200
+#: apps/users/admin/adminuser/display.py:10
 msgid "Admin"
 msgstr "المشرف"
 
@@ -586,54 +1070,201 @@ msgid "ID: %s"
 msgstr "المعرّف: %s"
 
 #: apps/users/admin/adminuser/display.py:27
-#: apps/users/admin/customer/display.py:31
+#: apps/users/admin/customer/display.py:32
+#: apps/users/admin/provider/display.py:27
 msgid "Date joined ago"
 msgstr "تاريخ الانضمام منذ"
 
-#: apps/users/admin/customer/change_view.py:11
+#: apps/users/admin/adminuser/list_view.py:14
+#, fuzzy
+#| msgid "Search by name..."
+msgid "Search by email..."
+msgstr "البحث بالاسم..."
+
+#: apps/users/admin/customer/admin.py:41
+msgid "View Customer Wallet"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:58
+msgid "This customer does not have a wallet yet."
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:77
+#, fuzzy
+#| msgid "Order Payment"
+msgid "Avg Order Per Client"
+msgstr "دفع الطلب"
+
+#: apps/users/admin/customer/admin.py:79
+msgid "Average number of orders per customer"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:82
+msgid "Avg Payment Per Client"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:84
+msgid "Average total amount paid by each client"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:87
+msgid "Clients Joined Today"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:89
+msgid "Number of new clients who signed up today"
+msgstr ""
+
+#: apps/users/admin/customer/admin.py:92
+#, fuzzy
+#| msgid "Customer"
+msgid "Repeat Customers"
+msgstr "العميل"
+
+#: apps/users/admin/customer/admin.py:95
+msgid "Percentage of clients who has more than 2 paid payment"
+msgstr ""
+
+#: apps/users/admin/customer/change_view.py:14
 msgid "Customer Information👨‍🦰"
 msgstr "معلومات العميل👨‍🦰"
 
-#: apps/users/admin/customer/change_view.py:26
+#: apps/users/admin/customer/change_view.py:28
+#: apps/users/admin/provider/change_view.py:23
 msgid "Advanced Settings🔧"
 msgstr "إعدادات متقدمة🔧"
 
-#: apps/users/admin/customer/display.py:14
-#, python-format
-msgid "Phone: %s"
-msgstr "الهاتف: %s"
+#: apps/users/admin/customer/display.py:15
+#: apps/users/admin/provider/display.py:14
+#, fuzzy, python-format
+#| msgid "Email"
+msgid "Email: %s"
+msgstr "البريد الإلكتروني"
 
-#: apps/users/admin/customer/display.py:29
+#: apps/users/admin/customer/display.py:30
+#: apps/users/admin/provider/display.py:25
 msgid "True"
 msgstr "صحيح"
 
-#: apps/users/admin/customer/display.py:29
+#: apps/users/admin/customer/display.py:30
+#: apps/users/admin/provider/display.py:25
 msgid "False"
 msgstr "خطأ"
 
-#: apps/users/admin/customer/list_view.py:24
-msgid "search phone...🔍"
+#: apps/users/admin/customer/display.py:36
+msgid "Total Spend"
+msgstr ""
+
+#: apps/users/admin/customer/list_view.py:25
+#, fuzzy
+#| msgid "search phone...🔍"
+msgid "search email...🔍"
 msgstr "البحث عن هاتف...🔍"
+
+#: apps/users/admin/customer/sections.py:12
+msgid "The Latest 7 Client's Payments"
+msgstr ""
+
+#: apps/users/admin/customer/sections.py:34
+msgid "Status"
+msgstr ""
+
+#: apps/users/admin/customer/sections.py:47
+#: apps/users/admin/provider/sections.py:58
+#, fuzzy
+#| msgid "FAQ Details"
+msgid "Detail"
+msgstr "تفاصيل الأسئلة الشائعة"
 
 #: apps/users/admin/group/admin.py:14
 msgid "Search by group name...🔍"
 msgstr "البحث باسم المجموعة...🔍"
 
-#: apps/users/api/common/exceptions.py:8
-msgid "The provided OTP is invalid or has expired."
-msgstr "رمز التحقق المقدم غير صالح أو انتهت صلاحيته."
+#: apps/users/admin/provider/admin.py:41
+msgid "Avg Orders Per Provider"
+msgstr ""
 
-#: apps/users/api/common/exceptions.py:16
+#: apps/users/admin/provider/admin.py:43
+msgid "Average number of orders per provider"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:46
+msgid "Avg Revenue Per Provider"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:48
+msgid "Average revenue earned by each provider"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:51
+msgid "Providers Joined Today"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:53
+msgid "Number of new providers who signed up today"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:56
+msgid "Top Rated Providers"
+msgstr ""
+
+#: apps/users/admin/provider/admin.py:58
+msgid "Percentage of providers with rating above 4.5"
+msgstr ""
+
+#: apps/users/admin/provider/change_view.py:14
+#, fuzzy
+#| msgid "User Information"
+msgid "Provider Information🏢"
+msgstr "معلومات المستخدم"
+
+#: apps/users/admin/provider/display.py:10 apps/users/constants.py:13
+#: apps/users/models/provider.py:34 config/integrations/unfold.py:105
+msgid "Provider"
+msgstr ""
+
+#: apps/users/admin/provider/list_view.py:22
+#, fuzzy
+#| msgid "Search by group name...🔍"
+msgid "search email or company name...🔍"
+msgstr "البحث باسم المجموعة...🔍"
+
+#: apps/users/admin/provider/sections.py:14
+#, fuzzy
+#| msgid "Wallet Transactions"
+msgid "The Latest 7 Wallet Transactions"
+msgstr "معاملات المحفظة"
+
+#: apps/users/admin/provider/sections.py:45
+msgid "Type"
+msgstr ""
+
+#: apps/users/api/customer/serializers.py:126
+#: apps/users/api/provider/serializers.py:104
+msgid "Preferred language"
+msgstr ""
+
+#: apps/users/api/customer/serializers.py:133
+#, fuzzy
+#| msgid "Country Information"
+msgid "Country for the customer"
+msgstr "معلومات الدولة"
+
+#: apps/users/api/exceptions.py:10
 msgid "Phone number is already registered to a user of a different type."
 msgstr "رقم الهاتف مسجل بالفعل لمستخدم من نوع مختلف."
 
-#: apps/users/api/common/exceptions.py:24
+#: apps/users/api/exceptions.py:18
 msgid "Phone number is not in a working country"
 msgstr "رقم الهاتف ليس في دولة مدعومة"
 
-#: apps/users/api/common/exceptions.py:31
+#: apps/users/api/exceptions.py:25
 msgid "User account is deactivated. Please contact support for assistance."
 msgstr "تم تعطيل حساب المستخدم. يرجى الاتصال بالدعم للمساعدة."
+
+#: apps/users/api/provider/serializers.py:112
+msgid "Company name for the provider"
+msgstr ""
 
 #: apps/users/constants.py:6
 msgid "Male"
@@ -659,85 +1290,198 @@ msgstr "يمكنه الوصول إلى الأموال"
 msgid "Allow this user to access money like process wallet money"
 msgstr "السماح لهذا المستخدم بالوصول إلى الأموال مثل معالجة أموال المحفظة"
 
-#: apps/users/models/customer.py:32
+#: apps/users/models/customer.py:40
 msgid "Full Name"
 msgstr "الاسم الكامل"
 
-#: apps/users/models/customer.py:38
+#: apps/users/models/customer.py:46
 msgid "Gender"
 msgstr "الجنس"
 
-#: apps/users/models/customer.py:40
+#: apps/users/models/customer.py:48
 msgid "Birth Date"
 msgstr "تاريخ الميلاد"
 
-#: apps/users/models/customer.py:53
+#: apps/users/models/customer.py:61
 msgid "Primary Address"
 msgstr "العنوان الرئيسي"
 
-#: assets/templates/admin/index.html:8
-#: common/insights/dashboard_callback.py:48
+#: apps/users/models/customer.py:63
+msgid "Is Verified"
+msgstr ""
+
+#: apps/users/models/customer.py:65
+msgid "Referral Customer ID"
+msgstr ""
+
+#: apps/users/models/provider.py:27
+msgid "Company Name"
+msgstr ""
+
+#: apps/users/models/user.py:45
+#, fuzzy
+#| msgid "Primary Address"
+msgid "email address"
+msgstr "العنوان الرئيسي"
+
+#: assets/templates/admin/components/contact_messages.html:12
+#, fuzzy
+#| msgid "Message Body"
+msgid "Messages"
+msgstr "محتوى الرسالة"
+
+#: assets/templates/admin/components/contact_messages.html:14
+msgid "Contact Messages"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:19
+msgid "Unchecked"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:25
+msgid "View All"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:35
+msgid "Contact"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:36
+#, fuzzy
+#| msgid "Message Body"
+msgid "Message"
+msgstr "محتوى الرسالة"
+
+#: assets/templates/admin/components/contact_messages.html:37
+msgid "Date"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:38
+#, fuzzy
+#| msgid "Notifications"
+msgid "Actions"
+msgstr "الإشعارات"
+
+#: assets/templates/admin/components/contact_messages.html:66
+msgid "ago"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:72
+msgid "View"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:83
+msgid "All messages have been read"
+msgstr ""
+
+#: assets/templates/admin/components/contact_messages.html:95
+#, python-format
+msgid "Showing %(count)s of %(total)s unread messages"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:12
+msgid "Connect"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:15
+msgid "Stay connected with us on social platforms"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:19
+msgid "Edit"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:56
+#, fuzzy
+#| msgid "Phone: %s"
+msgid "Phone"
+msgstr "الهاتف: %s"
+
+#: assets/templates/admin/components/social.html:77
+msgid "Follow Us"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:146
+#, fuzzy
+#| msgid "Social Media Configuration"
+msgid "Social Media Coming Soon"
+msgstr "تهيئة وسائل التواصل الاجتماعي"
+
+#: assets/templates/admin/components/social.html:147
+msgid "We're setting up our social media presence. Stay tuned!"
+msgstr ""
+
+#: assets/templates/admin/components/social.html:154
+msgid "Connect with us for updates and healthcare tips"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:52
+msgid "Active & Verified"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:54
+msgid "Session Earnings"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:56
+msgid "Completed Bookings"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:70
+msgid "Active clients on the platform"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:72
+msgid "Revenue from consultations"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:74
+msgid "Successfully completed sessions"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:81
+msgid "Clients"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:83
+msgid "Revenue"
+msgstr ""
+
+#: assets/templates/admin/components/top_cards.html:85
+#, fuzzy
+#| msgid "Regions"
+msgid "Sessions"
+msgstr "المناطق"
+
+#: assets/templates/admin/index.html:9
 msgid "Dashboard"
 msgstr "لوحة التحكم"
 
-#: assets/templates/admin/index.html:8
+#: assets/templates/admin/index.html:9
 msgid "Django site admin"
 msgstr "مسؤول موقع Django"
 
-#: assets/templates/admin/index.html:32
-msgid "Last 7 days"
-msgstr "آخر 7 أيام"
-
-#: assets/templates/admin/index.html:45
-msgid "Product performance in last 28 days"
-msgstr "أداء المنتج في آخر 28 يومًا"
-
-#: assets/templates/admin/index.html:49
-msgid "The most trending products in last 2 weeks"
-msgstr "أكثر المنتجات رواجًا في آخر أسبوعين"
-
-#: assets/templates/admin/index.html:54
-#, python-format
-msgid ""
-"\n"
-"              Total revenue between\n"
-"              <strong class=\"font-semibold text-font-important-light dark:"
-"text-font-important-dark dark:text-white\">1 -\n"
-"                31 October</strong>. Increase\n"
-"              <span class=\"text-green-700 font-semibold dark:text-"
-"green-400\">+3.14%%</span> comparing to previous month\n"
-"              <strong class=\"font-semibold text-font-important-light dark:"
-"text-font-important-dark dark:text-white\">1 -\n"
-"                30 September</strong>.\n"
-"            "
+#: assets/templates/admin/payment/payment/change_list.html:10
+#: assets/templates/admin/payment/wallet/change_list.html:10
+#: assets/templates/admin/payment/wallettransaction/change_list.html:10
+#: assets/templates/admin/users/customer/change_list.html:10
+#: assets/templates/admin/users/provider/change_list.html:10
+msgid "Filters"
 msgstr ""
-"\n"
-"              إجمالي الإيرادات بين\n"
-"              <strong class=\"font-semibold text-font-important-light dark:"
-"text-font-important-dark dark:text-white\">1 -\n"
-"                31 أكتوبر</strong>. زيادة\n"
-"              <span class=\"text-green-700 font-semibold dark:text-"
-"green-400\">+3.14%%</span> مقارنة بالشهر السابق\n"
-"              <strong class=\"font-semibold text-font-important-light dark:"
-"text-font-important-dark dark:text-white\">1 -\n"
-"                30 سبتمبر</strong>.\n"
-"            "
 
-#: assets/templates/admin/index.html:72
-msgid "View detailed analytics"
-msgstr "عرض التحليلات التفصيلية"
-
-#: assets/templates/admin/index.html:80
-msgid "Current system health"
-msgstr "حالة النظام الحالية"
+#: assets/templates/admin/payment/payment/change_list.html:19
+#: assets/templates/admin/payment/wallet/change_list.html:19
+#: assets/templates/admin/payment/wallettransaction/change_list.html:19
+#: assets/templates/admin/users/customer/change_list.html:19
+#: assets/templates/admin/users/provider/change_list.html:19
+#, fuzzy
+#| msgid "Support"
+msgid "Export"
+msgstr "الدعم"
 
 #: assets/templates/admin/wallet/process_transaction_form.html:21
 msgid "User Information"
 msgstr "معلومات المستخدم"
-
-#: assets/templates/admin/wallet/process_transaction_form.html:29
-msgid "Username"
-msgstr "اسم المستخدم"
 
 #: assets/templates/admin/wallet/process_transaction_form.html:33
 #: assets/templates/admin/wallet/process_transaction_form.html:88
@@ -748,6 +1492,10 @@ msgstr "الرصيد الحالي"
 #: assets/templates/admin/wallet/process_transaction_form.html:101
 msgid "Cancel"
 msgstr "إلغاء"
+
+#: assets/templates/admin/wallet/process_transaction_form.html:65
+msgid "Process Transaction"
+msgstr "معالجة المعاملة"
 
 #: assets/templates/admin/wallet/process_transaction_form.html:92
 msgid "Balance After"
@@ -765,74 +1513,235 @@ msgstr "طرح"
 msgid "Add"
 msgstr "إضافة"
 
-#: common/insights/dashboard_callback.py:49
+#: common/insights/dashboard_callback.py:19
 msgid "Analytics"
 msgstr "التحليلات"
 
-#: common/insights/dashboard_callback.py:50
-msgid "Settings"
-msgstr "الإعدادات"
+#: config/integrations/unfold.py:92
+msgid "Customers & Providers 👥"
+msgstr ""
 
-#: common/insights/dashboard_callback.py:53
-msgid "All"
-msgstr "الكل"
+#: config/integrations/unfold.py:115
+#, fuzzy
+#| msgid "Notification 📢"
+msgid "Communication 📢"
+msgstr "إشعار 📢"
 
-#: common/insights/dashboard_callback.py:54
-msgid "New"
-msgstr "جديد"
+#: config/integrations/unfold.py:151
+#, fuzzy
+#| msgid "Banner"
+msgid "PopUp Banner"
+msgstr "البانر"
 
-#: common/insights/dashboard_callback.py:124
-msgid "Last week revenue"
-msgstr "إيرادات الأسبوع الماضي"
+#: config/integrations/unfold.py:159
+msgid "Contact Us"
+msgstr ""
 
-#: common/insights/dashboard_callback.py:142
-msgid "Last week expenses"
-msgstr "نفقات الأسبوع الماضي"
-
-#: config/integrations/unfold.py:134
+#: config/integrations/unfold.py:169
 msgid "Payment 💳"
 msgstr "الدفع 💳"
 
-#: config/integrations/unfold.py:172
+#: config/integrations/unfold.py:201
 msgid "Location 📍"
 msgstr "الموقع 📍"
 
-#: config/integrations/unfold.py:177
-msgid "country"
-msgstr "الدولة"
-
-#: config/integrations/unfold.py:195
-msgid "Admin & Group 👥"
-msgstr "المشرف والمجموعة 👥"
-
-#: config/integrations/unfold.py:208
-msgid "Groups"
-msgstr "المجموعات"
-
-#: config/integrations/unfold.py:218
-msgid "App Info ⓘ"
-msgstr "معلومات التطبيق ⓘ"
-
-#: config/integrations/unfold.py:223
-msgid "App Info"
-msgstr "معلومات التطبيق"
-
 #: config/integrations/unfold.py:231
-msgid "FAQs"
-msgstr "الأسئلة الشائعة"
+#, fuzzy
+#| msgid "System Configuration"
+msgid "Configuration ⚙️"
+msgstr "تهيئة النظام"
 
-#: config/integrations/unfold.py:247
+#: config/integrations/unfold.py:236
 msgid "Social Accounts"
 msgstr "حسابات التواصل الاجتماعي"
 
-#: config/integrations/unfold.py:255
-msgid "Banner"
-msgstr "البانر"
+#: config/integrations/unfold.py:252
+msgid "App Info"
+msgstr "معلومات التطبيق"
 
-#: config/settings/base.py:45
-msgid "Arabic"
-msgstr "العربية"
+#: config/integrations/unfold.py:260
+#, fuzzy
+#| msgid "System Configuration"
+msgid "System Configurations"
+msgstr "تهيئة النظام"
 
-#: config/settings/base.py:46
-msgid "English"
-msgstr "الإنجليزية"
+#: config/integrations/unfold.py:270
+msgid "Administration 🔐"
+msgstr ""
+
+#: config/integrations/unfold.py:274
+#, fuzzy
+#| msgid "Admin"
+msgid "Admins"
+msgstr "المشرف"
+
+#: config/integrations/unfold.py:282
+msgid "Groups"
+msgstr "المجموعات"
+
+#~ msgid "Cancellation Fees"
+#~ msgstr "رسوم الإلغاء"
+
+#~ msgid "cancellation feed."
+#~ msgstr "رسوم الإلغاء."
+
+#~ msgid "Choices"
+#~ msgstr "خيارات"
+
+#~ msgid "Hourly OTP limit exceeded. Please try again later."
+#~ msgstr "تم تجاوز حد رمز التحقق لكل ساعة. يرجى المحاولة لاحقًا."
+
+#~ msgid "Failed to send verification code"
+#~ msgstr "فشل في إرسال رمز التحقق"
+
+#~ msgid "Error sending code"
+#~ msgstr "خطأ في إرسال الرمز"
+
+#~ msgid "Verification code expired or not found"
+#~ msgstr "انتهت صلاحية رمز التحقق أو لم يتم العثور عليه"
+
+#~ msgid "Maximum verification attempts exceeded"
+#~ msgstr "تم تجاوز الحد الأقصى لمحاولات التحقق"
+
+#~ msgid "Invalid verification code"
+#~ msgstr "رمز التحقق غير صالح"
+
+#~ msgid "Egypt"
+#~ msgstr "مصر"
+
+#~ msgid "Saudi Arabia"
+#~ msgstr "المملكة العربية السعودية"
+
+#~ msgid "United Arab Emirates"
+#~ msgstr "الإمارات العربية المتحدة"
+
+#~ msgid "Kuwait"
+#~ msgstr "الكويت"
+
+#~ msgid "Qatar"
+#~ msgstr "قطر"
+
+#~ msgid "Oman"
+#~ msgstr "عُمان"
+
+#~ msgid "Bahrain"
+#~ msgstr "البحرين"
+
+#~ msgid "Egyptian Pound"
+#~ msgstr "الجنيه المصري"
+
+#~ msgid "Saudi Riyal"
+#~ msgstr "الريال السعودي"
+
+#~ msgid "Emirati Dirham"
+#~ msgstr "الدرهم الإماراتي"
+
+#~ msgid "Kuwaiti Dinar"
+#~ msgstr "الدينار الكويتي"
+
+#~ msgid "Qatari Riyal"
+#~ msgstr "الريال القطري"
+
+#~ msgid "Omani Rial"
+#~ msgstr "الريال العُماني"
+
+#~ msgid "Bahraini Dinar"
+#~ msgstr "الدينار البحريني"
+
+#~ msgid "Currency"
+#~ msgstr "العملة"
+
+#~ msgid "Number Code"
+#~ msgstr "الرمز الرقمي"
+
+#~ msgid "negative to deduct - positive to add."
+#~ msgstr "سالب للخصم - موجب للإضافة."
+
+#~ msgid "Total Products"
+#~ msgstr "إجمالي المنتجات"
+
+#~ msgid "Search by name"
+#~ msgstr "البحث بالاسم"
+
+#~ msgid "Main Banner"
+#~ msgstr "بانر رئيسي"
+
+#~ msgid "Side Banner"
+#~ msgstr "بانر جانبي"
+
+#~ msgid "Logo"
+#~ msgstr "الشعار"
+
+#~ msgid "Price"
+#~ msgstr "السعر"
+
+#~ msgid "The provided OTP is invalid or has expired."
+#~ msgstr "رمز التحقق المقدم غير صالح أو انتهت صلاحيته."
+
+#~ msgid "Last 7 days"
+#~ msgstr "آخر 7 أيام"
+
+#~ msgid "Product performance in last 28 days"
+#~ msgstr "أداء المنتج في آخر 28 يومًا"
+
+#~ msgid "The most trending products in last 2 weeks"
+#~ msgstr "أكثر المنتجات رواجًا في آخر أسبوعين"
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "              Total revenue between\n"
+#~ "              <strong class=\"font-semibold text-font-important-light "
+#~ "dark:text-font-important-dark dark:text-white\">1 -\n"
+#~ "                31 October</strong>. Increase\n"
+#~ "              <span class=\"text-green-700 font-semibold dark:text-"
+#~ "green-400\">+3.14%%</span> comparing to previous month\n"
+#~ "              <strong class=\"font-semibold text-font-important-light "
+#~ "dark:text-font-important-dark dark:text-white\">1 -\n"
+#~ "                30 September</strong>.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "              إجمالي الإيرادات بين\n"
+#~ "              <strong class=\"font-semibold text-font-important-light "
+#~ "dark:text-font-important-dark dark:text-white\">1 -\n"
+#~ "                31 أكتوبر</strong>. زيادة\n"
+#~ "              <span class=\"text-green-700 font-semibold dark:text-"
+#~ "green-400\">+3.14%%</span> مقارنة بالشهر السابق\n"
+#~ "              <strong class=\"font-semibold text-font-important-light "
+#~ "dark:text-font-important-dark dark:text-white\">1 -\n"
+#~ "                30 سبتمبر</strong>.\n"
+#~ "            "
+
+#~ msgid "View detailed analytics"
+#~ msgstr "عرض التحليلات التفصيلية"
+
+#~ msgid "Current system health"
+#~ msgstr "حالة النظام الحالية"
+
+#~ msgid "Username"
+#~ msgstr "اسم المستخدم"
+
+#~ msgid "Settings"
+#~ msgstr "الإعدادات"
+
+#~ msgid "All"
+#~ msgstr "الكل"
+
+#~ msgid "New"
+#~ msgstr "جديد"
+
+#~ msgid "Last week revenue"
+#~ msgstr "إيرادات الأسبوع الماضي"
+
+#~ msgid "Last week expenses"
+#~ msgstr "نفقات الأسبوع الماضي"
+
+#~ msgid "country"
+#~ msgstr "الدولة"
+
+#~ msgid "Admin & Group 👥"
+#~ msgstr "المشرف والمجموعة 👥"
+
+#~ msgid "App Info ⓘ"
+#~ msgstr "معلومات التطبيق ⓘ"

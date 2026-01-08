@@ -1,10 +1,13 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class ContactUsChangeView:
     filter_horizontal = ()
     compressed_fields = True
     autocomplete_fields = ()
     fieldsets = (
         (
-            "Information",
+            _("Information"),
             {
                 "fields": (
                     "customer",

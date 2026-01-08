@@ -13,11 +13,11 @@ class NotificationType(models.TextChoices):
 class DeviceType(models.TextChoices):
     """FCM device types."""
 
-    IOS = "ios", "iOS"
-    ANDROID = "android", "Android"
-    WEB = "web", "Web"
+    IOS = "ios", _("iOS")
+    ANDROID = "android", _("Android")
+    WEB = "web", _("Web")
 
 
 class Language(models.TextChoices):
-    ENGLISH = "en", "English"
-    ARABIC = "ar", "Arabic"
+    ENGLISH = "en", _("English")
+    ARABIC = "ar", _("Arabic")
