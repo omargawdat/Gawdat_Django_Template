@@ -25,5 +25,10 @@ class ContactUs(models.Model):
     has_checked = models.BooleanField(default=False, verbose_name=_("Has Checked"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
 
+    class Meta:
+        verbose_name = _("Contact Us")
+        verbose_name_plural = _("Contact Us Entries")
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.contact_type
