@@ -7,21 +7,20 @@ class NotificationListView:
         "display_header",
         "display_notification_type",
         "title",
-        "message_body",
+        "display_message",
         "display_created_time",
         "display_is_read",
     )
     list_editable = ()
     list_filter = (
         ("created_at", RangeDateFilter),
-        # ("notification_type", ChoicesCheckboxFilter),
         "notification_type",
     )
-    date_hierarchy = "created_at"
+    date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
     list_fullwidth = True
     list_horizontal_scrollbar_top = True
-    search_fields = ["id"]
-    search_help_text = _("Search By Notification ID...🔍")
+    search_fields = ["id", "title", "message_body"]
+    search_help_text = _("Search By Notification ID, title, body...🔍")
     ordering = ["-created_at"]
