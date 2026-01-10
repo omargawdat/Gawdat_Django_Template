@@ -40,3 +40,10 @@ class NotificationDisplayMixin:
     @display(description=_("Is Read"), label={True: "success", False: "warning"})
     def display_is_read(self, notification: Notification):
         return notification.is_read
+
+    @display(description=_("Message"))
+    def display_message(self, notification: Notification):
+        LENTH = 25
+        return notification.message_body[:LENTH] + (
+            "..." if len(notification.message_body) > LENTH else ""
+        )

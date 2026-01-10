@@ -6,8 +6,8 @@ from unfold.contrib.filters.admin import RangeNumericFilter
 class WalletTransactionListView:
     list_display = (
         "display_header",
-        "display_transaction_type",
         "display_amount",
+        "display_transaction_type",
         "display_created_time",
     )
     list_editable = ()
@@ -17,7 +17,7 @@ class WalletTransactionListView:
         "action_by",
         "transaction_type",
     ]
-    date_hierarchy = "created_at"
+    date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
     list_fullwidth = False

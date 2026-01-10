@@ -18,7 +18,7 @@ class BaseProviderPermissions:
             ),
             "is_active": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
-                editable=(context.is_staff,),
+                editable=(),
             ),
             "date_joined": FieldPermissions(
                 visible=(context.is_staff and context.is_created),
@@ -30,7 +30,7 @@ class BaseProviderPermissions:
             ),
             "company_name": FieldPermissions(
                 visible=(context.is_staff),
-                editable=(context.is_staff),
+                editable=(),
             ),
             "user": FieldPermissions(
                 visible=(context.is_staff),
@@ -44,7 +44,7 @@ class ProviderAdminPermissions(BaseProviderPermissions):
         return False
 
     def can_change(self, request, obj=None):
-        return True
+        return False
 
     def can_delete(self, request, obj=None):
         return False

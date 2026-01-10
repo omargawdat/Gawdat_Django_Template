@@ -11,20 +11,34 @@ from apps.users.models import User
 class WalletTransaction(models.Model):
     history = HistoricalRecords()
     wallet = models.ForeignKey(
-        Wallet, related_name="transactions", on_delete=models.PROTECT
+        Wallet,
+        related_name="transactions",
+        on_delete=models.PROTECT,
+        verbose_name=_("Wallet"),
     )
     transaction_type = models.CharField(
-        max_length=30, choices=WalletTransactionType.choices
+        max_length=30,
+        choices=WalletTransactionType.choices,
+        verbose_name=_("Transaction Type"),
     )
-    amount = MoneyField(max_digits=14, decimal_places=2)
+    amount = MoneyField(max_digits=14, decimal_places=2, verbose_name=_("Amount"))
     action_by = models.ForeignKey(
-        User, on_delete=models.PROTECT, null=True, limit_choices_to={"is_staff": True}
+        User,
+        on_delete=models.PROTECT,
+        null=True,
+        limit_choices_to={"is_staff": True},
+        verbose_name=_("Action By"),
     )
-    transaction_note = models.TextField(max_length=1500, blank=True, default="")
+    transaction_note = models.TextField(
+        max_length=1500, blank=True, default="", verbose_name=_("Transaction Note")
+    )
     attachment = models.FileField(
-        upload_to="wallet_transactions", blank=True, null=True
+        upload_to="wallet_transactions",
+        blank=True,
+        null=True,
+        verbose_name=_("Attachment"),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
 
     class Meta:
         verbose_name = _("Wallet Transaction")

@@ -8,12 +8,12 @@ from apps.payment.models.wallet_transaction import WalletTransaction
 
 
 class WalletTransactionDisplayMixin:
-    @display(description="wallet_transaction", header=True)
+    @display(description=_("Wallet Transaction"), header=True)
     def display_header(self, wallet_transaction: WalletTransaction):
         """Display header with image if available."""
         return [
-            f"Transaction ID: {wallet_transaction.pk}",
-            f"Customer: {wallet_transaction.wallet.user.email}",
+            _("Transaction ID: %s") % wallet_transaction.pk,
+            _("Customer: %s") % wallet_transaction.wallet.user.email,
             "",
             "O",
             {

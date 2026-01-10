@@ -1,10 +1,13 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class AdminUserChangeView:
     filter_horizontal = ()
     compressed_fields = True
     autocomplete_fields = ()
     fieldsets = (
         (
-            "Admin Info",
+            _("Admin Info"),
             {
                 "fields": (
                     "image",

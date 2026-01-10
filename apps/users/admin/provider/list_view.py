@@ -1,6 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from unfold.contrib.filters.admin import RangeDateFilter
 
+from .sections import ProviderWalletTransactionSection
+
 
 class ProviderListView:
     list_display = (
@@ -11,7 +13,7 @@ class ProviderListView:
     )
     list_editable = ()
     list_filter = (("user__date_joined", RangeDateFilter), "user__is_active")
-    date_hierarchy = "user__date_joined"
+    date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
     list_fullwidth = False
@@ -19,3 +21,4 @@ class ProviderListView:
     search_fields = ["user__email", "company_name"]
     search_help_text = _("search email or company name...🔍")
     ordering = ("-user__date_joined",)
+    list_sections = [ProviderWalletTransactionSection]

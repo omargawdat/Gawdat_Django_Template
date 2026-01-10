@@ -1,72 +1,89 @@
 {% load i18n %}
 
-
 <div class="kpi-cards-container">
   {% for card in kpi %}
-  <div class="kpi-card">
+  <div class="kpi-card {% if forloop.counter == 1 %}kpi-card-clients{% elif forloop.counter == 2 %}kpi-card-revenue{% elif forloop.counter == 3 %}kpi-card-sessions{% endif %}">
+    <!-- Glowing accent line -->
+    <div class="kpi-accent-line"></div>
+
+    <!-- Icon with glow effect -->
     <div class="kpi-card-icon">
       {% if forloop.counter == 1 %}
-      👥
+      <!-- Users/Clients icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
       {% elif forloop.counter == 2 %}
-      💰
+      <!-- Wallet/Revenue icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+        <circle cx="17" cy="15" r="2"/>
+      </svg>
       {% elif forloop.counter == 3 %}
-      📦
+      <!-- Calendar/Sessions icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+        <path d="M9 16l2 2 4-4"/>
+      </svg>
       {% endif %}
     </div>
 
-    <div class="kpi-card-title">
-      {{ card.title }}
+    <!-- Header -->
+    <div class="kpi-card-header">
+      <div class="kpi-card-label">
+        {% if forloop.counter == 1 %}
+        <span class="label-icon">👥</span>
+        {% elif forloop.counter == 2 %}
+        <span class="label-icon">💰</span>
+        {% elif forloop.counter == 3 %}
+        <span class="label-icon">📅</span>
+        {% endif %}
+        <span class="label-text">{{ card.title }}</span>
+      </div>
+      <div class="kpi-card-subtitle">
+        {% if forloop.counter == 1 %}
+        {% trans "Active & Verified" %}
+        {% elif forloop.counter == 2 %}
+        {% trans "Session Earnings" %}
+        {% elif forloop.counter == 3 %}
+        {% trans "Completed Bookings" %}
+        {% endif %}
+      </div>
     </div>
 
-    <div class="kpi-card-subtitle">
-      {% if forloop.counter == 1 %}
-      Active & Verified Users
-      {% elif forloop.counter == 2 %}
-      Total Revenue Generated
-      {% elif forloop.counter == 3 %}
-      Successfully Paid Orders
-      {% endif %}
-    </div>
-
+    <!-- Value -->
     <div class="kpi-card-value">
-      {{ card.display }}
+      <span class="value-number">{{ card.display }}</span>
     </div>
 
-    <div class="kpi-card-description">
-      {% if forloop.counter == 1 %}
-      Users who have completed verification and are actively using the platform
-      {% elif forloop.counter == 2 %}
-      Total monetary value from all completed transactions and payments
-      {% elif forloop.counter == 3 %}
-      Orders that have been successfully processed and payment confirmed
-      {% endif %}
-    </div>
-
-    <div class="kpi-card-metric">
-      <div class="kpi-card-change kpi-card-change-positive">
-        <span>↗</span>
-        <span>
-          {% if forloop.counter == 1 %}
-          +12% this month
-          {% elif forloop.counter == 2 %}
-          +8.5% this month
-          {% elif forloop.counter == 3 %}
-          +15% this month
-          {% endif %}
-        </span>
+    <!-- Footer -->
+    <div class="kpi-card-footer">
+      <div class="kpi-card-description">
+        {% if forloop.counter == 1 %}
+        {% trans "Active clients on the platform" %}
+        {% elif forloop.counter == 2 %}
+        {% trans "Revenue from consultations" %}
+        {% elif forloop.counter == 3 %}
+        {% trans "Successfully completed sessions" %}
+        {% endif %}
       </div>
 
-      <div class="kpi-card-trend">
-        <span>📈</span>
-        <span>
-          {% if forloop.counter == 1 %}
-          Growing
-          {% elif forloop.counter == 2 %}
-          Strong
-          {% elif forloop.counter == 3 %}
-          Excellent
-          {% endif %}
-        </span>
+      <div class="kpi-card-indicator">
+        <span class="indicator-dot"></span>
+        {% if forloop.counter == 1 %}
+        <span>{% trans "Clients" %}</span>
+        {% elif forloop.counter == 2 %}
+        <span>{% trans "Revenue" %}</span>
+        {% elif forloop.counter == 3 %}
+        <span>{% trans "Sessions" %}</span>
+        {% endif %}
       </div>
     </div>
   </div>

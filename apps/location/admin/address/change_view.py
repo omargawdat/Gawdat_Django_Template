@@ -1,10 +1,13 @@
+from django.utils.translation import gettext_lazy as _
+
+
 class AddressChangeView:
     filter_horizontal = ()
     compressed_fields = True
     autocomplete_fields = ()
     fieldsets = (
         (
-            "Customer Address",
+            _("Customer Address"),
             {
                 "fields": (
                     "customer",

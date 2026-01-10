@@ -55,7 +55,7 @@ class InsightSelector:
 
     @staticmethod
     def get_unchecked_contacts(limit: int = 10) -> list[ContactUs]:
-        return ContactUs.objects.filter(has_checked=False)
+        return ContactUs.objects.filter(has_checked=False)[:limit]
 
     @staticmethod
     def get_social_accounts() -> SocialAccount:
@@ -137,3 +137,72 @@ class InsightSelector:
             counts[month_index] = item["count"]
 
         return {"labels": month_labels, "amounts": amounts, "counts": counts}
+
+    @staticmethod
+    def get_monthly_customer_data() -> dict:
+        """Get daily customer registration data for current month."""
+        current_date = timezone.now()
+        current_month_customers = Customer.objects.filter(
+            user__date_joined__year=current_date.year,
+            user__date_joined__month=current_date.month,
+        )
+
+        # Group by day and count
+        daily_data = (
+            current_month_customers.annotate(day=Extract("user__date_joined", "day"))
+            .values("day")
+            .annotate(count=Count("user_id"))
+            .order_by("day")
+        )
+
+        # Create arrays for all days of the month
+        days_in_month = calendar.monthrange(current_date.year, current_date.month)[1]
+        labels = [str(i) for i in range(1, days_in_month + 1)]
+        counts = [0] * days_in_month
+
+        # Fill in actual data
+        for item in daily_data:
+            day_index = item["day"] - 1
+            counts[day_index] = item["count"]
+
+        return {"labels": labels, "counts": counts}
+
+    @staticmethod
+    def get_yearly_customer_data() -> dict:
+        """Get monthly customer registration data for current year."""
+        current_date = timezone.now()
+        current_year_customers = Customer.objects.filter(
+            user__date_joined__year=current_date.year
+        )
+
+        # Group by month and count
+        monthly_data = (
+            current_year_customers.annotate(month=Extract("user__date_joined", "month"))
+            .values("month")
+            .annotate(count=Count("user_id"))
+            .order_by("month")
+        )
+
+        # Create arrays for all months
+        month_labels = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ]
+        counts = [0] * 12
+
+        # Fill in actual data
+        for item in monthly_data:
+            month_index = item["month"] - 1
+            counts[month_index] = item["count"]
+
+        return {"labels": month_labels, "counts": counts}

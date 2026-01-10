@@ -9,5 +9,5 @@ class GenderChoices(models.TextChoices):
 
 
 class UserType(models.TextChoices):
-    CUSTOMER = "customer", "Customer"
-    PROVIDER = "provider", "Provider"
+    CUSTOMER = "customer", _("Customer")
+    PROVIDER = "provider", _("Provider")

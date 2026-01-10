@@ -26,7 +26,7 @@ class BaseContactUsPermissions:
             ),
             "has_checked": FieldPermissions(
                 visible=(normal_admin),
-                editable=(normal_admin),
+                editable=(),
             ),
             "created_at": FieldPermissions(
                 visible=(normal_admin),
@@ -40,7 +40,7 @@ class ContactUsAdminPermissions(BaseContactUsPermissions):
         return False
 
     def can_change(self, request, obj=None):
-        return True
+        return False
 
     def can_delete(self, request, obj=None):
         return False

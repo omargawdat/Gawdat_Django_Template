@@ -71,7 +71,7 @@ class OnboardingAdminPermissions(BaseOnboardingPermissions):
         return True
 
     def can_delete(self, request, obj=None):
-        return True
+        return False
 
 
 class OnboardingInlinePermissions(BaseOnboardingPermissions):

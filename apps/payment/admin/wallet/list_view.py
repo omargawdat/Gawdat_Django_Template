@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from unfold.contrib.filters.admin import RangeNumericFilter
 
 
 class WalletListView:
@@ -9,7 +10,7 @@ class WalletListView:
         "display_last_update",
     )
     list_editable = ()
-    list_filter = ("is_use_wallet_in_payment",)
+    list_filter = ("is_use_wallet_in_payment", ("balance", RangeNumericFilter))
     date_hierarchy = None
     list_per_page = 50
     list_filter_submit = True
