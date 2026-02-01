@@ -11,7 +11,7 @@ jobs:
   block-migration-edits:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Detect modified/deleted migrations
         id: changes
