@@ -1,0 +1,17 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+<div style="font-size:14px; line-height:1.6; color:#334155; margin-top:8px;">
+    Welcome to <b>Dars</b>! Please use the code below to verify your email and complete your registration.
+</div>
+
+<div style="margin-top:24px; text-align:center;">
+    <span style="display:inline-block; background:#f1f5ff; border:2px solid #3b82f6; border-radius:14px; padding:14px 22px;">
+        <span style="font-weight:800; font-size:28px; letter-spacing:8px; color:#3b82f6;">{{ code }}</span>
+    </span>
+</div>
+
+<div style="margin-top:16px; font-size:13px; color:#64748b; text-align:center;">
+    This code expires in 10 minutes.
+</div>
+{% endblock content %}

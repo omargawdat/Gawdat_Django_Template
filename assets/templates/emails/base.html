@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>Dars</title>
+  <style>
+    @media screen and (max-width:600px){
+      .w-100{width:100%!important}
+      .px-24{padding-left:24px!important;padding-right:24px!important}
+    }
+    a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important}
+  </style>
+</head>
+<body style="margin:0; padding:0; background:#f1f5ff; font-family:Arial,Helvetica,sans-serif;">
+
+  {% if preheader %}
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; mso-hide:all;">
+    {{ preheader }}
+  </div>
+  {% endif %}
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f1f5ff;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="w-100"
+               style="max-width:600px; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 16px rgba(37, 99, 235, 0.08);">
+
+          <!-- Logo Bar -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#3b82f6,#60a5fa); padding:24px 40px;" class="px-24">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="vertical-align:middle; padding-right:12px;">
+                    <img src="{% static 'images/logo.png' %}" alt="Dars" width="40" height="40" style="display:block; border:0;" />
+                  </td>
+                  <td style="vertical-align:middle;">
+                    <div style="font-size:22px; font-weight:700; color:#ffffff; letter-spacing:1px;">Dars</div>
+                    <div style="font-size:11px; color:#e0f2fe;">Learn &bull; Grow &bull; Achieve</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding:36px 40px;" class="px-24">
+              {% block content %}{% endblock content %}
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#f8fafc; border-top:1px solid #e2e8f0; padding:20px 40px;" class="px-24">
+              <div style="font-size:12px; color:#94a3b8; line-height:1.5;">
+                &copy; {% now "Y" %} Dars. All rights reserved.
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

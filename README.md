@@ -193,8 +193,7 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "SMS_MISR_PASSWORD": "REPLACE-WHEN-NEEDED",
      "SMS_MISR_SENDER": "REPLACE-WHEN-NEEDED",
 
-     "EMAIL_HOST_USER": "REPLACE-WHEN-NEEDED",
-     "EMAIL_HOST_PASSWORD": "REPLACE-WHEN-NEEDED",
+     "DEFAULT_FROM_EMAIL": "noreply@yourdomain.com",
 
      "FRONTEND_DEFAULT_URL": "MUST-BE-REPLACED",
      "FRONTEND_ALLOWED_ORIGINS": "MUST-BE-REPLACED",

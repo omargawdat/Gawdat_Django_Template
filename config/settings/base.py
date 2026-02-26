@@ -91,6 +91,7 @@ THIRD_PARTY_APPS = [
     "djmoney",
     "mapwidgets",
     "constance",
+    "django_tasks",
 ]
 
 # Django core applications
@@ -191,6 +192,16 @@ ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # User model has no username field
 ACCOUNT_PASSWORD_REQUIRED = False  # No password required for signup/login
+
+# --- Social Account Settings ---
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"  # Social providers already verify email
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True  # Auto-link if email matches
+
+# Custom adapter for 6-digit numeric codes
+ACCOUNT_ADAPTER = "config.helpers.account_adapter.CustomAccountAdapter"
+
+# Email subject prefix for allauth emails
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "Dars"
 
 # -------------------------------------------------------------------------------
 # COMMON SETTINGS FOR ALL AUTHENTICATION MODES
@@ -327,13 +338,8 @@ TEMPLATES = [
 # EMAIL
 # ==============================================================================
 # EMAIL_BACKEND is configured in local.py/prod.py
-# Base configuration for SMTP (used by production)
 EMAIL_TIMEOUT = 5
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env.email_host_user
-EMAIL_HOST_PASSWORD = env.email_host_password.get_secret_value()
+DEFAULT_FROM_EMAIL = env.default_from_email
 
 # ==============================================================================
 # CACHING
@@ -386,6 +392,15 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# ==============================================================================
+# DJANGO TASKS (default: immediate for local dev)
+# ==============================================================================
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks.backends.immediate.ImmediateBackend",
+    }
 }
 
 # ==============================================================================

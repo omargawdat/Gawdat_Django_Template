@@ -361,6 +361,11 @@ CONSTANCE_CONFIG = {
         "Enable validation that user addresses must be in supported regions",
         bool,
     ),
+    "SUPPORT_EMAIL": (
+        "support@example.com",
+        "Support email shown in transactional emails",
+        "wysiwyg_field",
+    ),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -377,6 +382,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "TESTING_PHONE_NUMBERS",
     ),
     "Location Settings": ("ENABLE_REGION_VALIDATION",),
+    "Email Settings": ("SUPPORT_EMAIL",),
 }
 
 
