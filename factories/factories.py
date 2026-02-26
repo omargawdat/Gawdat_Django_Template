@@ -363,9 +363,11 @@ class WalletFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
     balance = factory.LazyAttribute(
-        lambda obj: Money(100, obj.user.customer.country.currency)
-        if hasattr(obj.user, "customer")
-        else Money(100, "USD")
+        lambda obj: (
+            Money(100, obj.user.customer.country.currency)
+            if hasattr(obj.user, "customer")
+            else Money(100, "USD")
+        )
     )
     is_use_wallet_in_payment = True
 

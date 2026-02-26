@@ -716,6 +716,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-ses"
+version = "4.7.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "boto3" },
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7f/25/25838da8e213c9f125b26a25360f0bb8ac57f07c24977451f3e7a0d63ddd/django_ses-4.7.2.tar.gz", hash = "sha256:a36f2af0e4ce060bf36053ed4c94feac1703ea3351e677c6f6421abd01433a35", size = 71828, upload-time = "2026-02-20T19:22:35.078Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/f2/15d4bd54bd01e68e8a116e0b66243c91cb62a3fa0d780a39d2af6654e8ae/django_ses-4.7.2-py3-none-any.whl", hash = "sha256:f3db567fb6f43c01d7d890f5c991e1ebbfa48220de0be24d497ba6332004abcb", size = 37796, upload-time = "2026-02-20T19:22:32.819Z" },
+]
+
+[[package]]
 name = "django-simple-history"
 version = "3.10.1"
 source = { registry = "https://pypi.org/simple" }
@@ -802,6 +815,35 @@ wheels = [
 ]
 
 [[package]]
+name = "django-tasks"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-stubs-ext" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1d/6e/34d4e77bb7951e5a5acbd846f43240f062c68bb04d9c246cb446a55d4cbc/django_tasks-0.12.0.tar.gz", hash = "sha256:58be66c1e487da32a3ce7320bd1949d0d1dc381b9004819f92591eb37fb2c1b8", size = 15445, upload-time = "2026-02-06T16:15:33.593Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/e7/40c45768e84efd77e3ae6ffdcd2b5540011036cbb00c6df6ef2a2ad69551/django_tasks-0.12.0-py3-none-any.whl", hash = "sha256:ffcc1d7bdfad3bc5ef9c2d498596c6546484c9ec6b182fb9709c691eb66a8709", size = 15758, upload-time = "2026-02-06T16:15:32.168Z" },
+]
+
+[[package]]
+name = "django-tasks-db"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-stubs-ext" },
+    { name = "django-tasks" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f4/25/bc21ad4a610634f0a66f4faea4522eed26b55dbd50c4ac853128d24091d3/django_tasks_db-0.12.0.tar.gz", hash = "sha256:314d486b8c1786705b4afaf03dadaf0b1b104163acce9c5d9c9bb2aef205c501", size = 26724, upload-time = "2026-02-06T16:54:33.021Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/09/1c/e14198615e22df28b333540f2e506d6ddef7aff16d510818e94ebc01440c/django_tasks_db-0.12.0-py3-none-any.whl", hash = "sha256:69e3a1edcbf1efeeb1268da465e8ea5296ddd80834719769acc719b82da2d62e", size = 28832, upload-time = "2026-02-06T16:54:31.564Z" },
+]
+
+[[package]]
 name = "django-template"
 version = "1.0.0"
 source = { virtual = "." }
@@ -827,6 +869,7 @@ dependencies = [
     { name = "django-simple-history" },
     { name = "django-soft-delete" },
     { name = "django-solo" },
+    { name = "django-tasks" },
     { name = "django-unfold" },
     { name = "djangorestframework" },
     { name = "djangorestframework-camel-case" },
@@ -872,7 +915,9 @@ dev = [
 ]
 production = [
     { name = "collectfasta" },
+    { name = "django-ses" },
     { name = "django-storages", extra = ["s3"] },
+    { name = "django-tasks-db" },
     { name = "gevent" },
     { name = "gunicorn" },
     { name = "sentry-sdk", extra = ["django"] },
@@ -901,6 +946,7 @@ requires-dist = [
     { name = "django-simple-history", specifier = ">=3.10" },
     { name = "django-soft-delete", specifier = ">=1.0" },
     { name = "django-solo", specifier = ">=2.4" },
+    { name = "django-tasks", specifier = "==0.12.0" },
     { name = "django-unfold", specifier = ">=0.67" },
     { name = "djangorestframework", specifier = ">=3.16" },
     { name = "djangorestframework-camel-case", specifier = ">=1.4" },
@@ -946,7 +992,9 @@ dev = [
 ]
 production = [
     { name = "collectfasta", specifier = ">=3.3" },
+    { name = "django-ses", specifier = ">=4.6.0" },
     { name = "django-storages", extras = ["s3"], specifier = ">=1.14" },
+    { name = "django-tasks-db", specifier = "==0.12.0" },
     { name = "gevent", specifier = ">=25.9" },
     { name = "gunicorn", specifier = ">=23.0" },
     { name = "sentry-sdk", extras = ["django"], specifier = ">=2.39" },

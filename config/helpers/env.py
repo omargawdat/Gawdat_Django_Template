@@ -62,8 +62,7 @@ class EnvSettings(BaseSettings):
     sms_misr_sender: str
 
     # Email
-    email_host_user: str
-    email_host_password: SecretStr
+    default_from_email: str
 
     # Frontend Configuration
     frontend_default_url: str

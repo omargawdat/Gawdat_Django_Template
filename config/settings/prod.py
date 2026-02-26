@@ -156,9 +156,20 @@ LOGGING = {
 }
 
 # ------------------------------------------------------------------------------
-# EMAIL CONFIGURATION (Production - Gmail SMTP)
+# EMAIL CONFIGURATION (Production — AWS SES)
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django_ses.SESBackend"
+AWS_SES_REGION_NAME = env.aws_region_name
+
+# ------------------------------------------------------------------------------
+# DJANGO TASKS (Production — Database Backend)
+# ------------------------------------------------------------------------------
+INSTALLED_APPS += ["django_tasks_db"]
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks_db.DatabaseBackend",
+    }
+}
 
 # ------------------------------------------------------------------------------
 # EXTERNAL INTEGRATIONS
