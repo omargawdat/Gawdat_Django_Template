@@ -20,7 +20,7 @@ dependencies = [
     "hiredis>=3.2",
     "psycopg[pool]>=3.2",
     # Django and Extensions
-    "django>=5.2,<6.0",
+    "django>=5.2,<7.0",
     "django-model-utils>=5.0",
     "django-redis>=6.0",
     "django-import-export>=4.3",
