@@ -158,6 +158,8 @@ This project uses GitHub Actions for CI/CD deployment to AWS. Follow these steps
      "DJANGO_ADMIN_URL": "admin/",
 
      "DATABASE_URL": "postgis://user:password@host:5432/dbname",
+     "DB_POOL_MIN_SIZE": "0",
+     "DB_POOL_MAX_SIZE": "5",
 
      "DOMAIN_NAME": "MUST-BE-REPLACED",
      "ENVIRONMENT": "development",
