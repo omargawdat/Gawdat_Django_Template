@@ -58,10 +58,18 @@ DATABASES = {
     "default": {
         **dj_database_url.config(
             default=env.database_url,
-            conn_max_age=600,
             conn_health_checks=True,
         ),
         "ATOMIC_REQUESTS": True,
+        "OPTIONS": {
+            "pool": {
+                "min_size": env.db_pool_min_size,
+                "max_size": env.db_pool_max_size,
+                "timeout": 30,
+                "max_lifetime": 1800,
+                "max_idle": 120,
+            }
+        },
     },
 }
 
