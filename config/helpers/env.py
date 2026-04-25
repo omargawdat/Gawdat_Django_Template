@@ -19,6 +19,10 @@ class EnvSettings(BaseSettings):
 
     # Database
     database_url: str
+    # Connection pool (per gunicorn worker; 3 workers x max_size = total per instance)
+    # Override DB_POOL_MAX_SIZE in prod env if a service hits real load.
+    db_pool_min_size: int = 0
+    db_pool_max_size: int = 5
 
     # Environment
     domain_name: str
