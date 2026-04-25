@@ -20,9 +20,10 @@ class EnvSettings(BaseSettings):
     # Database
     database_url: str
     # Connection pool (per gunicorn worker; 3 workers x max_size = total per instance)
-    # Override DB_POOL_MAX_SIZE in prod env if a service hits real load.
-    db_pool_min_size: int = 0
-    db_pool_max_size: int = 5
+    # Required: must be set in dummy.env (local/CI) and AWS Secret Manager (prod).
+    # Defaults (0 / 5) live in dummy.env; override DB_POOL_MAX_SIZE in prod if needed.
+    db_pool_min_size: int
+    db_pool_max_size: int
 
     # Environment
     domain_name: str
